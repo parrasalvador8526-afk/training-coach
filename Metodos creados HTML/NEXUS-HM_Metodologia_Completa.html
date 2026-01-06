@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS-HM - Híbrido Mecánico-Metabólico (5 Semanas)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #8B5CF6;
+            --secondary: #A78BFA;
+            --accent: #F59E0B;
+            --tm-color: #DC2626;
+            --em-color: #10B981;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 30%, var(--tm-color) 60%, var(--em-color) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--tm-color), var(--primary), var(--em-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tm-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--tm-color);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .em-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--em-color);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 10pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .dual-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .dual-card {
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .dual-card.tm {
+            border-color: var(--tm-color);
+            background: #FEF2F2;
+        }
+
+        .dual-card.em {
+            border-color: var(--em-color);
+            background: #ECFDF5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>NEXUS-HM</h1>
+        <p class="subtitle">Híbrido Mecánico-Metabólico - 5 Semanas</p>
+        <p style="font-size: 1.1rem; max-width: 700px;">Metodología que <strong>combina Tensión Mecánica + Estrés
+                Metabólico</strong> en cada sesión, utilizando 10 intensificadores para máxima hipertrofia completa.</p>
+        <p
+            style="font-size: 1rem; margin-top: 40px; padding: 15px 30px; border: 2px solid #A78BFA; border-radius: 50px;">
+            NEXUS v3.3 · Metodología Híbrida Completa</p>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">🔴 TM: 75-90% · 🟢 EM: 60-75% · 5 Semanas · 10
+            Intensificadores</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción</li>
+                <li><strong>2.</strong> Filosofía TM + EM</li>
+                <li><strong>3.</strong> Los 10 Intensificadores</li>
+                <li><strong>4.</strong> Estructura del Ciclo</li>
+                <li><strong>5.</strong> Estructura de Sesión</li>
+                <li><strong>6.</strong> Rutinas por Grupo Muscular</li>
+                <li><strong>7.</strong> Estructuras por División</li>
+                <li><strong>8.</strong> Nutrición y Suplementación</li>
+                <li><strong>9.</strong> Calculadora de Parámetros</li>
+                <li><strong>10.</strong> Consideraciones</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción a NEXUS-HM</h1>
+        <div class="highlight-box">
+            <strong>NEXUS-HM</strong> es la fusión de NEXUS-TM y NEXUS-EM. Cada semana utiliza UN intensificador TM + UN
+            intensificador EM, atacando ambos mecanismos de hipertrofia en cada sesión.
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">5</div>
+                <div class="label">Semanas</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">10</div>
+                <div class="label">Intensificadores</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">60-90%</div>
+                <div class="label">Rango 1RM</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">0-2</div>
+                <div class="label">RIR</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">60-75min</div>
+                <div class="label">Por Sesión</div>
+            </div>
+        </div>
+
+        <h1>2. Filosofía: TM + EM</h1>
+        <div class="dual-grid">
+            <div class="dual-card tm">
+                <h3>🔴 Tensión Mecánica</h3>
+                <ul>
+                    <li>Hipertrofia miofibrilar</li>
+                    <li>Cargas: 75-90% 1RM</li>
+                    <li>Descanso: 3-5 min</li>
+                </ul>
+            </div>
+            <div class="dual-card em">
+                <h3>🟢 Estrés Metabólico</h3>
+                <ul>
+                    <li>Hipertrofia sarcoplasmática</li>
+                    <li>Cargas: 60-75% 1RM</li>
+                    <li>Descanso: 30-90s</li>
+                </ul>
+            </div>
+        </div>
+
+        <h1 class="page-break">3. Los 10 Intensificadores</h1>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>🔴 TM (Compuestos)</th>
+                <th>🟢 EM (Aislamientos)</th>
+            </tr>
+            <tr>
+                <td>S1</td>
+                <td>AMRAP | 5@65%→5@75%→5+@85%</td>
+                <td>Bomba | 10x10 @ 60%</td>
+            </tr>
+            <tr>
+                <td>S2</td>
+                <td>Cluster | 3-3-2-2 @ 82%</td>
+                <td>Myo Reps | 20 + mini-sets</td>
+            </tr>
+            <tr>
+                <td>S3</td>
+                <td>Negativas | 6-8 + 3-4 neg</td>
+                <td>RIV | 8-4-4 intra-set</td>
+            </tr>
+            <tr>
+                <td>S4</td>
+                <td>Forzadas | 6-8 + 2-3 forz</td>
+                <td>FST-7 | 7x10-12</td>
+            </tr>
+            <tr>
+                <td>S5</td>
+                <td>Rest-Pause | 7-4-3 @ 87%</td>
+                <td>Drop Sets | 2-3 drops</td>
+            </tr>
+        </table>
+
+        <h1>4. Estructura del Ciclo</h1>
+        <table>
+            <tr>
+                <th>Sem</th>
+                <th>TM</th>
+                <th>EM</th>
+                <th>Intensidad</th>
+            </tr>
+            <tr>
+                <td>S1</td>
+                <td>AMRAP</td>
+                <td>Bomba</td>
+                <td>⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S2</td>
+                <td>Cluster</td>
+                <td>Myo</td>
+                <td>⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S3</td>
+                <td>Negativas</td>
+                <td>RIV</td>
+                <td>⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S4</td>
+                <td>Forzadas</td>
+                <td>FST-7</td>
+                <td>⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S5</td>
+                <td>Rest-Pause</td>
+                <td>Drop</td>
+                <td>⭐⭐⭐⭐⭐⭐</td>
+            </tr>
+        </table>
+
+        <h1>5. Estructura de Sesión Híbrida</h1>
+        <div class="code-block">CALENTAMIENTO (10-15 min):
+            • Cardio ligero + movilidad
+            • Series aproximación: 15@30% → 10@50% → 6@70%
+
+            BLOQUE TM (30-35 min):
+            • 2 ejercicios compuestos
+            • Intensificador TM de la semana
+            • Descanso: 3-5 min
+
+            BLOQUE EM (20-25 min):
+            • 2-3 ejercicios aislamiento
+            • Intensificador EM de la semana
+            • Descanso: 30-90s
+
+            TOTAL: 60-75 minutos</div>
+
+        <h1 class="page-break">6. Rutinas por Grupo Muscular</h1>
+
+        <h2>6.1 Pecho</h2>
+        <div class="code-block">🔴 BLOQUE TM:
+            A. PRESS BANCA:
+            S1: 5@65% → 5@75% → 5+@85% | TUT: 30-45s | Desc: 3-4 min
+            S2: 3-3-2-2 @ 82% | TUT: 60-90s | Desc: 4 min
+            S3: 6-8@85% + 3-4 neg | TUT: 50-70s | ⚠️ SPOTTER
+            S4: 6-8@87% + 2-3 forz | TUT: 50-70s | ⚠️ SPOTTER
+            S5: 7-4-3 @ 87% | TUT: 60-90s | Desc: 4 min
+
+            B. PRESS INCLINADO MC:
+            3 x 6-8 @ 75-80% | TUT: 25-35s | Desc: 2-3 min
+
+            🟢 BLOQUE EM:
+            C. APERTURAS:
+            S1: 3x15-20 @ 60% | TUT: 50-70s | Desc: 60-90s
+            S2: 18 + 5-4-4-3 @ 70% | TUT: 70-90s
+            S3: 3x (8-4-4) @ 70% | TUT: 60-80s
+
+            D. PEC DECK (FINISHER):
+            S4: 7x10-12 @ 65% | Desc: 30s
+            S5: 3x15 + TRIPLE DROP</div>
+
+        <h2>6.2 Espalda</h2>
+        <div class="code-block">🔴 BLOQUE TM:
+            A. PESO MUERTO:
+            S1: 5@65% → 5@75% → 5+@85% | Desc: 4-5 min
+            S2: 3-3-2-2 @ 80% | Desc: 4 min
+            S5: 5-3-2 @ 85% (Rest-Pause)
+
+            B. DOMINADAS:
+            S3: 6-8 + 3-4 negativas | ⚠️ Ideal para negativas
+
+            🟢 BLOQUE EM:
+            C. REMO CABLE:
+            S2: Myo Reps (18 + mini-sets)
+            S3: RIV (8-4-4)
+
+            D. PULLDOWN RECTO (FINISHER):
+            S4: FST-7 (7x12-15)
+            S5: Drop Sets</div>
+
+        <h2>6.3 Piernas</h2>
+        <div class="code-block">🔴 BLOQUE TM:
+            A. SENTADILLA:
+            S1: AMRAP | S2: Cluster | S4: Forzadas | S5: Rest-Pause
+            ⚠️ S3: Sin negativas (seguridad)
+
+            B. PRENSA:
+            S5: Ideal para Rest-Pause (más seguro)
+
+            🟢 BLOQUE EM:
+            C. EXTENSIONES:
+            S4: FST-7 (7x12-15) | Máxima bomba cuádriceps
+
+            D. CURL FEMORAL:
+            S3: RIV | S5: Drop Sets
+
+            E. GEMELOS:
+            4 x 15-20 + pausa arriba 2s</div>
+
+        <h2>6.4 Hombros</h2>
+        <div class="code-block">🔴 BLOQUE TM:
+            A. PRESS MILITAR:
+            S1-S2-S4-S5: Aplicar intensificador
+            ⚠️ S3: Sin negativas (riesgo hombro)
+
+            🟢 BLOQUE EM:
+            B. LATERALES CABLE:
+            S4: FST-7 (7x12-15)
+            S5: Drop Sets ideales aquí
+
+            C. FACE PULLS:
+            3 x 15-20 (salud hombro)</div>
+
+        <h2>6.5 Brazos</h2>
+        <div class="code-block">🔴 BLOQUE TM:
+            A. CURL BARRA: S1 AMRAP | S4-S5 Forzadas/R-P
+            B. PRESS FRANCÉS: S2 Cluster
+            C. FONDOS BANCO: S3 Negativas
+
+            🟢 BLOQUE EM:
+            D. CURL CABLE: S4 FST-7
+            E. PUSHDOWN: S2 Myo | S4 FST-7
+            F. CURL MARTILLO + EXT OVERHEAD: S5 Drop Sets</div>
+
+        <h1 class="page-break">7. Estructuras por División</h1>
+
+        <h2>7.1 Upper/Lower (4 días) - RECOMENDADO</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>🔴 TM</th>
+                <th>🟢 EM</th>
+            </tr>
+            <tr>
+                <td>Lun</td>
+                <td>Upper A</td>
+                <td>Press Banca, Press Mil</td>
+                <td>Aperturas, Laterales</td>
+            </tr>
+            <tr>
+                <td>Mar</td>
+                <td>Lower A</td>
+                <td>Sentadilla</td>
+                <td>Extensiones, Gemelos</td>
+            </tr>
+            <tr>
+                <td>Jue</td>
+                <td>Upper B</td>
+                <td>Dominadas, Remo</td>
+                <td>Pulldown, Face Pulls</td>
+            </tr>
+            <tr>
+                <td>Vie</td>
+                <td>Lower B + Arms</td>
+                <td>RDL, Curl Barra</td>
+                <td>Curl Fem, Pushdown</td>
+            </tr>
+        </table>
+
+        <h2>7.2 Bro Split (5 días)</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupo</th>
+                <th>🔴 TM</th>
+                <th>🟢 EM</th>
+            </tr>
+            <tr>
+                <td>Lun</td>
+                <td>Pecho</td>
+                <td>Press Banca, Inc</td>
+                <td>Aperturas, Pec Deck</td>
+            </tr>
+            <tr>
+                <td>Mar</td>
+                <td>Espalda</td>
+                <td>P.Muerto, Dominadas</td>
+                <td>Remos, Pulldown</td>
+            </tr>
+            <tr>
+                <td>Mié</td>
+                <td>Hombros</td>
+                <td>Press Mil, Arnold</td>
+                <td>Laterales, Face Pulls</td>
+            </tr>
+            <tr>
+                <td>Jue</td>
+                <td>Piernas</td>
+                <td>Sentadilla, Prensa</td>
+                <td>Ext, Curl, Gemelos</td>
+            </tr>
+            <tr>
+                <td>Vie</td>
+                <td>Brazos</td>
+                <td>Curl, Fondos</td>
+                <td>Cables</td>
+            </tr>
+        </table>
+
+        <h1>8. Nutrición y Suplementación</h1>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+                <th>Razón</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.2-2.5 g/kg</td>
+                <td>Alto para TM</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>5-7 g/kg</td>
+                <td>Alto para EM (bomba)</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1 g/kg</td>
+                <td>Hormonas</td>
+            </tr>
+            <tr>
+                <td>Calorías</td>
+                <td>TDEE + 400-600</td>
+                <td>Superávit</td>
+            </tr>
+        </table>
+        <h3>Suplementación</h3>
+        <table>
+            <tr>
+                <th>Para TM</th>
+                <th>Para EM</th>
+                <th>Ambos</th>
+            </tr>
+            <tr>
+                <td>Cafeína 3-6mg/kg</td>
+                <td>Citrulina 6-8g</td>
+                <td>Creatina 5g</td>
+            </tr>
+            <tr>
+                <td>Beta-Alanina</td>
+                <td>Sal/Electrolitos</td>
+                <td>Omega-3</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">9. Calculadora de Parámetros</h1>
+        <table>
+            <tr>
+                <th>Intensificador</th>
+                <th>% 1RM</th>
+                <th>Reps</th>
+                <th>TUT (seg)</th>
+                <th>Desc</th>
+                <th>RPE</th>
+            </tr>
+            <tr style="background:#FEF2F2;">
+                <td>AMRAP</td>
+                <td>65-85%</td>
+                <td>5-5-5+</td>
+                <td>25-40</td>
+                <td>3-4 min</td>
+                <td>8-10</td>
+            </tr>
+            <tr style="background:#FEF2F2;">
+                <td>Cluster</td>
+                <td>80-85%</td>
+                <td>10-15</td>
+                <td>60-90</td>
+                <td>4 min</td>
+                <td>10</td>
+            </tr>
+            <tr style="background:#FEF2F2;">
+                <td>Negativas</td>
+                <td>85/120%</td>
+                <td>6-8+3-4</td>
+                <td>50-70</td>
+                <td>4-5 min</td>
+                <td>10+</td>
+            </tr>
+            <tr style="background:#FEF2F2;">
+                <td>Forzadas</td>
+                <td>85-90%</td>
+                <td>6-8+2-3</td>
+                <td>50-70</td>
+                <td>4-5 min</td>
+                <td>10+</td>
+            </tr>
+            <tr style="background:#FEF2F2;">
+                <td>Rest-Pause</td>
+                <td>85-90%</td>
+                <td>11-15</td>
+                <td>60-90</td>
+                <td>4 min</td>
+                <td>10</td>
+            </tr>
+            <tr style="background:#ECFDF5;">
+                <td>Bomba</td>
+                <td>60%</td>
+                <td>10x10</td>
+                <td>40-60</td>
+                <td>60-90s</td>
+                <td>6-9</td>
+            </tr>
+            <tr style="background:#ECFDF5;">
+                <td>Myo Reps</td>
+                <td>70-75%</td>
+                <td>25-40</td>
+                <td>60-90</td>
+                <td>5-10s</td>
+                <td>9-10</td>
+            </tr>
+            <tr style="background:#ECFDF5;">
+                <td>RIV</td>
+                <td>70-75%</td>
+                <td>16-20</td>
+                <td>60-80</td>
+                <td>10s</td>
+                <td>9-10</td>
+            </tr>
+            <tr style="background:#ECFDF5;">
+                <td>FST-7</td>
+                <td>65-70%</td>
+                <td>7x10-12</td>
+                <td>210-280</td>
+                <td>30s</td>
+                <td>8-10</td>
+            </tr>
+            <tr style="background:#ECFDF5;">
+                <td>Drop Sets</td>
+                <td>70→35%</td>
+                <td>30-40</td>
+                <td>60-90</td>
+                <td>0s</td>
+                <td>10</td>
+            </tr>
+        </table>
+
+        <h1>10. Consideraciones</h1>
+        <div class="success-box">
+            <strong>6 REGLAS DE ORO:</strong>
+            <ol>
+                <li>Bloque TM PRIMERO, EM DESPUÉS</li>
+                <li>Spotter en S3 y S4</li>
+                <li>Carbos altos + Citrulina pre</li>
+                <li>Descansos TM: 3-5 min | EM: 30-90s</li>
+                <li>FST-7 solo en aislamientos</li>
+                <li>Máximo 4 días/sem + 7-8h sueño</li>
+            </ol>
+        </div>
+
+        <h2>10.2 Especialización de Grupos Débiles (NEXUS-HM)</h2>
+        <div class="highlight-box">
+            <strong>🎯 Priorización Híbrida de Grupos Rezagados</strong>
+            <p>NEXUS-HM es ideal para la especialización porque permite atacar el músculo débil desde dos frentes:
+                tensión mecánica pesada (inicio semana) y estrés metabólico extremo (fin de semana).</p>
+        </div>
+
+        <h3>Estrategia NEXUS-HM para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Acción Bloque TM (🔴)</th>
+                <th>Acción Bloque EM (🟢)</th>
+                <th>Frecuencia</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+1 Set Cluster</td>
+                <td>+1 Ejercicio FST-7 al final</td>
+                <td>2x/semana +</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>Prioridad de Orden</td>
+                <td>Super-sets de pre-fatiga</td>
+                <td>3x/semana</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>Técnica "Forzadas"</td>
+                <td>Día extra solo bombeo (Feeder)</td>
+                <td>4-5x/semana</td>
+            </tr>
+        </table>
+
+        <h3>Esquema Semanal de Especialización (Ejemplo: Hombros)</h3>
+        <div class="code-block">LUNES (TM Upper):
+            1. Press Militar Pesado (Prioridad #1): 3 sets + Cluster
+            2. Resto de rutina TM...
+
+            JUEVES (EM Upper):
+            1. Pre-fatiga: Laterales 3x20 (antes de presses)
+            2. Rutina normal...
+            3. Finisher: FST-7 Elevaciones Laterales Cable (7x12, 30s desc)
+
+            SÁBADO (Extra - Opcional):
+            Feeder Workout: 10 min Laterales con banda elástica (100 reps totales)</div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <strong>NEXUS-HM</strong> es la metodología más completa del sistema NEXUS. Combina 10 intensificadores (5
+            TM + 5 EM) en 5 semanas, atacando AMBOS mecanismos de hipertrofia: miofibrilar + sarcoplasmática.
+        </div>
+        <p style="text-align: center; margin-top: 40px; color: #999;">
+            <strong>NEXUS-HM · Híbrido Mecánico-Metabólico · v1.1</strong><br>
+            Sistema NEXUS - 13 Metodologías
+        </p>
+    </div>
+</body>
+
+</html>

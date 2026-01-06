@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS-RP Coach | Guía de Protocolo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --rp-primary: #E040FB;
+            --rp-secondary: #7C4DFF;
+            --rp-accent: #00BFA5;
+            --bg-dark: #0D0D1A;
+            --bg-card: #1A1A2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0C0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--bg-card), #252540);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(224, 64, 251, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #E040FB, #7C4DFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #E040FB, #7C4DFF);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--rp-primary);
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--rp-primary);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--rp-secondary);
+            margin: 25px 0 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card--highlight {
+            border-color: var(--rp-primary);
+            box-shadow: 0 0 20px rgba(224, 64, 251, 0.2);
+        }
+
+        .step-box {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border-left: 4px solid var(--rp-primary);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #E040FB, #7C4DFF);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #E040FB, #7C4DFF, #00BFA5);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 25px 0;
+            padding-left: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            background: var(--rp-primary);
+            border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+        }
+
+        .timeline-item h4 {
+            color: var(--rp-primary);
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        th {
+            background: rgba(224, 64, 251, 0.15);
+            color: var(--rp-primary);
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .alert--info {
+            background: rgba(124, 77, 255, 0.15);
+            border: 1px solid rgba(124, 77, 255, 0.3);
+        }
+
+        .alert--success {
+            background: rgba(0, 191, 165, 0.15);
+            border: 1px solid rgba(0, 191, 165, 0.3);
+        }
+
+        .alert--warning {
+            background: rgba(255, 179, 0, 0.15);
+            border: 1px solid rgba(255, 179, 0, 0.3);
+        }
+
+        ul,
+        ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checklist li {
+            padding: 10px 15px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            font-size: 1.2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #E040FB, #7C4DFF);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(224, 64, 251, 0.4);
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .card {
+                border: 1px solid #ddd;
+            }
+
+            .header {
+                background: #f5f5f5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- HEADER -->
+        <header class="header">
+            <h1>🧠 NEXUS-RP Coach</h1>
+            <p class="subtitle">Guía de Protocolo y Seguimiento</p>
+            <span class="badge">✨ Sistema de Autorregulación Inteligente</span>
+        </header>
+
+        <!-- INTRODUCCIÓN -->
+        <section>
+            <h2>1. ¿Qué es NEXUS-RP Coach?</h2>
+
+            <div class="card card--highlight">
+                <p><strong>NEXUS-RP Coach</strong> es un sistema de autorregulación del entrenamiento inspirado en la
+                    metodología de <strong>Renaissance Periodization</strong>. Funciona como un "entrenador inteligente"
+                    que te ayuda a tomar decisiones basadas en datos sobre:</p>
+                <ul>
+                    <li>Cuánto peso usar en cada sesión</li>
+                    <li>Cuántas series hacer por grupo muscular</li>
+                    <li>Cuándo empujar más fuerte y cuándo retroceder</li>
+                    <li>Cuándo tomar una semana de descarga (deload)</li>
+                </ul>
+            </div>
+
+            <h3>Filosofía Central</h3>
+            <p>El sistema se basa en tres pilares fundamentales:</p>
+
+            <div class="step-box">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Estímulo Adecuado</h4>
+                    <p>No entrenar de más ni de menos. El volumen correcto para cada persona en cada momento.</p>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Recuperación Suficiente</h4>
+                    <p>Escuchar las señales del cuerpo (fatiga, agujetas) para ajustar la carga de trabajo.</p>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Progresión Gradual</h4>
+                    <p>Aumentar el esfuerzo sistemáticamente para forzar adaptaciones continuas.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROTOCOLO DE USO -->
+        <section>
+            <h2>2. Protocolo de Seguimiento Semanal</h2>
+
+            <p>Sigue este protocolo cada semana para obtener los mejores resultados:</p>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>🌅 ANTES DE LA SEMANA (Domingo/Lunes)</h4>
+                    <ol>
+                        <li>Abre NEXUS-RP Coach y selecciona tu <strong>metodología</strong></li>
+                        <li>Ve a <strong>RIR Dinámico</strong> y selecciona la semana actual del mesociclo</li>
+                        <li>Anota el <strong>RIR objetivo</strong> para toda la semana</li>
+                        <li>Ve a <strong>Volumen MEV→MRV</strong> y revisa tus series objetivo por grupo</li>
+                    </ol>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>🏋️ ANTES DE CADA SESIÓN</h4>
+                    <ol>
+                        <li>Ve a <strong>Sobrecarga Progresiva</strong></li>
+                        <li>Ingresa los datos de tu última sesión del mismo ejercicio</li>
+                        <li>Obtén el <strong>peso recomendado</strong> para hoy</li>
+                    </ol>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>📝 DESPUÉS DE CADA SESIÓN</h4>
+                    <ol>
+                        <li>Ve a <strong>Registro de Sesión</strong></li>
+                        <li>Registra cada ejercicio: peso, reps, RPE</li>
+                        <li>Califica la sesión del 1 al 10</li>
+                    </ol>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>🔄 DESPUÉS DE LA ÚLTIMA SESIÓN DE LA SEMANA</h4>
+                    <ol>
+                        <li>Ve a <strong>Autorregulación</strong></li>
+                        <li>Evalúa tu nivel de Pump, Agujetas y Fatiga (1-5)</li>
+                        <li>Obtén la <strong>recomendación</strong> para la próxima semana</li>
+                        <li>Ajusta tu plan según la recomendación</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- ESTRUCTURA DEL MESOCICLO -->
+        <section>
+            <h2>3. Estructura del Mesociclo</h2>
+
+            <p>Un mesociclo típico dura 4-6 semanas con la siguiente progresión:</p>
+
+            <table>
+                <tr>
+                    <th>Semana</th>
+                    <th>Fase</th>
+                    <th>RIR</th>
+                    <th>Volumen</th>
+                    <th>Objetivo</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Acumulación</td>
+                    <td>3</td>
+                    <td>MEV</td>
+                    <td>Establecer base, técnica perfecta</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Progresión</td>
+                    <td>2</td>
+                    <td>MEV→MAV</td>
+                    <td>Aumentar estímulo gradualmente</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Intensificación</td>
+                    <td>1</td>
+                    <td>MAV</td>
+                    <td>Empujar cerca del límite</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Peak</td>
+                    <td>0</td>
+                    <td>MAV→MRV</td>
+                    <td>Máximo esfuerzo controlado</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Deload</td>
+                    <td>4-5</td>
+                    <td>50% MEV</td>
+                    <td>Recuperación y supercompensación</td>
+                </tr>
+            </table>
+
+            <div class="alert alert--warning">
+                <span>⚠️</span>
+                <div>
+                    <strong>Importante:</strong> Si la Autorregulación indica DELOAD antes de la Semana 5, tómalo
+                    inmediatamente. Tu cuerpo te está diciendo que necesita recuperarse.
+                </div>
+            </div>
+        </section>
+
+        <!-- CÓMO INTERPRETAR LA AUTORREGULACIÓN -->
+        <section>
+            <h2>4. Cómo Interpretar la Autorregulación</h2>
+
+            <p>Después de cada semana, evalúa estos tres factores:</p>
+
+            <div class="card">
+                <h3>💪 Pump (Bombeo Muscular)</h3>
+                <table>
+                    <tr>
+                        <th>Valor</th>
+                        <th>Significado</th>
+                        <th>Indica</th>
+                    </tr>
+                    <tr>
+                        <td>1-2</td>
+                        <td>Poco o nulo pump</td>
+                        <td>Volumen/intensidad insuficiente</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Pump moderado</td>
+                        <td>Estímulo adecuado</td>
+                    </tr>
+                    <tr>
+                        <td>4-5</td>
+                        <td>Pump intenso</td>
+                        <td>Excelente conexión mente-músculo</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>😣 Soreness (Agujetas)</h3>
+                <table>
+                    <tr>
+                        <th>Valor</th>
+                        <th>Significado</th>
+                        <th>Acción</th>
+                    </tr>
+                    <tr>
+                        <td>1-2</td>
+                        <td>Poca molestia</td>
+                        <td>Puedes aumentar volumen</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Molestia normal</td>
+                        <td>Mantén el ritmo</td>
+                    </tr>
+                    <tr>
+                        <td>4-5</td>
+                        <td>Muy adolorido</td>
+                        <td>Reduce volumen o toma deload</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>😴 Fatiga General</h3>
+                <table>
+                    <tr>
+                        <th>Valor</th>
+                        <th>Significado</th>
+                        <th>Acción</th>
+                    </tr>
+                    <tr>
+                        <td>1-2</td>
+                        <td>Fresco y recuperado</td>
+                        <td>Aumenta estímulo</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Fatiga normal</td>
+                        <td>Continúa igual</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Fatigado</td>
+                        <td>Reduce volumen 20-30%</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Agotado</td>
+                        <td>DELOAD obligatorio</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- CHECKLIST SEMANAL -->
+        <section>
+            <h2>5. Checklist Semanal</h2>
+
+            <p>Usa esta checklist para asegurarte de seguir el protocolo correctamente:</p>
+
+            <ul class="checklist">
+                <li>Revisar RIR objetivo de la semana</li>
+                <li>Verificar series objetivo por grupo muscular</li>
+                <li>Calcular pesos antes de cada sesión</li>
+                <li>Registrar cada ejercicio después de entrenar</li>
+                <li>Evaluar autorregulación al final de la semana</li>
+                <li>Ajustar plan según recomendación</li>
+            </ul>
+        </section>
+
+        <!-- SEÑALES DE ALERTA -->
+        <section>
+            <h2>6. Señales de Alerta - Cuándo Hacer Deload</h2>
+
+            <div class="alert alert--warning">
+                <span>🚨</span>
+                <div>Toma un deload inmediato si experimentas cualquiera de estos síntomas:</div>
+            </div>
+
+            <ul>
+                <li><strong>Rendimiento estancado o en declive</strong> por más de 2 semanas</li>
+                <li><strong>Fatiga persistente</strong> que no mejora con sueño</li>
+                <li><strong>Dolor articular</strong> o molestias que no son agujetas normales</li>
+                <li><strong>Pérdida de motivación</strong> para entrenar</li>
+                <li><strong>Problemas de sueño</strong> o apetito alterado</li>
+                <li><strong>Sistema inmune débil</strong> (resfriados frecuentes)</li>
+            </ul>
+
+            <div class="alert alert--success">
+                <span>✅</span>
+                <div>
+                    <strong>Deload preventivo:</strong> Es mejor tomar un deload planificado que ser forzado a uno por
+                    lesión o enfermedad. La Semana 5 de cada mesociclo existe por esta razón.
+                </div>
+            </div>
+        </section>
+
+        <!-- PREGUNTAS FRECUENTES -->
+        <section>
+            <h2>7. Preguntas Frecuentes</h2>
+
+            <div class="card">
+                <h4>¿Qué hago si la app recomienda MANTENER pero quiero progresar?</h4>
+                <p>Mantener es progresar. Significa que estás en el punto óptimo y tu cuerpo se está adaptando. Forzar
+                    más estímulo cuando no es necesario solo aumenta el riesgo de sobreentrenamiento.</p>
+            </div>
+
+            <div class="card">
+                <h4>¿Puedo usar esto con cualquier metodología?</h4>
+                <p>Sí. El sistema está sincronizado con las 11 metodologías de NEXUS y ajusta automáticamente las
+                    recomendaciones según la filosofía de cada una (Heavy Duty usa menos volumen, GVT usa más, etc.).
+                </p>
+            </div>
+
+            <div class="card">
+                <h4>¿Con qué frecuencia debo evaluar la autorregulación?</h4>
+                <p>Una vez por semana es suficiente, idealmente después de la última sesión de entrenamiento de la
+                    semana. Hacerlo más frecuentemente puede generar ruido en los datos.</p>
+            </div>
+
+            <div class="card">
+                <h4>¿Qué pasa si pierdo una sesión?</h4>
+                <p>No intentes "recuperarla" añadiendo más volumen a otras sesiones. Simplemente continúa con tu plan
+                    normal. El sistema se ajustará automáticamente.</p>
+            </div>
+        </section>
+
+        <!-- RESUMEN RÁPIDO -->
+        <section>
+            <h2>8. Resumen Rápido</h2>
+
+            <div class="card card--highlight">
+                <h3 style="text-align: center; margin-bottom: 20px;">📋 Flujo Semanal</h3>
+                <p style="text-align: center; font-size: 1.1rem;">
+                    <strong>1.</strong> Revisar RIR →
+                    <strong>2.</strong> Calcular pesos →
+                    <strong>3.</strong> Entrenar →
+                    <strong>4.</strong> Registrar →
+                    <strong>5.</strong> Evaluar →
+                    <strong>6.</strong> Ajustar
+                </p>
+            </div>
+
+            <div class="alert alert--info">
+                <span>💡</span>
+                <div>
+                    <strong>Recuerda:</strong> El objetivo no es entrenar lo más duro posible, sino entrenar lo más
+                    inteligente posible. NEXUS-RP Coach te ayuda a encontrar ese punto óptimo.
+                </div>
+            </div>
+        </section>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="../index.html" class="back-link">← Volver a NEXUS-RP Coach</a>
+        </div>
+
+        <footer style="text-align: center; margin-top: 60px; padding: 30px; color: var(--text-secondary);">
+            <p>NEXUS-RP Coach v1.0 | Guía de Protocolo</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">
+                Inspirado en la metodología de Renaissance Periodization<br>
+                Sincronizado con las 11 metodologías de NEXUS
+            </p>
+        </footer>
+
+    </div>
+</body>
+
+</html>

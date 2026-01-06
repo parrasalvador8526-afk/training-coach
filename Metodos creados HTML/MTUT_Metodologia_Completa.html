@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MTUT - Metodología Maestra Unificada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #8B5CF6;
+            --secondary: #06B6D4;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            padding: 6px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc .sub {
+            padding-left: 20px;
+            font-size: 0.9rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #8B5CF615, #06B6D410);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #FEF3C7;
+            border-left: 4px solid var(--accent);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .danger-box {
+            background: #FEE2E2;
+            border-left: 4px solid var(--danger);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: #D1FAE5;
+            border-left: 4px solid var(--success);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: var(--dark);
+            color: #E2E8F0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #E2E8F0;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .tempo-visual {
+            display: flex;
+            justify-content: space-around;
+            background: #1E293B;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .tempo-phase {
+            flex: 1;
+            padding: 15px;
+        }
+
+        .tempo-phase .number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+        }
+
+        .tempo-phase .label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        @media print {
+            .page {
+                padding: 10mm;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+        }
+
+        /* Tempo Color Classes */
+        .tempo-con {
+            color: #06B6D4;
+            font-weight: 700;
+            background: rgba(6, 182, 212, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-ecc {
+            color: #F59E0B;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-iso {
+            color: #10B981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 2px;
+        }
+
+        .tempo-badge.tce {
+            background: linear-gradient(135deg, #06B6D4, #0891B2);
+            color: white;
+        }
+
+        .tempo-badge.tee {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+        }
+
+        .tempo-badge.mixed {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .method-card h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .use-when,
+        .avoid-when {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .use-when>div,
+        .avoid-when>div {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .use-when>div {
+            background: #D1FAE5;
+        }
+
+        .avoid-when>div {
+            background: #FEE2E2;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="cover">
+        <h1>MTUT</h1>
+        <div class="subtitle">Menace Time Under Tension</div>
+        <p style="font-size: 1.2rem; max-width: 600px; opacity: 0.85;">Metodología Maestra Unificada de Tiempo Bajo
+            Tensión Amenazante</p>
+        <div class="author"><strong>Desarrollado por:</strong> Dennis James</div>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 10 ATLETAS DESTACADOS
+                    MTUT:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Big Ramy (2x Mr. Olympia 2020-2021) ·
+                <strong>2.</strong> Dennis James (IFBB Pro, creador) ·
+                <strong>3.</strong> Roelly Winklaar (IFBB Pro, entrena con DJ) ·
+                <strong>4.</strong> Regan Grimes (IFBB Pro Open) ·
+                <strong>5.</strong> Nathan De Asha (IFBB Pro) ·
+                <strong>6.</strong> Hassan Mostafa (IFBB Pro) ·
+                <strong>7.</strong> Mohamed Shaaban (IFBB Pro) ·
+                <strong>8.</strong> Ahmed Elsadany (IFBB Pro Egipto) ·
+                <strong>9.</strong> Blessing Awodibu (IFBB Pro) ·
+                <strong>10.</strong> Martin Fitzwater (IFBB Pro)
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Entrenamiento estilo "Old School" Kuwait · NEXUS
+            v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al MTUT</li>
+                <li><strong>2.</strong> Objetivos del MTUT</li>
+                <li><strong>3.</strong> Principios Básicos del MTUT</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT)</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en MTUT</li>
+                <li><strong>4.</strong> Métodos y Técnicas del MTUT</li>
+                <li class="sub">4.1 MTUT Core - El Núcleo (4.1.1 TCE, 4.1.2 TEE)</li>
+                <li class="sub">4.2 Variante "Vieja Escuela" (YouTube)</li>
+                <li class="sub">4.3 Series de Choque MTUT (Shock Sets)</li>
+                <li class="sub">4.4 MTUT + Isometría (Contracción Pico)</li>
+                <li class="sub">4.5 Repeticiones Mixtas MTUT</li>
+                <li class="sub">4.6 MTUT con Pre-Fatiga</li>
+                <li class="sub">4.7 Compatibilidad con Otras Metodologías</li>
+                <li class="sub">4.8 Intensificadores y Técnicas Adicionales</li>
+                <li class="sub">4.9 Ejemplo: Rutina Full Body con Todos los Métodos</li>
+
+                <li><strong>5.</strong> Estructura de una Sesión MTUT</li>
+                <li class="sub">5.1 Calentamiento y Series de Aproximación</li>
+                <li class="sub">5.2 Ejercicios Principales y Series MTUT</li>
+                <li class="sub">5.3 Ejercicios Accesorios</li>
+                <li class="sub">5.4 Enfriamiento y Estiramiento</li>
+                <li><strong>6.</strong> Periodización con MTUT</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Ondulación de Intensidad</li>
+                <li class="sub">6.3 Fases de Adaptación e Intensificación</li>
+                <li class="sub">6.4 Descargas (Deloads)</li>
+                <li class="sub">6.5 Duración del Ciclo por Nivel de Experiencia</li>
+                <li><strong>7.</strong> Progresión en MTUT</li>
+                <li class="sub">7.1 Aumento de Segundos (NO Cargas)</li>
+                <li class="sub">7.2 Aumento de Volumen</li>
+                <li class="sub">7.3 Manipulación del Descanso</li>
+                <li class="sub">7.4 Variación de Ejercicios</li>
+                <li><strong>8.</strong> Nutrición y Suplementación para MTUT</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Timing Nutricional</li>
+                <li class="sub">8.4 Suplementación Clave</li>
+                <li><strong>9.</strong> Ejemplos de Rutinas MTUT por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas | 9.4 Hombros | 9.5 Brazos</li>
+                <li class="sub">9.6 Estructuras por Nivel de Intensidad</li>
+                <li class="sub" style="padding-left: 40px;">• Full Body | Upper/Lower | Torso/Pierna | Bro Split</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Descanso y Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía Práctica de Implementación Paso a Paso</li>
+                <li class="sub" style="padding-left: 40px;">• Calcular 1RM | Contar Tempo | Equipo | Primera Sesión |
+                    Troubleshooting | Post-MTUT</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al MTUT</h1>
+        <div class="highlight-box">
+            <strong>MTUT (Menace Time Under Tension)</strong> es una metodología de entrenamiento de alta intensidad
+            desarrollada por <strong>Dennis James</strong> y popularizada por atletas como <strong>Big Ramy</strong>. Se
+            basa en el principio de que la <strong>intensidad proviene del tiempo bajo tensión, no del peso
+                absoluto</strong>.
+        </div>
+        <p>A diferencia de los métodos tradicionales que buscan aumentar progresivamente la carga, MTUT manipula el
+            <strong>Tiempo Bajo Tensión (TUT)</strong> variando la velocidad de las repeticiones dentro de una serie,
+            ejecutando fases ultra-lentas (5-20 segundos), creando un "quemazón" muscular intenso y un gran estrés
+            metabólico.
+        </p>
+        <p>Esta metodología combina repeticiones normales con repeticiones superlentas para maximizar el tiempo que el
+            músculo está bajo esfuerzo, aumentando significativamente la congestión y el estímulo para el crecimiento
+            muscular mediante hipertrofia sarcoplásmica.</p>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">40-50%</div>
+                <div class="label">1RM - Carga Típica</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">15-20s</div>
+                <div class="label">Concéntrica Ultra-Lenta</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">80-130s</div>
+                <div class="label">TUT por Serie</div>
+            </div>
+        </div>
+
+        <h1>2. Objetivos del MTUT</h1>
+        <h3>Objetivos Primarios</h3>
+        <ul>
+            <li><strong>Hipertrofia Sarcoplásmica Máxima:</strong> Aumentar el tamaño muscular mediante acumulación de
+                fluidos y glucógeno</li>
+            <li><strong>Conexión Mente-Músculo Superior:</strong> Desarrollar control neuromuscular extremo</li>
+            <li><strong>Estrés Metabólico Intenso:</strong> Maximizar la "bomba" y quemazón muscular</li>
+            <li><strong>Bajo Impacto Articular:</strong> Lograr hipertrofia con cargas muy ligeras (40-50% 1RM)</li>
+        </ul>
+        <h3>Objetivos Secundarios</h3>
+        <ul>
+            <li>Romper mesetas de adaptación cuando otros métodos fallan</li>
+            <li>Rehabilitación activa durante recuperación de lesiones articulares</li>
+            <li>Resensibilizar el músculo a futuros estímulos de tensión mecánica</li>
+            <li>Desarrollar tolerancia mental al discomfort muscular</li>
+        </ul>
+        <div class="warning-box"><strong>⚠️ IMPORTANTE:</strong> MTUT es una técnica avanzada recomendada para atletas
+            con 2-3+ años de experiencia.</div>
+
+        <h1 class="page-break">3. Principios Básicos del MTUT</h1>
+
+        <h2>3.1 Tiempo Bajo Tensión (TUT)</h2>
+        <p>El TUT es el tiempo total que el músculo permanece bajo carga durante una serie. En MTUT, este principio es
+            el <strong>pilar fundamental</strong>:</p>
+        <div class="tempo-visual">
+            <div class="tempo-phase">
+                <div class="number">15</div>
+                <div class="label">Concéntrica<br>(subida ultra-lenta)</div>
+            </div>
+            <div class="tempo-phase">
+                <div class="number">0</div>
+                <div class="label">Pausa Arriba<br>(sin pausar)</div>
+            </div>
+            <div class="tempo-phase">
+                <div class="number">2</div>
+                <div class="label">Excéntrica<br>(bajada controlada)</div>
+            </div>
+            <div class="tempo-phase">
+                <div class="number">0</div>
+                <div class="label">Pausa Abajo<br>(sin pausar)</div>
+            </div>
+        </div>
+        <table>
+            <tr>
+                <th>Tipo de Serie</th>
+                <th>TUT por Rep</th>
+                <th>Reps</th>
+                <th>TUT Total/Serie</th>
+            </tr>
+            <tr>
+                <td>Serie Normal</td>
+                <td>3-4 segundos</td>
+                <td>10</td>
+                <td>30-40 segundos</td>
+            </tr>
+            <tr>
+                <td>Serie MTUT</td>
+                <td>17-22 segundos</td>
+                <td>4-6</td>
+                <td>80-132 segundos</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Rangos de Repeticiones y Fibras</h2>
+        <table>
+            <tr>
+                <th>Tipo de Fibra</th>
+                <th>Reps MTUT</th>
+                <th>TUT Objetivo</th>
+                <th>Características</th>
+            </tr>
+            <tr>
+                <td>Tipo IIb (Rápidas)</td>
+                <td>3-4 reps</td>
+                <td>60-80s</td>
+                <td>Máxima tensión, fuerza</td>
+            </tr>
+            <tr>
+                <td>Tipo IIa (Intermedias)</td>
+                <td>4-6 reps</td>
+                <td>80-120s</td>
+                <td>Balance tensión/metabolismo</td>
+            </tr>
+            <tr>
+                <td>Tipo I (Lentas)</td>
+                <td>6-8 reps</td>
+                <td>120-160s</td>
+                <td>Máximo estrés metabólico</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Tipos de Contracción</h2>
+        <ul>
+            <li><strong>Concéntrica (15-20s):</strong> Fase principal en MTUT. Subida extremadamente lenta, sin
+                momentum.</li>
+            <li><strong>Excéntrica (2-3s):</strong> Bajada controlada pero más rápida que la subida.</li>
+            <li><strong>Isométrica:</strong> Opcional - pausa de 1-2s en punto de máxima contracción para intensificar.
+            </li>
+        </ul>
+
+        <h2>3.4 Fallo Muscular en MTUT</h2>
+        <p>En MTUT, el fallo se alcanza de manera diferente:</p>
+        <div class="highlight-box">
+            <strong>Fallo MTUT:</strong> Cuando ya NO puedes mantener el tempo prescrito (ej: subida en 15s se reduce a
+            8-10s), la serie ha terminado. No se busca fallo concéntrico absoluto.
+        </div>
+
+        <h1>4. Métodos y Técnicas del MTUT</h1>
+
+        <div class="highlight-box">
+            <strong>Introducción al Uso de los Métodos MTUT</strong>
+            <p>Los métodos y técnicas del MTUT fueron desarrollados por <strong>Dennis James</strong> para maximizar la
+                intensidad del entrenamiento sin necesidad de un compañero (spotter). Big Ramy utiliza este sistema
+                intensivamente cuando entrena solo en Kuwait, logrando mantener la intensidad que requiere su
+                preparación para Mr. Olympia.</p>
+        </div>
+
+        <h3>¿Cuándo Usar MTUT?</h3>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar MTUT cuando:</strong>
+            <ul>
+                <li>Entrenas SOLO sin spotter disponible</li>
+                <li>Quieres mejorar tu conexión mente-músculo</li>
+                <li>Buscas maximizar TUT sin cargas extremas</li>
+                <li>Tienes al menos 1 año de experiencia entrenando</li>
+                <li>Prefieres control sobre peso máximo</li>
+                <li>Quieres entrenar de forma segura con alta intensidad</li>
+            </ul>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar MTUT cuando:</strong>
+            <ul>
+                <li><strong>Objetivo es fuerza máxima:</strong> MTUT usa 40-55% 1RM, no desarrolla 1RM</li>
+                <li><strong>Impaciencia con tempo:</strong> Requiere disciplina para mantener 5-8 segundos por fase</li>
+                <li><strong>Ego lifting:</strong> Si te importa más el peso en la barra que la calidad</li>
+                <li><strong>Principiante total:</strong> Primero domina técnica básica</li>
+                <li><strong>Tiempo muy limitado (&lt;30 min):</strong> Los sets son largos (40-70s TUT)</li>
+            </ul>
+        </div>
+
+        <h3>Limitantes del Sistema MTUT</h3>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>No desarrolla fuerza máxima directamente (usa cargas ligeras)</li>
+                <li>Requiere concentración extrema para mantener tempo</li>
+                <li>Puede ser mentalmente agotador por la intensidad del control</li>
+                <li>No ideal para todos los ejercicios (mejor en máquinas)</li>
+            </ul>
+        </div>
+
+        <h3>🔧 Cómo Crear Rutinas MTUT</h3>
+        <div class="highlight-box">
+            <strong>Guía para Diseñar tus Propias Rutinas MTUT:</strong>
+            <ol>
+                <li><strong>Split recomendado:</strong> Push/Pull/Legs o Bro Split (4-5 días)</li>
+                <li><strong>Ejercicios por grupo:</strong> 4-6 ejercicios, preferir máquinas</li>
+                <li><strong>Sets por ejercicio:</strong> 2-3 sets MTUT (menos volumen, más intensidad)</li>
+                <li><strong>Selección de protocolo:</strong>
+                    <ul>
+                        <li>TCE (Concéntrico): Para compuestos y conexión mente-músculo</li>
+                        <li>TEE (Excéntrico): Para aislamiento y daño muscular</li>
+                        <li>Combinado: Alternar en el mismo ejercicio</li>
+                    </ul>
+                </li>
+                <li><strong>Carga:</strong> 40-55% 1RM (nunca pesado)</li>
+                <li><strong>TUT objetivo:</strong> 40-70 segundos por serie</li>
+            </ol>
+        </div>
+
+        <h3>¿Cómo Aplicar los Métodos MTUT?</h3>
+        <ul>
+            <li><strong>Aplicación Esporádica:</strong> Usar MTUT en 1-2 series pesadas por ejercicio (días normales)
+            </li>
+            <li><strong>Aplicación Completa:</strong> Aplicar en todas las series de todos los ejercicios (días de alta
+                intensidad)</li>
+            <li><strong>Seguridad:</strong> MTUT es más seguro en máquinas - si fallen, puedes soltar el peso</li>
+            <li><strong>Sin Spotter:</strong> Diseñado para entrenar solo con alta intensidad</li>
+            <li><strong>Duración Sets:</strong> Objetivo 40-70 segundos TUT por serie para hipertrofia óptima</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ Regla de Oro:</strong> El enfoque está en la FORMA PERFECTA y el control, no en levantar el peso
+            más pesado posible. La carga siempre debe permitir mantener el tempo prescrito.
+        </div>
+
+        <h3>📊 Especificaciones Técnicas para Aplicación</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Protocolo</th>
+                <th>Nivel</th>
+                <th>Descanso</th>
+                <th>TUT/Serie</th>
+                <th>Equipamiento</th>
+                <th>Duración Sesión</th>
+            </tr>
+            <tr>
+                <td><code>MTUT-TCE</code></td>
+                <td>Tempo Concéntrico Extremo</td>
+                <td>Intermedio</td>
+                <td>60-90s</td>
+                <td>40-60s</td>
+                <td>Máquinas (preferible)</td>
+                <td>45-60 min</td>
+            </tr>
+            <tr>
+                <td><code>MTUT-TEE</code></td>
+                <td>Tempo Excéntrico Extremo</td>
+                <td>Intermedio+</td>
+                <td>60-90s</td>
+                <td>50-70s</td>
+                <td>Máquinas (preferible)</td>
+                <td>45-60 min</td>
+            </tr>
+            <tr>
+                <td><code>MTUT-VE</code></td>
+                <td>Vieja Escuela</td>
+                <td>Intermedio</td>
+                <td>45-60s</td>
+                <td>60-90s</td>
+                <td>Cualquiera</td>
+                <td>50-70 min</td>
+            </tr>
+            <tr>
+                <td><code>MTUT-SS</code></td>
+                <td>Shock Sets</td>
+                <td>Avanzado</td>
+                <td>30-45s</td>
+                <td>90-120s</td>
+                <td>Máquinas</td>
+                <td>45-60 min</td>
+            </tr>
+            <tr>
+                <td><code>MTUT-ISO</code></td>
+                <td>MTUT + Isometría</td>
+                <td>Avanzado</td>
+                <td>60-90s</td>
+                <td>70-100s</td>
+                <td>Poleas, máquinas</td>
+                <td>50-70 min</td>
+            </tr>
+            <tr>
+                <td><code>MTUT-PF</code></td>
+                <td>Pre-Fatiga MTUT</td>
+                <td>Avanzado</td>
+                <td>0-10s entre</td>
+                <td>90-120s combo</td>
+                <td>Máquinas cercanas</td>
+                <td>+5 min/combo</td>
+            </tr>
+        </table>
+
+        <h2>4.1 MTUT Core - El Núcleo del Sistema</h2>
+
+        <div class="highlight-box">
+            <strong>Introducción a MTUT Core</strong>
+            <p>El sistema MTUT Core consiste en <strong>dos variantes fundamentales</strong> que forman la base de toda
+                la metodología: <strong>TCE (Tempo Concéntrico Extremo)</strong> y <strong>TEE (Tempo Excéntrico
+                    Extremo)</strong>. La elección entre ambos depende del tipo de ejercicio, objetivo del entrenamiento
+                y estado de recuperación del atleta.</p>
+        </div>
+
+        <h3>Matriz de Decisión: ¿Cuándo usar TCE vs TEE?</h3>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th>TCE (Concéntrico)</th>
+                <th>TEE (Excéntrico)</th>
+            </tr>
+            <tr>
+                <td><strong>Tipo de Ejercicio</strong></td>
+                <td>Compuestos (press, remo, prensa)</td>
+                <td>Aislamiento (curls, extensiones, elevaciones)</td>
+            </tr>
+            <tr>
+                <td><strong>Objetivo Principal</strong></td>
+                <td>Conexión mente-músculo, bomba</td>
+                <td>Daño muscular controlado, DOMS</td>
+            </tr>
+            <tr>
+                <td><strong>Carga Recomendada</strong></td>
+                <td>40-50% 1RM</td>
+                <td>45-55% 1RM</td>
+            </tr>
+            <tr>
+                <td><strong>Reps por Serie</strong></td>
+                <td>4-6 reps</td>
+                <td>6-8 reps</td>
+            </tr>
+            <tr>
+                <td><strong>TUT por Serie</strong></td>
+                <td>80-120 segundos</td>
+                <td>60-96 segundos</td>
+            </tr>
+            <tr>
+                <td><strong>Posición en Rutina</strong></td>
+                <td>Primeros ejercicios (frescura mental)</td>
+                <td>Ejercicios finales (fatiga OK)</td>
+            </tr>
+            <tr>
+                <td><strong>Frecuencia Semanal</strong></td>
+                <td>2-3x por grupo muscular</td>
+                <td>1-2x por grupo muscular</td>
+            </tr>
+        </table>
+
+        <h3>Reglas de Aplicación para Creación de Rutinas</h3>
+
+        <div class="success-box">
+            <strong>📋 Reglas para Implementación en App:</strong>
+            <ol>
+                <li><strong>Ejercicios Compuestos → TCE</strong>: Press, remos, jalones, prensa = usar tempo concéntrico
+                    extremo</li>
+                <li><strong>Ejercicios Aislamiento → TEE</strong>: Curls, extensiones, elevaciones = usar tempo
+                    excéntrico extremo</li>
+                <li><strong>Máximo 2 ejercicios TCE por sesión</strong>: Fatiga mental extrema limita más</li>
+                <li><strong>TEE después de TCE</strong>: Nunca iniciar sesión con TEE (requiere músculo caliente)</li>
+                <li><strong>Descanso 3-4 min para TCE, 2-3 min para TEE</strong></li>
+            </ol>
+        </div>
+
+        <div class="warning-box">
+            <strong>⚠️ Contraindicaciones Absolutas:</strong>
+            <ul>
+                <li><strong>Déficit calórico &gt;20%:</strong> No usar MTUT Core completo, solo variantes ligeras</li>
+                <li><strong>Menos de 2 años experiencia:</strong> Usar solo 1 ejercicio MTUT por sesión</li>
+                <li><strong>Sesiones &lt;40 minutos:</strong> No hay tiempo suficiente para recuperación entre series
+                </li>
+                <li><strong>Pesos libres complejos:</strong> Nunca usar TCE/TEE en sentadilla libre, peso muerto, press
+                    banca libre</li>
+            </ul>
+        </div>
+
+        <h3>Algoritmo de Selección (Para App)</h3>
+        <div class="code-block">LÓGICA DE SELECCIÓN MTUT CORE:
+
+            SI ejercicio.tipo == "COMPUESTO" Y ejercicio.equipo == "MÁQUINA":
+            → Aplicar TCE (15-0-2-0)
+            → Reps: 4-6
+            → Descanso: 3-4 min
+
+            SI ejercicio.tipo == "AISLAMIENTO":
+            → Aplicar TEE (2-0-8-0)
+            → Reps: 6-8
+            → Descanso: 2-3 min
+
+            SI usuario.experiencia < 2_AÑOS: → Limitar a 1 ejercicio MTUT por sesión → Usar tempos reducidos (12-0-2-0
+                para TCE, 2-0-6-0 para TEE) SI usuario.deficit_calorico> 20%:
+                → Desactivar MTUT Core
+                → Sugerir variante "Vieja Escuela" con menos series
+
+                ORDEN EN SESIÓN:
+                1. Calentamiento (10-15 min)
+                2. Ejercicio TCE #1 (compuesto principal)
+                3. Ejercicio TCE #2 (compuesto secundario) - opcional
+                4. Ejercicio TEE #1 (aislamiento)
+                5. Ejercicio TEE #2 o finisher (shock set)</div>
+
+        <p><strong>Leyenda de Colores:</strong>
+            <span class="tempo-con">Concéntrica</span> = Cyan |
+            <span class="tempo-ecc">Excéntrica</span> = Naranja |
+            <span class="tempo-iso">Isométrica</span> = Verde
+        </p>
+
+
+        <div class="method-card">
+            <h4><span class="tempo-badge tce">4.1.1 TCE</span> Tempo Concéntrico Extremo</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">40-50% 1RM</strong>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    ESTRÉS METABÓLICO</span>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+            </p>
+            <p><strong>Tempo:</strong> <span class="tempo-con">15</span>-0-<span class="tempo-ecc">2</span>-0 → <span
+                    class="tempo-con">20</span>-0-<span class="tempo-ecc">2</span>-0</p>
+            <p>Énfasis en subida ULTRA-LENTA (<span class="tempo-con">15-20 segundos</span>).</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#F59E0B;">70% Estrés Metabólico</strong> (acumulación lactato, bomba extrema,
+                hipoxia local)<br>
+                <strong style="color:#06B6D4;">30% Tensión Mecánica</strong> (tiempo prolongado bajo carga sin momentum)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Quieres máxima conexión mente-músculo<br>• Ejercicios
+                    compuestos en máquinas<br>• Días de alta intensidad sin spotter</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Estás en déficit calórico
+                    agresivo<br>• Fatiga acumulada del SNC<br>• Ejercicios de pesos libres complejos</div>
+            </div>
+        </div>
+
+
+        <div class="method-card">
+            <h4><span class="tempo-badge tee">4.1.2 TEE</span> Tempo Excéntrico Extremo</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">45-55% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    ESTRÉS METABÓLICO</span>
+            </p>
+            <p><strong>Tempo:</strong> <span class="tempo-con">2</span>-0-<span class="tempo-ecc">8</span>-0 → <span
+                    class="tempo-con">2</span>-0-<span class="tempo-ecc">12</span>-0</p>
+            <p>Énfasis en bajada ULTRA-LENTA (<span class="tempo-ecc">8-12 segundos</span>).</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#06B6D4;">60% Tensión Mecánica</strong> (mayor daño muscular en fase excéntrica,
+                microtrauma controlado)<br>
+                <strong style="color:#F59E0B;">40% Estrés Metabólico</strong> (acumulación lactato, fatiga localizada)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Ejercicios de aislamiento<br>• Quieres máximo daño muscular
+                    controlado<br>• Grupos rezagados que necesitan énfasis</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ya tienes DOMS severo<br>•
+                    Principio del mesociclo (adaptación)<br>• Músculos pequeños fatigados</div>
+            </div>
+        </div>
+
+
+        <h2>4.2 Variante "Vieja Escuela" (YouTube)</h2>
+        <div class="success-box"><strong>🎬 Fuente:</strong> Video "CRECE TUS PIERNAS con este método vieja escuela
+            (MTUT)"</div>
+
+        <div class="method-card">
+            <h4><span class="tempo-badge tee">VIEJA ESCUELA</span> Énfasis Excéntrico con Alto Volumen</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">40-50% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    ESTRÉS METABÓLICO</span>
+            </p>
+            <p><strong>Tempo:</strong> <span class="tempo-con">2-3</span>-<span class="tempo-iso">1-2</span>-<span
+                    class="tempo-ecc">5-8</span>-0 | Series: 6-7 | Reps: 8-12</p>
+            <p>Excéntrica lenta (<span class="tempo-ecc">5-8s</span>), pausa breve (<span
+                    class="tempo-iso">1-2s</span>), concéntrica normal (<span class="tempo-con">2-3s</span>).</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#06B6D4;">55% Tensión Mecánica</strong> (excéntrica lenta = daño muscular
+                controlado)<br>
+                <strong style="color:#F59E0B;">45% Estrés Metabólico</strong> (alto volumen 6-7 series acumula
+                metabolitos)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Recuperación de lesiones (cargas ligeras)<br>• Atletas
+                    veteranos (+35 años)<br>• No puedes cargar pesado por condición física</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Objetivo es fuerza máxima<br>•
+                    Tiempo limitado (&lt;40 min)<br>• Primera vez usando MTUT</div>
+            </div>
+        </div>
+
+        <h2>4.3 Series de Choque MTUT (Shock Sets)</h2>
+
+        <div class="method-card">
+            <h4><span class="tempo-badge mixed">SHOCK SETS</span> Choque Metabólico Extremo</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">30-40% 1RM</strong>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡⚡
+                    ESTRÉS METABÓLICO EXTREMO</span>
+            </p>
+            <p><strong>Protocolo Descendente:</strong></p>
+            <p>Serie 1: 6 reps @ <span class="tempo-con">15</span>-0-<span class="tempo-ecc">2</span>-0 → Sin descanso →
+            </p>
+            <p>Serie 2: Max reps @ <span class="tempo-con">8</span>-0-<span class="tempo-ecc">2</span>-0 → Sin descanso
+                →</p>
+            <p>Serie 3: Max reps @ <span class="tempo-con">4</span>-0-<span class="tempo-ecc">2</span>-0 (fallo total)
+            </p>
+            <p><strong>TUT Total:</strong> 150-200+ segundos</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#F59E0B;">90% Estrés Metabólico</strong> (bomba extrema, hipoxia, acumulación
+                lactato masiva)<br>
+                <strong style="color:#06B6D4;">10% Tensión Mecánica</strong> (carga ligera, foco en volumen)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Último ejercicio del grupo (finisher)<br>• Quieres bomba
+                    máxima<br>• 1x por grupo muscular por sesión</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Inicio de sesión<br>• Más de 1
+                    shock set por sesión<br>• Grupos compuestos (piernas completas)</div>
+            </div>
+        </div>
+
+        <h2>4.4 MTUT + Isometría (Contracción Pico)</h2>
+
+        <div class="method-card">
+            <h4><span class="tempo-badge tce">ISOMÉTRICO</span> Pausa en Contracción Máxima</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">40-50% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    ESTRÉS METABÓLICO</span>
+            </p>
+            <p><strong>Tempo:</strong> <span class="tempo-con">15</span>-<span class="tempo-iso">3</span>-<span
+                    class="tempo-ecc">2</span>-0 (<span class="tempo-iso">3s pausa</span> en squeeze)</p>
+            <p>Intensifica conexión mente-músculo en punto de máxima contracción.</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#06B6D4;">65% Tensión Mecánica</strong> (pausa isométrica maximiza reclutamiento
+                fibras)<br>
+                <strong style="color:#F59E0B;">35% Estrés Metabólico</strong> (isquemia temporal, acumulación
+                localizada)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Ejercicios de aislamiento (pec deck, curls)<br>• Quieres
+                    máxima activación<br>• Músculo "difícil de sentir"</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ejercicios compuestos
+                    pesados<br>• Ya estás muy fatigado<br>• Press o movimientos de empuje</div>
+            </div>
+        </div>
+
+        <h2>4.5 Repeticiones Mixtas MTUT</h2>
+
+        <div class="method-card">
+            <h4><span class="tempo-badge mixed">MIXTAS</span> Protocolo "Sandwich"</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">50-60% 1RM</strong>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    ESTRÉS METABÓLICO</span>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+            </p>
+            <p><strong>Estructura:</strong> 3 reps MTUT → 6 reps normales → 2 reps MTUT</p>
+            <p>Tempos: <span class="tempo-con">15</span>-0-<span class="tempo-ecc">2</span>-0 | normal | <span
+                    class="tempo-con">15</span>-0-<span class="tempo-ecc">2</span>-0</p>
+            <p><strong>Total:</strong> 11 reps, TUT ~120-140s</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#F59E0B;">50% Estrés Metabólico</strong> (reps MTUT crean bomba)<br>
+                <strong style="color:#06B6D4;">50% Tensión Mecánica</strong> (reps normales con carga moderada añaden
+                tensión)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Transición a MTUT completo<br>• Quieres variedad en la
+                    serie<br>• Combinar fibras rápidas y lentas</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ya dominas MTUT (usar TCE
+                    puro)<br>• Confunde tu conteo mental<br>• Ejercicios técnicamente complejos</div>
+            </div>
+        </div>
+
+        <h2>4.6 MTUT con Pre-Fatiga</h2>
+
+        <div class="method-card">
+            <h4><span class="tempo-badge tce">PRE-FATIGA</span> Aislamiento MTUT → Compuesto Normal</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">40-50% 1RM
+                    (aislamiento) + 65-75% 1RM (compuesto)</strong>
+            </p>
+            <p>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px;">⚡ ESTRÉS
+                    METABÓLICO</span>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+            </p>
+            <p><strong>Ejemplo Pecho:</strong></p>
+            <p>A1. Pec Deck: 3x5 @ <span class="tempo-con">15</span>-0-<span class="tempo-ecc">2</span>-0 ← MTUT</p>
+            <p>A2. Press Máquina: 3x8-10 @ 3-0-2-0 ← Normal</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#F59E0B;">55% Estrés Metabólico</strong> (pre-fatiga MTUT crea bomba antes de
+                compuesto)<br>
+                <strong style="color:#06B6D4;">45% Tensión Mecánica</strong> (compuesto con carga moderada-alta
+                post-fatiga)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Músculo dominante opaca al objetivo<br>• Pecho débil (tríceps
+                    domina)<br>• Cuádriceps débil (glúteos dominan)</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Eres principiante<br>• Objetivo
+                    es fuerza máxima<br>• Tiempo muy limitado</div>
+            </div>
+        </div>
+
+        <h2 class="page-break">4.9 Ejemplo: Rutina Full Body con Todos los Métodos</h2>
+
+        <div class="highlight-box">
+            <strong>Ejemplo Práctico:</strong> Esta rutina muestra cómo combinar diferentes métodos MTUT en una sesión
+            Full Body. Cada ejercicio usa un método diferente para demostrar su aplicación.
+        </div>
+
+        <div class="code-block">RUTINA FULL BODY MTUT - TODOS LOS MÉTODOS
+            Duración: ~60 minutos | Nivel: Avanzado
+
+            A. PECHO - Press Máquina Horizontal <span style="color:#06B6D4;">[TCE]</span>
+            3x4-6 @ Tempo: <span style="color:#06B6D4;">15</span>-0-<span style="color:#F59E0B;">2</span>-0
+            Descanso: 3-4 min
+
+            B. ESPALDA - Remo Máquina Neutral <span style="color:#F59E0B;">[TEE]</span>
+            3x6-8 @ Tempo: <span style="color:#06B6D4;">2</span>-0-<span style="color:#F59E0B;">8</span>-0
+            Descanso: 3 min
+
+            C. PIERNAS - Press Piernas <span style="color:#8B5CF6;">[MIXTO]</span>
+            Protocolo Sandwich:
+            - 3 reps @ <span style="color:#06B6D4;">15</span>-0-<span style="color:#F59E0B;">2</span>-0
+            - 5 reps @ 3-0-2-0
+            - 2 reps @ <span style="color:#06B6D4;">15</span>-0-<span style="color:#F59E0B;">2</span>-0
+            Descanso: 4 min
+
+            D. HOMBROS - Elevaciones Laterales <span style="color:#10B981;">[ISOMÉTRICO]</span>
+            3x5-7 @ Tempo: <span style="color:#06B6D4;">12</span>-<span style="color:#10B981;">3</span>-<span
+                style="color:#F59E0B;">2</span>-0
+            (3s squeeze arriba)
+            Descanso: 2 min
+
+            E. BÍCEPS - Curl Máquina <span style="color:#F59E0B;">[VIEJA ESCUELA]</span>
+            4x8-10 @ Tempo: <span style="color:#06B6D4;">2</span>-<span style="color:#10B981;">1</span>-<span
+                style="color:#F59E0B;">6</span>-0
+            Descanso: 90s
+
+            F. TRÍCEPS - Extensión Polea <span style="color:#EF4444;">[SHOCK SET]</span>
+            FINISHER:
+            - 6 reps @ <span style="color:#06B6D4;">15</span>-0-<span style="color:#F59E0B;">2</span>-0 → Sin pausa
+            - Max reps @ <span style="color:#06B6D4;">8</span>-0-<span style="color:#F59E0B;">2</span>-0 → Sin pausa
+            - Max reps @ <span style="color:#06B6D4;">4</span>-0-<span style="color:#F59E0B;">2</span>-0 (fallo)
+
+            ───────────────────────────────────────
+            LEYENDA DE COLORES:
+            <span style="color:#06B6D4;">■ Cyan = Concéntrica (subida)</span>
+            <span style="color:#F59E0B;">■ Naranja = Excéntrica (bajada)</span>
+            <span style="color:#10B981;">■ Verde = Isométrica (pausa)</span>
+            <span style="color:#8B5CF6;">■ Púrpura = Protocolo Mixto</span>
+            <span style="color:#EF4444;">■ Rojo = Shock Set (finisher)</span>
+        </div>
+
+
+        <h2>4.6.5 RPE/RIR en MTUT</h2>
+        <p>Aunque MTUT usa el tempo como indicador principal, el RPE (Rate of Perceived Exertion) y RIR (Reps In
+            Reserve) son útiles para calibrar la intensidad:</p>
+        <table>
+            <tr>
+                <th>RPE</th>
+                <th>RIR</th>
+                <th>Sensación en MTUT</th>
+                <th>Cuándo Ocurre</th>
+            </tr>
+            <tr>
+                <td>7-8</td>
+                <td>2-3</td>
+                <td>Puedes mantener tempo perfectamente</td>
+                <td>Series de calentamiento, inicio protocolo</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>1</td>
+                <td>Tempo empieza a fallar ligeramente</td>
+                <td>Mitad del set, fatiga acumulándose</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>0</td>
+                <td>NO puedes mantener tempo prescrito</td>
+                <td>FIN DE SERIE - la serie ha terminado</td>
+            </tr>
+        </table>
+        <div class="warning-box">
+            <strong>⚠️ En MTUT, RPE 10 = pérdida de tempo.</strong> Cuando tu concéntrica de 15s baja a 8-10s, has
+            llegado al fallo MTUT. Termina la serie.
+        </div>
+
+        <h2>4.7 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatibilidad</th>
+                <th>Cómo Combinar</th>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td>✅ Excelente</td>
+                <td>MTUT compuestos + FST-7 finisher</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td>⚠️ Transición</td>
+                <td>MTUT 4-6 sem → HD para capitalizar</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td>⚠️ Alternativa</td>
+                <td>Ciclos separados, no combinar</td>
+            </tr>
+            <tr>
+                <td>GVT</td>
+                <td>❌ Evitar</td>
+                <td>Muy demandante combinar</td>
+            </tr>
+        </table>
+
+        <h2>4.8 Intensificadores y Técnicas Adicionales</h2>
+        <table>
+            <tr>
+                <th>Compatible ✅</th>
+                <th>Incompatible ❌</th>
+            </tr>
+            <tr>
+                <td>Contracción Pico (pausa 2-3s)</td>
+                <td>Drop Sets (rompe tempo)</td>
+            </tr>
+            <tr>
+                <td>Bomba Controlada</td>
+                <td>Rest-Pause (afecta concentración)</td>
+            </tr>
+            <tr>
+                <td>Isometría final (hold 10-20s)</td>
+                <td>Negativas Forzadas</td>
+            </tr>
+            <tr>
+                <td>Pre-fatiga con aislamiento</td>
+                <td>Supersets rápidos</td>
+            </tr>
+        </table>
+
+
+        <h1 class="page-break">5. Estructura de una Sesión MTUT</h1>
+
+        <h2>5.1 Calentamiento y Series de Aproximación</h2>
+        <div class="code-block">CALENTAMIENTO (10-15 min):
+            1. Cardio ligero: 5 min (bicicleta o caminadora)
+            2. Movilidad articular: 3-5 min (articulaciones a trabajar)
+            3. Series de aproximación:
+            - Serie 1: 15 reps peso muy ligero, tempo normal
+            - Serie 2: 10 reps 30% 1RM, tempo 4-0-2-0
+            - Serie 3: 6 reps 35% 1RM, tempo 8-0-2-0 (práctica tempo MTUT)</div>
+
+        <h2>5.2 Ejercicios Principales y Series MTUT</h2>
+        <ul>
+            <li><strong>Ejercicios:</strong> 3-4 ejercicios por sesión (preferiblemente máquinas)</li>
+            <li><strong>Series MTUT:</strong> 3-4 series por ejercicio</li>
+            <li><strong>Descanso:</strong> 3-4 minutos (recuperación neuromuscular)</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios</h2>
+        <p>Opcional: 1-2 ejercicios de aislamiento con tempo 10-0-2-0 para "finisher".</p>
+
+        <h2>5.4 Enfriamiento y Estiramiento</h2>
+        <div class="code-block">ENFRIAMIENTO (5-10 min):
+            1. Estiramientos estáticos: 30-60s por músculo trabajado
+            2. Respiración profunda: Control de lactato
+            3. Hidratación inmediata: Electrolitos recomendados</div>
+
+        <h1>6. Periodización con MTUT</h1>
+
+        <h2>6.1 Microciclos y Mesociclos</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Semanas</th>
+                <th>Tempo</th>
+                <th>Objetivo</th>
+            </tr>
+            <tr>
+                <td>Adaptación</td>
+                <td>1-2</td>
+                <td>12-0-2-0</td>
+                <td>Aprender tempo, 40% 1RM</td>
+            </tr>
+            <tr>
+                <td>Intensificación</td>
+                <td>3-4</td>
+                <td>15-0-2-0</td>
+                <td>Estándar MTUT, 45% 1RM</td>
+            </tr>
+            <tr>
+                <td>Pico</td>
+                <td>5-6</td>
+                <td>18-0-2-0</td>
+                <td>Elite MTUT, 45-50% 1RM</td>
+            </tr>
+            <tr>
+                <td>Deload</td>
+                <td>7</td>
+                <td>Normal</td>
+                <td>Recuperación SNC</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Ondulación de Intensidad</h2>
+        <div class="code-block">SEMANA EJEMPLO (Ondulación Intra-Semanal):
+            Lunes: MTUT Completo (15-0-2-0) - Torso
+            Martes: MTUT Completo (15-0-2-0) - Piernas
+            Miércoles: Descanso
+            Jueves: MTUT Vieja Escuela (variante excéntrica) - Torso
+            Viernes: MTUT Vieja Escuela (variante excéntrica) - Piernas
+            Sábado/Domingo: Descanso</div>
+
+        <h2>6.3 Fases de Adaptación e Intensificación</h2>
+        <ul>
+            <li><strong>Semanas 1-2:</strong> Dominar tempo, contar mentalmente, 40% 1RM</li>
+            <li><strong>Semanas 3-4:</strong> Aumentar a 15s concéntrica, 45% 1RM</li>
+            <li><strong>Semanas 5-6:</strong> Pico: 18-20s concéntrica (solo avanzados)</li>
+        </ul>
+
+        <h2>6.4 Descargas (Deloads)</h2>
+        <div class="warning-box"><strong>Deload OBLIGATORIO cada 4-6 semanas:</strong> 50% volumen, tempo normal, sin
+            MTUT. Recuperación del SNC.</div>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>La duración óptima del ciclo MTUT varía según el nivel de experiencia del atleta, basándose en evidencia
+            científica sobre capacidad de recuperación y adaptación:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (1-2 años)</td>
+                <td>6-8 semanas</td>
+                <td>Mayor capacidad de recuperación, adaptación gradual al tempo lento</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas</td>
+                <td>Balance entre adaptación y fatiga del SNC, requiere deloads regulares</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>3-4 semanas</td>
+                <td>Fatiga rápida del SNC, ventana MEV/MRV estrecha, rotación TCE→TEE→VE</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación MTUT:</strong> La aplicación NEXUS adapta automáticamente las opciones de duración
+            según tu nivel. Para MTUT, se recomienda rotar entre variantes (TCE→TEE→VE) cada 3 semanas en avanzados.
+        </div>
+
+        <h1 class="page-break">7. Progresión en MTUT</h1>
+        <div class="danger-box"><strong>⚠️ CRÍTICO:</strong> En MTUT <strong>NO aumentas peso</strong>. La progresión es
+            diferente.</div>
+
+        <h2>7.1 Aumento de Segundos (NO Cargas)</h2>
+        <div class="code-block">PROGRESIÓN RECOMENDADA:
+            Semana 1-2: 12s concéntrica → Semana 3-4: 15s
+            Semana 5-6: 18s → Semana 7-8: 20s (elite)</div>
+
+        <h2>7.2 Aumento de Volumen</h2>
+        <ul>
+            <li>Semana 1: 3 series por ejercicio</li>
+            <li>Semana 3: 4 series por ejercicio</li>
+            <li>Semana 5: 4-5 series (solo si recuperación óptima)</li>
+        </ul>
+
+        <h2>7.3 Manipulación del Descanso</h2>
+        <ul>
+            <li>Inicio: 4 minutos entre series</li>
+            <li>Avanzado: Reducir a 3 minutos (mayor demanda metabólica)</li>
+        </ul>
+
+        <h2>7.4 Variación de Ejercicios</h2>
+        <p>Rotar ejercicios cada 2-3 semanas manteniendo patrón de movimiento similar.</p>
+
+        <h1>8. Nutrición y Suplementación para MTUT</h1>
+        <div class="warning-box"><strong>⚠️ MTUT es extremadamente demandante metabólicamente.</strong></div>
+
+        <h2>8.1 Requerimientos Calóricos</h2>
+        <ul>
+            <li><strong>Mínimo:</strong> Mantenimiento calórico (TDEE)</li>
+            <li><strong>Óptimo:</strong> Superávit ligero (+200-300 kcal)</li>
+            <li><strong>Evitar:</strong> Déficit agresivo (MTUT requiere glucógeno)</li>
+        </ul>
+
+        <h2>8.2 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>5-6g/kg</td>
+                <td>CRÍTICO - Mínimo 4g/kg</td>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.2-2.5g/kg</td>
+                <td>Estándar</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1g/kg</td>
+                <td>Función hormonal</td>
+            </tr>
+            <tr>
+                <td>Agua</td>
+                <td>3-4L/día</td>
+                <td>Bomba extrema requiere hidratación</td>
+            </tr>
+        </table>
+
+        <h2>8.3 Timing Nutricional</h2>
+        <div class="code-block">PRE-ENTRENO (60-90 min antes):
+            - Carbos: 50-75g (arroz, avena, pasta)
+            - Proteína: 25-30g
+
+            POST-ENTRENO (60-90 min después):
+            - Carbos: 75-100g (rápidos + complejos)
+            - Proteína: 40-50g
+
+            ⚠️ EVITAR: Sesiones MTUT en ayunas</div>
+
+        <h2>8.4 Suplementación Clave</h2>
+        <ul>
+            <li><strong>Creatina:</strong> 5g/día (retención de fuerza)</li>
+            <li><strong>Citrulina:</strong> 6-8g pre-entreno (bomba)</li>
+            <li><strong>Electrolitos:</strong> Sodio 3-5g, Potasio 3-4g</li>
+            <li><strong>EAAs:</strong> 10-15g intra-entreno (opcional)</li>
+        </ul>
+
+        <h1 class="page-break">9. Ejemplos de Rutinas MTUT por Grupo Muscular</h1>
+
+        <h2>9.1 Pecho</h2>
+        <div class="code-block">A. Press Máquina Horizontal: 3x4-6 (15-0-2-0) - 3-4 min descanso
+            B. Press Máquina Inclinado: 3x4-6 (15-0-2-0) - 3-4 min descanso
+            C. Pec Deck / Aperturas Máquina: 3x5-7 (12-0-2-0) - 3 min descanso
+            Total: 9 series, ~40 min</div>
+
+        <h2>9.2 Espalda</h2>
+        <div class="code-block">A. Remo Máquina Neutral: 3x4-6 (15-0-2-0) - 3-4 min descanso
+            B. Jalón Máquina Ancho: 3x4-6 (15-0-2-0) - 3-4 min descanso
+            C. Pulldown Supino: 3x5-7 (12-0-2-0) - 3 min descanso
+            Total: 9 series, ~40 min</div>
+
+        <h2>9.3 Piernas</h2>
+        <div class="code-block">A. Press Piernas 45°: 3x4-6 (15-0-2-0) - 4 min descanso
+            B. Extensión Cuádriceps: 3x5-7 (12-0-2-0) - 3 min descanso
+            C. Curl Femoral Acostado: 3x5-7 (12-0-2-0) - 3 min descanso
+            D. Gemelos Sentado: 3x8-10 (10-0-2-0) - 2 min descanso
+            Total: 12 series, ~50 min</div>
+
+        <h2>9.4 Hombros</h2>
+        <div class="code-block">A. Press Hombro Máquina: 3x4-6 (15-0-2-0) - 3-4 min descanso
+            B. Elevaciones Laterales Máquina: 3x5-7 (12-0-2-0) - 3 min descanso
+            C. Rear Delt Máquina: 3x6-8 (10-0-2-0) - 2-3 min descanso
+            Total: 9 series, ~35 min</div>
+
+        <h2>9.5 Brazos</h2>
+        <div class="code-block">A. Curl Bíceps Máquina: 3x5-7 (12-0-2-0) - 3 min descanso
+            B. Extensión Tríceps Polea: 3x5-7 (12-0-2-0) - 3 min descanso
+            C. Curl Martillo Cable: 3x6-8 (10-0-2-0) - 2-3 min descanso
+            D. Press Cerrado Máquina: 3x6-8 (10-0-2-0) - 2-3 min descanso
+            Total: 12 series, ~40 min</div>
+
+        <h2 class="page-break">9.6 Estructuras por Nivel de Intensidad</h2>
+
+        <div class="highlight-box">
+            <strong>¿Qué Estructura Elegir?</strong>
+            <p>La estructura de entrenamiento depende de tu experiencia, tiempo disponible y capacidad de recuperación.
+                MTUT es una metodología avanzada que se adapta mejor a estructuras que permiten descanso adecuado entre
+                sesiones del mismo grupo muscular (mínimo 72h).</p>
+        </div>
+
+        <h3>Full Body MTUT (3x Semana)</h3>
+        <p><strong>Para:</strong> Intermedios con tiempo limitado, transición a MTUT</p>
+        <div class="code-block">FULL BODY MTUT - 3 DÍAS/SEMANA
+            Lunes - Full Body A:
+            A. Press Máquina Pecho: 3x4-6 (15-0-2-0)
+            B. Remo Máquina: 3x4-6 (15-0-2-0)
+            C. Press Piernas: 3x4-6 (15-0-2-0)
+            D. Press Hombro Máquina: 2x5-7 (12-0-2-0)
+            Total: 11 series, ~50 min
+
+            Miércoles - Full Body B:
+            A. Jalón Máquina: 3x4-6 (15-0-2-0)
+            B. Press Inclinado Máquina: 3x4-6 (15-0-2-0)
+            C. Curl Femoral: 3x5-7 (12-0-2-0)
+            D. Extensión Cuádriceps: 3x5-7 (12-0-2-0)
+            Total: 12 series, ~50 min
+
+            Viernes - Full Body C:
+            A. Sentadilla Hack: 3x4-6 (15-0-2-0)
+            B. Remo Bajo Máquina: 3x4-6 (15-0-2-0)
+            C. Pec Deck: 3x5-7 (12-0-2-0)
+            D. Elevaciones Laterales: 2x6-8 (10-0-2-0)
+            Total: 11 series, ~45 min</div>
+
+        <h3>Upper/Lower MTUT (4x Semana)</h3>
+        <p><strong>Para:</strong> Intermedios-Avanzados, balance óptimo volumen/frecuencia</p>
+        <div class="code-block">UPPER/LOWER MTUT - 4 DÍAS/SEMANA
+            Lunes - Upper A:
+            A. Press Máquina Horizontal: 3x4-6 (15-0-2-0)
+            B. Remo Máquina Neutral: 3x4-6 (15-0-2-0)
+            C. Press Hombro Máquina: 3x5-7 (12-0-2-0)
+            D. Jalón Agarre Ancho: 3x5-7 (12-0-2-0)
+            Total: 12 series
+
+            Martes - Lower A:
+            A. Press Piernas: 3x4-6 (15-0-2-0)
+            B. Curl Femoral: 3x5-7 (12-0-2-0)
+            C. Extensión Cuádriceps: 3x5-7 (12-0-2-0)
+            D. Gemelos Sentado: 3x8-10 (10-0-2-0)
+            Total: 12 series
+
+            Jueves - Upper B:
+            A. Press Inclinado Máquina: 3x4-6 (15-0-2-0)
+            B. Remo Bajo Máquina: 3x4-6 (15-0-2-0)
+            C. Elevaciones Laterales Máquina: 3x6-8 (10-0-2-0)
+            D. Pulldown Supino: 3x5-7 (12-0-2-0)
+            Total: 12 series
+
+            Viernes - Lower B:
+            A. Sentadilla Hack: 3x4-6 (15-0-2-0)
+            B. Peso Muerto Rumano Máquina: 3x5-7 (12-0-2-0)
+            C. Leg Press Unilateral: 3x5-7 (12-0-2-0)
+            D. Gemelos Parado: 3x8-10 (10-0-2-0)
+            Total: 12 series</div>
+
+        <h3>Torso/Pierna MTUT (4x Semana) - Estilo Big Ramy</h3>
+        <p><strong>Para:</strong> Avanzados, usado por Big Ramy en preparación</p>
+        <div class="code-block">TORSO/PIERNA MTUT - 4 DÍAS/SEMANA
+            Lunes - Torso (Empuje énfasis):
+            A. Press Máquina Pecho: 4x4-6 (15-0-2-0)
+            B. Press Hombro Máquina: 3x5-7 (12-0-2-0)
+            C. Remo Máquina: 3x4-6 (15-0-2-0)
+            D. Extensión Tríceps: 3x6-8 (10-0-2-0)
+            Total: 13 series
+
+            Martes - Pierna Completa:
+            A. Press Piernas: 4x4-6 (15-0-2-0)
+            B. Curl Femoral: 3x5-7 (12-0-2-0)
+            C. Extensión Cuádriceps: 3x5-7 (12-0-2-0)
+            D. Aductores/Abductores: 2x8-10 (10-0-2-0)
+            E. Gemelos: 3x8-10 (10-0-2-0)
+            Total: 15 series
+
+            Jueves - Torso (Jalón énfasis):
+            A. Jalón Máquina Ancho: 4x4-6 (15-0-2-0)
+            B. Remo Bajo Máquina: 3x4-6 (15-0-2-0)
+            C. Press Inclinado Máquina: 3x5-7 (12-0-2-0)
+            D. Curl Bíceps Máquina: 3x6-8 (10-0-2-0)
+            Total: 13 series
+
+            Viernes - Pierna (Variante):
+            A. Sentadilla Hack: 4x4-6 (15-0-2-0)
+            B. Peso Muerto Rumano: 3x5-7 (12-0-2-0)
+            C. Leg Press Alto: 3x5-7 (12-0-2-0)
+            D. Gemelos Sentado: 3x8-10 (10-0-2-0)
+            Total: 13 series</div>
+
+        <h3>Bro Split MTUT (5-6x Semana)</h3>
+        <p><strong>Para:</strong> Avanzados con excelente recuperación, máximo volumen por grupo</p>
+        <div class="code-block">BRO SPLIT MTUT - 5 DÍAS/SEMANA
+            Lunes - Pecho:
+            A. Press Máquina Horizontal: 4x4-6 (15-0-2-0)
+            B. Press Máquina Inclinado: 3x4-6 (15-0-2-0)
+            C. Pec Deck: 3x5-7 (12-0-2-0)
+            Total: 10 series, ~45 min
+
+            Martes - Espalda:
+            A. Remo Máquina Neutral: 4x4-6 (15-0-2-0)
+            B. Jalón Máquina Ancho: 3x4-6 (15-0-2-0)
+            C. Pulldown Supino: 3x5-7 (12-0-2-0)
+            Total: 10 series
+
+            Miércoles - Piernas:
+            A. Press Piernas: 4x4-6 (15-0-2-0)
+            B. Extensión Cuádriceps: 3x5-7 (12-0-2-0)
+            C. Curl Femoral: 3x5-7 (12-0-2-0)
+            D. Gemelos: 3x8-10 (10-0-2-0)
+            Total: 13 series
+
+            Jueves - Hombros:
+            A. Press Hombro Máquina: 4x4-6 (15-0-2-0)
+            B. Elevaciones Laterales Máquina: 3x6-8 (10-0-2-0)
+            C. Rear Delt Máquina: 3x6-8 (10-0-2-0)
+            Total: 10 series
+
+            Viernes - Brazos:
+            A. Curl Bíceps Máquina: 4x5-7 (12-0-2-0)
+            B. Extensión Tríceps Polea: 4x5-7 (12-0-2-0)
+            C. Curl Martillo Cable: 3x6-8 (10-0-2-0)
+            D. Press Cerrado: 3x6-8 (10-0-2-0)
+            Total: 14 series</div>
+
+        <h3>Tabla Comparativa de Estructuras</h3>
+        <table>
+            <tr>
+                <th>Estructura</th>
+                <th>Días/Sem</th>
+                <th>Frecuencia/Grupo</th>
+                <th>Nivel</th>
+                <th>Ideal Para</th>
+            </tr>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>3x/semana</td>
+                <td>Intermedio</td>
+                <td>Tiempo limitado, transición</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>2x/semana</td>
+                <td>Intermedio-Avanzado</td>
+                <td>Balance óptimo</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>2x/semana</td>
+                <td>Avanzado</td>
+                <td>Estilo Big Ramy</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5-6</td>
+                <td>1x/semana</td>
+                <td>Avanzado</td>
+                <td>Máximo volumen/grupo</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">9.7 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatible con MTUT</th>
+                <th>Recomendación</th>
+            </tr>
+            <tr>
+                <td>Y3T</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>MTUT en Week 2 Moderate</td>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>MTUT tempo + FST-7 finisher</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Complementarios - diferente estrés</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>Solo en warm-ups</td>
+            </tr>
+            <tr>
+                <td>Blood & Guts</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>Alternar días</td>
+            </tr>
+        </table>
+
+        <h2>9.8 Calculadora de Cargas (%1RM)</h2>
+        <table>
+            <tr>
+                <th>Protocolo</th>
+                <th>% 1RM</th>
+                <th>TUT Objetivo</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>MTUT-TCE</td>
+                <td>40-50%</td>
+                <td>40-60s</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>MTUT-TEE</td>
+                <td>45-55%</td>
+                <td>50-70s</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Shock Sets</td>
+                <td>30-40%</td>
+                <td>90-120s</td>
+                <td>10 (fallo)</td>
+            </tr>
+        </table>
+
+        <h2>9.9 Guía de Progresión Semanal</h2>
+        <div class="highlight-box">
+            <strong>Cómo Progresar en MTUT:</strong>
+            <ol>
+                <li><strong>Semana 1-4:</strong> Aumentar TUT (segundos), NO peso</li>
+                <li><strong>Si completaste 70s TUT:</strong> Sube peso 2.5kg, reinicia a 40s</li>
+                <li><strong>Control ante todo:</strong> Nunca sacrifiques tempo por peso</li>
+                <li><strong>Cada 6-8 semanas:</strong> Semana normal (sin tempo extremo)</li>
+            </ol>
+        </div>
+
+        <h2>9.10 Selector de Metodología por Objetivo</h2>
+        <table>
+            <tr>
+                <th>Tu Objetivo</th>
+                <th>¿MTUT es para ti?</th>
+                <th>Alternativa</th>
+            </tr>
+            <tr>
+                <td>Sin spotter</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Conexión mente-músculo</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Rehabilitación/lesiones</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Fuerza máxima</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Heavy Duty</td>
+            </tr>
+            <tr>
+                <td>Solo pesas pesadas</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Y3T Week 1</td>
+            </tr>
+        </table>
+
+        <h1>10. Consideraciones Importantes</h1>
+
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <h3>✅ Señales de que MTUT Funciona</h3>
+        <div class="success-box">
+            <ul>
+                <li>Bomba muscular extrema (48-72h)</li>
+                <li>Conexión mente-músculo mejorada</li>
+                <li>Mediciones +0.5-1cm en 2-3 semanas</li>
+                <li>DOMS moderado (48h)</li>
+                <li>Articulaciones sin dolor</li>
+            </ul>
+        </div>
+        <h3>❌ Señales de Detener MTUT</h3>
+        <div class="danger-box">
+            <ul>
+                <li>Pérdida fuerza >10%</li>
+                <li>Fatiga mental extrema</li>
+                <li>DOMS incapacitante >72h</li>
+                <li>Pérdida de peso corporal</li>
+                <li>Insomnio persistente</li>
+            </ul>
+        </div>
+
+        <h2>10.2 Descanso y Recuperación</h2>
+        <ul>
+            <li><strong>Sueño:</strong> 8-9 horas (vs 7-8h normal)</li>
+            <li><strong>Entre sesiones mismo grupo:</strong> Mínimo 72h</li>
+            <li><strong>Cardio:</strong> Máximo 2 LISS/semana, evitar HIIT</li>
+        </ul>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li><strong>Usar MÁQUINAS:</strong> Más seguro con fatiga extrema</li>
+            <li><strong>Evitar:</strong> Sentadilla libre, peso muerto, press banca libre</li>
+            <li><strong>Calentamiento extenso:</strong> 10-15 min obligatorio</li>
+            <li><strong>Si pierde tempo:</strong> Terminar serie, NO forzar</li>
+        </ul>
+
+        <h2 class="page-break">10.4 Guía Práctica de Implementación Paso a Paso</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Esta sección contiene información práctica esencial</strong> que necesitas antes de tu primera
+            sesión MTUT. Sigue estos pasos en orden.
+        </div>
+
+        <h3>Paso 1: Calcular tu 1RM Estimado (Sin ir al Fallo Máximo)</h3>
+
+        <div class="highlight-box">
+            <strong>¿Qué es el 1RM?</strong>
+            <p>El <strong>1RM (One Rep Max)</strong> es el peso máximo que puedes levantar UNA sola vez con buena
+                técnica. En MTUT usamos porcentajes del 1RM (40-50%) para determinar qué peso usar. <strong>No necesitas
+                    probar tu máximo real</strong> - es peligroso y hay formas seguras de estimarlo.</p>
+        </div>
+
+        <h4>¿Por qué necesito saber mi 1RM para MTUT?</h4>
+        <p>MTUT usa cargas del <strong>40-50% de tu 1RM</strong>. Si no sabes tu 1RM estimado, no sabrás qué peso poner
+            en la máquina. Ejemplo:</p>
+        <ul>
+            <li>Si tu 1RM en Press Máquina es 100kg → usarás 40-50kg para MTUT</li>
+            <li>Si tu 1RM en Prensa es 200kg → usarás 80-100kg para MTUT</li>
+        </ul>
+
+        <h4>Método 1: Fórmula Epley (Calculadora)</h4>
+        <p>Haz una serie hasta cerca del fallo con un peso moderado (que puedas hacer 5-15 reps) y aplica esta fórmula:
+        </p>
+
+        <div class="code-block">FÓRMULA EPLEY:
+            1RM Estimado = Peso usado × (1 + Repeticiones completadas / 30)
+
+            EJEMPLO PASO A PASO:
+            1. Eliges un peso que crees poder hacer ~10 reps (ej: 60kg)
+            2. Haces las reps hasta que la técnica empiece a fallar = 10 reps
+            3. Aplicas la fórmula:
+            1RM = 60 × (1 + 10/30)
+            1RM = 60 × (1 + 0.33)
+            1RM = 60 × 1.33
+            1RM = 80kg
+
+            4. Para MTUT (45% de 80kg) = 36kg ← Este es tu peso de trabajo</div>
+
+        <h4>Método 2: Tabla Rápida (Sin Calculadora)</h4>
+        <p>Si no quieres hacer cálculos, usa esta tabla. Simplemente multiplica el peso que usaste por el factor según
+            las reps que hiciste:</p>
+
+        <table>
+            <tr>
+                <th>Si hiciste...</th>
+                <th>Multiplica el peso por</th>
+                <th>Eso representa...</th>
+                <th>Ejemplo (con 60kg)</th>
+            </tr>
+            <tr>
+                <td><strong>5 reps</strong></td>
+                <td>× 1.17</td>
+                <td>85% del 1RM</td>
+                <td>60 × 1.17 = <strong>70kg</strong> (1RM)</td>
+            </tr>
+            <tr>
+                <td><strong>8 reps</strong></td>
+                <td>× 1.27</td>
+                <td>79% del 1RM</td>
+                <td>60 × 1.27 = <strong>76kg</strong> (1RM)</td>
+            </tr>
+            <tr>
+                <td><strong>10 reps</strong></td>
+                <td>× 1.33</td>
+                <td>75% del 1RM</td>
+                <td>60 × 1.33 = <strong>80kg</strong> (1RM)</td>
+            </tr>
+            <tr>
+                <td><strong>12 reps</strong></td>
+                <td>× 1.40</td>
+                <td>71% del 1RM</td>
+                <td>60 × 1.40 = <strong>84kg</strong> (1RM)</td>
+            </tr>
+            <tr>
+                <td><strong>15 reps</strong></td>
+                <td>× 1.50</td>
+                <td>67% del 1RM</td>
+                <td>60 × 1.50 = <strong>90kg</strong> (1RM)</td>
+            </tr>
+        </table>
+
+        <div class="success-box">
+            <strong>✅ Ejemplo completo:</strong> Haces 10 reps con 60kg en Press Máquina.
+            <br>→ Tu 1RM estimado = 60 × 1.33 = <strong>80kg</strong>
+            <br>→ Para MTUT al 45% = 80 × 0.45 = <strong>36kg</strong> ← ¡Este es tu peso de trabajo!
+        </div>
+
+        <h3>Paso 2: Cómo Contar 15 Segundos con Precisión</h3>
+        <div class="warning-box">
+            <strong>⚠️ El error más común:</strong> Contar "1, 2, 3..." demasiado rápido. Usa el método "mil" para
+            precisión.
+        </div>
+
+        <div class="code-block">MÉTODO "MIL" PARA CONTAR SEGUNDOS:
+            En lugar de "1, 2, 3..." di mentalmente:
+            "Uno-mil, dos-mil, tres-mil..."
+
+            Cada "número-mil" = 1 segundo real
+
+            PARA 15 SEGUNDOS CONCÉNTRICOS:
+            "Uno-mil, dos-mil, tres-mil, cuatro-mil, cinco-mil,
+            seis-mil, siete-mil, ocho-mil, nueve-mil, diez-mil,
+            once-mil, doce-mil, trece-mil, catorce-mil, quince-mil"
+
+            TIPS ADICIONALES:
+            • Practica con cronómetro las primeras 2-3 sesiones
+            • Divide mentalmente: 5 segundos × 3 bloques
+            • Enfócate en la contracción, no solo el conteo
+            • Algunos prefieren contar hacia atrás: "15-mil, 14-mil..."</div>
+
+        <h3>Paso 3: Checklist de Equipo Antes de Empezar</h3>
+        <table>
+            <tr>
+                <th>Grupo Muscular</th>
+                <th>Máquinas Recomendadas (Mínimo 2)</th>
+                <th>Alternativa</th>
+            </tr>
+            <tr>
+                <td><strong>Pecho</strong></td>
+                <td>Press máquina horizontal, Press inclinado máquina</td>
+                <td>Pec deck, Cruces en polea</td>
+            </tr>
+            <tr>
+                <td><strong>Espalda</strong></td>
+                <td>Remo máquina, Jalón máquina</td>
+                <td>Pulldown, Remo bajo polea</td>
+            </tr>
+            <tr>
+                <td><strong>Piernas</strong></td>
+                <td>Prensa 45°, Extensión cuádriceps, Curl femoral</td>
+                <td>Hack squat, Leg press horizontal</td>
+            </tr>
+            <tr>
+                <td><strong>Hombros</strong></td>
+                <td>Press hombro máquina, Elevaciones laterales máquina</td>
+                <td>Rear delt máquina</td>
+            </tr>
+            <tr>
+                <td><strong>Brazos</strong></td>
+                <td>Curl máquina, Extensión tríceps polea</td>
+                <td>Preacher curl, Press cerrado máquina</td>
+            </tr>
+        </table>
+
+        <div class="danger-box">
+            <strong>❌ EVITAR en MTUT:</strong> Sentadilla libre, Peso muerto, Press banca libre, Remo con barra,
+            Dominadas libres. La fatiga extrema + tempo lento = riesgo de lesión con pesos libres.
+        </div>
+
+        <h3>Paso 4: Protocolo de tu Primera Sesión MTUT</h3>
+        <div class="code-block">DÍA 1 - PRIMERA SESIÓN MTUT (Ejemplo: Pecho)
+            Duración total: ~50-60 minutos
+
+            FASE 1: CALENTAMIENTO (15 min)
+            ├─ 5 min cardio ligero (bicicleta o caminadora)
+            ├─ 5 min movilidad articular (hombros, codos, muñecas)
+            └─ 2-3 series de aproximación:
+            • Serie 1: 15 reps @ 20% 1RM, tempo normal
+            • Serie 2: 10 reps @ 30% 1RM, tempo 4-0-2-0
+            • Serie 3: 5 reps @ 35% 1RM, tempo 8-0-2-0 (práctica)
+
+            FASE 2: TRABAJO MTUT (30-35 min)
+            ├─ Ejercicio 1: Press Máquina Horizontal [TCE]
+            │ • 3 series × 4-6 reps @ 45% 1RM
+            │ • Tempo: <span style="color:#06B6D4;">15</span>-0-<span style="color:#F59E0B;">2</span>-0
+            │ • Descanso: 3-4 minutos entre series
+            │
+            ├─ Ejercicio 2: Press Inclinado Máquina [TCE]
+            │ • 3 series × 4-6 reps @ 45% 1RM
+            │ • Tempo: <span style="color:#06B6D4;">15</span>-0-<span style="color:#F59E0B;">2</span>-0
+            │ • Descanso: 3-4 minutos
+            │
+            └─ Ejercicio 3: Pec Deck [TEE]
+            • 3 series × 6-8 reps @ 50% 1RM
+            • Tempo: <span style="color:#06B6D4;">2</span>-0-<span style="color:#F59E0B;">8</span>-0
+            • Descanso: 2-3 minutos
+
+            FASE 3: ENFRIAMIENTO (5-10 min)
+            ├─ Estiramientos estáticos: 30-60s por músculo
+            ├─ Respiración profunda: 2-3 minutos
+            └─ Hidratación inmediata + carbohidratos si es posible</div>
+
+        <h3>Paso 5: Troubleshooting - ¿Qué Hacer Si...?</h3>
+        <table>
+            <tr>
+                <th>Problema</th>
+                <th>Causa Probable</th>
+                <th>Solución</th>
+            </tr>
+            <tr>
+                <td>No puedo mantener 15 segundos (baja a 10s)</td>
+                <td>Peso muy alto o fatiga</td>
+                <td>Termina la serie, reduce peso 10% para siguiente</td>
+            </tr>
+            <tr>
+                <td>Puedo hacer más de 6 reps fácilmente</td>
+                <td>Peso muy bajo</td>
+                <td>Aumenta 5-10% en siguiente serie</td>
+            </tr>
+            <tr>
+                <td>Dolor articular durante el ejercicio</td>
+                <td>Rango de movimiento o técnica</td>
+                <td>PARA inmediatamente, revisa técnica, cambia ejercicio</td>
+            </tr>
+            <tr>
+                <td>Mareo durante la serie</td>
+                <td>Falta de respiración</td>
+                <td>Respira durante todo el movimiento, nunca aguantes</td>
+            </tr>
+            <tr>
+                <td>No siento el músculo trabajar</td>
+                <td>Tempo muy rápido o carga incorrecta</td>
+                <td>Reduce peso, enfócate en contracción, verifica conteo</td>
+            </tr>
+            <tr>
+                <td>DOMS severo después de +72 horas</td>
+                <td>Exceso de volumen o intensidad</td>
+                <td>Reduce series en próxima sesión, aumenta descanso</td>
+            </tr>
+        </table>
+
+        <h3>Paso 6: Transición Post-MTUT (Después de 4-6 Semanas)</h3>
+        <div class="highlight-box">
+            <strong>¿Cómo volver al entrenamiento normal?</strong> No puedes saltar directamente de MTUT a cargas
+            pesadas. Sigue este protocolo de transición.
+        </div>
+
+        <div class="code-block">PROTOCOLO DE TRANSICIÓN POST-MTUT (2 semanas)
+
+            SEMANA DE TRANSICIÓN 1:
+            • Mantener ejercicios de máquinas
+            • Tempo: 4-0-2-0 (normal controlado)
+            • Carga: 60-65% 1RM
+            • Reps: 8-10
+            • Objetivo: Re-sensibilizar al peso
+
+            SEMANA DE TRANSICIÓN 2:
+            • Introducir gradualmente pesos libres
+            • Tempo: 3-0-2-0 (más dinámico)
+            • Carga: 70-75% 1RM
+            • Reps: 6-8
+            • Objetivo: Recuperar fuerza absoluta
+
+            DESPUÉS DE TRANSICIÓN:
+            • Volver a metodología normal (Heavy Duty, SST, etc.)
+            • La fuerza puede estar 5-10% abajo temporalmente
+            • En 2-3 semanas recuperarás y potencialmente superarás niveles previos
+            • El músculo ganado durante MTUT ahora responderá mejor a tensión mecánica</div>
+
+        <div class="success-box">
+            <strong>✅ Señal de éxito post-MTUT:</strong> Después de las 2 semanas de transición, deberías notar mejor
+            conexión mente-músculo, bombas más fáciles de lograr, y eventualmente PR en tus levantamientos principales.
+        </div>
+
+        <h1 class="page-break">Apéndice A: Datos para Creación de Rutinas</h1>
+
+        <h2>A.1 Base de Datos de Ejercicios MTUT</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Ejercicios IDEALES (máquinas/poleas)</th>
+                <th>Ejercicios a EVITAR</th>
+            </tr>
+            <tr>
+                <td><strong>Pecho</strong></td>
+                <td>Pec deck, Aperturas máquina, Press máquina</td>
+                <td>Press barra libre (peligro en fallo)</td>
+            </tr>
+            <tr>
+                <td><strong>Espalda</strong></td>
+                <td>Remo cable bajo, Pulldown, Remo máquina</td>
+                <td>Peso muerto, Dominadas</td>
+            </tr>
+            <tr>
+                <td><strong>Piernas</strong></td>
+                <td>Extensiones, Curl femoral, Prensa</td>
+                <td>Sentadilla libre, Peso muerto</td>
+            </tr>
+            <tr>
+                <td><strong>Hombros</strong></td>
+                <td>Elevaciones laterales cable, Press máquina</td>
+                <td>Press militar barra</td>
+            </tr>
+            <tr>
+                <td><strong>Brazos</strong></td>
+                <td>Curl cable, Extensión cable, Curl predicador máquina</td>
+                <td>Curl barra pesado</td>
+            </tr>
+        </table>
+
+        <h2>A.2 Plantillas de Split Recomendados MTUT</h2>
+        <div class="highlight-box">
+            <strong>Splits Óptimos para MTUT:</strong>
+            <ul>
+                <li><strong>Full Body (3 días):</strong> Ideal para MTUT - menos fatiga acumulada</li>
+                <li><strong>Upper/Lower (4 días):</strong> L-Upper, M-Lower, J-Upper, V-Lower</li>
+                <li><strong>Push/Pull/Legs (6 días):</strong> Más volumen pero más TUT por grupo</li>
+            </ul>
+        </div>
+
+        <h2>A.3 Semana Tipo Completa MTUT</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Ejercicios</th>
+                <th>Tempo</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Full Body A</td>
+                <td>Press máquina, Remo cable, Prensa, Curl cable, Extensión cable</td>
+                <td>4-1-4 (MTUT-TCE)</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td colspan="3">DESCANSO (recuperación TUT)</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Full Body B</td>
+                <td>Aperturas, Pulldown, Extensiones, Curl predicador, Press hombro</td>
+                <td>2-4-1 (MTUT-TEE)</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td colspan="3">DESCANSO</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Full Body C</td>
+                <td>Pec deck, Remo máquina, Curl femoral, Curl cable, Elevaciones</td>
+                <td>3-2-3 (MTUT-VE)</td>
+            </tr>
+            <tr>
+                <td>Sáb-Dom</td>
+                <td colspan="3">DESCANSO</td>
+            </tr>
+        </table>
+
+        <h2>A.4 Protocolo de Calentamiento MTUT</h2>
+        <div class="success-box">
+            <strong>Calentamiento para Tempo Lento:</strong>
+            <ul>
+                <li><strong>Movilidad:</strong> 5 min articular del grupo a trabajar</li>
+                <li><strong>Set 1:</strong> 30% peso trabajo x 8 reps @ tempo normal</li>
+                <li><strong>Set 2:</strong> 40% peso trabajo x 5 reps @ tempo MTUT</li>
+                <li><strong>Working Sets:</strong> Iniciar con tempo MTUT prescrito</li>
+            </ul>
+        </div>
+
+        <h2>A.5 Sistema de Deload MTUT</h2>
+        <div class="warning-box">
+            <strong>Reglas de Deload MTUT:</strong>
+            <ul>
+                <li><strong>Frecuencia:</strong> Cada 6-8 semanas</li>
+                <li><strong>Duración:</strong> 1 semana de tempo NORMAL</li>
+                <li><strong>Cargas:</strong> Subir peso 20%, bajar tempo a 2-0-2</li>
+                <li><strong>Objetivo:</strong> Recuperar sistema nervioso del estrés de TUT</li>
+                <li><strong>Alternativa:</strong> 1 semana completa de descanso si hay fatiga severa</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">Apéndice B: Datos Técnicos para Aplicación</h1>
+
+        <h2>B.1 Glosario de Términos MTUT</h2>
+        <table>
+            <tr>
+                <th>Término</th>
+                <th>Definición</th>
+                <th>Uso en App</th>
+            </tr>
+            <tr>
+                <td><code>Tempo</code></td>
+                <td>Velocidad de ejecución (concéntrico-pausa-excéntrico)</td>
+                <td>Timer por fase</td>
+            </tr>
+            <tr>
+                <td><code>TUT</code></td>
+                <td>Time Under Tension - objetivo 40-70s por serie</td>
+                <td>Timer acumulativo</td>
+            </tr>
+            <tr>
+                <td><code>MTUT-TCE</code></td>
+                <td>Tempo Concéntrico Extremo (4-1-2)</td>
+                <td>Preset de timer</td>
+            </tr>
+            <tr>
+                <td><code>MTUT-TEE</code></td>
+                <td>Tempo Excéntrico Extremo (2-1-4)</td>
+                <td>Preset de timer</td>
+            </tr>
+            <tr>
+                <td><code>Shock Sets</code></td>
+                <td>Combinación de tempos sin descanso</td>
+                <td>Secuencia especial</td>
+            </tr>
+        </table>
+
+        <h2>B.2 Configuración de Timer para App</h2>
+        <table>
+            <tr>
+                <th>Protocolo</th>
+                <th>Timer Descanso</th>
+                <th>Timer Rep</th>
+                <th>Sonido</th>
+            </tr>
+            <tr>
+                <td>MTUT-TCE</td>
+                <td>60-90s</td>
+                <td>Beep cada 1s durante concéntrico</td>
+                <td>4 beeps subida</td>
+            </tr>
+            <tr>
+                <td>MTUT-TEE</td>
+                <td>60-90s</td>
+                <td>Beep cada 1s durante excéntrico</td>
+                <td>4 beeps bajada</td>
+            </tr>
+            <tr>
+                <td>MTUT-VE</td>
+                <td>45-60s</td>
+                <td>Beep cada 1s ambas fases</td>
+                <td>3-2-3 pattern</td>
+            </tr>
+        </table>
+
+        <h2>B.3 Indicadores de Éxito</h2>
+        <div class="success-box">
+            <strong>¿Cómo saber si MTUT está funcionando?</strong>
+            <ul>
+                <li><strong>Semana 2-3:</strong> Mejor conexión mente-músculo</li>
+                <li><strong>Semana 4-6:</strong> Pump más fácil de lograr</li>
+                <li><strong>Semana 6-8:</strong> Medidas aumentando (no necesariamente peso)</li>
+                <li><strong>Señal negativa:</strong> Dolor articular = reduce peso o cambia ejercicio</li>
+            </ul>
+        </div>
+
+        <h2>B.4 Protocolos de Transición</h2>
+        <div class="highlight-box">
+            <strong>Cómo cambiar DESDE MTUT:</strong>
+            <ul>
+                <li><strong>→ Y3T:</strong> Usar MTUT tempos en Y3T Week 2, transición suave</li>
+                <li><strong>→ FST-7:</strong> Combinar bien - FST-7 después de MTUT base</li>
+                <li><strong>→ SST:</strong> 1 semana normal, luego SST (diferente estrés)</li>
+                <li><strong>→ Heavy Duty:</strong> 2 semanas tempo normal antes de HIT</li>
+            </ul>
+        </div>
+
+        <h2>B.5 Plantilla de Tracking</h2>
+        <table>
+            <tr>
+                <th>Campo</th>
+                <th>Obligatorio</th>
+                <th>Ejemplo</th>
+            </tr>
+            <tr>
+                <td>Ejercicio</td>
+                <td>✓</td>
+                <td>Cable row sentado</td>
+            </tr>
+            <tr>
+                <td>Peso</td>
+                <td>✓</td>
+                <td>40kg</td>
+            </tr>
+            <tr>
+                <td>Tempo usado</td>
+                <td>✓</td>
+                <td>4-1-4 (MTUT-TCE)</td>
+            </tr>
+            <tr>
+                <td>TUT total (segundos)</td>
+                <td>✓</td>
+                <td>52s</td>
+            </tr>
+            <tr>
+                <td>Reps</td>
+                <td>✓</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>Conexión (1-5)</td>
+                <td>Recomendado</td>
+                <td>4/5</td>
+            </tr>
+        </table>
+
+        <h2>B.6 FAQ / Troubleshooting</h2>
+        <div class="warning-box">
+            <strong>Problemas Comunes MTUT:</strong>
+            <ul>
+                <li><strong>No puedo mantener tempo:</strong> Peso muy alto - reduce 20%</li>
+                <li><strong>Muy aburrido/lento:</strong> Alterna con ejercicios de tempo normal</li>
+                <li><strong>Calambres:</strong> Más hidratación, reduce TUT objetivo</li>
+                <li><strong>Sin pump:</strong> Aumenta reps manteniendo tempo</li>
+                <li><strong>Perdí fuerza:</strong> Normal al inicio - volverá en 4-6 semanas</li>
+            </ul>
+        </div>
+
+        <h2 class="page-break">10.5 Especialización de Grupos Débiles</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con MTUT</strong>
+            <p>MTUT es excepcional para grupos con pobre conexión mente-músculo. El tempo ultra-lento
+                fuerza la activación consciente de cada fibra muscular, ideal para grupos que
+                "no sientes" durante el entrenamiento normal (espalda alta, glúteos, deltoides posterior).</p>
+        </div>
+
+        <h3>Estrategia MTUT para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Series MTUT Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Protocolo Recomendado</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+3-4 series</td>
+                <td>2x/semana</td>
+                <td>MTUT-TCE (4-1-4) al inicio</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+6-8 series</td>
+                <td>3x/semana</td>
+                <td>MTUT-TEE (2-1-6) para énfasis excéntrico</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+9-12 series</td>
+                <td>4-5x/semana</td>
+                <td>Shock Sets solo para grupo débil</td>
+            </tr>
+        </table>
+
+        <h3>Grupos Comunes a Priorizar</h3>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Protocolo MTUT Ideal</th>
+                <th>Ejercicio Recomendado</th>
+                <th>TUT Objetivo</th>
+            </tr>
+            <tr>
+                <td>Espalda Alta</td>
+                <td>MTUT-TCE</td>
+                <td>Remo cable alto con pausa</td>
+                <td>50-60s por serie</td>
+            </tr>
+            <tr>
+                <td>Glúteos</td>
+                <td>MTUT-TEE</td>
+                <td>Hip thrust máquina</td>
+                <td>45-55s por serie</td>
+            </tr>
+            <tr>
+                <td>Deltoides Posterior</td>
+                <td>MTUT-ISOM</td>
+                <td>Rear delt máquina</td>
+                <td>40-50s + isometría final</td>
+            </tr>
+            <tr>
+                <td>Vasto Interno</td>
+                <td>MTUT-TCE</td>
+                <td>Extensión pies hacia afuera</td>
+                <td>50-60s por serie</td>
+            </tr>
+        </table>
+
+        <div class="code-block">EJEMPLO: ESPECIALIZACIÓN ESPALDA ALTA CON MTUT
+
+            FRECUENCIA: Al inicio de CADA sesión de tirón (3x/semana)
+            DURACIÓN: 10-12 minutos extra por sesión
+
+            PROTOCOLO:
+            1. CALENTAMIENTO ESPECÍFICO:
+            - Remo cable ligero: 15 reps @ tempo normal
+            - Activación escapular: 10 reps con pausa
+
+            2. MTUT-TCE ESPALDA ALTA:
+            Ejercicio: Remo Cable Sentado con agarre alto
+            - 3 series × 5-6 reps
+            - Tempo: 4 segundos concéntrico (squeeze escapular)
+            1 segundo pausa (contracción máxima)
+            4 segundos excéntrico
+            - TUT por serie: ~50 segundos
+            - Peso: 40-45% 1RM
+
+            3. ENFOQUE MENTAL:
+            - Visualizar omóplatos juntándose
+            - No usar bíceps para tirar
+            - Codos hacia atrás, no hacia abajo
+
+            RESULTADO: 4-6 semanas = dorsales y romboides visiblemente más desarrollados</div>
+
+        <h3>Reglas de Especialización MTUT</h3>
+        <div class="warning-box">
+            <strong>⚠️ Reglas Importantes:</strong>
+            <ul>
+                <li><strong>Grupo prioritario PRIMERO:</strong> MTUT requiere máxima concentración - hacerlo cuando
+                    estás fresco</li>
+                <li><strong>Máximo 1 grupo débil:</strong> MTUT es mentalmente agotador, no sobrecargar</li>
+                <li><strong>Sin fallo muscular:</strong> Terminar 1-2 reps antes del fallo para mantener tempo</li>
+                <li><strong>Conexión ante carga:</strong> Si pierdes la conexión, baja peso 10%</li>
+                <li><strong>Evaluar por sensación:</strong> Éxito = sentir el músculo 48h después sin dolor</li>
+                <li><strong>No combinar con HIT:</strong> MTUT es incompatible con Heavy Duty el mismo día</li>
+            </ul>
+        </div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <p><strong>MTUT es una herramienta avanzada poderosa cuando se usa correctamente.</strong> No es para todos,
+                no es para siempre, pero en el contexto correcto puede romper mesetas que nada más funciona.</p>
+            <p>La clave es entender que sacrificas fuerza absoluta temporalmente para ganar tamaño y conexión
+                mente-músculo que luego puedes capitalizar volviendo a cargas pesadas.</p>
+        </div>
+
+        <h3>Atletas Conocidos que Usan MTUT</h3>
+        <ul>
+            <li><strong>Dennis James</strong> - Creador del sistema</li>
+            <li><strong>Big Ramy</strong> - Mr. Olympia, uso intensivo en preparación</li>
+            <li>Varios culturistas IFBB Pro en fases específicas</li>
+        </ul>
+
+        <h3>Comparación Rápida</h3>
+        <table>
+            <tr>
+                <th>Aspecto</th>
+                <th>MTUT</th>
+                <th>Heavy Duty</th>
+                <th>SST</th>
+            </tr>
+            <tr>
+                <td>Intensidad vía</td>
+                <td>TUT (tiempo)</td>
+                <td>Peso</td>
+                <td>Descansos</td>
+            </tr>
+            <tr>
+                <td>Carga</td>
+                <td>40-50% 1RM</td>
+                <td>85-95% 1RM</td>
+                <td>70-80% 1RM</td>
+            </tr>
+            <tr>
+                <td>Estrés articular</td>
+                <td>Muy bajo ⭐</td>
+                <td>Alto ⚠️</td>
+                <td>Medio</td>
+            </tr>
+            <tr>
+                <td>Duración max</td>
+                <td>6 semanas</td>
+                <td>Indefinida</td>
+                <td>6 semanas</td>
+            </tr>
+        </table>
+
+        <div
+            style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, var(--dark), #1E293B); color: white; border-radius: 12px;">
+            <h2 style="color: var(--secondary); margin-bottom: 15px;">MTUT - Menace Time Under Tension</h2>
+            <p style="opacity: 0.9;">Metodología Maestra Unificada</p>
+            <p style="opacity: 0.7; font-size: 0.9rem;">Estructura basada en SST_Metodologia_Maestra_Unificada</p>
+            <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Diciembre 2025</p>
+        </div>
+    </div>
+
+    <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Duración del Ciclo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Principiante (1‑2 años)</td>
+                <td>6‑8 semanas</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2‑5 años)</td>
+                <td>4‑6 semanas</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>3‑4 semanas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Estructura</th>
+                <th>Días por semana</th>
+                <th>Nivel recomendado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio‑Avanzado</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5‑6</td>
+                <td>Avanzado</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

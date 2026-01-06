@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Blood & Guts - Metodología Maestra Unificada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #1E3A8A;
+            --secondary: #3B82F6;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .tempo-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tempo-badge.riv {
+            background: #10B981;
+            color: white;
+        }
+
+        .tempo-badge.ct {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .tempo-badge.rt {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .tempo-badge.isom {
+            background: #06B6D4;
+            color: white;
+        }
+
+        .tempo-badge.neg {
+            background: #EF4444;
+            color: white;
+        }
+
+        .use-when {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .use-when>div {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .use-when>div:first-child {
+            background: #ECFDF5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .riv-visual {
+            display: flex;
+            justify-content: space-around;
+            background: #1E293B;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .riv-phase {
+            flex: 1;
+            padding: 10px;
+            min-width: 60px;
+        }
+
+        .riv-phase .time {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #10B981;
+        }
+
+        .riv-phase .label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Tempo Color Classes */
+        .tempo-con {
+            color: #06B6D4;
+            font-weight: 700;
+            background: rgba(6, 182, 212, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-ecc {
+            color: #F59E0B;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-iso {
+            color: #10B981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>BLOOD & GUTS</h1>
+        <p class="subtitle">Dorian Yates Training Method</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Sistema de entrenamiento HIT desarrollado por Dorian Yates
+            basado en series al fallo absoluto, bajo volumen, alta intensidad y entrenamientos breves de 45-60 minutos.
+        </p>
+        <p class="author">Creador: Dorian Yates · 6x Mr. Olympia</p>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 10 ATLETAS DESTACADOS BLOOD &
+                    GUTS:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Dorian Yates (6x Mr. Olympia, Creador) ·
+                <strong>2.</strong> Mike Mentzer (Mr. Universe, Mentor) ·
+                <strong>3.</strong> Leroy Davis (IFBB Pro, Training Partner) ·
+                <strong>4.</strong> Chris Cormier (IFBB Pro) ·
+                <strong>5.</strong> Nasser El Sonbaty† (IFBB Pro) ·
+                <strong>6.</strong> Shaun Davis (IFBB Pro, UK) ·
+                <strong>7.</strong> Paul Dillett (IFBB Pro) ·
+                <strong>8.</strong> Jean-Pierre Fux (IFBB Pro) ·
+                <strong>9.</strong> Temple Gym Athletes (Birmingham) ·
+                <strong>10.</strong> DY Nutrition Athletes
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">From Temple Gym, Birmingham, UK · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al Blood & Guts</li>
+                <li><strong>2.</strong> Objetivos del Blood & Guts</li>
+                <li><strong>3.</strong> Principios Básicos del Blood & Guts</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT)</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en Blood & Guts</li>
+                <li><strong>4.</strong> Métodos y Técnicas del Blood & Guts</li>
+                <li class="sub">4.1 El Working Set al Fallo (Core B&G)</li>
+                <li class="sub">4.2 Forced Reps (Repeticiones Forzadas)</li>
+                <li class="sub">4.3 Negativas Controladas</li>
+                <li class="sub">4.4 Rest-Pause Dorian Style</li>
+                <li class="sub">4.5 Partials (Parciales)</li>
+                <li class="sub">4.6 Drop Sets</li>
+                <li class="sub">4.7 RPE en Blood & Guts</li>
+                <li class="sub">4.8 Compatibilidad con Otras Metodologías</li>
+                <li class="sub">4.9 Ejemplo: Rutina Espalda Dorian Yates</li>
+                <li><strong>5.</strong> Estructura de una Sesión Blood & Guts</li>
+                <li class="sub">5.1 Calentamiento y Series de Aproximación</li>
+                <li class="sub">5.2 Ejercicios Principales (Blood & Guts Core)</li>
+                <li class="sub">5.3 Ejercicios Accesorios</li>
+                <li class="sub">5.4 Enfriamiento y Estiramiento</li>
+                <li><strong>6.</strong> Periodización con Blood & Guts</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Ondulación de Intensidad y Volumen</li>
+                <li class="sub">6.3 Fases de Acumulación, Intensificación y Realización</li>
+                <li class="sub">6.4 Descargas (Deloads)</li>
+                <li class="sub">6.5 Duración del Ciclo por Nivel de Experiencia</li>
+                <li><strong>7.</strong> Progresión en Blood & Guts</li>
+                <li class="sub">7.1 Progresión de Carga y Reps</li>
+                <li class="sub">7.2 Manipulación de Variables (TUT, Descanso, Intensificadores)</li>
+                <li class="sub">7.3 Progresión a Largo Plazo</li>
+                <li><strong>8.</strong> Nutrición y Suplementación para Blood & Guts</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Timing Nutricional</li>
+                <li class="sub">8.4 Suplementación Clave</li>
+                <li><strong>9.</strong> Ejemplos de Rutinas Blood & Guts por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas | 9.4 Hombros | 9.5 Brazos</li>
+                <li class="sub">9.6 Estructuras por Nivel de Intensidad</li>
+                <li class="sub" style="padding-left: 40px;">• Full Body | Upper/Lower | Torso/Pierna | Bro Split</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Descanso y Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía Práctica de Implementación Paso a Paso</li>
+                <li class="sub" style="padding-left: 40px;">• Calcular 1RM | Equipo | Primera Sesión | Troubleshooting |
+                    Post-Blood & Guts</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al Blood & Guts</h1>
+        <div class="highlight-box">
+            <strong>Blood & Guts</strong> es la adaptación personal de <strong>Dorian Yates</strong> del sistema
+            Heavy Duty de Mike Mentzer. Es un protocolo de entrenamiento de alta intensidad caracterizado por
+            sesiones cortas (45-60 min), series únicas al fallo absoluto, y técnicas post-fallo brutales.
+        </div>
+
+        <p>Dorian Yates ganó 6 títulos consecutivos de Mr. Olympia (1992-1997) usando este sistema desarrollado
+            en Temple Gym, Birmingham. El método enfatiza calidad sobre cantidad: cada working set debe ser
+            el más intenso posible, llegando más allá del fallo con forced reps y negativas.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">1</div>
+                <div class="label">Working Set al Fallo</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">45-60</div>
+                <div class="label">Min/Sesión</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4x</div>
+                <div class="label">Entrenamientos/Semana</div>
+            </div>
+        </div>
+
+        <h3>Origen: Temple Gym, Birmingham</h3>
+        <p>Dorian desarrolló Blood & Guts influenciado por Mike Mentzer, adaptándolo a su estilo:</p>
+        <ul>
+            <li><strong>Un Working Set al Fallo:</strong> Después de 2-3 warm-ups, UN set TODO-FALLO</li>
+            <li><strong>Más Allá del Fallo:</strong> 2-3 forced reps + negativa lenta en cada ejercicio</li>
+            <li><strong>Entrenamientos Cortos:</strong> 45-60 minutos máximo, 4 veces por semana</li>
+            <li><strong>Máquinas Hammer Strength:</strong> Permiten entrenar más intenso con mayor seguridad</li>
+        </ul>
+
+        <h1>2. Objetivos del Blood & Guts</h1>
+        <ul>
+            <li><strong>Fallo Absoluto:</strong> Cada working set termina cuando NO puedes mover el peso</li>
+            <li><strong>Forced Reps:</strong> 2-3 reps asistidas después del fallo para máximo daño</li>
+            <li><strong>Eficiencia:</strong> Sesiones breves pero brutalmente intensas</li>
+            <li><strong>Progresión:</strong> Añadir peso O reps cada semana sin excepción</li>
+            <li><strong>Recuperación:</strong> Cada grupo muscular una vez por semana únicamente</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del Blood & Guts</h1>
+
+        <h2>3.1 La Filosofía de Dorian Yates</h2>
+        <p>Blood & Guts se basa en la evolución de Dorian del sistema Heavy Duty de Mike Mentzer:</p>
+        <div class="highlight-box">
+            <strong>"Entrena duro, entrena breve, y ve a casa a crecer."</strong> — Dorian Yates
+        </div>
+        <table>
+            <tr>
+                <th>Concepto</th>
+                <th>Blood & Guts</th>
+                <th>Bodybuilding Tradicional</th>
+            </tr>
+            <tr>
+                <td>Working Sets</td>
+                <td>1 por ejercicio (máximo 2)</td>
+                <td>3-4 por ejercicio</td>
+            </tr>
+            <tr>
+                <td>Duración</td>
+                <td>45-60 minutos máximo</td>
+                <td>90-120 minutos</td>
+            </tr>
+            <tr>
+                <td>Frecuencia</td>
+                <td>4x por semana, 1 grupo/semana</td>
+                <td>5-6x por semana</td>
+            </tr>
+        </table>
+
+        <h2>3.2 El Fallo Total + Forced Reps</h2>
+        <p>Cada working set en Blood & Guts sigue este patrón:</p>
+        <ul>
+            <li><strong>Fallo Concéntrico:</strong> No puedes completar otra rep solo</li>
+            <li><strong>2-3 Forced Reps:</strong> Con mínima ayuda del spotter</li>
+            <li><strong>Negativa Controlada:</strong> 4-6 segundos en la última rep</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ Regla de Dorian:</strong> "Si puedes hacer más de un working set pesado,
+            no fuiste lo suficientemente intenso en el primero."
+        </div>
+
+        <h2>3.3 Warm-up Progresivo</h2>
+        <p>El calentamiento en Blood & Guts es muy específico:</p>
+        <ul>
+            <li><strong>Set 1:</strong> 15 reps @ 30% - Activación</li>
+            <li><strong>Set 2:</strong> 10 reps @ 50% - Patrón motor</li>
+            <li><strong>Set 3:</strong> 6 reps @ 70% - Preparación SNC</li>
+            <li><strong>WORKING SET:</strong> 6-10 reps @ 80-85% → FALLO + técnicas</li>
+        </ul>
+
+        <h2>3.4 Preferencia por Máquinas</h2>
+        <p>Dorian usaba muchas máquinas Hammer Strength por razones específicas:</p>
+        <ul>
+            <li>Permiten ir al fallo sin riesgo de lesión</li>
+            <li>No necesitas preocuparte por estabilización cuando estás destruido</li>
+            <li>Puedes hacer forced reps más fácilmente</li>
+            <li>Menor riesgo de lesión que con pesos libres al fallo</li>
+        </ul>
+
+        <h1 class="page-break">4. Métodos y Técnicas del Blood & Guts</h1>
+
+        <div class="highlight-box">
+            <strong>Técnicas de Dorian Yates</strong>
+            <p>Las siguientes técnicas son las que Dorian usó para construir uno de los físicos
+                más impresionantes en la historia del bodybuilding.</p>
+        </div>
+
+        <h3>¿Cuándo Usar Blood & Guts?</h3>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar Blood & Guts cuando:</strong>
+            <ul>
+                <li>Tienes al menos 2+ años de experiencia entrenando</li>
+                <li>Tu técnica es sólida y consistente</li>
+                <li>Tienes spotter confiable para la mayoría de sesiones</li>
+                <li>Buscas sesiones cortas pero brutalmente intensas (45-60 min)</li>
+                <li>Tienes acceso a máquinas Hammer Strength o similares</li>
+                <li>Tu nutrición y sueño están optimizados</li>
+            </ul>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar Blood & Guts cuando:</strong>
+            <ul>
+                <li><strong>Principiante (&lt;2 años):</strong> No tienes la base para entrenar al fallo seguro</li>
+                <li><strong>Sin spotter confiable:</strong> Las forced reps requieren asistencia inteligente</li>
+                <li><strong>Solo pesos libres:</strong> B&G funciona mejor con máquinas para fallo seguro</li>
+                <li><strong>Déficit calórico severo:</strong> La intensidad destruirá tu recuperación</li>
+                <li><strong>Problemas de tendones:</strong> Las negativas son muy demandantes</li>
+                <li><strong>Estrés alto/sueño malo:</strong> SNC ya comprometido</li>
+            </ul>
+        </div>
+
+        <h3>Limitantes del Sistema Blood & Guts</h3>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Requiere acceso a máquinas específicas (Hammer Strength ideal)</li>
+                <li>Spotter es casi obligatorio para resultados óptimos</li>
+                <li>El DOMS puede ser brutal las primeras semanas</li>
+                <li>No es ideal para atletas de rendimiento (powerlifters, CrossFit)</li>
+            </ul>
+        </div>
+
+        <h3>🔧 Cómo Crear Rutinas Blood & Guts</h3>
+        <div class="highlight-box">
+            <strong>Guía para Diseñar tus Propias Rutinas Blood & Guts:</strong>
+            <ol>
+                <li><strong>Split recomendado:</strong> 4 días (Día 1: Pecho/Bíceps, Día 2: Piernas, Día 3: Espalda, Día
+                    4: Hombros/Tríceps)</li>
+                <li><strong>Ejercicios por grupo:</strong> 3-5 ejercicios (1 working set cada uno)</li>
+                <li><strong>Working sets:</strong> 1 por ejercicio (NUNCA más)</li>
+                <li><strong>Estructura del set:</strong>
+                    <ul>
+                        <li>Warm-ups: 15/10/6 progresivos</li>
+                        <li>Working set: Fallo absoluto + 2 forced reps + negativa</li>
+                        <li>Descanso: 2 minutos entre ejercicios</li>
+                    </ul>
+                </li>
+                <li><strong>Duración objetivo:</strong> 45-60 minutos MÁXIMO</li>
+                <li><strong>Frecuencia:</strong> Cada grupo 1x por semana</li>
+            </ol>
+        </div>
+
+        <h3>📊 Especificaciones Técnicas para Aplicación</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Técnica</th>
+                <th>Nivel</th>
+                <th>Descanso</th>
+                <th>TUT/Serie</th>
+                <th>Equipamiento</th>
+                <th>Duración Sesión</th>
+            </tr>
+            <tr>
+                <td><code>BG-WS</code></td>
+                <td>Working Set al Fallo</td>
+                <td>Avanzado</td>
+                <td>2 min</td>
+                <td>40-60s</td>
+                <td>Preferir máquinas Hammer</td>
+                <td>45-60 min</td>
+            </tr>
+            <tr>
+                <td><code>BG-FR</code></td>
+                <td>Forced Reps Dorian</td>
+                <td>Avanzado</td>
+                <td>+2 min post</td>
+                <td>+10s extra</td>
+                <td>SPOTTER requerido</td>
+                <td>+2 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>BG-NEG</code></td>
+                <td>Negativas Controladas</td>
+                <td>Avanzado</td>
+                <td>+3 min post</td>
+                <td>4-6s por rep</td>
+                <td>SPOTTER requerido</td>
+                <td>+2 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>BG-RP</code></td>
+                <td>Rest-Pause Dorian</td>
+                <td>Intermedio+</td>
+                <td>10-15s (micro)</td>
+                <td>60-90s total</td>
+                <td>Cualquiera</td>
+                <td>+2 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>BG-PAR</code></td>
+                <td>Partials</td>
+                <td>Intermedio+</td>
+                <td>0s (continuo)</td>
+                <td>+15-20s extra</td>
+                <td>Aislamiento, poleas</td>
+                <td>+1 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>BG-DS</code></td>
+                <td>Drop Sets</td>
+                <td>Intermedio+</td>
+                <td>0s (inmediato)</td>
+                <td>90-120s total</td>
+                <td>Máquinas, mancuernas</td>
+                <td>+3 min/ejercicio</td>
+            </tr>
+        </table>
+
+        <h2>4.1 El Working Set al Fallo (Core B&G)</h2>
+        <div class="method-card">
+            <h4>El Corazón del Sistema</h4>
+            <p>
+                <strong style="background:#1E3A8A; color:white; padding:3px 8px; border-radius:4px;">1 WORKING
+                    SET</strong>
+                <span
+                    style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">FALLO
+                    + FORCED REPS + NEGATIVA</span>
+            </p>
+            <div class="code-block">ESTRUCTURA BLOOD & GUTS:
+
+                Warm-up 1: 15 reps @ 30% 1RM
+                Warm-up 2: 10 reps @ 50% 1RM
+                Warm-up 3: 6 reps @ 70% 1RM
+
+                WORKING SET: 8-10 reps @ 80% 1RM
+                → Hasta fallo concéntrico
+                → + 2 forced reps (spotter asiste mínimamente)
+                → + 1 negativa lenta (4-5 segundos)
+
+                Descanso: 2 minutos → Siguiente ejercicio</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Todos los ejercicios principales<br>• Tienes spotter<br>•
+                    Energía y foco al 100%</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Sin calentamiento previo<br>•
+                    Ejercicio nuevo/técnica insegura<br>• Fatiga extrema acumulada</div>
+            </div>
+        </div>
+
+        <h2>4.2 Forced Reps (Estilo Dorian)</h2>
+        <div class="method-card">
+            <h4>La Firma de Blood & Guts</h4>
+            <div class="code-block">FORCED REPS DORIAN STYLE:
+
+                El spotter SOLO toca la barra/mancuerna para:
+                • Quitar 10-20% del peso con sus manos
+                • NUNCA tirar con fuerza
+                • Permitir que TÚ sigas trabajando
+
+                Cantidad: 2-3 forced reps máximo
+                Si puedes hacer más, el peso era muy ligero</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Press banca, militar<br>• Curl, extensiones<br>• Spotter
+                    experimentado</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ejercicios de espalda<br>• Peso
+                    muerto, sentadilla<br>• Sin spotter confiable</div>
+            </div>
+        </div>
+
+        <h2>4.3 Negativas Controladas</h2>
+        <div class="method-card">
+            <h4>Máximo Daño en la Última Rep</h4>
+            <div class="code-block">NEGATIVA FINAL:
+
+                Después de las forced reps:
+                1. Spotter ayuda a subir el peso
+                2. TÚ resistsas la bajada: 4-6 segundos
+                3. Control total, sin dejar caer
+                4. Máxima tensión en el músculo</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Máquinas con asistencia<br>• Última rep del set<br>• Buscas
+                    máximo daño muscular</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• DOMS severo previo<br>•
+                    Tendones/ligamentos sensibles<br>• Sin control del peso</div>
+            </div>
+        </div>
+
+        <h2>4.4 Rest-Pause Dorian Style</h2>
+        <div class="method-card">
+            <h4>Para Cuando No Hay Spotter</h4>
+            <div class="code-block">REST-PAUSE B&G:
+
+                1. Serie al fallo (8-10 reps)
+                2. Rack - descanso 10-15 segundos
+                3. 2-4 reps más al fallo
+                4. Rack - descanso 10-15 segundos
+                5. 1-3 reps finales
+
+                Usar cuando: No tienes spotter disponible</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Sin spotter disponible<br>• Máquinas/poleas<br>• Quieres más
+                    volumen</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Pesos libres pesados<br>•
+                    Ejercicios técnicos<br>• Ya hiciste forced reps</div>
+            </div>
+        </div>
+
+        <h2>4.5 Partials (Parciales)</h2>
+        <div class="method-card">
+            <h4>Después del Fallo en Rango Completo</h4>
+            <div class="code-block">PARTIALS EN B&G:
+
+                Después de llegar al fallo con ROM completo:
+                • Continuar con reps parciales (1/3 del rango)
+                • 3-5 reps parciales adicionales
+                • Mantener tensión constante
+
+                Ideal para: Curls, extensiones, elevaciones</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Ejercicios de aislamiento<br>• Poleas/máquinas<br>• Buscas
+                    bomba extrema</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ejercicios compuestos<br>• Pesos
+                    libres pesados<br>• Articulaciones sensibles</div>
+            </div>
+        </div>
+
+        <h2>4.6 Drop Sets</h2>
+        <div class="method-card">
+            <h4>Último Ejercicio del Grupo</h4>
+            <div class="code-block">DROP SET B&G:
+
+                1. Working set al fallo (8-10 reps)
+                2. Reducir peso 30% inmediatamente
+                3. Más reps al fallo
+                4. Reducir peso 30% más
+                5. Reps finales al fallo absoluto
+
+                Usar en: Máquinas, cables, aislamiento
+                NO usar en: Compuestos pesados</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Último ejercicio del grupo<br>• Máquinas/cables<br>• Objetivo:
+                    bomba máxima</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Primer ejercicio<br>• Compuestos
+                    pesados<br>• Ya usaste otras técnicas post-fallo</div>
+            </div>
+        </div>
+
+        <h2>4.7 Ejemplo: Rutina Espalda Dorian Yates</h2>
+        <div class="code-block">ESPALDA - BLOOD & GUTS (45-50 min):
+
+            1. PULLOVER MÁQUINA (Hammer Strength)
+            Warm-up: 15/10/6
+            Working Set: 10-12 reps + 2 forced + negativa
+
+            2. JALÓN FRONTAL AGARRE CERRADO
+            Warm-up: 10/6
+            Working Set: 8-10 reps + 2 forced + negativa
+
+            3. REMO T-BAR
+            Warm-up: 10/6
+            Working Set: 8-10 reps + rest-pause
+
+            4. REMO MANCUERNA UN BRAZO
+            Sin warm-up
+            Working Set: 8-10 reps cada lado
+
+            5. PESO MUERTO PARCIAL (Rack Pulls)
+            Warm-up: 6 reps @ 50%
+            Working Set: 6-8 reps (sin técnicas - demasiado peligroso)
+
+            ───────────────────────────────────────
+            TOTAL: 5 ejercicios, 5 working sets
+            TIEMPO: 45-50 minutos
+            FRECUENCIA: 1x por semana para espalda</div>
+
+        <h1 class="page-break">5. Estructura de una Sesión Blood & Guts</h1>
+
+        <h2>5.1 Calentamiento y Series de Aproximación</h2>
+        <div class="code-block">CALENTAMIENTO Blood & Guts (10-15 min):
+
+            1. Cardio ligero: 5 min (elevación temperatura)
+            2. Movilidad articular: 3-5 min
+            3. Series de aproximación:
+            - Serie 1: 15 reps @ 30% 1RM (activación)
+            - Serie 2: 10 reps @ 50% 1RM (patrón motor)
+            - Serie 3: 6 reps @ 70% 1RM (preparación SNC)</div>
+
+        <h2>5.2 Ejercicios Principales (Blood & Guts Core)</h2>
+        <ul>
+            <li>1-2 protocolos Blood & Guts completos por grupo muscular grande</li>
+            <li>Elegir el protocolo según objetivo semanal (TM vs EM)</li>
+            <li>Descanso entre protocolos: 3-5 minutos</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios</h2>
+        <ul>
+            <li>2-3 ejercicios complementarios con técnica normal</li>
+            <li>3 series de 8-12 reps, RIR 1-2</li>
+            <li>Opción: aplicar mini-protocolo Blood & Guts (versión corta)</li>
+        </ul>
+
+        <h2>5.4 Enfriamiento y Estiramiento</h2>
+        <ul>
+            <li>Estiramientos estáticos: 30-60s por músculo trabajado</li>
+            <li>Respiración profunda: 2-3 minutos</li>
+            <li>Hidratación inmediata</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con Blood & Guts</h1>
+
+        <h2>6.1 Microciclos y Mesociclos</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Énfasis</th>
+                <th>Protocolos Blood & Guts Principales</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Tensión Mecánica (80/20)</td>
+                <td>Blood & Guts-RT, Blood & Guts-NEG</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Híbrido (50/50)</td>
+                <td>Blood & Guts-CT, Blood & Guts-TM</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Estrés Metabólico (30/70)</td>
+                <td>Blood & Guts-RIV, Blood & Guts-ISOM</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Deload</td>
+                <td>Sin protocolos Blood & Guts, volumen reducido</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Ondulación de Intensidad y Volumen</h2>
+        <p>Blood & Guts permite manipular intensidad mediante selección de protocolo, no solo carga:</p>
+        <ul>
+            <li><strong>Alta Intensidad:</strong> Blood & Guts-NEG, Blood & Guts-RT → cargas pesadas, bajo volumen
+            </li>
+            <li><strong>Alto Volumen:</strong> Blood & Guts-RIV completo → cargas moderadas, TUT extremo</li>
+        </ul>
+
+        <h2>6.3 Fases de Acumulación, Intensificación y Realización</h2>
+        <ul>
+            <li><strong>Acumulación (4-6 sem):</strong> Blood & Guts-RIV, Blood & Guts-CT → volumen alto</li>
+            <li><strong>Intensificación (2-4 sem):</strong> Blood & Guts-RT, Blood & Guts-NEG → cargas máximas</li>
+            <li><strong>Realización (1-2 sem):</strong> Reducir Blood & Guts, mantener cargas</li>
+        </ul>
+
+        <h2>6.4 Descargas (Deloads)</h2>
+        <div class="warning-box">
+            <strong>⚠️ Blood & Guts es ALTAMENTE demandante.</strong> Deload cada 3-4 semanas es obligatorio.
+            Durante deload: eliminar protocolos Blood & Guts, mantener 40-50% del volumen normal.
+        </div>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>Blood & Guts requiere recuperación óptima debido a su intensidad HIT. La duración del ciclo varía según
+            nivel:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (2+ años req.)</td>
+                <td>6-8 semanas</td>
+                <td>Adaptación gradual al fallo + forced reps, menor riesgo de lesión</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas</td>
+                <td>Balance entre adaptación y fatiga del SNC, estilo HIT clásico</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>4 semanas intensivo</td>
+                <td>Fatiga rápida, necesita deload frecuente, régimen Dorian</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación B&G:</strong> Blood & Guts NO es para principiantes (<2 años). La aplicación NEXUS
+                adapta las opciones de duración según tu nivel. </div>
+
+                <h1 class="page-break">7. Progresión en Blood & Guts</h1>
+
+                <h2>7.1 Progresión de Carga y Reps</h2>
+                <ul>
+                    <li><strong>Aumentar reps por fase:</strong> Si completas más reps en cada mini-serie, mantén peso
+                    </li>
+                    <li><strong>Aumentar peso:</strong> Solo cuando Blood & Guts-RIV se siente "fácil" (raro)</li>
+                    <li><strong>Progresión típica:</strong> 2.5-5kg cada 2-3 semanas</li>
+                </ul>
+
+                <h2>7.2 Manipulación de Variables</h2>
+                <table>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Progresión</th>
+                    </tr>
+                    <tr>
+                        <td>Descansos RIV</td>
+                        <td>Reducir 5s en cada fase cuando dominas protocolo</td>
+                    </tr>
+                    <tr>
+                        <td>Fases CT</td>
+                        <td>Aumentar duración excéntrica/concéntrica (+1s)</td>
+                    </tr>
+                    <tr>
+                        <td>Hold Isométrico</td>
+                        <td>Extender de 3s a 5s gradualmente</td>
+                    </tr>
+                </table>
+
+                <h2>7.3 Progresión a Largo Plazo</h2>
+                <ul>
+                    <li><strong>Mes 1-2:</strong> Dominar Blood & Guts-RIV y Blood & Guts-CT</li>
+                    <li><strong>Mes 3-4:</strong> Incorporar Blood & Guts-RT y Blood & Guts-NEG</li>
+                    <li><strong>Mes 5+:</strong> Blood & Guts-TM personalizado según respuesta</li>
+                </ul>
+
+                <h1 class="page-break">8. Nutrición y Suplementación para Blood & Guts</h1>
+
+                <h2>8.1 Requerimientos Calóricos</h2>
+                <p>Blood & Guts genera alto gasto calórico por TUT extremo. Ajustar según objetivo:</p>
+                <ul>
+                    <li><strong>Volumen:</strong> Superávit 300-500 kcal</li>
+                    <li><strong>Definición:</strong> Déficit moderado 15-20% (Blood & Guts demandante)</li>
+                    <li><strong>Mantenimiento:</strong> TDEE + 200-300 kcal días Blood & Guts</li>
+                </ul>
+
+                <h2>8.2 Macronutrientes</h2>
+                <table>
+                    <tr>
+                        <th>Macro</th>
+                        <th>Recomendación Blood & Guts</th>
+                        <th>Razón</th>
+                    </tr>
+                    <tr>
+                        <td>Proteína</td>
+                        <td>2.2-2.5g/kg</td>
+                        <td>Síntesis y reparación muscular</td>
+                    </tr>
+                    <tr>
+                        <td>Carbohidratos</td>
+                        <td>4-6g/kg días Blood & Guts</td>
+                        <td>Reposición glucógeno (alto TUT)</td>
+                    </tr>
+                    <tr>
+                        <td>Grasas</td>
+                        <td>0.8-1g/kg</td>
+                        <td>Función hormonal</td>
+                    </tr>
+                </table>
+
+                <h2>8.3 Timing Nutricional</h2>
+                <ul>
+                    <li><strong>Pre-entreno (1-2h antes):</strong> Comida completa con carbos complejos</li>
+                    <li><strong>Intra-entreno:</strong> EAAs + carbohidratos simples (opcional pero beneficioso)</li>
+                    <li><strong>Post-entreno (30-60 min):</strong> Proteína + carbos rápidos</li>
+                </ul>
+
+                <h2>8.4 Suplementación Clave</h2>
+                <ul>
+                    <li><strong>Creatina:</strong> 5g/día (rendimiento y recuperación)</li>
+                    <li><strong>Citrulina Malato:</strong> 6-8g pre-entreno (bomba, resistencia)</li>
+                    <li><strong>Beta-Alanina:</strong> 3-5g/día (buffer ácido láctico)</li>
+                    <li><strong>EAAs:</strong> 10-15g intra-entreno (anti-catabolismo)</li>
+                </ul>
+
+                <h1 class="page-break">9. Ejemplos de Rutinas Blood & Guts por Grupo Muscular</h1>
+
+                <h2>9.1 Pecho</h2>
+                <div class="code-block">RUTINA Blood & Guts PECHO:
+
+                    A. Press Máquina Inclinado: 1x Blood & Guts-RIV Completo
+                    Peso: 70% 1RM → 8-9 mini-series al fallo
+                    Descanso después: 4-5 min
+
+                    B. Press Máquina Horizontal: 1x Blood & Guts-CT
+                    Peso inicial: 70% 1RM, reducción progresiva
+
+                    C. Aperturas Cable: 3x12-15 (técnica normal)
+                    + Contracción Pico 2s cada rep
+
+                    Duración: ~40 minutos</div>
+
+                <h2>9.2 Espalda</h2>
+                <div class="code-block">RUTINA Blood & Guts ESPALDA:
+
+                    A. Jalón Máquina: 1x Blood & Guts-RIV Completo
+                    Peso: 65-70% 1RM
+
+                    B. Remo Máquina: 1x Blood & Guts-CT
+                    Énfasis excéntrico en Fase 2
+
+                    C. Pulldown Brazos Rectos: 3x15 (técnica normal)
+                    + Isometría final 20s última serie
+
+                    Duración: ~45 minutos</div>
+
+                <h2>9.3 Piernas</h2>
+                <div class="code-block">RUTINA Blood & Guts PIERNAS:
+
+                    A. Prensa 45°: 1x Blood & Guts-RIV Completo
+                    Peso: 60-65% 1RM (¡cuidado con fatiga!)
+
+                    B. Extensión Cuádriceps: 1x Blood & Guts-CT
+
+                    C. Curl Femoral: 1x Blood & Guts-RT
+                    4 mini-series al fallo
+
+                    D. Gemelos Sentado: 3x15-20 + Isometría final
+
+                    Duración: ~50 minutos</div>
+
+                <h2>9.4 Hombros</h2>
+                <div class="code-block">RUTINA Blood & Guts HOMBROS:
+
+                    A. Press Hombro Máquina: 1x Blood & Guts-RT
+                    Peso: 75-80% 1RM
+
+                    B. Elevaciones Laterales Máquina: 1x Blood & Guts-RIV (versión corta)
+                    Solo 5 mini-series: 45-30-15-30-45
+
+                    C. Pájaros Máquina: 3x12-15 + Contracción Pico
+
+                    Duración: ~35 minutos</div>
+
+                <h2>9.5 Brazos</h2>
+                <div class="code-block">RUTINA Blood & Guts BRAZOS:
+
+                    BÍCEPS:
+                    A. Curl Máquina: 1x Blood & Guts-RIV (versión corta)
+                    B. Curl Scott: 2x10-12 + Isometría final
+
+                    TRÍCEPS:
+                    C. Extensión Polea: 1x Blood & Guts-CT
+                    D. Press Cerrado Máquina: 2x10-12
+
+                    Duración: ~30 minutos</div>
+
+                <h2 class="page-break">9.6 Estructuras por Nivel de Intensidad</h2>
+
+                <div class="highlight-box">
+                    <strong>🎯 Elige tu estructura según experiencia y disponibilidad.</strong>
+                    Blood & Guts funciona en cualquier división, pero algunas son más eficientes que otras.
+                </div>
+
+                <h3>Full Body (3 días/semana) - Intermedio</h3>
+                <div class="code-block">ESTRUCTURA FULL BODY Blood & Guts:
+                    Frecuencia: Lun/Mié/Vie
+                    Protocolo: 1 Blood & Guts Core por grupo grande
+
+                    DÍA A (Empuje + Piernas):
+                    - Press Máquina: 1x Blood & Guts-CT
+                    - Prensa: 1x Blood & Guts-RIV (corto)
+                    - Hombros + Tríceps: 2 ejercicios normales
+
+                    DÍA B (Tirón + Piernas):
+                    - Jalón: 1x Blood & Guts-RIV
+                    - Curl Femoral: 1x Blood & Guts-CT
+                    - Bíceps + Espalda: 2 ejercicios normales
+
+                    DÍA C (Híbrido):
+                    - Combinación según fatiga</div>
+
+                <h3>Upper/Lower (4 días/semana) - Intermedio-Avanzado</h3>
+                <table>
+                    <tr>
+                        <th>Día</th>
+                        <th>Enfoque</th>
+                        <th>Protocolos Blood & Guts</th>
+                    </tr>
+                    <tr>
+                        <td>Lunes</td>
+                        <td>Upper A (Empuje)</td>
+                        <td>1x RIV Pecho + 1x CT Hombros</td>
+                    </tr>
+                    <tr>
+                        <td>Martes</td>
+                        <td>Lower A (Cuádriceps)</td>
+                        <td>1x RIV Prensa + 1x CT Extensión</td>
+                    </tr>
+                    <tr>
+                        <td>Jueves</td>
+                        <td>Upper B (Tirón)</td>
+                        <td>1x RIV Espalda + 1x RT Bíceps</td>
+                    </tr>
+                    <tr>
+                        <td>Viernes</td>
+                        <td>Lower B (Posterior)</td>
+                        <td>1x CT Curl Femoral + 1x ISOM Gemelos</td>
+                    </tr>
+                </table>
+
+                <h3>Torso/Pierna (4 días/semana) - Avanzado</h3>
+                <div class="code-block">TORSO (Lun/Jue):
+                    A. Pecho: 1x Blood & Guts-RIV o CT
+                    B. Espalda: 1x Blood & Guts-RIV o CT
+                    C. Hombros: 1x Blood & Guts-RT
+                    D. Brazos: Trabajo accesorio
+
+                    PIERNA (Mar/Vie):
+                    A. Cuádriceps: 1x Blood & Guts-RIV
+                    B. Femoral: 1x Blood & Guts-CT
+                    C. Gemelos: 1x Blood & Guts-ISOM
+                    D. Glúteo: Trabajo accesorio</div>
+
+                <h3>Bro Split (5-6 días/semana) - Avanzado</h3>
+                <table>
+                    <tr>
+                        <th>Día</th>
+                        <th>Grupo</th>
+                        <th>Protocolos Blood & Guts</th>
+                    </tr>
+                    <tr>
+                        <td>Lunes</td>
+                        <td>Pecho</td>
+                        <td>1x RIV + 1x CT + Accesorios</td>
+                    </tr>
+                    <tr>
+                        <td>Martes</td>
+                        <td>Espalda</td>
+                        <td>1x RIV + 1x NEG + Accesorios</td>
+                    </tr>
+                    <tr>
+                        <td>Miércoles</td>
+                        <td>Piernas</td>
+                        <td>1x RIV Prensa + 1x CT Curl + Gemelos</td>
+                    </tr>
+                    <tr>
+                        <td>Jueves</td>
+                        <td>Hombros</td>
+                        <td>1x RT + 1x ISOM + Accesorios</td>
+                    </tr>
+                    <tr>
+                        <td>Viernes</td>
+                        <td>Brazos</td>
+                        <td>1x RIV corto Bíceps + 1x CT Tríceps</td>
+                    </tr>
+                </table>
+
+                <h2 class="page-break">9.7 Compatibilidad con Otras Metodologías</h2>
+                <table>
+                    <tr>
+                        <th>Metodología</th>
+                        <th>Compatible con Blood & Guts</th>
+                        <th>Recomendación</th>
+                    </tr>
+                    <tr>
+                        <td>Heavy Duty</td>
+                        <td style="background:#10B981; color:white;">✅ SÍ</td>
+                        <td>Misma filosofía HIT - intercambiar técnicas</td>
+                    </tr>
+                    <tr>
+                        <td>MTUT</td>
+                        <td style="background:#10B981; color:white;">✅ SÍ</td>
+                        <td>Usar MTUT en warm-ups o días solos</td>
+                    </tr>
+                    <tr>
+                        <td>Y3T</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>Filosofías opuestas</td>
+                    </tr>
+                    <tr>
+                        <td>SST</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>Demasiado volumen combinado</td>
+                    </tr>
+                    <tr>
+                        <td>FST-7</td>
+                        <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                        <td>Solo grupos pequeños ocasionalmente</td>
+                    </tr>
+                </table>
+
+                <h2>9.8 Calculadora de Cargas (%1RM)</h2>
+                <table>
+                    <tr>
+                        <th>Técnica</th>
+                        <th>% 1RM</th>
+                        <th>Reps Objetivo</th>
+                        <th>RPE</th>
+                    </tr>
+                    <tr>
+                        <td>Working Set</td>
+                        <td>75-80%</td>
+                        <td>8-10</td>
+                        <td>10 (fallo)</td>
+                    </tr>
+                    <tr>
+                        <td>Forced Reps Dorian</td>
+                        <td>80% + asistencia</td>
+                        <td>+2-3</td>
+                        <td>10+</td>
+                    </tr>
+                    <tr>
+                        <td>Drop Sets</td>
+                        <td>70% → 50% → 30%</td>
+                        <td>8→8→8</td>
+                        <td>10+</td>
+                    </tr>
+                </table>
+
+                <h2>9.9 Guía de Progresión Semanal</h2>
+                <div class="highlight-box">
+                    <strong>Cómo Progresar en Blood & Guts:</strong>
+                    <ol>
+                        <li><strong>Cada sesión:</strong> Diario de entrenamiento OBLIGATORIO</li>
+                        <li><strong>Si completaste 12 reps:</strong> Sube peso 2.5-5kg</li>
+                        <li><strong>Si no llegaste a 8 reps:</strong> Mantén peso</li>
+                        <li><strong>Cada 6-8 semanas:</strong> Deload (reducir intensidad 50%)</li>
+                    </ol>
+                </div>
+
+                <h2>9.10 Selector de Metodología por Objetivo</h2>
+                <table>
+                    <tr>
+                        <th>Tu Objetivo</th>
+                        <th>¿Blood & Guts es para ti?</th>
+                        <th>Alternativa</th>
+                    </tr>
+                    <tr>
+                        <td>Físico de competición</td>
+                        <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Sesiones cortas intensas</td>
+                        <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                        <td>Heavy Duty</td>
+                    </tr>
+                    <tr>
+                        <td>Sin spotter</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>MTUT</td>
+                    </tr>
+                    <tr>
+                        <td>Principiante</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>Y3T</td>
+                    </tr>
+                    <tr>
+                        <td>Solo pesos libres</td>
+                        <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                        <td>Heavy Duty</td>
+                    </tr>
+                </table>
+
+                <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+                <h2>10.1 Escuchar al Cuerpo</h2>
+                <ul>
+                    <li><strong>Fatiga excesiva:</strong> Reducir protocolos RIV, usar CT o RT</li>
+                    <li><strong>Dolor articular:</strong> Cambiar a ejercicios de máquina, reducir ROM</li>
+                    <li><strong>Falta de bomba:</strong> Verificar hidratación y carbohidratos</li>
+                </ul>
+
+                <h2>10.2 Descanso y Recuperación</h2>
+                <ul>
+                    <li><strong>Sueño:</strong> 7-9 horas (crítico para Blood & Guts)</li>
+                    <li><strong>Entre sesiones mismo grupo:</strong> Mínimo 48-72h</li>
+                    <li><strong>Cardio:</strong> LISS preferible, evitar HIIT días Blood & Guts</li>
+                </ul>
+
+                <h2>10.3 Prevención de Lesiones</h2>
+                <ul>
+                    <li><strong>Usar MÁQUINAS:</strong> Más seguro con fatiga extrema de Blood & Guts</li>
+                    <li><strong>Calentamiento extenso:</strong> 10-15 min obligatorio</li>
+                    <li><strong>Si no completas protocolo:</strong> Reduce peso, no fuerces</li>
+                </ul>
+
+                <h2 class="page-break">10.4 Guía Práctica de Implementación Paso a Paso</h2>
+
+                <div class="highlight-box">
+                    <strong>🎯 Esta sección contiene información práctica esencial</strong> que necesitas antes de tu
+                    primera
+                    sesión Blood & Guts. Sigue estos pasos en orden.
+                </div>
+
+                <h3>Paso 1: Calcular tu 1RM Estimado</h3>
+
+                <div class="highlight-box">
+                    <strong>¿Qué es el 1RM?</strong>
+                    <p>El <strong>1RM (One Rep Max)</strong> es el peso máximo que puedes levantar UNA sola vez. En
+                        Blood &
+                        Guts
+                        usamos
+                        diferentes porcentajes según el protocolo (60-85% 1RM).</p>
+                </div>
+
+                <div class="code-block">FÓRMULA EPLEY:
+                    1RM Estimado = Peso usado × (1 + Repeticiones / 30)
+
+                    EJEMPLO:
+                    Si haces 10 reps con 80kg en Prensa:
+                    1RM = 80 × (1 + 10/30) = 80 × 1.33 = 106kg
+
+                    Para Blood & Guts-RIV (65% de 106kg) = 69kg ← Peso de trabajo</div>
+
+                <h4>Tabla de Porcentajes Blood & Guts</h4>
+                <table>
+                    <tr>
+                        <th>Protocolo</th>
+                        <th>% 1RM</th>
+                        <th>Ejemplo (1RM=100kg)</th>
+                    </tr>
+                    <tr>
+                        <td>Blood & Guts-RIV</td>
+                        <td>60-70%</td>
+                        <td>60-70kg</td>
+                    </tr>
+                    <tr>
+                        <td>Blood & Guts-CT</td>
+                        <td>70% inicial</td>
+                        <td>70kg → reduce</td>
+                    </tr>
+                    <tr>
+                        <td>Blood & Guts-RT</td>
+                        <td>75-85%</td>
+                        <td>75-85kg</td>
+                    </tr>
+                    <tr>
+                        <td>Blood & Guts-NEG</td>
+                        <td>105-120%</td>
+                        <td>105-120kg (con ayuda)</td>
+                    </tr>
+                </table>
+
+                <h3>Paso 2: Checklist de Equipo</h3>
+                <table>
+                    <tr>
+                        <th>Grupo Muscular</th>
+                        <th>Máquinas Recomendadas</th>
+                    </tr>
+                    <tr>
+                        <td>Pecho</td>
+                        <td>Press máquina, Pec deck, Cruces polea</td>
+                    </tr>
+                    <tr>
+                        <td>Espalda</td>
+                        <td>Jalón máquina, Remo máquina, Pulldown</td>
+                    </tr>
+                    <tr>
+                        <td>Piernas</td>
+                        <td>Prensa, Extensión, Curl femoral, Hack squat</td>
+                    </tr>
+                    <tr>
+                        <td>Hombros</td>
+                        <td>Press máquina, Elevaciones laterales máquina</td>
+                    </tr>
+                    <tr>
+                        <td>Brazos</td>
+                        <td>Curl máquina, Extensión polea</td>
+                    </tr>
+                </table>
+
+                <h3>Paso 3: Tu Primera Sesión Blood & Guts</h3>
+                <div class="code-block">DÍA 1 - PRIMERA SESIÓN Blood & Guts (Ejemplo: Pecho)
+                    Duración: ~40-50 minutos
+
+                    FASE 1: CALENTAMIENTO (15 min)
+                    ├─ 5 min cardio ligero
+                    ├─ Movilidad articular
+                    └─ Series aproximación en press máquina
+
+                    FASE 2: Blood & Guts CORE (25-30 min)
+                    ├─ Ejercicio 1: Press Máquina [Blood & Guts-RIV versión CORTA]
+                    │ • Peso: 65% 1RM
+                    │ • SOLO: 45-30-15-30-45 (5 mini-series, no 8)
+                    │ • Primera vez = versión reducida
+                    │
+                    └─ Ejercicio 2: Aperturas Cable [Normal]
+                    • 3×12-15 + Contracción pico
+                    • Acostumbrarte a técnica Blood & Guts
+
+                    FASE 3: ENFRIAMIENTO (5 min)
+                    └─ Estiramientos estáticos</div>
+
+                <h3>Paso 4: Troubleshooting</h3>
+                <table>
+                    <tr>
+                        <th>Problema</th>
+                        <th>Causa</th>
+                        <th>Solución</th>
+                    </tr>
+                    <tr>
+                        <td>No completo todas las mini-series</td>
+                        <td>Peso muy alto</td>
+                        <td>Reduce 10-15% para próxima sesión</td>
+                    </tr>
+                    <tr>
+                        <td>No siento bomba</td>
+                        <td>Descansos muy largos o poca hidratación</td>
+                        <td>Cronometra descansos, toma agua</td>
+                    </tr>
+                    <tr>
+                        <td>Mareo durante Blood & Guts-RIV</td>
+                        <td>Falta respiración</td>
+                        <td>Respira entre mini-series, nunca aguantes</td>
+                    </tr>
+                    <tr>
+                        <td>DOMS extremo (+72h)</td>
+                        <td>Demasiado volumen</td>
+                        <td>Reduce a versión corta, aumenta gradualmente</td>
+                    </tr>
+                </table>
+
+                <h3>Paso 5: Transición Post-Blood & Guts</h3>
+                <div class="code-block">DESPUÉS DE CICLO Blood & Guts (4-6 semanas):
+
+                    SEMANA TRANSICIÓN:
+                    • Eliminar protocolos Blood & Guts completos
+                    • Mantener solo ejercicios normales
+                    • Carga: 70-75% 1RM
+                    • Objetivo: Reconectar con tensión mecánica
+
+                    SIGUIENTE CICLO:
+                    • Opción 1: Reiniciar Blood & Guts con progresión
+                    • Opción 2: Cambiar a metodología TM (Heavy Duty, etc.)
+                    • Opción 3: Híbrido según respuesta</div>
+
+                <h1 class="page-break">Apéndice A: Datos para Creación de Rutinas</h1>
+
+                <h2>A.1 Base de Datos de Ejercicios Blood & Guts (Dorian Style)</h2>
+                <table>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Ejercicios FAVORITOS Dorian</th>
+                        <th>Ejercicios a EVITAR</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Espalda</strong></td>
+                        <td>Remo Hammer, Jalón agarre neutro, Peso muerto parcial</td>
+                        <td>Dominadas (lesión bíceps)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pecho</strong></td>
+                        <td>Press inclinado Hammer, Aperturas máquina</td>
+                        <td>Press barra plano (muy hombro)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Piernas</strong></td>
+                        <td>Prensa 45°, Extensiones, Curl femoral acostado</td>
+                        <td>Sentadilla profunda</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hombros</strong></td>
+                        <td>Press máquina, Elevaciones laterales</td>
+                        <td>Press tras nuca</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Brazos</strong></td>
+                        <td>Curl predicador, Extensión overhead</td>
+                        <td>Curl barra recta</td>
+                    </tr>
+                </table>
+
+                <h2>A.2 Plantillas de Split Recomendados (Dorian Yates Original)</h2>
+                <div class="highlight-box">
+                    <strong>Split Original Blood & Guts (4 días):</strong>
+                    <ul>
+                        <li><strong>Día 1:</strong> Pecho + Bíceps</li>
+                        <li><strong>Día 2:</strong> DESCANSO</li>
+                        <li><strong>Día 3:</strong> Piernas</li>
+                        <li><strong>Día 4:</strong> DESCANSO</li>
+                        <li><strong>Día 5:</strong> Espalda + Trapecios</li>
+                        <li><strong>Día 6:</strong> Hombros + Tríceps</li>
+                        <li><strong>Día 7:</strong> DESCANSO</li>
+                    </ul>
+                </div>
+
+                <h2>A.3 Semana Tipo Completa Dorian</h2>
+                <table>
+                    <tr>
+                        <th>Día</th>
+                        <th>Grupo</th>
+                        <th>Ejercicios</th>
+                        <th>Series</th>
+                    </tr>
+                    <tr>
+                        <td>Lunes</td>
+                        <td>Pecho + Bíceps</td>
+                        <td>Press inclinado, Aperturas, Curl predicador, Curl martillo</td>
+                        <td>1 working set + forced reps</td>
+                    </tr>
+                    <tr>
+                        <td>Martes</td>
+                        <td colspan="3">DESCANSO</td>
+                    </tr>
+                    <tr>
+                        <td>Miércoles</td>
+                        <td>Piernas</td>
+                        <td>Extensiones, Prensa, Curl femoral, Pantorrillas</td>
+                        <td>1 working set + drop set</td>
+                    </tr>
+                    <tr>
+                        <td>Jueves</td>
+                        <td colspan="3">DESCANSO</td>
+                    </tr>
+                    <tr>
+                        <td>Viernes</td>
+                        <td>Espalda + Traps</td>
+                        <td>Jalón, Remo Hammer, Peso muerto parcial, Encogimientos</td>
+                        <td>1 working set + negativas</td>
+                    </tr>
+                    <tr>
+                        <td>Sábado</td>
+                        <td>Hombros + Tríceps</td>
+                        <td>Press hombro, Laterales, Extensiones triceps, Fondos</td>
+                        <td>1 working set + rest-pause</td>
+                    </tr>
+                    <tr>
+                        <td>Domingo</td>
+                        <td colspan="3">DESCANSO</td>
+                    </tr>
+                </table>
+
+                <h2>A.4 Protocolo de Calentamiento Blood & Guts</h2>
+                <div class="success-box">
+                    <strong>Calentamiento Dorian Style:</strong>
+                    <ul>
+                        <li><strong>Set 1:</strong> 30% 1RM x 15 reps (muy ligero, activa)</li>
+                        <li><strong>Set 2:</strong> 50% 1RM x 10 reps (siente el músculo)</li>
+                        <li><strong>Descanso:</strong> 2 minutos</li>
+                        <li><strong>Working Set:</strong> FALLO ABSOLUTO + 2-3 forced reps + negativa lenta</li>
+                    </ul>
+                </div>
+
+                <h2>A.5 Sistema de Deload Blood & Guts</h2>
+                <div class="warning-box">
+                    <strong>Reglas de Deload Dorian:</strong>
+                    <ul>
+                        <li><strong>Frecuencia:</strong> Cada 6-8 semanas</li>
+                        <li><strong>Duración:</strong> 1 semana completa</li>
+                        <li><strong>Cargas:</strong> 60% de las cargas normales</li>
+                        <li><strong>Fallo:</strong> NUNCA llegar al fallo en deload</li>
+                        <li><strong>Técnicas post-fallo:</strong> NINGUNA</li>
+                        <li><strong>Señales:</strong> Dolor articular persistente, estancamiento 2+ semanas</li>
+                    </ul>
+                </div>
+
+                <h1 class="page-break">Apéndice B: Datos Técnicos para Aplicación</h1>
+
+                <h2>B.1 Glosario de Términos Blood & Guts</h2>
+                <table>
+                    <tr>
+                        <th>Término</th>
+                        <th>Definición Dorian</th>
+                        <th>Uso en App</th>
+                    </tr>
+                    <tr>
+                        <td><code>Working Set</code></td>
+                        <td>Serie principal con fallo + técnicas post-fallo</td>
+                        <td>Set marcado especial</td>
+                    </tr>
+                    <tr>
+                        <td><code>Warm-up Sets</code></td>
+                        <td>2 sets progresivos sin fallo</td>
+                        <td>No contar como trabajo</td>
+                    </tr>
+                    <tr>
+                        <td><code>Hammer Strength</code></td>
+                        <td>Máquinas preferidas por Dorian</td>
+                        <td>Tag en ejercicio</td>
+                    </tr>
+                    <tr>
+                        <td><code>Blood & Guts</code></td>
+                        <td>Intensidad máxima cada set</td>
+                        <td>RPE 10 siempre</td>
+                    </tr>
+                </table>
+
+                <h2>B.2 Configuración de Timer para App</h2>
+                <table>
+                    <tr>
+                        <th>Fase</th>
+                        <th>Timer Descanso</th>
+                        <th>Timer Trabajo</th>
+                        <th>Alerta</th>
+                    </tr>
+                    <tr>
+                        <td>Entre ejercicios</td>
+                        <td>120s</td>
+                        <td>N/A</td>
+                        <td>Beep 30s antes</td>
+                    </tr>
+                    <tr>
+                        <td>Post-working set</td>
+                        <td>180s</td>
+                        <td>40-60s</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Post-negativas</td>
+                        <td>240s</td>
+                        <td>4-6s/rep</td>
+                        <td>Beep para cada rep</td>
+                    </tr>
+                </table>
+
+                <h2>B.3 Indicadores de Éxito</h2>
+                <div class="success-box">
+                    <strong>¿Cómo saber si Blood & Guts está funcionando?</strong>
+                    <ul>
+                        <li><strong>Semana 2-4:</strong> Más reps en working sets</li>
+                        <li><strong>Semana 4-8:</strong> Subiendo peso en ejercicios principales</li>
+                        <li><strong>Señal positiva:</strong> Sesiones de 45-60 min máximo</li>
+                        <li><strong>Señal negativa:</strong> Sesiones >75 min = demasiados ejercicios</li>
+                    </ul>
+                </div>
+
+                <h2>B.4 Protocolos de Transición</h2>
+                <div class="highlight-box">
+                    <strong>Cómo cambiar DESDE Blood & Guts:</strong>
+                    <ul>
+                        <li><strong>→ Heavy Duty:</strong> Transición directa (misma filosofía)</li>
+                        <li><strong>→ Y3T:</strong> 1 semana sin fallo, iniciar Y3T Week 1</li>
+                        <li><strong>→ FST-7:</strong> Agregar FST-7 solo como finisher 1x/semana</li>
+                        <li><strong>→ SST:</strong> No recomendado directamente, usar deload</li>
+                    </ul>
+                </div>
+
+                <h2>B.5 Plantilla de Tracking</h2>
+                <table>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Obligatorio</th>
+                        <th>Ejemplo Dorian</th>
+                    </tr>
+                    <tr>
+                        <td>Ejercicio</td>
+                        <td>✓</td>
+                        <td>Remo Hammer</td>
+                    </tr>
+                    <tr>
+                        <td>Warm-up 1</td>
+                        <td>✓</td>
+                        <td>30% x 15</td>
+                    </tr>
+                    <tr>
+                        <td>Warm-up 2</td>
+                        <td>✓</td>
+                        <td>50% x 10</td>
+                    </tr>
+                    <tr>
+                        <td>Working Set</td>
+                        <td>✓</td>
+                        <td>120kg x 10 + 2FR</td>
+                    </tr>
+                    <tr>
+                        <td>Técnica extra</td>
+                        <td>Si aplica</td>
+                        <td>+ negativa 6s</td>
+                    </tr>
+                </table>
+
+                <h2>B.6 FAQ / Troubleshooting</h2>
+                <div class="warning-box">
+                    <strong>Problemas Comunes Blood & Guts:</strong>
+                    <ul>
+                        <li><strong>No tengo máquinas Hammer:</strong> Usa máquinas similares con palanca</li>
+                        <li><strong>Sesión muy larga:</strong> Máximo 4-5 ejercicios por sesión</li>
+                        <li><strong>Sin compañero:</strong> Enfócate en drop sets y rest-pause</li>
+                        <li><strong>Lesión previa:</strong> Evita pesos libres, prioriza máquinas</li>
+                        <li><strong>No progreso:</strong> Revisa dieta y sueño antes de cambiar programa</li>
+                    </ul>
+                </div>
+
+                <h2 class="page-break">10.5 Especialización de Grupos Débiles</h2>
+
+                <div class="highlight-box">
+                    <strong>🎯 Priorización de Grupos Rezagados</strong>
+                    <p>Cuando un grupo muscular está menos desarrollado que el resto del cuerpo,
+                        Blood & Guts ofrece estrategias específicas de alta intensidad.</p>
+                </div>
+
+                <h3>Estrategia Blood & Guts para Grupos Débiles</h3>
+                <table>
+                    <tr>
+                        <th>Nivel</th>
+                        <th>Series Extra/Semana</th>
+                        <th>Frecuencia</th>
+                        <th>Técnica Recomendada</th>
+                    </tr>
+                    <tr>
+                        <td>Moderado</td>
+                        <td>+3-4 series</td>
+                        <td>3x/semana</td>
+                        <td>1 working set extra + drop</td>
+                    </tr>
+                    <tr>
+                        <td>Alto</td>
+                        <td>+6-8 series</td>
+                        <td>4x/semana</td>
+                        <td>Forced reps + negativas</td>
+                    </tr>
+                    <tr>
+                        <td>Especialización</td>
+                        <td>+9-12 series</td>
+                        <td>5-6x/semana</td>
+                        <td>Working set + drop + negativas</td>
+                    </tr>
+                </table>
+
+                <h3>Grupos Comunes a Priorizar</h3>
+                <table>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Warm-up</th>
+                        <th>Working Set</th>
+                        <th>Técnica Dorian</th>
+                    </tr>
+                    <tr>
+                        <td>Pantorrillas</td>
+                        <td>2x15 ligero</td>
+                        <td>Gemelo máquina</td>
+                        <td>10 reps + negativas 6s</td>
+                    </tr>
+                    <tr>
+                        <td>Bíceps</td>
+                        <td>2x12 curl</td>
+                        <td>Curl predicador</td>
+                        <td>8-10 + forced reps</td>
+                    </tr>
+                    <tr>
+                        <td>Deltoides Posterior</td>
+                        <td>2x15</td>
+                        <td>Pájaros máquina</td>
+                        <td>12 + drop set doble</td>
+                    </tr>
+                    <tr>
+                        <td>Trapecios</td>
+                        <td>2x15</td>
+                        <td>Shrugs máquina</td>
+                        <td>10 + negativas 5s</td>
+                    </tr>
+                </table>
+
+                <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS BLOOD & GUTS
+
+                    FRECUENCIA: Al inicio de CADA sesión (5-6x/semana)
+                    DURACIÓN: 8-10 minutos extra por sesión
+
+                    PROTOCOLO DORIAN:
+                    1. Warm-up: 2×15 @ 50%
+                    2. Working Set:
+                    - Gemelo sentado máquina
+                    - 10 reps @ 80% + FALLO
+                    - + 2 forced reps con ayuda
+                    - + 3 negativas de 6 segundos
+                    3. Stretch: 60 segundos bajo tensión
+
+                    RESULTADO ESPERADO: 6-8 semanas para desarrollo proporcional</div>
+
+                <h3>Reglas de Especialización Blood & Guts</h3>
+                <div class="warning-box">
+                    <strong>⚠️ Reglas Importantes:</strong>
+                    <ul>
+                        <li><strong>Grupo prioritario PRIMERO:</strong> Siempre al inicio cuando estás fresco</li>
+                        <li><strong>Máximo 1-2 grupos:</strong> La intensidad B&G no permite más</li>
+                        <li><strong>Duración:</strong> 6-8 semanas, luego reevaluar</li>
+                        <li><strong>Deload incluido:</strong> El grupo prioritario también descansa</li>
+                    </ul>
+                </div>
+
+                <h1>11. Conclusión</h1>
+                <div class="highlight-box">
+                    <p><strong>Blood & Guts es una herramienta poderosa para hipertrofia sarcoplásmica</strong> cuando
+                        se
+                        usa
+                        correctamente. Los protocolos de descansos variables y múltiples tipos de contracción ofrecen
+                        versatilidad única para romper mesetas y generar crecimiento por vías metabólicas.</p>
+                    <p>La clave es <strong>dominar un protocolo antes de añadir otros</strong>, respetar los deloads, y
+                        escuchar al cuerpo. Blood & Guts no es para entrenar todos los días del año, sino para ciclos
+                        específicos de
+                        4-6 semanas seguidos de períodos de recuperación o metodologías complementarias.</p>
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Resumen de Éxito Blood & Guts:</strong><br>
+                    • Domina Blood & Guts-RIV primero (protocolo más versátil)<br>
+                    • Usa máquinas para seguridad con fatiga extrema<br>
+                    • Deload cada 3-4 semanas es obligatorio<br>
+                    • Nutrición alta en carbohidratos para reposición<br>
+                    • Combina con metodologías TM en mesociclos largos
+                </div>
+
+                <h3>Atletas Conocidos que Usan Blood & Guts</h3>
+                <ul>
+                    <li><strong>Dorian Yates</strong> - Creador del sistema</li>
+                    <li><strong>Atletas IFBB Pro</strong> - Uso en fases de volumen y definición</li>
+                    <li><strong>Culturistas naturales</strong> - Popular por sus protocolos sin fallo absoluto</li>
+                </ul>
+
+                <h3>Comparación Rápida</h3>
+                <table>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>Blood & Guts</th>
+                        <th>MTUT</th>
+                        <th>FST-7</th>
+                    </tr>
+                    <tr>
+                        <td>Intensidad vía</td>
+                        <td>Descansos variables</td>
+                        <td>TUT (tiempo)</td>
+                        <td>Pump (7 series)</td>
+                    </tr>
+                    <tr>
+                        <td>Carga típica</td>
+                        <td>60-80% 1RM</td>
+                        <td>40-50% 1RM</td>
+                        <td>60-70% 1RM</td>
+                    </tr>
+                    <tr>
+                        <td>TUT por serie</td>
+                        <td>60-90s por mini-serie</td>
+                        <td>80-130s</td>
+                        <td>30-50s (x7)</td>
+                    </tr>
+                    <tr>
+                        <td>Estrés articular</td>
+                        <td>Medio</td>
+                        <td>Muy bajo ⭐</td>
+                        <td>Bajo</td>
+                    </tr>
+                    <tr>
+                        <td>Duración recomendada</td>
+                        <td>4-6 semanas</td>
+                        <td>4-6 semanas</td>
+                        <td>Continuo</td>
+                    </tr>
+                    <tr>
+                        <td>Spotter requerido</td>
+                        <td>Preferible</td>
+                        <td>No ⭐</td>
+                        <td>No</td>
+                    </tr>
+                </table>
+
+                <div
+                    style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, var(--dark), #1E293B); color: white; border-radius: 12px;">
+                    <h2 style="color: var(--primary); margin-bottom: 15px;">Blood & Guts - Dorian Yates Training Method
+                    </h2>
+                    <p style="opacity: 0.9;">Metodología Maestra Unificada</p>
+                    <p style="opacity: 0.7; font-size: 0.9rem;">Basado en trabajo de Dorian Yates</p>
+                    <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Diciembre 2025</p>
+                </div>
+        </div>
+
+        <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nivel de Experiencia</th>
+                    <th>Duración del Ciclo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Principiante (1‑2 años)</td>
+                    <td>6‑8 semanas</td>
+                </tr>
+                <tr>
+                    <td>Intermedio (2‑5 años)</td>
+                    <td>4‑6 semanas</td>
+                </tr>
+                <tr>
+                    <td>Avanzado (5+ años)</td>
+                    <td>3‑4 semanas</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Estructura</th>
+                    <th>Días por semana</th>
+                    <th>Nivel recomendado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Full Body</td>
+                    <td>3</td>
+                    <td>Principiante</td>
+                </tr>
+                <tr>
+                    <td>Upper/Lower</td>
+                    <td>4</td>
+                    <td>Intermedio‑Avanzado</td>
+                </tr>
+                <tr>
+                    <td>Torso/Pierna</td>
+                    <td>4</td>
+                    <td>Avanzado</td>
+                </tr>
+                <tr>
+                    <td>Bro Split</td>
+                    <td>5‑6</td>
+                    <td>Avanzado</td>
+                </tr>
+            </tbody>
+        </table>
+</body>
+
+</html>

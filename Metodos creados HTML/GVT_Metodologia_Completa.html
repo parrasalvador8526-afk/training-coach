@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GVT - German Volume Training</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #DC2626;
+            --secondary: #EF4444;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #B91C1C;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 10pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>GVT</h1>
+        <p class="subtitle">German Volume Training</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Sistema de entrenamiento de alto volumen 10×10 desarrollado por
+            Charles Poliquin para maximizar hipertrofia mediante acumulación de volumen con cargas moderadas.</p>
+        <p class="author">Creador: Charles Poliquin · Strength Coach</p>
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 ATLETAS DESTACADOS
+                    GVT:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Jacques Demers (Weightlifter) ·
+                <strong>2.</strong> Bev Francis (Powerlifter) ·
+                <strong>3.</strong> Vince Gironda (Pioneer) ·
+                <strong>4.</strong> Mike Mentzer (Adaptation) ·
+                <strong>5.</strong> Arnold Schwarzenegger (Volume Training)
+            </p>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Sistema Clásico 10×10 · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al GVT</li>
+                <li><strong>2.</strong> Objetivos del GVT</li>
+                <li><strong>3.</strong> Principios Básicos del GVT</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT)</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en GVT</li>
+                <li><strong>4.</strong> Métodos y Técnicas del GVT</li>
+                <li class="sub">4.1 Protocolo Clásico 10×10</li>
+                <li class="sub">4.2 Variantes del GVT</li>
+                <li class="sub">4.3 Selección de Ejercicios</li>
+                <li class="sub">4.4 Control del Tempo</li>
+                <li class="sub">4.5 RPE/RIR en GVT</li>
+                <li class="sub">4.6 Compatibilidad con Otras Metodologías</li>
+                <li class="sub">4.7 Cuándo Usar GVT</li>
+                <li class="sub">4.8 Limitantes del Sistema GVT</li>
+                <li class="sub">4.9 Ejemplo: Rutina Pecho en Ciclo de 6 Semanas</li>
+                <li><strong>5.</strong> Estructura de una Sesión GVT</li>
+                <li class="sub">5.1 Calentamiento</li>
+                <li class="sub">5.2 Ejercicio Principal (10×10)</li>
+                <li class="sub">5.3 Ejercicios Accesorios</li>
+                <li class="sub">5.4 Enfriamiento</li>
+                <li><strong>6.</strong> Periodización con GVT</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Progresión de Carga</li>
+                <li class="sub">6.3 Deloads</li>
+                <li class="sub">6.4 Fases de Acumulación, Intensificación y Realización</li>
+                <li><strong>7.</strong> Progresión en GVT</li>
+                <li class="sub">7.1 Progresión de Carga y Reps</li>
+                <li class="sub">7.2 Manipulación de Variables (TUT, Descanso, Peso)</li>
+                <li class="sub">7.3 Progresión a Largo Plazo</li>
+                <li><strong>8.</strong> Nutrición y Suplementación</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Timing Nutricional</li>
+                <li class="sub">8.4 Suplementación</li>
+                <li><strong>9.</strong> Rutinas por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas</li>
+                <li class="sub">9.4 Hombros | 9.5 Brazos | 9.6 División Semanal</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía de Implementación</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al GVT</h1>
+        <div class="highlight-box">
+            <strong>German Volume Training (GVT)</strong> es una metodología de entrenamiento creada por <strong>Charles
+                Poliquin</strong> basada en realizar 10 series de 10 repeticiones con el mismo peso, usando un tempo
+            controlado de 4-0-2 y descansos de 60 segundos.
+        </div>
+        <p>El GVT se originó en Alemania en los años 70s como método de entrenamiento para halterófilos durante la
+            temporada baja. Su simplicidad y efectividad lo convirtieron en uno de los protocolos más utilizados para
+            ganar masa muscular rápidamente.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">10×10</div>
+                <div class="label">Series × Reps</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">60s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4-0-2</div>
+                <div class="label">Tempo</div>
+            </div>
+        </div>
+
+        <h3>Filosofía del GVT</h3>
+        <ul>
+            <li><strong>Volumen extremo:</strong> 100 repeticiones totales por ejercicio principal</li>
+            <li><strong>Acumulación de fatiga:</strong> Las primeras series son "fáciles", las últimas brutales</li>
+            <li><strong>Simplicidad:</strong> Un ejercicio principal por grupo muscular</li>
+            <li><strong>Tempo controlado:</strong> 4 segundos bajando, 2 subiendo = máximo TUT</li>
+        </ul>
+
+        <h1>2. Objetivos del GVT</h1>
+        <ul>
+            <li><strong>Hipertrofia Masiva:</strong> El alto volumen genera daño muscular significativo</li>
+            <li><strong>Resistencia Muscular:</strong> 100 reps desarrollan capacidad de trabajo</li>
+            <li><strong>Densidad Muscular:</strong> Tempo lento maximiza tiempo bajo tensión</li>
+            <li><strong>Eficiencia:</strong> Pocas sesiones semanales, máximo estímulo</li>
+            <li><strong>Romper Mesetas:</strong> Shock al sistema después de entrenamientos tradicionales</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del GVT</h1>
+
+        <h2>3.1 Tiempo Bajo Tensión (TUT)</h2>
+        <p>El GVT maximiza el TUT mediante su tempo característico:</p>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Duración</th>
+                <th>Descripción</th>
+            </tr>
+            <tr>
+                <td>Excéntrica (Bajar)</td>
+                <td>4 segundos</td>
+                <td>Control total, sin rebote</td>
+            </tr>
+            <tr>
+                <td>Pausa Inferior</td>
+                <td>0 segundos</td>
+                <td>Sin pausa, transición fluida</td>
+            </tr>
+            <tr>
+                <td>Concéntrica (Subir)</td>
+                <td>2 segundos</td>
+                <td>Controlado, sin momentum</td>
+            </tr>
+        </table>
+        <div class="warning-box">
+            <strong>⚠️ TUT por serie:</strong> 60 segundos (10 reps × 6 seg/rep)<br>
+            <strong>TUT total ejercicio principal:</strong> 600 segundos (10 minutos!)
+        </div>
+
+        <h2>3.2 Rangos de Repeticiones y Fibras</h2>
+        <table>
+            <tr>
+                <th>Componente</th>
+                <th>GVT Clásico</th>
+                <th>Fibras Target</th>
+            </tr>
+            <tr>
+                <td>Ejercicio Principal</td>
+                <td>10×10 @ 60% 1RM</td>
+                <td>Tipo I y IIA</td>
+            </tr>
+            <tr>
+                <td>Ejercicios Accesorios</td>
+                <td>3×10-12</td>
+                <td>Tipo IIA</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Tipos de Contracción</h2>
+        <ul>
+            <li><strong>Énfasis Excéntrico:</strong> 4 segundos bajando genera máximo daño muscular</li>
+            <li><strong>Concéntrica Controlada:</strong> Sin usar impulso ni rebote</li>
+            <li><strong>Sin Pausas:</strong> Movimiento continuo para mantener tensión</li>
+        </ul>
+
+        <h2>3.4 Fallo Muscular en GVT</h2>
+        <div class="danger-box">
+            <strong>❌ NO buscar el fallo en GVT:</strong>
+            <ul>
+                <li>Las primeras 5-6 series deben sentirse "fáciles"</li>
+                <li>Series 7-8 empiezan a ser desafiantes</li>
+                <li>Series 9-10 son muy difíciles pero completables</li>
+                <li>Si fallas antes de serie 8, el peso es muy alto</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del GVT</h1>
+
+        <h2>4.1 Protocolo Clásico 10×10</h2>
+        <div class="code-block">PROTOCOLO GVT CLÁSICO:
+
+            Ejercicio Principal: 10 series × 10 repeticiones
+            Peso: 60% de tu 1RM (o peso que puedas hacer 20 reps)
+            Tempo: 4-0-2 (4 seg bajar, 0 pausa, 2 seg subir)
+            Descanso: 60 segundos entre series
+            Ejercicios Accesorios: 3×10-12 con 60s descanso
+
+            EJEMPLO PECHO + ESPALDA:
+            A1. Press Banca: 10×10 @ 60% 1RM, 60s descanso
+            A2. Remo con Barra: 10×10 @ 60% 1RM, 60s descanso
+            (Superset antagonista)
+
+            B1. Aperturas Inclinadas: 3×10-12
+            B2. Pullover: 3×10-12</div>
+
+        <h2>4.2 Variantes del GVT</h2>
+        <table>
+            <tr>
+                <th>Variante</th>
+                <th>Estructura</th>
+                <th>Uso</th>
+            </tr>
+            <tr>
+                <td>GVT Clásico</td>
+                <td>10×10 @ 60%</td>
+                <td>Principiantes en GVT</td>
+            </tr>
+            <tr>
+                <td>GVT Avanzado</td>
+                <td>10×6 @ 70%</td>
+                <td>Mayor fuerza</td>
+            </tr>
+            <tr>
+                <td>GVT 2000</td>
+                <td>10×5 @ 75%</td>
+                <td>Fuerza-hipertrofia</td>
+            </tr>
+            <tr>
+                <td>GVT Superset</td>
+                <td>10×10 antagonistas</td>
+                <td>Eficiencia de tiempo</td>
+            </tr>
+        </table>
+
+        <h2>4.3 Selección de Ejercicios</h2>
+        <div class="success-box">
+            <strong>✅ Ejercicios IDEALES para GVT:</strong>
+            <ul>
+                <li><strong>Pecho:</strong> Press Banca, Press Inclinado, Fondos</li>
+                <li><strong>Espalda:</strong> Remo Barra, Dominadas, Jalón</li>
+                <li><strong>Piernas:</strong> Sentadilla, Prensa, Peso Muerto Rumano</li>
+                <li><strong>Hombros:</strong> Press Militar, Press Arnold</li>
+                <li><strong>Brazos:</strong> Curl Barra, Fondos Cerrados</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ Ejercicios a EVITAR en GVT:</strong>
+            <ul>
+                <li>Peso Muerto convencional (muy demandante para SNC)</li>
+                <li>Ejercicios de aislamiento extremo</li>
+                <li>Ejercicios que requieren mucha técnica</li>
+            </ul>
+        </div>
+
+        <h2>4.4 Control del Tempo</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Tempo</th>
+                <th>Sensación</th>
+            </tr>
+            <tr>
+                <td>Ejercicio Principal</td>
+                <td>4-0-2</td>
+                <td>Controlado, sin prisa</td>
+            </tr>
+            <tr>
+                <td>Accesorios</td>
+                <td>3-0-2</td>
+                <td>Moderadamente lento</td>
+            </tr>
+        </table>
+
+        <h2>4.5 RPE/RIR en GVT</h2>
+        <table>
+            <tr>
+                <th>Serie</th>
+                <th>RPE Esperado</th>
+                <th>RIR Esperado</th>
+            </tr>
+            <tr>
+                <td>1-3</td>
+                <td>5-6</td>
+                <td>5+</td>
+            </tr>
+            <tr>
+                <td>4-6</td>
+                <td>7</td>
+                <td>3-4</td>
+            </tr>
+            <tr>
+                <td>7-8</td>
+                <td>8</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>9-10</td>
+                <td>9</td>
+                <td>1</td>
+            </tr>
+        </table>
+
+        <h2>4.6 Compatibilidad con Otras Metodologías</h2>
+        <div class="success-box">
+            <strong>✅ Compatible con:</strong>
+            <ul>
+                <li><strong>Deload Y3T:</strong> GVT funciona excelente como fase de acumulación antes de Y3T</li>
+                <li><strong>FST-7 finisher:</strong> Puedes añadir FST-7 al final de accesorios (no del 10×10)</li>
+                <li><strong>MTUT:</strong> El tempo 4-0-2 de GVT es similar al enfoque MTUT</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ Incompatible con:</strong>
+            <ul>
+                <li><strong>Heavy Duty:</strong> Filosofías opuestas (volumen extremo vs. mínimo)</li>
+                <li><strong>DC Training:</strong> Demasiada demanda combinada para el SNC</li>
+                <li><strong>5/3/1:</strong> No combinar en la misma semana, diferentes objetivos</li>
+            </ul>
+        </div>
+
+        <h2>4.7 Cuándo Usar GVT</h2>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar GVT cuando:</strong>
+            <ul>
+                <li>Tienes 1+ años de experiencia entrenando</li>
+                <li>Quieres ganar masa muscular rápidamente</li>
+                <li>Estás en fase de volumen (+300-500 kcal)</li>
+                <li>Puedes dormir 7-8 horas diarias</li>
+                <li>Tienes 60-75 minutos por sesión</li>
+                <li>No compites en otro deporte simultáneamente</li>
+                <li>Quieres romper una meseta de hipertrofia</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar GVT cuando:</strong>
+            <ul>
+                <li><strong>Déficit calórico:</strong> No hay suficiente energía para recuperarse</li>
+                <li><strong>Principiante:</strong> Demasiado volumen sin base técnica sólida</li>
+                <li><strong>Lesiones activas:</strong> El alto volumen agrava problemas articulares</li>
+                <li><strong>Estrés elevado:</strong> El SNC no puede manejar la carga adicional</li>
+                <li><strong>Preparación para competencia de fuerza:</strong> GVT no optimiza 1RM</li>
+                <li><strong>Tiempo limitado (&lt;45 min):</strong> Las sesiones GVT requieren tiempo</li>
+            </ul>
+        </div>
+
+        <h2>4.8 Limitantes del Sistema GVT</h2>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>No es óptimo para desarrollo de fuerza máxima (mejor usar 5/3/1)</li>
+                <li>Puede ser muy aburrido - mismas series y reps cada sesión</li>
+                <li>Alto riesgo de sobreentrenamiento si no se respetan descansos</li>
+                <li>DOMS severo las primeras semanas puede afectar vida diaria</li>
+                <li>No recomendado por más de 6-8 semanas consecutivas</li>
+                <li>Requiere acceso a pesas libres y rack (difícil en gimnasios concurridos)</li>
+            </ul>
+        </div>
+
+        <h2>4.9 Ejemplo: Rutina Pecho en Ciclo GVT de 6 Semanas</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Ejercicio Principal</th>
+                <th>Estructura</th>
+                <th>Peso</th>
+                <th>Observaciones</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Press Banca</td>
+                <td>10×10</td>
+                <td>60 kg</td>
+                <td>Establecer baseline, series 1-6 fáciles</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Press Banca</td>
+                <td>10×10</td>
+                <td>60 kg</td>
+                <td>Mantener peso, mejorar tempo</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Press Banca</td>
+                <td>10×10</td>
+                <td>62.5 kg</td>
+                <td>+2.5 kg si completó semanas 1-2</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Press Banca</td>
+                <td>10×6</td>
+                <td>75 kg</td>
+                <td>Fase GVT Avanzado, más peso</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Press Banca</td>
+                <td>10×6</td>
+                <td>77.5 kg</td>
+                <td>Progresión si completó semana 4</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Press Banca</td>
+                <td>5×10</td>
+                <td>50 kg</td>
+                <td>Deload, recuperación activa</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">5. Estructura de una Sesión GVT</h1>
+
+        <h2>5.1 Calentamiento</h2>
+        <div class="code-block">CALENTAMIENTO GVT (10-15 min):
+
+            1. Cardio ligero: 5 min (bici, caminadora)
+            2. Movilidad articular: 3-5 min
+            3. Series de aproximación:
+            - 1×15 @ 30% (solo barra o peso muy ligero)
+            - 1×10 @ 50%
+            - 1×5 @ 55%
+            4. Iniciar 10×10 @ 60%</div>
+
+        <h2>5.2 Ejercicio Principal (10×10)</h2>
+        <ul>
+            <li><strong>1 ejercicio compuesto por grupo muscular</strong></li>
+            <li>10 series × 10 reps con MISMO peso</li>
+            <li>60 segundos de descanso estrictos (usar timer)</li>
+            <li>Tempo 4-0-2 en TODAS las reps</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios</h2>
+        <ul>
+            <li>2-3 ejercicios de aislamiento</li>
+            <li>3 series × 10-12 reps cada uno</li>
+            <li>60 segundos de descanso</li>
+            <li>Tempo 3-0-2</li>
+        </ul>
+
+        <h2>5.4 Enfriamiento</h2>
+        <ul>
+            <li>Estiramiento estático: 5-10 minutos</li>
+            <li>Foam rolling opcional</li>
+            <li>Hidratación inmediata</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con GVT</h1>
+
+        <h2>6.1 Microciclos y Mesociclos</h2>
+        <div class="highlight-box">
+            <strong>Mesociclo GVT Típico: 6 semanas</strong>
+            <ul>
+                <li>Semanas 1-3: GVT Clásico 10×10</li>
+                <li>Semanas 4-5: GVT Avanzado 10×6 con más peso</li>
+                <li>Semana 6: Deload (5×10 @ 50%)</li>
+            </ul>
+        </div>
+
+        <h2>6.2 Progresión de Carga</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Estructura</th>
+                <th>Peso</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>10×10</td>
+                <td>60% 1RM</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>10×10</td>
+                <td>60% (si completaste todas)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>10×10</td>
+                <td>+2.5-5kg si completaste S1-2</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>10×6</td>
+                <td>70% 1RM</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>10×6</td>
+                <td>70% o +2.5kg</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>5×10</td>
+                <td>50% (Deload)</td>
+            </tr>
+        </table>
+
+        <h2>6.3 Deloads</h2>
+        <div class="warning-box">
+            <strong>⚠️ Deload OBLIGATORIO cada 5-6 semanas:</strong>
+            <ul>
+                <li>Reducir volumen a 50%</li>
+                <li>Mantener tempo pero bajar peso</li>
+                <li>5×10 en lugar de 10×10</li>
+                <li>Enfocarse en recuperación</li>
+            </ul>
+        </div>
+
+        <h2>6.4 Fases de Acumulación, Intensificación y Realización</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Semanas</th>
+                <th>Objetivo</th>
+                <th>Características</th>
+            </tr>
+            <tr>
+                <td>Acumulación</td>
+                <td>1-3</td>
+                <td>Construir volumen base</td>
+                <td>10×10 @ 60%, enfoque en tempo y técnica</td>
+            </tr>
+            <tr>
+                <td>Intensificación</td>
+                <td>4-5</td>
+                <td>Aumentar intensidad</td>
+                <td>10×6 @ 70-75%, mayor carga, menos reps</td>
+            </tr>
+            <tr>
+                <td>Realización</td>
+                <td>6</td>
+                <td>Recuperación y supercompensación</td>
+                <td>5×10 @ 50%, deload activo</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>Después del ciclo GVT:</strong>
+            <p>Tras 6 semanas de GVT, rotar a un programa de menor volumen (Heavy Duty, Y3T Semana 1, o 5/3/1) por 4-6
+                semanas para consolidar ganancias de fuerza.</p>
+        </div>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>La duración óptima del ciclo GVT varía según el nivel de experiencia del atleta, basándose en evidencia
+            científica sobre capacidad de recuperación y tolerancia al alto volumen:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (1-2 años)</td>
+                <td>6-8 semanas</td>
+                <td>Mayor capacidad de adaptación al volumen extremo, recuperación más rápida</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas</td>
+                <td>Balance entre adaptación y fatiga acumulada, DOMS manejable</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>3-4 semanas</td>
+                <td>Fatiga rápida del SNC, rotar GVT Clásico→Avanzado→2000</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación GVT:</strong> La aplicación NEXUS adapta automáticamente las opciones de duración
+            según tu nivel. Para GVT, se recomienda no exceder 6 semanas consecutivas incluso en principiantes.
+        </div>
+
+        <h2>6.6 Estructuras por Nivel de Intensidad</h2>
+        <table>
+            <tr>
+                <th>Split</th>
+                <th>Días/Semana</th>
+                <th>Frecuencia</th>
+                <th>Nivel Recomendado</th>
+                <th>Uso Ideal</th>
+            </tr>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>3x/semana</td>
+                <td>Principiante</td>
+                <td>Aprender 10×10, adaptación</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>2x/semana</td>
+                <td>Intermedio-Avanzado</td>
+                <td>Balance óptimo</td>
+            </tr>
+            <tr>
+                <td>Push/Pull/Legs</td>
+                <td>6</td>
+                <td>2x/semana</td>
+                <td>Avanzado</td>
+                <td>Máximo volumen por grupo</td>
+            </tr>
+            <tr>
+                <td>Antagonist Superset</td>
+                <td>3-4</td>
+                <td>1.5x/semana</td>
+                <td>Intermedio+</td>
+                <td>Eficiencia de tiempo</td>
+            </tr>
+        </table>
+
+        <h1>7. Progresión en GVT</h1>
+
+        <h2>7.1 Progresión de Carga y Reps</h2>
+        <div class="success-box">
+            <strong>✅ Regla de Progresión Principal:</strong>
+            <p>Solo aumentar peso cuando completes las 10×10 con el tempo correcto (4-0-2) y te sobren 1-2 reps en la
+                última serie.</p>
+        </div>
+        <table>
+            <tr>
+                <th>Situación</th>
+                <th>Acción</th>
+                <th>Ejemplo</th>
+            </tr>
+            <tr>
+                <td>Completaste 10×10 fácil (RPE < 8 en serie 10)</td>
+                <td>+2.5-5 kg próxima semana</td>
+                <td>60 kg → 62.5 kg</td>
+            </tr>
+            <tr>
+                <td>Completaste 10×10 difícil (RPE 9 en serie 10)</td>
+                <td>Mantener peso</td>
+                <td>60 kg → 60 kg</td>
+            </tr>
+            <tr>
+                <td>Fallaste en serie 8-10</td>
+                <td>Mantener peso, mejorar descanso/nutrición</td>
+                <td>Revisar sueño y calorías</td>
+            </tr>
+            <tr>
+                <td>Fallaste en serie 1-7</td>
+                <td>Reducir peso 5-10%</td>
+                <td>60 kg → 55 kg</td>
+            </tr>
+        </table>
+
+        <h2>7.2 Manipulación de Variables (TUT, Descanso, Peso)</h2>
+        <table>
+            <tr>
+                <th>Variable</th>
+                <th>Cómo Manipular</th>
+                <th>Efecto</th>
+            </tr>
+            <tr>
+                <td>Tempo</td>
+                <td>4-0-2 → 5-0-2 → 3-0-2</td>
+                <td>Aumenta/disminuye dificultad sin cambiar peso</td>
+            </tr>
+            <tr>
+                <td>Descanso</td>
+                <td>60s → 75s → 45s</td>
+                <td>Más descanso = más fuerza, menos = más metabólico</td>
+            </tr>
+            <tr>
+                <td>Peso</td>
+                <td>+2.5 kg cada 2-3 semanas</td>
+                <td>Progresión lineal clásica</td>
+            </tr>
+            <tr>
+                <td>Reps (fase avanzada)</td>
+                <td>10→8→6</td>
+                <td>Permite aumentar carga significativamente</td>
+            </tr>
+        </table>
+        <div class="warning-box">
+            <strong>⚠️ Orden de progresión recomendado:</strong>
+            <ol>
+                <li>Primero: Perfeccionar tempo (4-0-2 estricto)</li>
+                <li>Segundo: Completar todas las 10×10</li>
+                <li>Tercero: Aumentar peso (+2.5 kg)</li>
+                <li>Cuarto: Reducir descanso (opcional, 60s → 45s)</li>
+            </ol>
+        </div>
+
+        <h2>7.3 Progresión a Largo Plazo</h2>
+        <div class="highlight-box">
+            <strong>Plan de 24 Semanas con GVT:</strong>
+        </div>
+        <table>
+            <tr>
+                <th>Bloque</th>
+                <th>Semanas</th>
+                <th>Metodología</th>
+                <th>Objetivo</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1-6</td>
+                <td>GVT Clásico</td>
+                <td>Hipertrofia masiva</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>7-10</td>
+                <td>5/3/1 o Y3T Heavy</td>
+                <td>Consolidar fuerza</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>11-16</td>
+                <td>GVT Avanzado (10×6)</td>
+                <td>Hipertrofia + fuerza</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>17-20</td>
+                <td>FST-7 o SST</td>
+                <td>Densidad muscular</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>21-24</td>
+                <td>GVT 2000 (10×5)</td>
+                <td>Fuerza-hipertrofia</td>
+            </tr>
+        </table>
+        <div class="success-box">
+            <strong>✅ Resultado esperado en 24 semanas:</strong>
+            <ul>
+                <li>+5-10 kg de masa muscular (en superávit)</li>
+                <li>+15-25% en fuerza de ejercicios principales</li>
+                <li>Mejor capacidad de trabajo y resistencia muscular</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">8. Nutrición y Suplementación</h1>
+
+        <h2>8.1 Requerimientos Calóricos</h2>
+        <div class="highlight-box">
+            <strong>GVT requiere SUPERÁVIT calórico:</strong>
+            <p>Mínimo +300-500 kcal sobre mantenimiento. El alto volumen genera demanda metabólica extrema.</p>
+        </div>
+
+        <h2>8.2 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+                <th>Timing</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.0-2.2 g/kg</td>
+                <td>Distribuida en 4-5 comidas</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>4-6 g/kg</td>
+                <td>Mayoría peri-entrenamiento</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1 g/kg</td>
+                <td>Evitar pre-entreno</td>
+            </tr>
+        </table>
+
+        <h2>8.3 Timing Nutricional</h2>
+        <ul>
+            <li><strong>Pre-entreno (2h antes):</strong> Comida sólida con carbos complejos</li>
+            <li><strong>Intra-entreno:</strong> BCAA o EAA opcionales, electrolitos</li>
+            <li><strong>Post-entreno:</strong> Proteína + carbos rápidos dentro de 1h</li>
+        </ul>
+
+        <h2>8.4 Suplementación</h2>
+        <ul>
+            <li><strong>Creatina:</strong> 5g diarios (muy recomendado)</li>
+            <li><strong>Proteína Whey:</strong> Para completar requerimientos</li>
+            <li><strong>Magnesio/Zinc:</strong> Para recuperación</li>
+            <li><strong>Cafeína:</strong> Opcional pre-entreno</li>
+        </ul>
+
+        <h1 class="page-break">9. Rutinas por Grupo Muscular</h1>
+
+        <div class="highlight-box">
+            <strong>📋 PARÁMETROS GVT ESTÁNDAR:</strong>
+            <ul>
+                <li><strong>Ejercicio Principal:</strong> 10×10 @ 60% 1RM</li>
+                <li><strong>Tempo:</strong> 4-0-2 (4s excéntrica, 0 pausa, 2s concéntrica)</li>
+                <li><strong>Descanso:</strong> 60 segundos (estrictos, usar timer)</li>
+                <li><strong>Accesorios:</strong> 3×10-12, tempo 3-0-2, 60s descanso</li>
+            </ul>
+        </div>
+
+        <h2>9.1 Pecho</h2>
+        <div class="method-card">
+            <h4>Rutina Pecho GVT</h4>
+            <div class="code-block">EJERCICIO PRINCIPAL:
+                A. Press Banca (o Inclinado): 10×10 @ 60% 1RM
+                Tempo: 4-0-2 | Descanso: 60s
+                TUT Total: ~600 segundos
+
+                ACCESORIOS:
+                B1. Aperturas Inclinadas: 3×12, tempo 3-0-2, 60s
+                B2. Pull-over con Mancuerna: 3×12, tempo 3-0-2, 60s
+                C. Fondos (peso corporal): 2×15-20
+
+                DURACIÓN TOTAL: ~45 minutos
+                FRECUENCIA: 1x/semana máximo</div>
+        </div>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+            </tr>
+            <tr>
+                <td>Press Banca</td>
+                <td>10×10</td>
+                <td>60%</td>
+                <td>4-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Aperturas Inclinadas</td>
+                <td>3×12</td>
+                <td>50%</td>
+                <td>3-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Pull-over</td>
+                <td>3×12</td>
+                <td>40%</td>
+                <td>3-0-2</td>
+                <td>60s</td>
+            </tr>
+        </table>
+
+        <h2>9.2 Espalda</h2>
+        <div class="method-card">
+            <h4>Rutina Espalda GVT</h4>
+            <div class="code-block">EJERCICIO PRINCIPAL:
+                A. Remo con Barra (o Máquina): 10×10 @ 60% 1RM
+                Tempo: 4-0-2 | Descanso: 60s
+                Énfasis en contracción escapular
+
+                ACCESORIOS:
+                B1. Jalón al Pecho: 3×12, tempo 3-0-2, 60s
+                B2. Face Pulls: 3×15, tempo 2-1-2, 60s
+                C. Pulldown Brazos Rectos: 2×15
+
+                DURACIÓN TOTAL: ~45 minutos</div>
+        </div>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+            </tr>
+            <tr>
+                <td>Remo Barra</td>
+                <td>10×10</td>
+                <td>60%</td>
+                <td>4-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Jalón al Pecho</td>
+                <td>3×12</td>
+                <td>55%</td>
+                <td>3-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Face Pulls</td>
+                <td>3×15</td>
+                <td>40%</td>
+                <td>2-1-2</td>
+                <td>60s</td>
+            </tr>
+        </table>
+
+        <h2>9.3 Piernas</h2>
+        <div class="method-card">
+            <h4>Rutina Piernas GVT</h4>
+            <div class="code-block">EJERCICIO PRINCIPAL:
+                A. Sentadilla (trasera o frontal): 10×10 @ 60% 1RM
+                Tempo: 4-0-2 | Descanso: 60s
+                ⚠️ USAR CINTURÓN si es necesario
+
+                ACCESORIOS:
+                B1. Curl Femoral Tumbado: 3×12, tempo 3-0-2, 60s
+                B2. Extensión Cuádriceps: 3×12, tempo 3-0-2, 60s
+                C. Gemelos de Pie: 3×15, tempo 2-1-2, 45s
+                D. Gemelos Sentado: 3×15, tempo 2-1-2, 45s
+
+                DURACIÓN TOTAL: ~55 minutos</div>
+        </div>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+            </tr>
+            <tr>
+                <td>Sentadilla</td>
+                <td>10×10</td>
+                <td>60%</td>
+                <td>4-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Curl Femoral</td>
+                <td>3×12</td>
+                <td>55%</td>
+                <td>3-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Extensión Cuádriceps</td>
+                <td>3×12</td>
+                <td>55%</td>
+                <td>3-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Gemelos</td>
+                <td>3×15</td>
+                <td>60%</td>
+                <td>2-1-2</td>
+                <td>45s</td>
+            </tr>
+        </table>
+
+        <h2>9.4 Hombros</h2>
+        <div class="method-card">
+            <h4>Rutina Hombros GVT</h4>
+            <div class="code-block">EJERCICIO PRINCIPAL:
+                A. Press Militar (barra o mancuernas): 10×10 @ 60% 1RM
+                Tempo: 4-0-2 | Descanso: 60s
+
+                ACCESORIOS:
+                B1. Elevaciones Laterales: 3×12, tempo 3-1-2, 60s
+                B2. Elevaciones Posteriores: 3×12, tempo 3-1-2, 60s
+                C. Encogimientos: 3×12, tempo 2-2-2, 60s
+
+                DURACIÓN TOTAL: ~40 minutos</div>
+        </div>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+            </tr>
+            <tr>
+                <td>Press Militar</td>
+                <td>10×10</td>
+                <td>60%</td>
+                <td>4-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Elevaciones Laterales</td>
+                <td>3×12</td>
+                <td>35%</td>
+                <td>3-1-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Elevaciones Posteriores</td>
+                <td>3×12</td>
+                <td>30%</td>
+                <td>3-1-2</td>
+                <td>60s</td>
+            </tr>
+        </table>
+
+        <h2>9.5 Brazos</h2>
+        <div class="method-card">
+            <h4>Rutina Brazos GVT (Superset Antagonista)</h4>
+            <div class="code-block">EJERCICIO PRINCIPAL (Superset):
+                A1. Curl Barra EZ: 10×10 @ 60% 1RM
+                A2. Press Francés: 10×10 @ 60% 1RM
+                Tempo: 4-0-2 | Descanso: 60s entre supersets
+                (Hacer A1, descansar 60s, hacer A2, descansar 60s, repetir)
+
+                ACCESORIOS:
+                B1. Curl Martillo: 3×12, tempo 3-0-2, 60s
+                B2. Extensiones en Polea: 3×12, tempo 3-0-2, 60s
+
+                DURACIÓN TOTAL: ~40 minutos</div>
+        </div>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+            </tr>
+            <tr>
+                <td>Curl Barra EZ</td>
+                <td>10×10</td>
+                <td>60%</td>
+                <td>4-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Press Francés</td>
+                <td>10×10</td>
+                <td>60%</td>
+                <td>4-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Curl Martillo</td>
+                <td>3×12</td>
+                <td>50%</td>
+                <td>3-0-2</td>
+                <td>60s</td>
+            </tr>
+            <tr>
+                <td>Extensiones Polea</td>
+                <td>3×12</td>
+                <td>50%</td>
+                <td>3-0-2</td>
+                <td>60s</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">9.6 Divisiones Semanales GVT</h2>
+
+        <h3>Opción A: Split Pecho/Espalda (3 días/semana)</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupos</th>
+                <th>Ejercicio Principal</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Pecho + Espalda</td>
+                <td>Press Banca + Remo (superset)</td>
+                <td>72+ horas antes de siguiente</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Descanso</td>
+                <td>-</td>
+                <td>Recuperación activa opcional</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Piernas + Abs</td>
+                <td>Sentadilla</td>
+                <td>Sesión más demandante</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Descanso</td>
+                <td>-</td>
+                <td>Recuperación</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Hombros + Brazos</td>
+                <td>Press Militar + Superset Brazos</td>
+                <td>Menor demanda SNC</td>
+            </tr>
+            <tr>
+                <td>Sáb-Dom</td>
+                <td>Descanso</td>
+                <td>-</td>
+                <td>Recuperación completa</td>
+            </tr>
+        </table>
+
+        <h3>Opción B: Upper/Lower (4 días/semana)</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Ejercicio 10×10</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Upper A</td>
+                <td>Press Banca</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Lower A</td>
+                <td>Sentadilla</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Descanso</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Upper B</td>
+                <td>Remo Barra</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Lower B</td>
+                <td>Peso Muerto Rumano</td>
+            </tr>
+        </table>
+
+        <h3>Opción C: Full Body (3 días/semana) - Avanzados</h3>
+        <div class="warning-box">
+            <strong>⚠️ Solo para atletas muy experimentados:</strong>
+            <p>Esta opción es extremadamente demandante y requiere excelente recuperación.</p>
+        </div>
+        <div class="code-block">FULL BODY GVT (Lun/Mié/Vie):
+
+            DÍA A:
+            - Press Banca: 10×10
+            - Sentadilla: 6×6 (reducido)
+            - Remo: 3×10 (accesorio)
+
+            DÍA B:
+            - Remo Barra: 10×10
+            - Press Militar: 6×6 (reducido)
+            - Prensa: 3×10 (accesorio)
+
+            DÍA C:
+            - Peso Muerto Rumano: 10×10
+            - Press Inclinado: 6×6 (reducido)
+            - Jalón: 3×10 (accesorio)</div>
+
+        <h2>9.7 Tabla Resumen de Parámetros GVT</h2>
+        <table>
+            <tr>
+                <th>Parámetro</th>
+                <th>Ejercicio Principal</th>
+                <th>Accesorios</th>
+            </tr>
+            <tr>
+                <td>Series × Reps</td>
+                <td>10×10</td>
+                <td>3×10-12</td>
+            </tr>
+            <tr>
+                <td>% 1RM</td>
+                <td>60%</td>
+                <td>40-55%</td>
+            </tr>
+            <tr>
+                <td>Tempo</td>
+                <td>4-0-2</td>
+                <td>3-0-2</td>
+            </tr>
+            <tr>
+                <td>Descanso</td>
+                <td>60 segundos</td>
+                <td>60 segundos</td>
+            </tr>
+            <tr>
+                <td>RIR</td>
+                <td>1-2 (últimas series)</td>
+                <td>2-3</td>
+            </tr>
+            <tr>
+                <td>TUT por serie</td>
+                <td>60 segundos</td>
+                <td>45-50 segundos</td>
+            </tr>
+            <tr>
+                <td>Frecuencia grupo</td>
+                <td>1×/semana</td>
+                <td>1×/semana</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <ul>
+            <li>GVT genera DOMS (dolor muscular) severo las primeras 2-3 semanas</li>
+            <li>Si el DOMS dura más de 5 días, reduce el peso</li>
+            <li>Fatiga del SNC es común - monitorea tu estado general</li>
+        </ul>
+
+        <h2>10.2 Recuperación</h2>
+        <div class="warning-box">
+            <strong>⚠️ GVT requiere MÁXIMA recuperación:</strong>
+            <ul>
+                <li>Mínimo 7-8 horas de sueño</li>
+                <li>48-72 horas entre sesiones del mismo grupo</li>
+                <li>No combinar con otros deportes intensos</li>
+            </ul>
+        </div>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li>NUNCA sacrificar tempo por completar reps</li>
+            <li>Si la técnica se degrada, terminar la serie</li>
+            <li>Usar cinturón en sentadilla si es necesario</li>
+            <li>Calentar SIEMPRE de forma completa</li>
+        </ul>
+
+        <h2>10.4 Guía de Implementación</h2>
+        <div class="success-box">
+            <strong>✅ Cómo empezar con GVT:</strong>
+            <ol>
+                <li>Calcula tu 1RM en los ejercicios principales</li>
+                <li>Usa el 60% para el 10×10</li>
+                <li>Programa 3 días/semana máximo</li>
+                <li>Ejecuta por 6 semanas</li>
+                <li>Descarga y evalúa progreso</li>
+            </ol>
+        </div>
+
+        <h2 class="page-break">10.5 Especialización de Grupos Débiles</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con GVT</strong>
+            <p>GVT es ideal para especialización porque el 10×10 genera un estímulo hipertrófico masivo.
+                Añade un 10×10 adicional para el grupo débil.</p>
+        </div>
+
+        <h3>Estrategia GVT para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Series Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Técnica Recomendada</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+3-4 series</td>
+                <td>3x/semana</td>
+                <td>3×10 adicionales</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+6-8 series</td>
+                <td>4x/semana</td>
+                <td>5×10 adicionales</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+10 series</td>
+                <td>2x/semana</td>
+                <td>10×10 dedicado para grupo</td>
+            </tr>
+        </table>
+
+        <h3>Grupos Comunes a Priorizar</h3>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Ejercicio GVT</th>
+                <th>Tempo</th>
+                <th>Cuándo</th>
+            </tr>
+            <tr>
+                <td>Pantorrillas</td>
+                <td>Gemelo de Pie</td>
+                <td>4-0-2</td>
+                <td>Fin de cada sesión</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Curl Barra EZ</td>
+                <td>4-0-2</td>
+                <td>Día Upper extra</td>
+            </tr>
+            <tr>
+                <td>Deltoides Posterior</td>
+                <td>Face Pulls</td>
+                <td>3-1-2</td>
+                <td>Día Espalda</td>
+            </tr>
+            <tr>
+                <td>Trapecios</td>
+                <td>Shrugs</td>
+                <td>3-1-3</td>
+                <td>Día Espalda</td>
+            </tr>
+        </table>
+
+        <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS CON GVT
+
+            FRECUENCIA: 2x/semana (sesiones separadas)
+            DURACIÓN: 15-20 minutos extra por sesión
+
+            PROTOCOLO:
+            Gemelo de Pie: 10×10 @ 60% 1RM
+            Tempo: 4-0-2
+            Descanso: 60 segundos
+
+            VOLUMEN SEMANAL: 200 reps totales (vs 60 normales)
+            RESULTADO ESPERADO: 6-8 semanas para desarrollo proporcional</div>
+
+        <h3>Reglas de Especialización GVT</h3>
+        <div class="warning-box">
+            <strong>⚠️ Reglas Importantes:</strong>
+            <ul>
+                <li><strong>Grupo prioritario PRIMERO:</strong> Al inicio de sesión cuando estás fresco</li>
+                <li><strong>Máximo 1 grupo:</strong> El volumen de GVT es extremo, no añadir más</li>
+                <li><strong>Reducir volumen otros:</strong> Si añades 10×10 para grupo débil, reduce accesorios</li>
+                <li><strong>Deload incluido:</strong> Reducir a 5×10 en semana de deload</li>
+            </ul>
+        </div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <strong>German Volume Training</strong> es una de las metodologías más efectivas para hipertrofia masiva. Su
+            simplicidad (10×10 con tempo 4-0-2) oculta su brutalidad. Requiere disciplina, buena alimentación y
+            recuperación óptima, pero los resultados en 6 semanas pueden ser dramáticos.
+        </div>
+        <p><strong>Recomendación:</strong> Usar GVT por 6 semanas, luego rotar a una metodología de menor volumen (como
+            Heavy Duty o Y3T semana pesada) para evitar sobreentrenamiento.</p>
+
+        <div
+            style="margin-top: 40px; padding: 20px; border-top: 2px solid #ddd; text-align: center; font-size: 12px; color: #999;">
+            <p><strong>NEXUS - 10 Metodologías de Hipertrofia v3.1</strong></p>
+            <p>Y3T • Heavy Duty • Blood & Guts • MTUT • SST • FST-7 • GVT • DUP • 5/3/1 • DC Training</p>
+        </div>
+    </div>
+
+    <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Duración del Ciclo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Principiante (1‑2 años)</td>
+                <td>6‑8 semanas</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2‑5 años)</td>
+                <td>4‑6 semanas</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>3‑4 semanas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Estructura</th>
+                <th>Días por semana</th>
+                <th>Nivel recomendado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio‑Avanzado</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5‑6</td>
+                <td>Avanzado</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,2362 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SST - Metodología Maestra Unificada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #10B981;
+            --secondary: #06B6D4;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .tempo-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tempo-badge.riv {
+            background: #10B981;
+            color: white;
+        }
+
+        .tempo-badge.ct {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .tempo-badge.rt {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .tempo-badge.isom {
+            background: #06B6D4;
+            color: white;
+        }
+
+        .tempo-badge.neg {
+            background: #EF4444;
+            color: white;
+        }
+
+        .use-when {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .use-when>div {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .use-when>div:first-child {
+            background: #ECFDF5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .riv-visual {
+            display: flex;
+            justify-content: space-around;
+            background: #1E293B;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .riv-phase {
+            flex: 1;
+            padding: 10px;
+            min-width: 60px;
+        }
+
+        .riv-phase .time {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #10B981;
+        }
+
+        .riv-phase .label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Tempo Color Classes */
+        .tempo-con {
+            color: #06B6D4;
+            font-weight: 700;
+            background: rgba(6, 182, 212, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-ecc {
+            color: #F59E0B;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-iso {
+            color: #10B981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>SST</h1>
+        <p class="subtitle">Sarcoplasm Stimulating Training</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Metodología de Estrés Metabólico desarrollada por Patrick Tuor
+            para maximizar hipertrofia sarcoplásmica mediante protocolos de alta intensidad y descansos variables.</p>
+        <p class="author">Creador: Patrick Tuor · Swiss Bodybuilding Coach</p>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 10 ATLETAS/PRACTICANTES
+                    DESTACADOS SST:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Patrick Tuor (Creador, IFBB Coach) ·
+                <strong>2.</strong> Ben Pakulski (IFBB Pro, MI40) ·
+                <strong>3.</strong> Milos Sarcev (IFBB Pro, Giant Killer) ·
+                <strong>4.</strong> John Meadows† (IFBB Pro, Mountain Dog) ·
+                <strong>5.</strong> Luke Sandoe† (IFBB Pro) ·
+                <strong>6.</strong> Evan Centopani (IFBB Pro) ·
+                <strong>7.</strong> Antoine Vaillant (IFBB Pro) ·
+                <strong>8.</strong> Justin Compton (IFBB Pro) ·
+                <strong>9.</strong> Stanimal De Longeaux (IFBB Pro) ·
+                <strong>10.</strong> John Jewett (IFBB Pro, 3DMJ)
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Metodología basada en datos de atletas IFBB Pro ·
+            NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al SST</li>
+                <li><strong>2.</strong> Objetivos del SST</li>
+                <li><strong>3.</strong> Principios Básicos del SST</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT)</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en SST</li>
+                <li><strong>4.</strong> Métodos y Técnicas del SST</li>
+                <li class="sub">4.1 SST-RIV (Rest Interval Variable)</li>
+                <li class="sub">4.2 SST-CT (Contraction Type)</li>
+                <li class="sub">4.3 SST-RT (Rest-Pause Training)</li>
+                <li class="sub">4.4 SST-TM (Técnica Mixta)</li>
+                <li class="sub">4.5 SST-ISOM (Isométricos)</li>
+                <li class="sub">4.6 SST-NEG (Negativas)</li>
+                <li class="sub">4.7 RPE en SST</li>
+                <li class="sub">4.8 Compatibilidad con Otras Metodologías</li>
+                <li class="sub">4.9 Ejemplo: Rutina Full Body con Todos los Protocolos</li>
+                <li><strong>5.</strong> Estructura de una Sesión SST</li>
+                <li class="sub">5.1 Calentamiento y Series de Aproximación</li>
+                <li class="sub">5.2 Ejercicios Principales (SST Core)</li>
+                <li class="sub">5.3 Ejercicios Accesorios</li>
+                <li class="sub">5.4 Enfriamiento y Estiramiento</li>
+                <li><strong>6.</strong> Periodización con SST</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Ondulación de Intensidad y Volumen</li>
+                <li class="sub">6.3 Fases de Acumulación, Intensificación y Realización</li>
+                <li class="sub">6.4 Descargas (Deloads)</li>
+                <li><strong>7.</strong> Progresión en SST</li>
+                <li class="sub">7.1 Progresión de Carga y Reps</li>
+                <li class="sub">7.2 Manipulación de Variables (TUT, Descanso, Intensificadores)</li>
+                <li class="sub">7.3 Progresión a Largo Plazo</li>
+                <li><strong>8.</strong> Nutrición y Suplementación para SST</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Timing Nutricional</li>
+                <li class="sub">8.4 Suplementación Clave</li>
+                <li><strong>9.</strong> Ejemplos de Rutinas SST por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas | 9.4 Hombros | 9.5 Brazos</li>
+                <li class="sub">9.6 Estructuras por Nivel de Intensidad</li>
+                <li class="sub" style="padding-left: 40px;">• Full Body | Upper/Lower | Torso/Pierna | Bro Split</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Descanso y Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía Práctica de Implementación Paso a Paso</li>
+                <li class="sub" style="padding-left: 40px;">• Calcular 1RM | Equipo | Primera Sesión | Troubleshooting |
+                    Post-SST</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al SST</h1>
+        <div class="highlight-box">
+            <strong>SST (Sarcoplasm Stimulating Training)</strong> es una metodología de entrenamiento creada por
+            <strong>Patrick Tuor</strong> que se enfoca en maximizar la hipertrofia sarcoplásmica a través del estrés
+            metabólico extremo.
+        </div>
+
+        <p>A diferencia de métodos que priorizan cargas máximas, SST utiliza protocolos de descansos variables y
+            múltiples técnicas de intensificación para crear un entorno de fatiga metabólica que estimula el
+            crecimiento muscular por vías diferentes a la tensión mecánica pura.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">60-85%</div>
+                <div class="label">1RM - Rango de Carga</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">8-9</div>
+                <div class="label">Mini-Series RIV</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">180-300s</div>
+                <div class="label">TUT por Protocolo</div>
+            </div>
+        </div>
+
+        <h3>Origen y Filosofía</h3>
+        <p>Patrick Tuor desarrolló SST basándose en principios de fisiología muscular, combinando:</p>
+        <ul>
+            <li><strong>Descansos variables</strong> para manipular la recuperación y acumulación de metabolitos</li>
+            <li><strong>Múltiples tipos de contracción</strong> para estimular diferentes mecanismos de hipertrofia</li>
+            <li><strong>Protocolos estructurados</strong> que eliminan la improvisación del entrenamiento</li>
+        </ul>
+
+        <h1>2. Objetivos del SST</h1>
+        <ul>
+            <li><strong>Hipertrofia Sarcoplásmica:</strong> Aumento del contenido celular (glucógeno, agua, enzimas)
+            </li>
+            <li><strong>Bombeo Máximo:</strong> Expansión celular por acumulación de sangre y metabolitos</li>
+            <li><strong>Resistencia Muscular:</strong> Capacidad de mantener esfuerzo bajo fatiga</li>
+            <li><strong>Conexión Mente-Músculo:</strong> Control absoluto durante series prolongadas</li>
+            <li><strong>Variedad de Estímulos:</strong> Evitar adaptación mediante cambios de protocolo</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del SST</h1>
+
+        <h2>3.1 Tiempo Bajo Tensión (TUT)</h2>
+        <p>SST extiende el TUT mediante descansos cortos intra-serie y múltiples fases de fatiga:</p>
+        <table>
+            <tr>
+                <th>Protocolo</th>
+                <th>TUT por Serie</th>
+                <th>TUT Total (protocolo completo)</th>
+            </tr>
+            <tr>
+                <td>SST-RIV Completo</td>
+                <td>Variable (8+ mini-series)</td>
+                <td>180-300+ segundos</td>
+            </tr>
+            <tr>
+                <td>SST-CT</td>
+                <td>80-120 segundos</td>
+                <td>80-120 segundos</td>
+            </tr>
+            <tr>
+                <td>SST-RT</td>
+                <td>60-90 segundos</td>
+                <td>60-90 segundos</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Rangos de Repeticiones y Fibras</h2>
+        <table>
+            <tr>
+                <th>Rango</th>
+                <th>Tipo de Fibra</th>
+                <th>Mecanismo</th>
+                <th>Protocolo SST Ideal</th>
+            </tr>
+            <tr>
+                <td>6-10 reps</td>
+                <td>Tipo IIB</td>
+                <td>Tensión Mecánica</td>
+                <td>SST-NEG, SST-CT Fase 1</td>
+            </tr>
+            <tr>
+                <td>10-15 reps</td>
+                <td>Tipo IIA</td>
+                <td>Híbrido TM/EM</td>
+                <td>SST-RIV inicio, SST-RT</td>
+            </tr>
+            <tr>
+                <td>15-30+ reps</td>
+                <td>Tipo I</td>
+                <td>Estrés Metabólico</td>
+                <td>SST-RIV completo, SST-ISOM</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Tipos de Contracción</h2>
+        <ul>
+            <li><strong>Concéntrica:</strong> Énfasis en SST-CT Fase 3, velocidad controlada</li>
+            <li><strong>Excéntrica:</strong> SST-NEG y SST-CT Fase 2, 4-5 segundos</li>
+            <li><strong>Isométrica:</strong> SST-ISOM, pausas de contracción máxima 3-5 segundos</li>
+        </ul>
+
+        <h3>Tabla de Tempos y Variantes SST</h3>
+        <div class="highlight-box">
+            <p><strong>Notación de Tempo:</strong> Excéntrica - Pausa - Concéntrica (en segundos)</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tempo/Variante</th>
+                    <th>Notación</th>
+                    <th>%RM</th>
+                    <th>Descanso Series</th>
+                    <th>Descanso Ejercicio</th>
+                    <th>TM%</th>
+                    <th>EM%</th>
+                    <th>Nivel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: rgba(16, 185, 129, 0.1);">
+                    <td><strong>SST Moderado</strong></td>
+                    <td class="tempo-ecc">5-2-1</td>
+                    <td>60-70%</td>
+                    <td>30-45s</td>
+                    <td>3-4 min</td>
+                    <td>35%</td>
+                    <td><strong>65%</strong></td>
+                    <td>Intermedio</td>
+                </tr>
+                <tr style="background: rgba(16, 185, 129, 0.15);">
+                    <td><strong>SST Intenso</strong></td>
+                    <td class="tempo-ecc">8-2-1</td>
+                    <td>55-65%</td>
+                    <td>15-30s</td>
+                    <td>4 min</td>
+                    <td>30%</td>
+                    <td><strong>70%</strong></td>
+                    <td>Intermedio+</td>
+                </tr>
+                <tr style="background: rgba(16, 185, 129, 0.2);">
+                    <td><strong>SST Extremo</strong></td>
+                    <td class="tempo-ecc">10-2-1</td>
+                    <td>50-60%</td>
+                    <td>10-20s</td>
+                    <td>4-5 min</td>
+                    <td>25%</td>
+                    <td><strong>75%</strong></td>
+                    <td>Avanzado</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="success-box">
+            <strong>💡 Nota:</strong> SST prioriza Estrés Metabólico (EM) sobre Tensión Mecánica (TM).
+            A mayor tempo excéntrico, mayor acumulación de metabolitos y bomba muscular.
+        </div>
+
+        <h2>3.4 Fallo Muscular en SST</h2>
+        <div class="warning-box">
+            <strong>⚠️ En SST, el fallo se alcanza MÚLTIPLES VECES por protocolo.</strong> Cada mini-serie dentro de
+            SST-RIV va al fallo, acumulando 6-8+ fallos en un solo ejercicio.
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del SST</h1>
+
+        <div class="highlight-box">
+            <strong>Introducción al Uso del SST</strong>
+            <p>El SST fue desarrollado por <strong>Patrick Tuor</strong> como un sistema avanzado de hipertrofia
+                que utiliza descansos variables y manipulación de contracciones para maximizar el estrés metabólico.
+                A diferencia de otros métodos, SST genera múltiples fallos por protocolo, creando una bomba muscular
+                extrema y estimulando hipertrofia sarcoplásmica.</p>
+        </div>
+
+        <h3>¿Cuándo Usar SST?</h3>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar SST cuando:</strong>
+            <ul>
+                <li>Buscas BOMBA MUSCULAR extrema y estrés metabólico</li>
+                <li>Tienes al menos 1-2 años de experiencia entrenando</li>
+                <li>Quieres estimular hipertrofia sarcoplásmica</li>
+                <li>Tienes acceso a máquinas (ideal para SST)</li>
+                <li>Estás en fase de volumen o mantenimiento calórico</li>
+                <li>Tu recuperación es buena (el SST es muy demandante)</li>
+            </ul>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar SST cuando:</strong>
+            <ul>
+                <li><strong>Principiante (&lt;1 año):</strong> No tienes la tolerancia al fallo múltiple</li>
+                <li><strong>Objetivo es fuerza máxima:</strong> SST usa 60-70% 1RM, no desarrolla 1RM</li>
+                <li><strong>Déficit calórico severo:</strong> El volumen de fallos destruirá tu recuperación</li>
+                <li><strong>Problemas cardiovasculares:</strong> El estrés metabólico es intenso</li>
+                <li><strong>Sin acceso a máquinas:</strong> SST es más seguro en máquinas para fallo múltiple</li>
+                <li><strong>Hidratación insuficiente:</strong> El estrés metabólico requiere hidratación constante</li>
+            </ul>
+        </div>
+
+        <h3>Limitantes del Sistema SST</h3>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Extremadamente demandante - requiere 3-5 min descanso post-protocolo</li>
+                <li>No desarrolla fuerza máxima directamente</li>
+                <li>Puede causar calambres si no estás bien hidratado</li>
+                <li>Mentalmente agotador por la cantidad de fallos</li>
+            </ul>
+        </div>
+
+        <h3>🔧 Cómo Crear Rutinas SST</h3>
+        <div class="highlight-box">
+            <strong>Guía para Diseñar tus Propias Rutinas SST:</strong>
+            <ol>
+                <li><strong>Split recomendado:</strong> Push/Pull/Legs o Upper/Lower (4-5 días)</li>
+                <li><strong>Ejercicios por grupo:</strong> 3-4 ejercicios (1-2 con SST, resto normal)</li>
+                <li><strong>Protocolos SST por sesión:</strong> 1-2 máximo (son muy demandantes)</li>
+                <li><strong>Selección de protocolo:</strong>
+                    <ul>
+                        <li>SST-RIV: Finisher de grupo, bomba máxima</li>
+                        <li>SST-CT: Balance tensión/estrés metabólico</li>
+                        <li>SST-RT: Fuerza + hipertrofia</li>
+                        <li>SST-NEG: Daño muscular máximo</li>
+                    </ul>
+                </li>
+                <li><strong>Descanso post-SST:</strong> 3-5 minutos obligatorios</li>
+                <li><strong>Hidratación:</strong> Agua constante durante toda la sesión</li>
+            </ol>
+        </div>
+
+        <h3>¿Cómo Aplicar el SST?</h3>
+        <ul>
+            <li><strong>Posición en Rutina:</strong> SST puede usarse en cualquier posición (compuestos o aislamiento)
+            </li>
+            <li><strong>Ejercicio:</strong> Preferir MÁQUINAS para no preocuparse por estabilización en fatiga extrema
+            </li>
+            <li><strong>Protocolos:</strong> Elegir UN protocolo principal por ejercicio (no combinar varios)</li>
+            <li><strong>Descanso Post-Protocolo:</strong> 3-5 minutos obligatorios antes del siguiente ejercicio</li>
+            <li><strong>Hidratación:</strong> Crítica - el estrés metabólico requiere hidratación constante</li>
+            <li><strong>Objetivo:</strong> Máximo PUMP y fatiga metabólica, no fuerza máxima</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ Regla de Oro del SST:</strong> El fallo en SST ocurre MÚLTIPLES VECES. Si solo fallas una vez,
+            no estás haciendo SST. En SST-RIV, fallarás 6-9 veces en un solo protocolo. Elige el peso correctamente.
+        </div>
+
+        <h3>📊 Especificaciones Técnicas para Aplicación</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Protocolo</th>
+                <th>Nivel</th>
+                <th>Descanso</th>
+                <th>TUT/Serie</th>
+                <th>Equipamiento</th>
+                <th>Duración Sesión</th>
+            </tr>
+            <tr>
+                <td><code>SST-RIV</code></td>
+                <td>Rest Interval Variable</td>
+                <td>Intermedio+</td>
+                <td>5-25s (variable)</td>
+                <td>180-300s total</td>
+                <td>Máquinas (preferible)</td>
+                <td>60-90 min</td>
+            </tr>
+            <tr>
+                <td><code>SST-CT</code></td>
+                <td>Contraction Type</td>
+                <td>Intermedio+</td>
+                <td>10-20s</td>
+                <td>120-180s</td>
+                <td>Poleas, máquinas</td>
+                <td>60-75 min</td>
+            </tr>
+            <tr>
+                <td><code>SST-RT</code></td>
+                <td>Rest-Pause Training</td>
+                <td>Intermedio</td>
+                <td>10-15s (micro)</td>
+                <td>90-120s</td>
+                <td>Cualquiera</td>
+                <td>50-70 min</td>
+            </tr>
+            <tr>
+                <td><code>SST-TM</code></td>
+                <td>Técnica Mixta</td>
+                <td>Avanzado</td>
+                <td>Variable</td>
+                <td>120-180s</td>
+                <td>Máquinas</td>
+                <td>60-90 min</td>
+            </tr>
+            <tr>
+                <td><code>SST-ISOM</code></td>
+                <td>Isométricos</td>
+                <td>Intermedio+</td>
+                <td>30-45s</td>
+                <td>60-90s</td>
+                <td>Poleas, cables</td>
+                <td>50-70 min</td>
+            </tr>
+            <tr>
+                <td><code>SST-NEG</code></td>
+                <td>Negativas SST</td>
+                <td>Avanzado</td>
+                <td>45-60s</td>
+                <td>4-6s por rep</td>
+                <td>Máquinas seguras</td>
+                <td>50-70 min</td>
+            </tr>
+        </table>
+
+        <h3>Matriz de Decisión: ¿Cuándo usar cada Protocolo?</h3>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th>SST-RIV</th>
+                <th>SST-CT</th>
+                <th>SST-RT</th>
+                <th>SST-NEG</th>
+            </tr>
+            <tr>
+                <td><strong>Nivel</strong></td>
+                <td>Intermedio+</td>
+                <td>Intermedio+</td>
+                <td>Todos</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td><strong>Objetivo</strong></td>
+                <td>Bomba extrema, EM</td>
+                <td>Híbrido TM/EM</td>
+                <td>Rest-pause, fuerza</td>
+                <td>Daño muscular</td>
+            </tr>
+            <tr>
+                <td><strong>Carga</strong></td>
+                <td>60-70% 1RM</td>
+                <td>70% inicial ↓</td>
+                <td>80% 1RM</td>
+                <td>110% conc.</td>
+            </tr>
+            <tr>
+                <td><strong>Fallos por Protocolo</strong></td>
+                <td>6-9</td>
+                <td>4</td>
+                <td>3-4</td>
+                <td>1 (controlado)</td>
+            </tr>
+            <tr>
+                <td><strong>Recuperación</strong></td>
+                <td>72h mínimo</td>
+                <td>48-72h</td>
+                <td>48h</td>
+                <td>96h+</td>
+            </tr>
+        </table>
+
+        <div class="success-box">
+            <strong>📋 Reglas para Implementación:</strong>
+            <ol>
+                <li><strong>Máximo 2 protocolos SST completos por sesión:</strong> Más genera sobreentrenamiento</li>
+                <li><strong>SST-RIV primero:</strong> Es el más demandante, hacerlo con energía fresca</li>
+                <li><strong>Spotter recomendado:</strong> Especialmente para SST-NEG</li>
+                <li><strong>Cronometrar descansos:</strong> Los tiempos son exactos, usar timer</li>
+                <li><strong>No combinar con MTUT:</strong> Filosofías opuestas de TUT</li>
+            </ol>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ Contraindicaciones del SST:</strong>
+            <ul>
+                <li><strong>Menos de 1 año entrenando:</strong> SST es muy avanzado para principiantes</li>
+                <li><strong>Déficit calórico &gt;500 kcal:</strong> No hay energía para múltiples fallos</li>
+                <li><strong>Dolor articular activo:</strong> El volumen extremo puede agravar lesiones</li>
+                <li><strong>Pesos libres inestables:</strong> Sentadilla libre, peso muerto = no SST</li>
+                <li><strong>Sesiones cortas (&lt;45 min):</strong> SST requiere tiempo de recuperación entre protocolos
+                </li>
+            </ul>
+        </div>
+
+
+        <h3>Visualización del Protocolo RIV (Descansos Variables)</h3>
+        <div class="riv-visual">
+            <div class="riv-phase">
+                <div class="time">10</div>
+                <div class="label">Reps Inicio</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">45s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">30s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">15s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">5s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">5s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">15s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">30s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="riv-phase">
+                <div class="time">45s</div>
+                <div class="label">Descanso</div>
+            </div>
+        </div>
+
+        <h3>Algoritmo de Selección de Protocolo (Para App)</h3>
+        <div class="code-block">LÓGICA DE SELECCIÓN SST:
+
+            SI objetivo == "BOMBA_MÁXIMA" O semana == "ESTRÉS_METABÓLICO":
+            → Usar SST-RIV completo
+            → Descanso entre protocolos: 4-5 min
+
+            SI objetivo == "FUERZA_HIPERTROFIA" O semana == "TENSIÓN_MECÁNICA":
+            → Usar SST-RT o SST-NEG
+            → Descanso: 2-3 min
+
+            SI objetivo == "HÍBRIDO" O semana == "BALANCEADO":
+            → Usar SST-CT o SST-TM
+            → Combinar protocolos según fatiga
+
+            ORDEN RECOMENDADO EN SESIÓN:
+            1. Calentamiento (10-15 min)
+            2. Ejercicio compuesto con SST-RT o SST-RIV
+            3. Ejercicio aislamiento con SST-CT
+            4. Finisher con SST-ISOM o mini-RIV</div>
+
+        <p><strong>Leyenda de Colores:</strong>
+            <span class="tempo-con">Concéntrica</span> = Cyan |
+            <span class="tempo-ecc">Excéntrica</span> = Naranja |
+            <span class="tempo-iso">Isométrica</span> = Verde
+        </p>
+
+        <h2>4.1 SST-RIV (Rest Interval Variable)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge riv">RIV</span> Protocolo de Descansos Variables</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">60-70% 1RM</strong>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡⚡
+                    ESTRÉS METABÓLICO EXTREMO</span>
+            </p>
+            <div class="code-block">PROTOCOLO SST-RIV COMPLETO:
+
+                Serie Activación: 10 reps al fallo (mismo peso todo el protocolo)
+
+                ↓ 45s descanso → Fallo
+                ↓ 30s descanso → Fallo
+                ↓ 15s descanso → Fallo
+                ↓ 5s descanso → Fallo
+                ↓ 5s descanso → Fallo
+                ↓ 15s descanso → Fallo
+                ↓ 30s descanso → Fallo
+                ↓ 45s descanso → Fallo
+
+                Total: 8-9 mini-series al fallo
+                TUT Total: 180-300+ segundos</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#F59E0B;">85% Estrés Metabólico</strong> (acumulación masiva de lactato, hipoxia,
+                bomba extrema)<br>
+                <strong style="color:#06B6D4;">15% Tensión Mecánica</strong> (fatiga acumulativa mantiene reclutamiento)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Finisher de grupo muscular<br>• Quieres bomba máxima<br>• Fase
+                    de alto volumen (Semana 3)</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Inicio de sesión<br>• Déficit
+                    calórico severo<br>• Recuperación comprometida</div>
+            </div>
+        </div>
+
+        <h2>4.2 SST-CT (Contraction Type)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge ct">CT</span> Protocolo por Tipo de Contracción</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">Progresivo: 70% →
+                    50% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    ESTRÉS METABÓLICO</span>
+            </p>
+            <div class="code-block">PROTOCOLO SST-CT:
+
+                Fase 1: Serie normal 8-10 reps → 20s descanso
+                Fase 2: -20% peso, Excéntrica 4s por rep → 20s descanso
+                Fase 3: -20% peso, Concéntrica 4s por rep → 20s descanso
+                Fase 4: -20% peso, Isométrica hold al fallo
+
+                Reducción total: ~50% del peso inicial
+                TUT Total: 80-120 segundos</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#06B6D4;">55% Tensión Mecánica</strong> (excéntricas lentas = daño muscular)<br>
+                <strong style="color:#F59E0B;">45% Estrés Metabólico</strong> (descansos cortos, fase isométrica final)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Quieres trabajo completo de fibras<br>• Ejercicios de
+                    aislamiento<br>• Semana híbrida (50/50)</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ejercicios compuestos
+                    pesados<br>• DOMS severo previo<br>• Primera vez usando SST</div>
+            </div>
+        </div>
+
+        <h2>4.3 SST-RT (Rest-Pause Training)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge rt">RT</span> Rest-Pause Intensivo</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">75-85% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪💪
+                    TENSIÓN MECÁNICA ALTA</span>
+            </p>
+            <div class="code-block">PROTOCOLO SST-RT:
+
+                Serie trabajo: Fallo (6-8 reps)
+                ↓ 10-15s descanso
+                Mini-serie: Fallo (2-4 reps)
+                ↓ 10-15s descanso
+                Mini-serie: Fallo (1-3 reps)
+                ↓ 10-15s descanso
+                Mini-serie: Fallo (1-2 reps)
+
+                Total: 12-17 reps con peso de 6-8RM
+                TUT: 60-90 segundos</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#06B6D4;">70% Tensión Mecánica</strong> (carga alta, múltiples fallos)<br>
+                <strong style="color:#F59E0B;">30% Estrés Metabólico</strong> (descansos cortos mantienen fatiga)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Ejercicios compuestos<br>• Semana de tensión mecánica<br>•
+                    Quieres fuerza + hipertrofia</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Fatiga del SNC<br>• Ejercicios
+                    técnicamente complejos<br>• Sin spotter disponible</div>
+            </div>
+        </div>
+
+        <h2>4.4 SST-TM (Técnica Mixta)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge ct">TM</span> Combinación de Protocolos</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">60-75% 1RM</strong>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    ESTRÉS METABÓLICO</span>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+            </p>
+            <p>Combina elementos de RIV + CT + RT en una sesión según necesidad. Versatilidad máxima.</p>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#F59E0B;">50% Estrés Metabólico</strong><br>
+                <strong style="color:#06B6D4;">50% Tensión Mecánica</strong> (balance según combinación elegida)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Quieres variedad en la sesión<br>• Tiempo limitado para
+                    protocolo completo<br>• Semana híbrida (balance TM/EM)</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Primera vez usando SST<br>• No
+                    dominas protocolos individuales<br>• Objetivo claro (solo TM o solo EM)</div>
+            </div>
+        </div>
+
+        <h2>4.5 SST-ISOM (Isométricos)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge isom">ISOM</span> Contracciones Isométricas</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">50-60% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+            </p>
+            <div class="code-block">PROTOCOLO SST-ISOM:
+
+                Opción A - Pausa Pico:
+                Cada rep: Contracción concéntrica → Hold 3-5s en pico → Excéntrica controlada
+                Reps: 8-12
+
+                Opción B - Isometría Final:
+                Serie normal al fallo → Hold isométrico máximo en contracción pico (20-30s)</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#06B6D4;">65% Tensión Mecánica</strong> (reclutamiento máximo en hold)<br>
+                <strong style="color:#F59E0B;">35% Estrés Metabólico</strong> (isquemia temporal)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Quieres mejorar conexión mente-músculo<br>• Ejercicios de
+                    aislamiento<br>• Buscas sensación de contracción máxima</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Dolor articular<br>• Ejercicios
+                    compuestos pesados<br>• Muy fatigado (riesgo de calambre)</div>
+            </div>
+        </div>
+
+        <h2>4.6 SST-NEG (Negativas)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge neg">NEG</span> Énfasis Excéntrico</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">105-120% 1RM
+                    concéntrico</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪💪
+                    TENSIÓN MECÁNICA MÁXIMA</span>
+            </p>
+            <div class="code-block">PROTOCOLO SST-NEG:
+
+                Con spotter o máquina:
+                - Asistencia en fase concéntrica
+                - Excéntrica controlada 4-6 segundos
+                - 4-6 reps por serie
+                - Descanso: 2-3 min
+
+                ⚠️ REQUIERE SPOTTER o máquina con asistencia</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#06B6D4;">80% Tensión Mecánica</strong> (daño muscular controlado)<br>
+                <strong style="color:#F59E0B;">20% Estrés Metabólico</strong> (acumulación menor)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Tienes spotter confiable<br>• Máquina con asistencia<br>•
+                    Semana de tensión mecánica</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Sin spotter/asistencia<br>• DOMS
+                    severo aún presente<br>• Principiante (<2 años)</div>
+                </div>
+            </div>
+
+            <h2>4.7 RPE en SST</h2>
+            <table>
+                <tr>
+                    <th>RPE</th>
+                    <th>Descripción</th>
+                    <th>Uso en SST</th>
+                </tr>
+                <tr>
+                    <td>7-8</td>
+                    <td>2-3 reps en reserva</td>
+                    <td>Series de aproximación, inicio RIV</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>1 rep en reserva</td>
+                    <td>Pre-fallo, fase media protocolo</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Fallo total</td>
+                    <td>Cada mini-serie RIV, finales CT</td>
+                </tr>
+            </table>
+
+            <h2>4.8 Compatibilidad con Otras Metodologías</h2>
+            <table>
+                <tr>
+                    <th>Metodología</th>
+                    <th>Compatibilidad</th>
+                    <th>Cómo Combinar</th>
+                </tr>
+                <tr>
+                    <td>Heavy Duty</td>
+                    <td>⚠️ Media</td>
+                    <td>SST como finisher después de serie HD</td>
+                </tr>
+                <tr>
+                    <td>Y3T</td>
+                    <td>✅ Alta</td>
+                    <td>SST-RIV en Semana 3 (alto volumen)</td>
+                </tr>
+                <tr>
+                    <td>FST-7</td>
+                    <td>✅ Alta</td>
+                    <td>Reemplazar FST-7 por SST-RIV corto</td>
+                </tr>
+                <tr>
+                    <td>MTUT</td>
+                    <td>❌ Baja</td>
+                    <td>Filosofías opuestas, no mezclar</td>
+                </tr>
+            </table>
+
+            <h2 class="page-break">4.9 Ejemplo: Rutina Full Body con Todos los Protocolos</h2>
+
+            <div class="highlight-box">
+                <strong>Ejemplo Práctico:</strong> Esta rutina muestra cómo combinar diferentes protocolos SST en una
+                sesión
+                Full Body. Cada ejercicio usa un protocolo diferente para demostrar su aplicación.
+            </div>
+
+            <div class="code-block">RUTINA FULL BODY SST - TODOS LOS PROTOCOLOS
+                Duración: ~70 minutos | Nivel: Avanzado
+
+                A. PECHO - Press Máquina Inclinado <span style="color:#10B981;">[SST-RIV]</span>
+                Peso: 65% 1RM (mantener todo el protocolo)
+                Protocolo: 10 reps → <span style="color:#10B981;">45s</span> → <span style="color:#10B981;">30s</span> →
+                <span style="color:#10B981;">15s</span> → <span style="color:#10B981;">5s</span> → <span
+                    style="color:#10B981;">5s</span> → <span style="color:#10B981;">15s</span> → <span
+                    style="color:#10B981;">30s</span> → <span style="color:#10B981;">45s</span>
+                Cada mini-serie: AL FALLO
+                Descanso después: 4-5 min
+
+                B. ESPALDA - Remo Máquina <span style="color:#8B5CF6;">[SST-CT]</span>
+                Peso inicial: 70% 1RM
+                Fase 1: 8-10 reps normal → <span style="color:#F59E0B;">20s</span> descanso
+                Fase 2: <span style="color:#F59E0B;">-20%</span> peso, excéntrica 4s → <span
+                    style="color:#F59E0B;">20s</span> descanso
+                Fase 3: <span style="color:#F59E0B;">-20%</span> peso, concéntrica 4s → <span
+                    style="color:#F59E0B;">20s</span> descanso
+                Fase 4: <span style="color:#F59E0B;">-20%</span> peso, hold isométrico al fallo
+                Descanso después: 3-4 min
+
+                C. PIERNAS - Prensa 45° <span style="color:#F97316;">[SST-RT]</span>
+                Peso: 80% 1RM
+                Serie trabajo: 6-8 reps al fallo
+                ↓ <span style="color:#F97316;">10-15s</span> descanso → 2-4 reps al fallo
+                ↓ <span style="color:#F97316;">10-15s</span> descanso → 1-3 reps al fallo
+                ↓ <span style="color:#F97316;">10-15s</span> descanso → 1-2 reps al fallo
+                Descanso después: 4 min
+
+                D. HOMBROS - Elevaciones Laterales Máquina <span style="color:#06B6D4;">[SST-ISOM]</span>
+                Peso: 55% 1RM
+                Cada rep: Concéntrica → <span style="color:#06B6D4;">Hold 3-5s</span> en pico → Excéntrica
+                Reps: 8-12
+                + Isometría final: <span style="color:#06B6D4;">Hold 20-30s</span> en contracción
+                Descanso después: 2-3 min
+
+                E. BÍCEPS - Curl Máquina <span style="color:#EF4444;">[SST-NEG]</span>
+                Peso: 110% 1RM concéntrico
+                Asistencia en subida (spotter o palanca)
+                Excéntrica: <span style="color:#EF4444;">4-6 segundos</span> controlada
+                Reps: 4-6
+                Descanso después: 2-3 min
+
+                F. TRÍCEPS - Extensión Polea <span style="color:#10B981;">[SST-RIV Corto]</span>
+                FINISHER - Versión reducida:
+                Peso: 60% 1RM
+                Protocolo: <span style="color:#10B981;">45s</span> → <span style="color:#10B981;">30s</span> → <span
+                    style="color:#10B981;">15s</span> → <span style="color:#10B981;">30s</span> → <span
+                    style="color:#10B981;">45s</span>
+                (5 mini-series en lugar de 8-9)
+
+                ───────────────────────────────────────
+                LEYENDA DE COLORES - PROTOCOLOS SST:
+                <span style="color:#10B981;">■ Verde = SST-RIV (descansos variables)</span>
+                <span style="color:#8B5CF6;">■ Púrpura = SST-CT (tipos de contracción)</span>
+                <span style="color:#F97316;">■ Naranja = SST-RT (rest-pause)</span>
+                <span style="color:#06B6D4;">■ Cyan = SST-ISOM (isométricos)</span>
+                <span style="color:#EF4444;">■ Rojo = SST-NEG (negativas)</span>
+            </div>
+
+            <h1 class="page-break">5. Estructura de una Sesión SST</h1>
+
+            <h2>5.1 Calentamiento y Series de Aproximación</h2>
+            <div class="code-block">CALENTAMIENTO SST (10-15 min):
+
+                1. Cardio ligero: 5 min (elevación temperatura)
+                2. Movilidad articular: 3-5 min
+                3. Series de aproximación:
+                - Serie 1: 15 reps @ 30% 1RM (activación)
+                - Serie 2: 10 reps @ 50% 1RM (patrón motor)
+                - Serie 3: 6 reps @ 70% 1RM (preparación SNC)</div>
+
+            <h2>5.2 Ejercicios Principales (SST Core)</h2>
+            <ul>
+                <li>1-2 protocolos SST completos por grupo muscular grande</li>
+                <li>Elegir el protocolo según objetivo semanal (TM vs EM)</li>
+                <li>Descanso entre protocolos: 3-5 minutos</li>
+            </ul>
+
+            <h2>5.3 Ejercicios Accesorios</h2>
+            <ul>
+                <li>2-3 ejercicios complementarios con técnica normal</li>
+                <li>3 series de 8-12 reps, RIR 1-2</li>
+                <li>Opción: aplicar mini-protocolo SST (versión corta)</li>
+            </ul>
+
+            <h2>5.4 Enfriamiento y Estiramiento</h2>
+            <ul>
+                <li>Estiramientos estáticos: 30-60s por músculo trabajado</li>
+                <li>Respiración profunda: 2-3 minutos</li>
+                <li>Hidratación inmediata</li>
+            </ul>
+
+            <h1 class="page-break">6. Periodización con SST</h1>
+
+            <h2>6.1 Microciclos y Mesociclos</h2>
+            <table>
+                <tr>
+                    <th>Semana</th>
+                    <th>Énfasis</th>
+                    <th>Protocolos SST Principales</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Tensión Mecánica (80/20)</td>
+                    <td>SST-RT, SST-NEG</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Híbrido (50/50)</td>
+                    <td>SST-CT, SST-TM</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Estrés Metabólico (30/70)</td>
+                    <td>SST-RIV, SST-ISOM</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Deload</td>
+                    <td>Sin protocolos SST, volumen reducido</td>
+                </tr>
+            </table>
+
+            <h2>6.2 Ondulación de Intensidad y Volumen</h2>
+            <p>SST permite manipular intensidad mediante selección de protocolo, no solo carga:</p>
+            <ul>
+                <li><strong>Alta Intensidad:</strong> SST-NEG, SST-RT → cargas pesadas, bajo volumen</li>
+                <li><strong>Alto Volumen:</strong> SST-RIV completo → cargas moderadas, TUT extremo</li>
+            </ul>
+
+            <h2>6.3 Fases de Acumulación, Intensificación y Realización</h2>
+            <ul>
+                <li><strong>Acumulación (4-6 sem):</strong> SST-RIV, SST-CT → volumen alto</li>
+                <li><strong>Intensificación (2-4 sem):</strong> SST-RT, SST-NEG → cargas máximas</li>
+                <li><strong>Realización (1-2 sem):</strong> Reducir SST, mantener cargas</li>
+            </ul>
+
+            <h2>6.4 Descargas (Deloads)</h2>
+            <div class="warning-box">
+                <strong>⚠️ SST es ALTAMENTE demandante.</strong> Deload cada 3-4 semanas es obligatorio.
+                Durante deload: eliminar protocolos SST, mantener 40-50% del volumen normal.
+            </div>
+
+            <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+            <p>La duración óptima del ciclo SST varía según el nivel de experiencia del atleta, basándose en evidencia
+                científica sobre capacidad de recuperación y tolerancia al estrés metabólico:</p>
+            <table>
+                <tr>
+                    <th>Nivel</th>
+                    <th>Duración Recomendada</th>
+                    <th>Justificación Científica</th>
+                </tr>
+                <tr>
+                    <td><strong>Principiante</strong> (1-2 años)</td>
+                    <td>6-8 semanas</td>
+                    <td>Mayor recuperación, adaptación gradual al estrés metabólico extremo</td>
+                </tr>
+                <tr>
+                    <td><strong>Intermedio</strong> (2-5 años)</td>
+                    <td>4-6 semanas</td>
+                    <td>Balance entre adaptación y fatiga del SNC, requiere deloads regulares</td>
+                </tr>
+                <tr>
+                    <td><strong>Avanzado</strong> (5+ años)</td>
+                    <td>3-4 semanas</td>
+                    <td>Fatiga rápida del SNC, rotar entre protocolos RIV→CT→RT</td>
+                </tr>
+            </table>
+            <div class="highlight-box">
+                <strong>💡 Recomendación SST:</strong> La aplicación NEXUS adapta automáticamente las opciones de
+                duración
+                según tu nivel. Para SST, se recomienda alternar protocolos cada 2 semanas en avanzados.
+            </div>
+
+            <h1 class="page-break">7. Progresión en SST</h1>
+
+            <h2>7.1 Progresión de Carga y Reps</h2>
+            <ul>
+                <li><strong>Aumentar reps por fase:</strong> Si completas más reps en cada mini-serie, mantén peso</li>
+                <li><strong>Aumentar peso:</strong> Solo cuando SST-RIV se siente "fácil" (raro)</li>
+                <li><strong>Progresión típica:</strong> 2.5-5kg cada 2-3 semanas</li>
+            </ul>
+
+            <h2>7.2 Manipulación de Variables</h2>
+            <table>
+                <tr>
+                    <th>Variable</th>
+                    <th>Progresión</th>
+                </tr>
+                <tr>
+                    <td>Descansos RIV</td>
+                    <td>Reducir 5s en cada fase cuando dominas protocolo</td>
+                </tr>
+                <tr>
+                    <td>Fases CT</td>
+                    <td>Aumentar duración excéntrica/concéntrica (+1s)</td>
+                </tr>
+                <tr>
+                    <td>Hold Isométrico</td>
+                    <td>Extender de 3s a 5s gradualmente</td>
+                </tr>
+            </table>
+
+            <h2>7.3 Progresión a Largo Plazo</h2>
+            <ul>
+                <li><strong>Mes 1-2:</strong> Dominar SST-RIV y SST-CT</li>
+                <li><strong>Mes 3-4:</strong> Incorporar SST-RT y SST-NEG</li>
+                <li><strong>Mes 5+:</strong> SST-TM personalizado según respuesta</li>
+            </ul>
+
+            <h1 class="page-break">8. Nutrición y Suplementación para SST</h1>
+
+            <h2>8.1 Requerimientos Calóricos</h2>
+            <p>SST genera alto gasto calórico por TUT extremo. Ajustar según objetivo:</p>
+            <ul>
+                <li><strong>Volumen:</strong> Superávit 300-500 kcal</li>
+                <li><strong>Definición:</strong> Déficit moderado 15-20% (SST demandante)</li>
+                <li><strong>Mantenimiento:</strong> TDEE + 200-300 kcal días SST</li>
+            </ul>
+
+            <h2>8.2 Macronutrientes</h2>
+            <table>
+                <tr>
+                    <th>Macro</th>
+                    <th>Recomendación SST</th>
+                    <th>Razón</th>
+                </tr>
+                <tr>
+                    <td>Proteína</td>
+                    <td>2.2-2.5g/kg</td>
+                    <td>Síntesis y reparación muscular</td>
+                </tr>
+                <tr>
+                    <td>Carbohidratos</td>
+                    <td>4-6g/kg días SST</td>
+                    <td>Reposición glucógeno (alto TUT)</td>
+                </tr>
+                <tr>
+                    <td>Grasas</td>
+                    <td>0.8-1g/kg</td>
+                    <td>Función hormonal</td>
+                </tr>
+            </table>
+
+            <h2>8.3 Timing Nutricional</h2>
+            <ul>
+                <li><strong>Pre-entreno (1-2h antes):</strong> Comida completa con carbos complejos</li>
+                <li><strong>Intra-entreno:</strong> EAAs + carbohidratos simples (opcional pero beneficioso)</li>
+                <li><strong>Post-entreno (30-60 min):</strong> Proteína + carbos rápidos</li>
+            </ul>
+
+            <h2>8.4 Suplementación Clave</h2>
+            <ul>
+                <li><strong>Creatina:</strong> 5g/día (rendimiento y recuperación)</li>
+                <li><strong>Citrulina Malato:</strong> 6-8g pre-entreno (bomba, resistencia)</li>
+                <li><strong>Beta-Alanina:</strong> 3-5g/día (buffer ácido láctico)</li>
+                <li><strong>EAAs:</strong> 10-15g intra-entreno (anti-catabolismo)</li>
+            </ul>
+
+            <h1 class="page-break">9. Ejemplos de Rutinas SST por Grupo Muscular</h1>
+
+            <h2>9.1 Pecho</h2>
+            <div class="code-block">RUTINA SST PECHO:
+
+                A. Press Máquina Inclinado: 1x SST-RIV Completo
+                Peso: 70% 1RM → 8-9 mini-series al fallo
+                Descanso después: 4-5 min
+
+                B. Press Máquina Horizontal: 1x SST-CT
+                Peso inicial: 70% 1RM, reducción progresiva
+
+                C. Aperturas Cable: 3x12-15 (técnica normal)
+                + Contracción Pico 2s cada rep
+
+                Duración: ~40 minutos</div>
+
+            <h2>9.2 Espalda</h2>
+            <div class="code-block">RUTINA SST ESPALDA:
+
+                A. Jalón Máquina: 1x SST-RIV Completo
+                Peso: 65-70% 1RM
+
+                B. Remo Máquina: 1x SST-CT
+                Énfasis excéntrico en Fase 2
+
+                C. Pulldown Brazos Rectos: 3x15 (técnica normal)
+                + Isometría final 20s última serie
+
+                Duración: ~45 minutos</div>
+
+            <h2>9.3 Piernas</h2>
+            <div class="code-block">RUTINA SST PIERNAS:
+
+                A. Prensa 45°: 1x SST-RIV Completo
+                Peso: 60-65% 1RM (¡cuidado con fatiga!)
+
+                B. Extensión Cuádriceps: 1x SST-CT
+
+                C. Curl Femoral: 1x SST-RT
+                4 mini-series al fallo
+
+                D. Gemelos Sentado: 3x15-20 + Isometría final
+
+                Duración: ~50 minutos</div>
+
+            <h2>9.4 Hombros</h2>
+            <div class="code-block">RUTINA SST HOMBROS:
+
+                A. Press Hombro Máquina: 1x SST-RT
+                Peso: 75-80% 1RM
+
+                B. Elevaciones Laterales Máquina: 1x SST-RIV (versión corta)
+                Solo 5 mini-series: 45-30-15-30-45
+
+                C. Pájaros Máquina: 3x12-15 + Contracción Pico
+
+                Duración: ~35 minutos</div>
+
+            <h2>9.5 Brazos</h2>
+            <div class="code-block">RUTINA SST BRAZOS:
+
+                BÍCEPS:
+                A. Curl Máquina: 1x SST-RIV (versión corta)
+                B. Curl Scott: 2x10-12 + Isometría final
+
+                TRÍCEPS:
+                C. Extensión Polea: 1x SST-CT
+                D. Press Cerrado Máquina: 2x10-12
+
+                Duración: ~30 minutos</div>
+
+            <h2 class="page-break">9.6 Estructuras por Nivel de Intensidad</h2>
+
+            <div class="highlight-box">
+                <strong>🎯 Elige tu estructura según experiencia y disponibilidad.</strong>
+                SST funciona en cualquier división, pero algunas son más eficientes que otras.
+            </div>
+
+            <h3>Full Body (3 días/semana) - Intermedio</h3>
+            <div class="code-block">ESTRUCTURA FULL BODY SST:
+                Frecuencia: Lun/Mié/Vie
+                Protocolo: 1 SST Core por grupo grande
+
+                DÍA A (Empuje + Piernas):
+                - Press Máquina: 1x SST-CT
+                - Prensa: 1x SST-RIV (corto)
+                - Hombros + Tríceps: 2 ejercicios normales
+
+                DÍA B (Tirón + Piernas):
+                - Jalón: 1x SST-RIV
+                - Curl Femoral: 1x SST-CT
+                - Bíceps + Espalda: 2 ejercicios normales
+
+                DÍA C (Híbrido):
+                - Combinación según fatiga</div>
+
+            <h3>Upper/Lower (4 días/semana) - Intermedio-Avanzado</h3>
+            <table>
+                <tr>
+                    <th>Día</th>
+                    <th>Enfoque</th>
+                    <th>Protocolos SST</th>
+                </tr>
+                <tr>
+                    <td>Lunes</td>
+                    <td>Upper A (Empuje)</td>
+                    <td>1x RIV Pecho + 1x CT Hombros</td>
+                </tr>
+                <tr>
+                    <td>Martes</td>
+                    <td>Lower A (Cuádriceps)</td>
+                    <td>1x RIV Prensa + 1x CT Extensión</td>
+                </tr>
+                <tr>
+                    <td>Jueves</td>
+                    <td>Upper B (Tirón)</td>
+                    <td>1x RIV Espalda + 1x RT Bíceps</td>
+                </tr>
+                <tr>
+                    <td>Viernes</td>
+                    <td>Lower B (Posterior)</td>
+                    <td>1x CT Curl Femoral + 1x ISOM Gemelos</td>
+                </tr>
+            </table>
+
+            <h3>Torso/Pierna (4 días/semana) - Avanzado</h3>
+            <div class="code-block">TORSO (Lun/Jue):
+                A. Pecho: 1x SST-RIV o CT
+                B. Espalda: 1x SST-RIV o CT
+                C. Hombros: 1x SST-RT
+                D. Brazos: Trabajo accesorio
+
+                PIERNA (Mar/Vie):
+                A. Cuádriceps: 1x SST-RIV
+                B. Femoral: 1x SST-CT
+                C. Gemelos: 1x SST-ISOM
+                D. Glúteo: Trabajo accesorio</div>
+
+            <h3>Bro Split (5-6 días/semana) - Avanzado</h3>
+            <table>
+                <tr>
+                    <th>Día</th>
+                    <th>Grupo</th>
+                    <th>Protocolos SST</th>
+                </tr>
+                <tr>
+                    <td>Lunes</td>
+                    <td>Pecho</td>
+                    <td>1x RIV + 1x CT + Accesorios</td>
+                </tr>
+                <tr>
+                    <td>Martes</td>
+                    <td>Espalda</td>
+                    <td>1x RIV + 1x NEG + Accesorios</td>
+                </tr>
+                <tr>
+                    <td>Miércoles</td>
+                    <td>Piernas</td>
+                    <td>1x RIV Prensa + 1x CT Curl + Gemelos</td>
+                </tr>
+                <tr>
+                    <td>Jueves</td>
+                    <td>Hombros</td>
+                    <td>1x RT + 1x ISOM + Accesorios</td>
+                </tr>
+                <tr>
+                    <td>Viernes</td>
+                    <td>Brazos</td>
+                    <td>1x RIV corto Bíceps + 1x CT Tríceps</td>
+                </tr>
+            </table>
+
+            <h2 class="page-break">9.7 Compatibilidad con Otras Metodologías</h2>
+            <table>
+                <tr>
+                    <th>Metodología</th>
+                    <th>Compatible con SST</th>
+                    <th>Recomendación</th>
+                </tr>
+                <tr>
+                    <td>FST-7</td>
+                    <td style="background:#10B981; color:white;">✅ SÍ</td>
+                    <td>Ambos buscan pump - complementarios</td>
+                </tr>
+                <tr>
+                    <td>Y3T</td>
+                    <td style="background:#10B981; color:white;">✅ SÍ</td>
+                    <td>SST en Week 3 Annihilation</td>
+                </tr>
+                <tr>
+                    <td>MTUT</td>
+                    <td style="background:#10B981; color:white;">✅ SÍ</td>
+                    <td>Diferente tipo de estrés</td>
+                </tr>
+                <tr>
+                    <td>Heavy Duty</td>
+                    <td style="background:#DC2626; color:white;">❌ NO</td>
+                    <td>Filosofías opuestas</td>
+                </tr>
+                <tr>
+                    <td>Blood & Guts</td>
+                    <td style="background:#DC2626; color:white;">❌ NO</td>
+                    <td>Demasiado fallo acumulado</td>
+                </tr>
+            </table>
+
+            <h2>9.8 Calculadora de Cargas (%1RM)</h2>
+            <table>
+                <tr>
+                    <th>Protocolo</th>
+                    <th>% 1RM</th>
+                    <th>Fallos Esperados</th>
+                    <th>Duración Total</th>
+                </tr>
+                <tr>
+                    <td>SST-RIV</td>
+                    <td>60-70%</td>
+                    <td>6-9 fallos</td>
+                    <td>3-5 min</td>
+                </tr>
+                <tr>
+                    <td>SST-CT</td>
+                    <td>65-75%</td>
+                    <td>3-4 fallos</td>
+                    <td>2-3 min</td>
+                </tr>
+                <tr>
+                    <td>SST-RT</td>
+                    <td>75-80%</td>
+                    <td>3-4 fallos</td>
+                    <td>2 min</td>
+                </tr>
+            </table>
+
+            <h2>9.9 Guía de Progresión Semanal</h2>
+            <div class="highlight-box">
+                <strong>Cómo Progresar en SST:</strong>
+                <ol>
+                    <li><strong>Cada protocolo:</strong> Anota reps totales en cada fallo</li>
+                    <li><strong>Si reps totales aumentan 10%:</strong> Sube peso 2.5kg</li>
+                    <li><strong>Hidratación:</strong> Si calambres, NO subir intensidad</li>
+                    <li><strong>Cada 4-6 semanas:</strong> Semana sin SST (entrenamiento normal)</li>
+                </ol>
+            </div>
+
+            <h2>9.10 Selector de Metodología por Objetivo</h2>
+            <table>
+                <tr>
+                    <th>Tu Objetivo</th>
+                    <th>¿SST es para ti?</th>
+                    <th>Alternativa</th>
+                </tr>
+                <tr>
+                    <td>Pump extremo</td>
+                    <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                    <td>FST-7</td>
+                </tr>
+                <tr>
+                    <td>Definición/corte</td>
+                    <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Hipertrofia sarcoplásmica</td>
+                    <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Fuerza máxima</td>
+                    <td style="background:#DC2626; color:white;">❌ NO</td>
+                    <td>Heavy Duty</td>
+                </tr>
+                <tr>
+                    <td>Principiante</td>
+                    <td style="background:#DC2626; color:white;">❌ NO</td>
+                    <td>Y3T Week 1-2</td>
+                </tr>
+            </table>
+
+            <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+            <h2>10.1 Escuchar al Cuerpo</h2>
+            <ul>
+                <li><strong>Fatiga excesiva:</strong> Reducir protocolos RIV, usar CT o RT</li>
+                <li><strong>Dolor articular:</strong> Cambiar a ejercicios de máquina, reducir ROM</li>
+                <li><strong>Falta de bomba:</strong> Verificar hidratación y carbohidratos</li>
+            </ul>
+
+            <h2>10.2 Descanso y Recuperación</h2>
+            <ul>
+                <li><strong>Sueño:</strong> 7-9 horas (crítico para SST)</li>
+                <li><strong>Entre sesiones mismo grupo:</strong> Mínimo 48-72h</li>
+                <li><strong>Cardio:</strong> LISS preferible, evitar HIIT días SST</li>
+            </ul>
+
+            <h2>10.3 Prevención de Lesiones</h2>
+            <ul>
+                <li><strong>Usar MÁQUINAS:</strong> Más seguro con fatiga extrema de SST</li>
+                <li><strong>Calentamiento extenso:</strong> 10-15 min obligatorio</li>
+                <li><strong>Si no completas protocolo:</strong> Reduce peso, no fuerces</li>
+            </ul>
+
+            <h2 class="page-break">10.4 Guía Práctica de Implementación Paso a Paso</h2>
+
+            <div class="highlight-box">
+                <strong>🎯 Esta sección contiene información práctica esencial</strong> que necesitas antes de tu
+                primera
+                sesión SST. Sigue estos pasos en orden.
+            </div>
+
+            <h3>Paso 1: Calcular tu 1RM Estimado</h3>
+
+            <div class="highlight-box">
+                <strong>¿Qué es el 1RM?</strong>
+                <p>El <strong>1RM (One Rep Max)</strong> es el peso máximo que puedes levantar UNA sola vez. En SST
+                    usamos
+                    diferentes porcentajes según el protocolo (60-85% 1RM).</p>
+            </div>
+
+            <div class="code-block">FÓRMULA EPLEY:
+                1RM Estimado = Peso usado × (1 + Repeticiones / 30)
+
+                EJEMPLO:
+                Si haces 10 reps con 80kg en Prensa:
+                1RM = 80 × (1 + 10/30) = 80 × 1.33 = 106kg
+
+                Para SST-RIV (65% de 106kg) = 69kg ← Peso de trabajo</div>
+
+            <h4>Tabla de Porcentajes SST</h4>
+            <table>
+                <tr>
+                    <th>Protocolo</th>
+                    <th>% 1RM</th>
+                    <th>Ejemplo (1RM=100kg)</th>
+                </tr>
+                <tr>
+                    <td>SST-RIV</td>
+                    <td>60-70%</td>
+                    <td>60-70kg</td>
+                </tr>
+                <tr>
+                    <td>SST-CT</td>
+                    <td>70% inicial</td>
+                    <td>70kg → reduce</td>
+                </tr>
+                <tr>
+                    <td>SST-RT</td>
+                    <td>75-85%</td>
+                    <td>75-85kg</td>
+                </tr>
+                <tr>
+                    <td>SST-NEG</td>
+                    <td>105-120%</td>
+                    <td>105-120kg (con ayuda)</td>
+                </tr>
+            </table>
+
+            <h3>Paso 2: Checklist de Equipo</h3>
+            <table>
+                <tr>
+                    <th>Grupo Muscular</th>
+                    <th>Máquinas Recomendadas</th>
+                </tr>
+                <tr>
+                    <td>Pecho</td>
+                    <td>Press máquina, Pec deck, Cruces polea</td>
+                </tr>
+                <tr>
+                    <td>Espalda</td>
+                    <td>Jalón máquina, Remo máquina, Pulldown</td>
+                </tr>
+                <tr>
+                    <td>Piernas</td>
+                    <td>Prensa, Extensión, Curl femoral, Hack squat</td>
+                </tr>
+                <tr>
+                    <td>Hombros</td>
+                    <td>Press máquina, Elevaciones laterales máquina</td>
+                </tr>
+                <tr>
+                    <td>Brazos</td>
+                    <td>Curl máquina, Extensión polea</td>
+                </tr>
+            </table>
+
+            <h3>Paso 3: Tu Primera Sesión SST</h3>
+            <div class="code-block">DÍA 1 - PRIMERA SESIÓN SST (Ejemplo: Pecho)
+                Duración: ~40-50 minutos
+
+                FASE 1: CALENTAMIENTO (15 min)
+                ├─ 5 min cardio ligero
+                ├─ Movilidad articular
+                └─ Series aproximación en press máquina
+
+                FASE 2: SST CORE (25-30 min)
+                ├─ Ejercicio 1: Press Máquina [SST-RIV versión CORTA]
+                │ • Peso: 65% 1RM
+                │ • SOLO: 45-30-15-30-45 (5 mini-series, no 8)
+                │ • Primera vez = versión reducida
+                │
+                └─ Ejercicio 2: Aperturas Cable [Normal]
+                • 3×12-15 + Contracción pico
+                • Acostumbrarte a técnica SST
+
+                FASE 3: ENFRIAMIENTO (5 min)
+                └─ Estiramientos estáticos</div>
+
+            <h3>Paso 4: Troubleshooting</h3>
+            <table>
+                <tr>
+                    <th>Problema</th>
+                    <th>Causa</th>
+                    <th>Solución</th>
+                </tr>
+                <tr>
+                    <td>No completo todas las mini-series</td>
+                    <td>Peso muy alto</td>
+                    <td>Reduce 10-15% para próxima sesión</td>
+                </tr>
+                <tr>
+                    <td>No siento bomba</td>
+                    <td>Descansos muy largos o poca hidratación</td>
+                    <td>Cronometra descansos, toma agua</td>
+                </tr>
+                <tr>
+                    <td>Mareo durante SST-RIV</td>
+                    <td>Falta respiración</td>
+                    <td>Respira entre mini-series, nunca aguantes</td>
+                </tr>
+                <tr>
+                    <td>DOMS extremo (+72h)</td>
+                    <td>Demasiado volumen</td>
+                    <td>Reduce a versión corta, aumenta gradualmente</td>
+                </tr>
+            </table>
+
+            <h3>Paso 5: Transición Post-SST</h3>
+            <div class="code-block">DESPUÉS DE CICLO SST (4-6 semanas):
+
+                SEMANA TRANSICIÓN:
+                • Eliminar protocolos SST completos
+                • Mantener solo ejercicios normales
+                • Carga: 70-75% 1RM
+                • Objetivo: Reconectar con tensión mecánica
+
+                SIGUIENTE CICLO:
+                • Opción 1: Reiniciar SST con progresión
+                • Opción 2: Cambiar a metodología TM (Heavy Duty, etc.)
+                • Opción 3: Híbrido según respuesta</div>
+
+            <h1 class="page-break">Apéndice A: Datos para Creación de Rutinas</h1>
+
+            <h2>A.1 Base de Datos de Ejercicios SST</h2>
+            <table>
+                <tr>
+                    <th>Grupo</th>
+                    <th>Ejercicios IDEALES (máquinas)</th>
+                    <th>Ejercicios PROHIBIDOS</th>
+                </tr>
+                <tr>
+                    <td><strong>Pecho</strong></td>
+                    <td>Pec deck, Press máquina, Cruces cable</td>
+                    <td>Press barra (peligro en fallo múltiple)</td>
+                </tr>
+                <tr>
+                    <td><strong>Espalda</strong></td>
+                    <td>Pulldown, Remo máquina, Pullover máquina</td>
+                    <td>Peso muerto, Remo barra</td>
+                </tr>
+                <tr>
+                    <td><strong>Piernas</strong></td>
+                    <td>Extensiones, Curl femoral, Prensa</td>
+                    <td>Sentadilla libre</td>
+                </tr>
+                <tr>
+                    <td><strong>Hombros</strong></td>
+                    <td>Elevaciones laterales máquina, Press máquina</td>
+                    <td>Press militar barra</td>
+                </tr>
+                <tr>
+                    <td><strong>Brazos</strong></td>
+                    <td>Curl Scott máquina, Extensión polea</td>
+                    <td>Curl barra pesado</td>
+                </tr>
+            </table>
+
+            <h2>A.2 Plantillas de Split Recomendados SST</h2>
+            <div class="highlight-box">
+                <strong>Splits Óptimos para SST:</strong>
+                <ul>
+                    <li><strong>Bro Split (5 días):</strong> 1 grupo por día, 1 protocolo SST por grupo</li>
+                    <li><strong>Push/Pull/Legs (6 días):</strong> 1-2 SST por sesión</li>
+                    <li><strong>Upper/Lower (4 días):</strong> 1 SST finisher por sesión</li>
+                </ul>
+            </div>
+
+            <h2>A.3 Semana Tipo Completa SST (Bro Split)</h2>
+            <table>
+                <tr>
+                    <th>Día</th>
+                    <th>Grupo</th>
+                    <th>Ejercicios Normales</th>
+                    <th>Finisher SST</th>
+                </tr>
+                <tr>
+                    <td>Lunes</td>
+                    <td>Pecho</td>
+                    <td>Press inclinado, Press plano</td>
+                    <td>Pec deck SST-RIV</td>
+                </tr>
+                <tr>
+                    <td>Martes</td>
+                    <td>Espalda</td>
+                    <td>Remo Hammer, Dominadas</td>
+                    <td>Pulldown SST-CT</td>
+                </tr>
+                <tr>
+                    <td>Miércoles</td>
+                    <td>Hombros</td>
+                    <td>Press militar, Elevaciones</td>
+                    <td>Laterales máquina SST-RIV</td>
+                </tr>
+                <tr>
+                    <td>Jueves</td>
+                    <td colspan="3">DESCANSO (hidratación crítica)</td>
+                </tr>
+                <tr>
+                    <td>Viernes</td>
+                    <td>Piernas</td>
+                    <td>Prensa, Sentadilla hack</td>
+                    <td>Extensiones SST-RIV</td>
+                </tr>
+                <tr>
+                    <td>Sábado</td>
+                    <td>Brazos</td>
+                    <td>Curl predicador, Fondos</td>
+                    <td>Curl cable SST-CT</td>
+                </tr>
+                <tr>
+                    <td>Domingo</td>
+                    <td colspan="3">DESCANSO</td>
+                </tr>
+            </table>
+
+            <h2>A.4 Protocolo de Calentamiento SST</h2>
+            <div class="success-box">
+                <strong>Calentamiento para SST:</strong>
+                <ul>
+                    <li><strong>General:</strong> 5 min cardio ligero + movilidad</li>
+                    <li><strong>Set 1:</strong> 30% peso trabajo x 15 reps (activación)</li>
+                    <li><strong>Set 2:</strong> 50% peso trabajo x 10 reps</li>
+                    <li><strong>Hidratación:</strong> 500ml agua ANTES de iniciar protocolo SST</li>
+                    <li><strong>SST:</strong> Iniciar protocolo con el peso seleccionado</li>
+                </ul>
+            </div>
+
+            <h2>A.5 Sistema de Deload SST</h2>
+            <div class="warning-box">
+                <strong>Reglas de Deload SST:</strong>
+                <ul>
+                    <li><strong>Frecuencia:</strong> Cada 4-6 semanas (SST es MUY demandante)</li>
+                    <li><strong>Duración:</strong> 1 semana SIN SST</li>
+                    <li><strong>Entrenamiento:</strong> Solo ejercicios normales 3x10-12</li>
+                    <li><strong>Señales urgentes:</strong> Calambres frecuentes, fatiga extrema, dolor articular</li>
+                    <li><strong>Hidratación deload:</strong> Mantener 3-4L agua diarios</li>
+                </ul>
+            </div>
+
+            <h1 class="page-break">Apéndice B: Datos Técnicos para Aplicación</h1>
+
+            <h2>B.1 Glosario de Términos SST</h2>
+            <table>
+                <tr>
+                    <th>Término</th>
+                    <th>Definición</th>
+                    <th>Uso en App</th>
+                </tr>
+                <tr>
+                    <td><code>SST-RIV</code></td>
+                    <td>Rest Interval Variable (5-25s entre mini-sets)</td>
+                    <td>Timer variable</td>
+                </tr>
+                <tr>
+                    <td><code>Fallo Múltiple</code></td>
+                    <td>Fallar 6-9 veces en un solo protocolo</td>
+                    <td>Contador de fallos</td>
+                </tr>
+                <tr>
+                    <td><code>Pump</code></td>
+                    <td>Congestión muscular - objetivo principal</td>
+                    <td>Rating 1-5</td>
+                </tr>
+                <tr>
+                    <td><code>Estrés Metabólico</code></td>
+                    <td>Acumulación de lactato y metabolitos</td>
+                    <td>Indicador de éxito</td>
+                </tr>
+            </table>
+
+            <h2>B.2 Configuración de Timer para App</h2>
+            <table>
+                <tr>
+                    <th>Protocolo</th>
+                    <th>Timer Descanso</th>
+                    <th>Timer Trabajo</th>
+                    <th>Alerta</th>
+                </tr>
+                <tr>
+                    <td>SST-RIV</td>
+                    <td>5s→10s→15s→20s→25s</td>
+                    <td>Hasta fallo</td>
+                    <td>Beep al terminar descanso</td>
+                </tr>
+                <tr>
+                    <td>SST-CT</td>
+                    <td>10-20s</td>
+                    <td>Varía por tipo</td>
+                    <td>Beep cambio de contracción</td>
+                </tr>
+                <tr>
+                    <td>SST-RT</td>
+                    <td>10-15s (micro)</td>
+                    <td>Hasta fallo</td>
+                    <td>Beep "GO"</td>
+                </tr>
+            </table>
+
+            <h2>B.3 Indicadores de Éxito</h2>
+            <div class="success-box">
+                <strong>¿Cómo saber si SST está funcionando?</strong>
+                <ul>
+                    <li><strong>Inmediato:</strong> Pump extremo post-protocolo</li>
+                    <li><strong>Semana 2-4:</strong> Más reps totales en protocolo</li>
+                    <li><strong>Semana 4-8:</strong> Venas más visibles, músculo más lleno</li>
+                    <li><strong>Señal negativa:</strong> Calambres constantes = más agua + electrolitos</li>
+                </ul>
+            </div>
+
+            <h2>B.4 Protocolos de Transición</h2>
+            <div class="highlight-box">
+                <strong>Cómo cambiar DESDE SST:</strong>
+                <ul>
+                    <li><strong>→ Y3T:</strong> SST perfecto para Y3T Week 3 Annihilation</li>
+                    <li><strong>→ FST-7:</strong> Transición suave - ambos buscan pump</li>
+                    <li><strong>→ MTUT:</strong> 1 semana normal, luego MTUT (diferente estrés)</li>
+                    <li><strong>→ Heavy Duty:</strong> 2 semanas sin fallo múltiple antes de HIT</li>
+                </ul>
+            </div>
+
+            <h2>B.5 Plantilla de Tracking</h2>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Obligatorio</th>
+                    <th>Ejemplo SST-RIV</th>
+                </tr>
+                <tr>
+                    <td>Ejercicio</td>
+                    <td>✓</td>
+                    <td>Pec Deck</td>
+                </tr>
+                <tr>
+                    <td>Peso</td>
+                    <td>✓</td>
+                    <td>45kg</td>
+                </tr>
+                <tr>
+                    <td>Reps por fallo</td>
+                    <td>✓</td>
+                    <td>12,8,6,5,4,3,3,2</td>
+                </tr>
+                <tr>
+                    <td>Total reps</td>
+                    <td>✓</td>
+                    <td>43</td>
+                </tr>
+                <tr>
+                    <td>Fallos totales</td>
+                    <td>✓</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>Pump (1-5)</td>
+                    <td>✓</td>
+                    <td>5/5</td>
+                </tr>
+            </table>
+
+            <h2>B.6 FAQ / Troubleshooting</h2>
+            <div class="warning-box">
+                <strong>Problemas Comunes SST:</strong>
+                <ul>
+                    <li><strong>Solo fallo 1-2 veces:</strong> Peso muy alto - reduce 15-20%</li>
+                    <li><strong>Calambres severos:</strong> Más agua pre-workout, electrolitos</li>
+                    <li><strong>Sin pump:</strong> Descansos muy largos - reduce tiempo</li>
+                    <li><strong>Náuseas:</strong> No comer 2h antes, reduce intensidad</li>
+                    <li><strong>Mareo:</strong> Respira entre fallos, siéntate si necesario</li>
+                </ul>
+            </div>
+
+            <h2 class="page-break">10.5 Especialización de Grupos Débiles</h2>
+
+            <div class="highlight-box">
+                <strong>🎯 Priorización de Grupos Rezagados con SST</strong>
+                <p>SST es ideal para especialización debido a su alto estímulo metabólico. Los protocolos RIV
+                    y CT generan pump extremo que beneficia particularmente a grupos que responden mejor al
+                    estrés metabólico que a la tensión mecánica (pantorrillas, bíceps, deltoides posterior).</p>
+            </div>
+
+            <h3>Estrategia SST para Grupos Débiles</h3>
+            <table>
+                <tr>
+                    <th>Nivel</th>
+                    <th>Series Extra/Semana</th>
+                    <th>Frecuencia</th>
+                    <th>Protocolo Recomendado</th>
+                </tr>
+                <tr>
+                    <td>Moderado</td>
+                    <td>+4-6 series</td>
+                    <td>2x/semana</td>
+                    <td>SST-CT al inicio de sesión</td>
+                </tr>
+                <tr>
+                    <td>Alto</td>
+                    <td>+8-10 series</td>
+                    <td>3x/semana</td>
+                    <td>SST-RIV corto + CT</td>
+                </tr>
+                <tr>
+                    <td>Especialización</td>
+                    <td>+12-15 series</td>
+                    <td>4-5x/semana</td>
+                    <td>SST-RIV completo al inicio</td>
+                </tr>
+            </table>
+
+            <h3>Grupos Comunes a Priorizar</h3>
+            <table>
+                <tr>
+                    <th>Grupo</th>
+                    <th>Protocolo SST Ideal</th>
+                    <th>Ejercicio Recomendado</th>
+                    <th>Series Extra</th>
+                </tr>
+                <tr>
+                    <td>Pantorrillas</td>
+                    <td>SST-RIV corto</td>
+                    <td>Gemelo sentado máquina</td>
+                    <td>5 mini-series</td>
+                </tr>
+                <tr>
+                    <td>Bíceps</td>
+                    <td>SST-CT</td>
+                    <td>Curl Scott máquina</td>
+                    <td>3 series caída tensión</td>
+                </tr>
+                <tr>
+                    <td>Deltoides Posterior</td>
+                    <td>SST-ISOM</td>
+                    <td>Pájaros máquina</td>
+                    <td>3 series + isometría 30s</td>
+                </tr>
+                <tr>
+                    <td>Femoral</td>
+                    <td>SST-RIV corto</td>
+                    <td>Curl femoral acostado</td>
+                    <td>5 mini-series</td>
+                </tr>
+            </table>
+
+            <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS CON SST
+
+                FRECUENCIA: Al inicio de CADA sesión de pierna (3-4x/semana)
+                DURACIÓN: 8-10 minutos extra por sesión
+
+                PROTOCOLO:
+                1. Gemelo Sentado: 1x SST-RIV corto (5 mini-series)
+                Descansos: 45-30-15-30-45 segundos
+                Peso: 65% 1RM, mantener hasta fallo en cada mini-serie
+
+                2. Gemelo de Pie: 1x SST-CT
+                3 caídas de tensión: 100% → 70% → 40%
+                8-12 reps por fase sin descanso
+
+                RESULTADO: 6-9 semanas de ciclo SST + especialización = +1-2cm circunferencia</div>
+
+            <h3>Reglas de Especialización SST</h3>
+            <div class="warning-box">
+                <strong>⚠️ Reglas Importantes:</strong>
+                <ul>
+                    <li><strong>Grupo prioritario PRIMERO:</strong> Empezar sesión con el grupo débil cuando estás
+                        fresco</li>
+                    <li><strong>Protocolo más agresivo:</strong> Usar SST-RIV completo solo para el grupo débil</li>
+                    <li><strong>Máximo 1-2 grupos:</strong> SST ya es muy demandante, no sobrecargar</li>
+                    <li><strong>Hidratación extra:</strong> +500ml agua antes de sesión con especialización</li>
+                    <li><strong>Evaluar cada 2 semanas:</strong> Medir circunferencia y ajustar</li>
+                </ul>
+            </div>
+
+            <h1>11. Conclusión</h1>
+            <div class="highlight-box">
+                <p><strong>SST es una herramienta poderosa para hipertrofia sarcoplásmica</strong> cuando se usa
+                    correctamente. Los protocolos de descansos variables y múltiples tipos de contracción ofrecen
+                    versatilidad única para romper mesetas y generar crecimiento por vías metabólicas.</p>
+                <p>La clave es <strong>dominar un protocolo antes de añadir otros</strong>, respetar los deloads, y
+                    escuchar al cuerpo. SST no es para entrenar todos los días del año, sino para ciclos específicos de
+                    4-6 semanas seguidos de períodos de recuperación o metodologías complementarias.</p>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Resumen de Éxito SST:</strong><br>
+                • Domina SST-RIV primero (protocolo más versátil)<br>
+                • Usa máquinas para seguridad con fatiga extrema<br>
+                • Deload cada 3-4 semanas es obligatorio<br>
+                • Nutrición alta en carbohidratos para reposición<br>
+                • Combina con metodologías TM en mesociclos largos
+            </div>
+
+            <h3>Atletas Conocidos que Usan SST</h3>
+            <ul>
+                <li><strong>Patrick Tuor</strong> - Creador del sistema</li>
+                <li><strong>Atletas IFBB Pro</strong> - Uso en fases de volumen y definición</li>
+                <li><strong>Culturistas naturales</strong> - Popular por sus protocolos sin fallo absoluto</li>
+            </ul>
+
+            <h3>Comparación Rápida</h3>
+            <table>
+                <tr>
+                    <th>Aspecto</th>
+                    <th>SST</th>
+                    <th>MTUT</th>
+                    <th>FST-7</th>
+                </tr>
+                <tr>
+                    <td>Intensidad vía</td>
+                    <td>Descansos variables</td>
+                    <td>TUT (tiempo)</td>
+                    <td>Pump (7 series)</td>
+                </tr>
+                <tr>
+                    <td>Carga típica</td>
+                    <td>60-80% 1RM</td>
+                    <td>40-50% 1RM</td>
+                    <td>60-70% 1RM</td>
+                </tr>
+                <tr>
+                    <td>TUT por serie</td>
+                    <td>60-90s por mini-serie</td>
+                    <td>80-130s</td>
+                    <td>30-50s (x7)</td>
+                </tr>
+                <tr>
+                    <td>Estrés articular</td>
+                    <td>Medio</td>
+                    <td>Muy bajo ⭐</td>
+                    <td>Bajo</td>
+                </tr>
+                <tr>
+                    <td>Duración recomendada</td>
+                    <td>4-6 semanas</td>
+                    <td>4-6 semanas</td>
+                    <td>Continuo</td>
+                </tr>
+                <tr>
+                    <td>Spotter requerido</td>
+                    <td>Preferible</td>
+                    <td>No ⭐</td>
+                    <td>No</td>
+                </tr>
+            </table>
+
+            <div
+                style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, var(--dark), #1E293B); color: white; border-radius: 12px;">
+                <h2 style="color: var(--primary); margin-bottom: 15px;">SST - Sarcoplasm Stimulating Training</h2>
+                <p style="opacity: 0.9;">Metodología Maestra Unificada</p>
+                <p style="opacity: 0.7; font-size: 0.9rem;">Basado en trabajo de Patrick Tuor</p>
+                <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Diciembre 2025</p>
+            </div>
+        </div>
+
+        <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nivel de Experiencia</th>
+                    <th>Duración del Ciclo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Principiante (1‑2 años)</td>
+                    <td>6‑8 semanas</td>
+                </tr>
+                <tr>
+                    <td>Intermedio (2‑5 años)</td>
+                    <td>4‑6 semanas</td>
+                </tr>
+                <tr>
+                    <td>Avanzado (5+ años)</td>
+                    <td>3‑4 semanas</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Estructura</th>
+                    <th>Días por semana</th>
+                    <th>Nivel recomendado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Full Body</td>
+                    <td>3</td>
+                    <td>Principiante</td>
+                </tr>
+                <tr>
+                    <td>Upper/Lower</td>
+                    <td>4</td>
+                    <td>Intermedio‑Avanzado</td>
+                </tr>
+                <tr>
+                    <td>Torso/Pierna</td>
+                    <td>4</td>
+                    <td>Avanzado</td>
+                </tr>
+                <tr>
+                    <td>Bro Split</td>
+                    <td>5‑6</td>
+                    <td>Avanzado</td>
+                </tr>
+            </tbody>
+        </table>
+</body>
+
+</html>

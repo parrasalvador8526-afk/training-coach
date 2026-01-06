@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FST-7 - Metodología Maestra Unificada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #DC2626;
+            --secondary: #F97316;
+            --accent: #FBBF24;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .fst7-visual {
+            display: flex;
+            justify-content: space-around;
+            background: #1E293B;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .fst7-set {
+            flex: 1;
+            padding: 10px;
+            min-width: 60px;
+            border-right: 1px solid #374151;
+        }
+
+        .fst7-set:last-child {
+            border-right: none;
+        }
+
+        .fst7-set .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--secondary);
+        }
+
+        .fst7-set .label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .tempo-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tempo-badge.fst7 {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tempo-badge.compound {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .tempo-badge.iso {
+            background: var(--accent);
+            color: #1E293B;
+        }
+
+        .use-when {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .use-when>div {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .use-when>div:first-child {
+            background: #ECFDF5;
+        }
+
+        /* Tempo Color Classes */
+        .tempo-con {
+            color: #06B6D4;
+            font-weight: 700;
+            background: rgba(6, 182, 212, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-ecc {
+            color: #F59E0B;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-iso {
+            color: #10B981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>FST-7</h1>
+        <p class="subtitle">Fascia Stretch Training</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Metodología de Estiramiento Fascial desarrollada por Hany Rambod
+            para maximizar hipertrofia mediante bombeo extremo y expansión de la fascia muscular.</p>
+        <p class="author">Creador: Hany Rambod · "The Pro Creator"</p>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 10 ATLETAS DESTACADOS
+                    FST-7:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Phil Heath (7x Mr. Olympia) ·
+                <strong>2.</strong> Jay Cutler (4x Mr. Olympia) ·
+                <strong>3.</strong> Derek Lunsford (2x Mr. Olympia) ·
+                <strong>4.</strong> Chris Bumstead (6x Classic Physique Olympia) ·
+                <strong>5.</strong> Samson Dauda (Mr. Olympia 2024) ·
+                <strong>6.</strong> Shaun Rhoden (Mr. Olympia 2018) ·
+                <strong>7.</strong> Hadi Choopan (Mr. Olympia 2022) ·
+                <strong>8.</strong> Flex Lewis (7x 212 Olympia) ·
+                <strong>9.</strong> Brandon Curry (Mr. Olympia 2019) ·
+                <strong>10.</strong> Jeremy Buendia (4x Men's Physique Olympia)
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">25 Títulos Olympia combinados · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al FST-7</li>
+                <li><strong>2.</strong> Objetivos del FST-7</li>
+                <li><strong>3.</strong> Principios Básicos del FST-7</li>
+                <li class="sub">3.1 La Fascia y su Rol en Hipertrofia</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 El "Pump" como Indicador</li>
+                <li><strong>4.</strong> Métodos y Técnicas del FST-7</li>
+                <li class="sub">4.1 FST-7 Clásico (Finisher)</li>
+                <li class="sub">4.2 FST-7 con Contracciones Isométricas</li>
+                <li class="sub">4.3 FST-7 con Estiramientos</li>
+                <li class="sub">4.4 FST-7 Doble (Dos grupos)</li>
+                <li class="sub">4.5 FST-7 Burn (Intensificado)</li>
+                <li class="sub">4.6 RPE en FST-7</li>
+                <li class="sub">4.7 Compatibilidad con Otras Metodologías</li>
+                <li class="sub">4.8 Ejercicios Ideales para FST-7</li>
+                <li class="sub">4.9 Ejemplo: Rutina Push con Todas las Variantes</li>
+                <li><strong>5.</strong> Estructura de una Sesión FST-7</li>
+                <li class="sub">5.1 Calentamiento</li>
+                <li class="sub">5.2 Ejercicios Compuestos</li>
+                <li class="sub">5.3 FST-7 Finisher</li>
+                <li class="sub">5.4 Enfriamiento y Estiramiento</li>
+                <li><strong>6.</strong> Periodización con FST-7</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Integración con Y3T y NEXUS</li>
+                <li class="sub">6.3 Fases BIG vs RIPPED</li>
+                <li class="sub">6.4 Descargas (Deloads)</li>
+                <li class="sub">6.5 Duración del Ciclo por Nivel de Experiencia</li>
+                <li><strong>7.</strong> Progresión en FST-7</li>
+                <li class="sub">7.1 Progresión de Carga</li>
+                <li class="sub">7.2 Progresión de Reps</li>
+                <li class="sub">7.3 Reducción de Descanso</li>
+                <li class="sub">7.4 Variación de Ejercicios FST-7</li>
+                <li><strong>8.</strong> Nutrición y Suplementación para FST-7</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Hidratación</li>
+                <li class="sub">8.4 Suplementación</li>
+                <li><strong>9.</strong> Ejemplos de Rutinas FST-7 por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas | 9.4 Hombros | 9.5 Brazos</li>
+                <li class="sub">9.6 Estructuras por Nivel de Intensidad</li>
+                <li class="sub" style="padding-left: 40px;">• Full Body | Upper/Lower | Torso/Pierna | Bro Split</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Descanso y Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía Práctica de Implementación Paso a Paso</li>
+                <li class="sub" style="padding-left: 40px;">• Selección Ejercicio | Peso Inicial | Primera Sesión |
+                    Troubleshooting | Post-FST-7</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al FST-7</h1>
+        <div class="highlight-box">
+            <strong>FST-7 (Fascia Stretch Training)</strong> es una metodología de entrenamiento creada por <strong>Hany
+                Rambod</strong>, el "Pro Creator", enfocada en estirar la fascia muscular desde adentro mediante un
+            bombeo (pump) extremo para permitir mayor crecimiento muscular.
+        </div>
+
+        <p>El nombre FST-7 significa <strong>Fascia Stretch Training - 7 Series</strong>. La fascia es el tejido
+            conectivo que envuelve los músculos como una funda. Según Rambod, una fascia ajustada puede limitar el
+            crecimiento muscular, y el FST-7 busca expandirla mediante 7 series de alto volumen con descansos cortos al
+            final del entrenamiento.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">7</div>
+                <div class="label">Series Finisher</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">8-12</div>
+                <div class="label">Reps por Serie</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">30-45s</div>
+                <div class="label">Descanso entre Series</div>
+            </div>
+        </div>
+
+        <h3>Atletas que usan FST-7</h3>
+        <ul>
+            <li><strong>Phil Heath</strong> - 7x Mr. Olympia</li>
+            <li><strong>Big Ramy</strong> - 2x Mr. Olympia</li>
+            <li><strong>Jay Cutler</strong> - 4x Mr. Olympia</li>
+            <li><strong>Derek Lunsford</strong> - 1x Mr. Olympia</li>
+        </ul>
+
+        <h1>2. Objetivos del FST-7</h1>
+        <ul>
+            <li><strong>Expansión Fascial:</strong> Estirar la fascia para crear más espacio para crecimiento muscular
+            </li>
+            <li><strong>Bombeo Máximo:</strong> Saturar el músculo con sangre, nutrientes y oxígeno</li>
+            <li><strong>Hipertrofia Sarcoplásmica:</strong> Aumentar el contenido celular (glucógeno, agua)</li>
+            <li><strong>Redondez Muscular:</strong> Lograr músculos más llenos y redondeados (estética)</li>
+            <li><strong>Entrega de Nutrientes:</strong> Maximizar flujo sanguíneo post-entrenamiento</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del FST-7</h1>
+
+        <h2>3.1 La Fascia y su Rol en Hipertrofia</h2>
+        <p>La <strong>fascia</strong> es una capa delgada pero densa de tejido conectivo que envuelve músculos, huesos,
+            tendones y ligamentos. Actúa como una "funda" estructural:</p>
+        <ul>
+            <li><strong>Fascia apretada:</strong> Puede restringir la expansión muscular</li>
+            <li><strong>Fascia estirada:</strong> Permite mayor crecimiento del tejido muscular</li>
+        </ul>
+        <div class="highlight-box">
+            <strong>Mecanismo FST-7:</strong> Al llenar el músculo con sangre (pump), la presión interna estira la
+            fascia desde adentro. Con el tiempo, esto crea más espacio para el crecimiento muscular.
+        </div>
+
+        <h2>3.2 Rangos de Repeticiones y Fibras</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Reps</th>
+                <th>Tipo de Fibra</th>
+                <th>Objetivo</th>
+            </tr>
+            <tr>
+                <td>Ejercicios Compuestos</td>
+                <td>6-8</td>
+                <td>Tipo IIB</td>
+                <td>Tensión Mecánica</td>
+            </tr>
+            <tr>
+                <td>Ejercicios Accesorios</td>
+                <td>8-12</td>
+                <td>Tipo IIA</td>
+                <td>Hipertrofia Mixta</td>
+            </tr>
+            <tr>
+                <td>FST-7 Finisher</td>
+                <td>8-12 (a 15)</td>
+                <td>Tipo I + IIA</td>
+                <td>Pump / Estrés Metabólico</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Tipos de Contracción</h2>
+        <ul>
+            <li><strong>Concéntrica:</strong> Controlada, sin explosión (evitar momentum)</li>
+            <li><strong>Excéntrica:</strong> Lenta (2-3s) para maximizar TUT</li>
+            <li><strong>Isométrica:</strong> CRUCIAL - Flexionar músculo entre series (30-60s)</li>
+        </ul>
+
+        <h2>3.4 El "Pump" como Indicador</h2>
+        <div class="success-box">
+            <strong>✅ En FST-7, el pump es el objetivo principal.</strong> Si no sientes un pump intenso en las 7
+            series, el ejercicio elegido no es el correcto o el peso es muy alto.
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del FST-7</h1>
+
+        <div class="highlight-box">
+            <strong>Introducción al Uso del FST-7</strong>
+            <p>El FST-7 fue desarrollado por <strong>Hany Rambod</strong> ("The Pro Creator") como un sistema para
+                maximizar el bombeo muscular y estirar la fascia. Ha sido utilizado para preparar múltiples campeones
+                Mr. Olympia incluyendo Phil Heath, Jay Cutler y Big Ramy. El sistema es relativamente simple pero
+                extremadamente efectivo cuando se aplica correctamente.</p>
+        </div>
+
+        <h3>¿Cuándo Usar FST-7?</h3>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar FST-7 cuando:</strong>
+            <ul>
+                <li>Quieres maximizar el PUMP y estirar la fascia</li>
+                <li>Tienes grupos musculares rezagados</li>
+                <li>Buscas un "finisher" efectivo para tus sesiones</li>
+                <li>Tienes al menos 6 meses de experiencia entrenando</li>
+                <li>Tienes acceso a máquinas o poleas</li>
+                <li>Quieres un sistema simple pero efectivo de intensificación</li>
+            </ul>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar FST-7 cuando:</strong>
+            <ul>
+                <li><strong>Objetivo es fuerza máxima:</strong> FST-7 usa cargas moderadas, no desarrolla 1RM</li>
+                <li><strong>Tiempo limitado (&lt;30 min):</strong> Las 7 series requieren tiempo</li>
+                <li><strong>Sin acceso a máquinas:</strong> FST-7 es más seguro en máquinas/poleas</li>
+                <li><strong>Ejercicios compuestos:</strong> NUNCA usar FST-7 en peso muerto, sentadilla, etc.</li>
+                <li><strong>Primer ejercicio:</strong> FST-7 siempre va al FINAL del entrenamiento</li>
+            </ul>
+        </div>
+
+        <h3>Limitantes del Sistema FST-7</h3>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Solo funciona como "finisher" - no puede ser todo el entrenamiento</li>
+                <li>1 FST-7 por grupo muscular por sesión máximo</li>
+                <li>Requiere ejercicios de aislamiento específicos</li>
+                <li>El pump puede ser doloroso las primeras semanas</li>
+            </ul>
+        </div>
+
+        <h3>🔧 Cómo Crear Rutinas con FST-7</h3>
+        <div class="highlight-box">
+            <strong>Guía para Integrar FST-7 en tus Rutinas:</strong>
+            <ol>
+                <li><strong>Estructura de sesión:</strong> Ejercicios normales (3-4) + FST-7 al final</li>
+                <li><strong>Ejercicios para FST-7:</strong> Solo aislamiento en máquinas/poleas</li>
+                <li><strong>Esquema FST-7:</strong> 7 series x 8-12 reps, 30-45s descanso</li>
+                <li><strong>Entre series:</strong>
+                    <ul>
+                        <li>FST-7 Clásico: Flexionar/posar el músculo</li>
+                        <li>FST-7 Stretch: Estirar suavemente el músculo</li>
+                        <li>FST-7 Burn: Reps parciales adicionales</li>
+                    </ul>
+                </li>
+                <li><strong>Frecuencia:</strong> 1 FST-7 por grupo, 1-2 grupos por sesión</li>
+                <li><strong>Hidratación:</strong> Beber agua entre cada serie</li>
+            </ol>
+        </div>
+
+        <h3>¿Cómo Aplicar el FST-7?</h3>
+        <ul>
+            <li><strong>Posición en Rutina:</strong> FST-7 SIEMPRE va al FINAL del entrenamiento como "finisher"</li>
+            <li><strong>Ejercicio:</strong> Usar ejercicios de AISLAMIENTO en máquinas o poleas (nunca compuestos
+                pesados)</li>
+            <li><strong>Número de Series:</strong> 7 series del mismo ejercicio con mismo peso</li>
+            <li><strong>Descanso:</strong> 30-45 segundos entre series (cronometrar)</li>
+            <li><strong>Entre Series:</strong> Flexionar/posar el músculo o estirar suavemente</li>
+            <li><strong>Objetivo:</strong> Máximo PUMP - si no hay pump, cambiar ejercicio o bajar peso</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ Regla de Oro del FST-7:</strong> El objetivo es el PUMP, no el peso. Si no puedes completar
+            las 7 series con buen pump, el peso es muy alto. Reduce y enfócate en la conexión mente-músculo.
+        </div>
+
+        <h3>📊 Especificaciones Técnicas para Aplicación</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Variante</th>
+                <th>Nivel</th>
+                <th>Descanso</th>
+                <th>TUT/Serie</th>
+                <th>Equipamiento</th>
+                <th>Duración Sesión</th>
+            </tr>
+            <tr>
+                <td><code>FST7-CL</code></td>
+                <td>FST-7 Clásico</td>
+                <td>Todos</td>
+                <td>30-45s</td>
+                <td>30-40s</td>
+                <td>Máquinas, poleas</td>
+                <td>60-75 min</td>
+            </tr>
+            <tr>
+                <td><code>FST7-ISO</code></td>
+                <td>FST-7 con Isométricos</td>
+                <td>Intermedio+</td>
+                <td>30-45s</td>
+                <td>40-50s</td>
+                <td>Poleas, máquinas</td>
+                <td>65-80 min</td>
+            </tr>
+            <tr>
+                <td><code>FST7-STR</code></td>
+                <td>FST-7 con Estiramientos</td>
+                <td>Intermedio</td>
+                <td>20-30s + stretch</td>
+                <td>30-40s</td>
+                <td>Cualquiera</td>
+                <td>65-80 min</td>
+            </tr>
+            <tr>
+                <td><code>FST7-DB</code></td>
+                <td>FST-7 Doble</td>
+                <td>Avanzado</td>
+                <td>30-45s</td>
+                <td>30-40s x2</td>
+                <td>Máquinas cercanas</td>
+                <td>75-90 min</td>
+            </tr>
+            <tr>
+                <td><code>FST7-BN</code></td>
+                <td>FST-7 Burn</td>
+                <td>Avanzado</td>
+                <td>20-30s</td>
+                <td>45-60s + partials</td>
+                <td>Máquinas, poleas</td>
+                <td>70-85 min</td>
+            </tr>
+        </table>
+
+        <h3>Matriz de Decisión: ¿Cuándo usar cada Variante?</h3>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th>FST-7 Clásico</th>
+                <th>FST-7 Burn</th>
+                <th>FST-7 Stretch</th>
+            </tr>
+            <tr>
+                <td><strong>Nivel</strong></td>
+                <td>Todos los niveles</td>
+                <td>Avanzado</td>
+                <td>Intermedio+</td>
+            </tr>
+            <tr>
+                <td><strong>Objetivo Principal</strong></td>
+                <td>Pump estándar, estiramiento fascial</td>
+                <td>Bomba extrema, grupos rezagados</td>
+                <td>Flexibilidad + pump</td>
+            </tr>
+            <tr>
+                <td><strong>Reps</strong></td>
+                <td>8-12</td>
+                <td>12-15 + drop set</td>
+                <td>10-12</td>
+            </tr>
+            <tr>
+                <td><strong>Entre Series</strong></td>
+                <td>Flexionar músculo</td>
+                <td>Flexionar + reps parciales</td>
+                <td>Estirar músculo</td>
+            </tr>
+            <tr>
+                <td><strong>Frecuencia</strong></td>
+                <td>1-2x por grupo/semana</td>
+                <td>1x por grupo cada 2 semanas</td>
+                <td>1x por grupo/semana</td>
+            </tr>
+        </table>
+
+        <div class="success-box">
+            <strong>📋 Reglas para Implementación:</strong>
+            <ol>
+                <li><strong>FST-7 solo en FINISHER:</strong> Después de ejercicios compuestos y accesorios</li>
+                <li><strong>Un grupo muscular por sesión:</strong> No hacer FST-7 para 3+ grupos en misma sesión</li>
+                <li><strong>Hidratación crítica:</strong> Beber agua antes y durante (pump = sangre + agua)</li>
+                <li><strong>Cronometrar descansos:</strong> 30-45s exactos, no más</li>
+                <li><strong>Máquinas preferidas:</strong> Eliminan necesidad de estabilización en fatiga</li>
+            </ol>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ Contraindicaciones del FST-7:</strong>
+            <ul>
+                <li><strong>Ejercicios compuestos libres:</strong> Nunca hacer FST-7 con sentadilla, peso muerto, press
+                    banca</li>
+                <li><strong>Deshidratación:</strong> Sin hidratación adecuada, no habrá pump efectivo</li>
+                <li><strong>Déficit calórico extremo:</strong> Reducir a 5 series, no 7</li>
+                <li><strong>Lesiones articulares activas:</strong> El volumen alto puede agravar</li>
+                <li><strong>Fatiga extrema del SNC:</strong> Después de sesiones muy pesadas, omitir FST-7</li>
+            </ul>
+        </div>
+
+        <h3>Visualización del Protocolo FST-7</h3>
+        <div class="fst7-visual">
+            <div class="fst7-set">
+                <div class="number">1</div>
+                <div class="label">8-12 reps</div>
+            </div>
+            <div class="fst7-set">
+                <div class="number">30s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="fst7-set">
+                <div class="number">2</div>
+                <div class="label">8-12 reps</div>
+            </div>
+            <div class="fst7-set">
+                <div class="number">30s</div>
+                <div class="label">Descanso</div>
+            </div>
+            <div class="fst7-set">
+                <div class="number">...</div>
+                <div class="label">Continúa</div>
+            </div>
+            <div class="fst7-set">
+                <div class="number">7</div>
+                <div class="label">Al Fallo</div>
+            </div>
+        </div>
+
+        <h3>Algoritmo de Selección FST-7 (Para App)</h3>
+        <div class="code-block">LÓGICA DE IMPLEMENTACIÓN FST-7:
+
+            SI posición_en_rutina == "FINAL" Y tipo_ejercicio == "AISLAMIENTO":
+            → Aplicar FST-7 Clásico
+            → 7 series x 8-12 reps
+            → Descanso: 30-45s
+            → Flexionar músculo entre series
+
+            EJERCICIOS RECOMENDADOS POR GRUPO:
+            - Pecho: Pec Deck, Cruces Polea, Aperturas Máquina
+            - Espalda: Pullover Polea, Jalón Brazos Rectos
+            - Hombros: Elevaciones Laterales Máquina, Rear Delt
+            - Piernas: Extensión Cuádriceps, Curl Femoral
+            - Brazos: Curl Cable, Extensión Polea
+
+            NUNCA USAR FST-7 EN:
+            - Sentadilla, Peso Muerto, Press Banca
+            - Ejercicios que requieren estabilización</div>
+
+        <p><strong>Leyenda de Colores:</strong>
+            <span class="tempo-con">Concéntrica</span> = Cyan |
+            <span class="tempo-ecc">Excéntrica</span> = Naranja |
+            <span class="tempo-iso">Isométrica</span> = Verde
+        </p>
+
+        <h2>4.1 FST-7 Clásico (Finisher)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge fst7">FST-7</span> Protocolo Base de Hany Rambod</h4>
+            <p><strong style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px;">60-70% 1RM</strong>
+                <span style="background:#F97316; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡⚡
+                    PUMP EXTREMO</span>
+            </p>
+            <div class="code-block">PROTOCOLO FST-7 CLÁSICO:
+                Ejercicio: Aislamiento en máquina o polea
+                Series: 7
+                Reps: 8-12 (mantener consistente)
+                Descanso: <span style="color:#DC2626;">30-45 segundos</span>
+                Entre series: <span style="color:#FBBF24;">Flexionar músculo objetivo 15-30s</span>
+                Peso: Moderado (poder completar todas las series)</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#F97316;">85% Estrés Metabólico</strong> (pump máximo, acumulación sangre)<br>
+                <strong style="color:#06B6D4;">15% Tensión Mecánica</strong> (fatiga acumulativa)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Finisher después de compuestos<br>• Objetivo es pump y
+                    tamaño<br>• Tienes 15-20 min extra</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ejercicios compuestos
+                    libres<br>• Deshidratado o sin energía<br>• Lesión articular activa</div>
+            </div>
+        </div>
+
+        <h2>4.2 FST-7 con Contracciones Isométricas</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge iso">ISO-FST7</span> Flexión Entre Series</h4>
+            <p><strong style="background:#10B981; color:white; padding:3px 8px; border-radius:4px;">60-70% 1RM</strong>
+                <span style="background:#F97316; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡⚡
+                    PUMP + CONEXIÓN</span>
+            </p>
+            <div class="code-block">ENTRE CADA SERIE DE LAS 7:
+                1. Terminar serie
+                2. <span style="color:#10B981;">Flexionar músculo (pose) por 30-60 segundos</span>
+                3. Beber agua
+                4. Comenzar siguiente serie
+
+                Ejemplo Pecho:
+                Serie 1 → <span style="color:#FBBF24;">Pose "Most Muscular" 30s</span> → Serie 2...</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Por qué funciona:</strong> La flexión isométrica mantiene tensión en el músculo,
+                aumenta flujo sanguíneo y mejora la conexión mente-músculo.
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Quieres mejorar poses de competencia<br>• Buscas máxima
+                    conexión mente-músculo<br>• Tiempo no es problema</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Prisa en el gym<br>• No conoces
+                    las poses<br>• Fatiga extrema del SNC</div>
+            </div>
+        </div>
+
+        <h2>4.3 FST-7 con Estiramientos</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge compound">STRETCH-FST7</span> Estiramiento Intra-Series</h4>
+            <p><strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">55-65% 1RM</strong>
+                <span style="background:#10B981; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">🌿
+                    FLEXIBILIDAD + PUMP</span>
+            </p>
+            <p>Después de cada serie, <span style="color:#10B981;">estirar el músculo 15-20 segundos</span> en lugar de
+                flexionar.</p>
+            <div class="code-block">ESTIRAMIENTOS RECOMENDADOS POR GRUPO:
+                • Pecho: Apertura con mancuerna ligera o <span style="color:#10B981;">colgarse de marco</span>
+                • Espalda: <span style="color:#10B981;">Colgarse de barra</span> (brazos estirados)
+                • Cuádriceps: Estiramiento de pie (<span style="color:#10B981;">talón a glúteo</span>)
+                • Femoral: Inclinación hacia adelante con pierna recta
+                • Bíceps: Brazo extendido contra pared
+                • Tríceps: Brazo detrás de cabeza</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Músculos muy tensos o acortados<br>• Buscas flexibilidad +
+                    hipertrofia<br>• Después de días de mucho volumen</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Lesión muscular reciente<br>• No
+                    sabes estirar correctamente<br>• Objetivo es máximo pump (flexión es mejor)</div>
+            </div>
+        </div>
+
+        <h2>4.4 FST-7 Doble</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge fst7">DOBLE FST-7</span> Dos Grupos en una Sesión</h4>
+            <p><strong style="background:#EF4444; color:white; padding:3px 8px; border-radius:4px;">60-70% 1RM</strong>
+                <span style="background:#EF4444; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">🔥🔥
+                    SOLO AVANZADOS</span>
+            </p>
+            <p>Aplicar FST-7 a <strong>dos grupos musculares</strong> en la misma sesión.</p>
+            <div class="code-block">EJEMPLO - DÍA DE BRAZOS:
+                BÍCEPS:
+                • Curl Barra: 3x8-10
+                • Curl Predicador: 3x10-12
+                • <span style="color:#DC2626;">Curl Cable FST-7: 7x10-12 (30s descanso)</span>
+
+                TRÍCEPS:
+                • Press Cerrado: 3x8-10
+                • Extensión Sobre Cabeza: 3x10-12
+                • <span style="color:#DC2626;">Extensión Polea FST-7: 7x10-12 (30s descanso)</span></div>
+            <div class="warning-box">⚠️ Solo para avanzados con excelente recuperación. Aumenta significativamente la
+                demanda de recuperación. No usar más de 1x por semana.</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Grupos antagonistas (Bí+Trí, Cuád+Fem)<br>• Excelente
+                    nutrición y sueño<br>• Grupos pequeños que recuperan rápido</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Grupos grandes
+                    (Pecho+Espalda)<br>• Déficit calórico<br>• Menos de 3 años entrenando</div>
+            </div>
+        </div>
+
+        <h2>4.5 FST-7 Burn</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge fst7">BURN</span> FST-7 Intensificado</h4>
+            <p><strong style="background:#EF4444; color:white; padding:3px 8px; border-radius:4px;">55-65% 1RM</strong>
+                <span
+                    style="background:#EF4444; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">🔥🔥🔥
+                    MÁXIMA INTENSIDAD</span>
+            </p>
+            <div class="code-block">PROTOCOLO FST-7 BURN:
+                7 series x <span style="color:#EF4444;">12-15 reps</span> (más reps que clásico)
+                Descanso: <span style="color:#DC2626;">30s</span> entre series
+
+                SERIE 7 INTENSIFICADA:
+                → Completar 12-15 reps
+                → <span style="color:#EF4444;">Drop Set (-30% peso)</span>
+                → Reps al fallo
+                → <span style="color:#EF4444;">Reps parciales</span> hasta fallo absoluto
+
+                USO: Semanas de alto volumen, grupos rezagados</div>
+            <div class="highlight-box" style="margin:10px 0;">
+                <strong>🔬 Mecanismo de Hipertrofia:</strong><br>
+                <strong style="color:#EF4444;">95% Estrés Metabólico</strong> (ácido láctico extremo)<br>
+                <strong style="color:#06B6D4;">5% Tensión Mecánica</strong> (cargas moderadas)
+            </div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Grupo muscular rezagado<br>• Semana de alto volumen
+                    (shock)<br>• Buscas quemar y pump extremo</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Principiante<br>• Más de 1x cada
+                    2 semanas por grupo<br>• Fatiga acumulada alta</div>
+            </div>
+        </div>
+
+
+        <h2>4.6 RPE en FST-7</h2>
+        <table>
+            <tr>
+                <th>RPE</th>
+                <th>Descripción</th>
+                <th>Cuándo en FST-7</th>
+            </tr>
+            <tr>
+                <td>7-8</td>
+                <td>2-3 reps en reserva</td>
+                <td>Series 1-4</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>1 rep en reserva</td>
+                <td>Series 5-6</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>Fallo total</td>
+                <td>Serie 7 (última)</td>
+            </tr>
+        </table>
+
+        <h2>4.7 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatibilidad</th>
+                <th>Cómo Combinar</th>
+            </tr>
+            <tr>
+                <td>Y3T</td>
+                <td>✅ ALTA</td>
+                <td>FST-7 en Semana 3 (alto volumen)</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td>⚠️ Media</td>
+                <td>FST-7 como finisher después de serie HD</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td>✅ Alta</td>
+                <td>Reemplazar SST-RIV con FST-7 corto</td>
+            </tr>
+            <tr>
+                <td>MTUT</td>
+                <td>❌ Baja</td>
+                <td>Estilos opuestos de tempo, no mezclar</td>
+            </tr>
+        </table>
+
+        <h2>4.8 Ejercicios Ideales para FST-7</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>✅ Ejercicios Ideales</th>
+                <th>❌ Evitar</th>
+            </tr>
+            <tr>
+                <td>Pecho</td>
+                <td>Pec Deck, Cruces Polea, Aperturas Máquina</td>
+                <td>Press Banca, Press Inclinado</td>
+            </tr>
+            <tr>
+                <td>Espalda</td>
+                <td>Pullover Polea, Jalón Brazos Rectos</td>
+                <td>Peso Muerto, Remo Libre</td>
+            </tr>
+            <tr>
+                <td>Hombros</td>
+                <td>Elevaciones Laterales Máquina, Rear Delt</td>
+                <td>Press Militar Libre</td>
+            </tr>
+            <tr>
+                <td>Cuádriceps</td>
+                <td>Extensión, Hack Squat Máquina</td>
+                <td>Sentadilla Libre</td>
+            </tr>
+            <tr>
+                <td>Femoral</td>
+                <td>Curl Acostado/Sentado</td>
+                <td>Peso Muerto Rumano</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Curl Cable, Curl Predicador Máquina</td>
+                <td>Curl Barra Pesado</td>
+            </tr>
+            <tr>
+                <td>Tríceps</td>
+                <td>Extensión Polea, Máquina</td>
+                <td>Press Cerrado</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">4.9 Ejemplo: Rutina Push con Todas las Variantes FST-7</h2>
+
+        <div class="highlight-box">
+            <strong>Ejemplo Práctico:</strong> Esta rutina muestra cómo aplicar diferentes variantes FST-7 en una sesión
+            Push (empuje). Cada ejercicio demuestra una variante diferente del protocolo.
+        </div>
+
+        <div class="code-block">RUTINA PUSH FST-7 - TODAS LAS VARIANTES
+            Duración: ~60 minutos | Nivel: Avanzado
+
+            ═══════════════════════════════════════
+            FASE 1: EJERCICIOS COMPUESTOS (30 min)
+            ═══════════════════════════════════════
+
+            A. PECHO - Press Inclinado Mancuernas
+            Series: 4x6-8 reps
+            Descanso: <span style="color:#06B6D4;">90-120s</span>
+            Objetivo: Tensión mecánica
+
+            B. HOMBROS - Press Militar Máquina
+            Series: 3x8-10 reps
+            Descanso: <span style="color:#06B6D4;">90s</span>
+            Objetivo: Preparar deltoides
+
+            C. TRÍCEPS - Press Cerrado Máquina
+            Series: 3x10-12 reps
+            Descanso: <span style="color:#06B6D4;">60-90s</span>
+            Objetivo: Activar tríceps
+
+            ═══════════════════════════════════════
+            FASE 2: FST-7 FINISHERS (25-30 min)
+            ═══════════════════════════════════════
+
+            D. PECHO - Pec Deck <span style="color:#DC2626;">[FST-7 CLÁSICO]</span>
+            Peso: 60-70% 1RM
+            Serie 1: 10-12 reps → <span style="color:#DC2626;">30s descanso</span> → <span
+                style="color:#FBBF24;">Flexionar 15s</span>
+            Serie 2: 10-12 reps → <span style="color:#DC2626;">30s descanso</span> → <span
+                style="color:#FBBF24;">Flexionar 15s</span>
+            Serie 3: 10-12 reps → <span style="color:#DC2626;">30s descanso</span> → <span
+                style="color:#FBBF24;">Flexionar 15s</span>
+            Serie 4: 10-12 reps → <span style="color:#DC2626;">30s descanso</span> → <span
+                style="color:#FBBF24;">Flexionar 15s</span>
+            Serie 5: 10-12 reps → <span style="color:#DC2626;">30s descanso</span> → <span
+                style="color:#FBBF24;">Flexionar 15s</span>
+            Serie 6: 10-12 reps → <span style="color:#DC2626;">30s descanso</span> → <span
+                style="color:#FBBF24;">Flexionar 15s</span>
+            Serie 7: AL FALLO
+            Descanso después: 3-4 min
+
+            E. HOMBROS - Elevaciones Laterales Máquina <span style="color:#F97316;">[FST-7 + STRETCH]</span>
+            Peso: 55-65% 1RM
+            7 series x 10-12 reps
+            Descanso: <span style="color:#DC2626;">30-45s</span>
+            Entre series: <span style="color:#10B981;">Estiramiento brazo 15s</span> (en lugar de flexionar)
+            Descanso después: 2-3 min
+
+            F. TRÍCEPS - Extensión Polea <span style="color:#EF4444;">[FST-7 BURN]</span>
+            Peso inicial: 60% 1RM
+            7 series x <span style="color:#EF4444;">12-15 reps</span>
+            Descanso: <span style="color:#DC2626;">30s</span>
+            Serie 7: + <span style="color:#EF4444;">Drop Set (-30%)</span> + Reps parciales al fallo
+
+            ═══════════════════════════════════════
+            LEYENDA DE COLORES - FST-7:
+            <span style="color:#DC2626;">■ Rojo = FST-7 (series/descanso)</span>
+            <span style="color:#FBBF24;">■ Amarillo = Flexión entre series</span>
+            <span style="color:#10B981;">■ Verde = Estiramiento entre series</span>
+            <span style="color:#06B6D4;">■ Cyan = Descanso ejercicios normales</span>
+            <span style="color:#F97316;">■ Naranja = Variante con stretch</span>
+            <span style="color:#EF4444;">■ Rojo brillante = FST-7 Burn (intensificado)</span>
+        </div>
+
+        <h1 class="page-break">5. Estructura de una Sesión FST-7</h1>
+
+        <h2>5.1 Calentamiento</h2>
+        <div class="code-block">CALENTAMIENTO FST-7 (10-15 min):
+            1. Cardio ligero: 5 min
+            2. Movilidad articular: 3-5 min
+            3. Series de aproximación del primer ejercicio:
+            - Serie 1: 15 reps @ 30% 1RM
+            - Serie 2: 10 reps @ 50% 1RM</div>
+
+        <h2>5.2 Ejercicios Compuestos (Primero)</h2>
+        <ul>
+            <li>2-3 ejercicios compuestos con técnica tradicional</li>
+            <li>3-4 series de 6-10 reps</li>
+            <li>Descanso: 90-120 segundos</li>
+            <li>Objetivo: Tensión mecánica y fuerza</li>
+        </ul>
+
+        <h2>5.3 FST-7 Finisher (Final)</h2>
+        <div class="success-box">
+            <strong>El FST-7 SIEMPRE va al final del entrenamiento</strong> después de los ejercicios compuestos y
+            accesorios.
+            <ul>
+                <li>1 ejercicio de aislamiento</li>
+                <li>7 series x 8-12 reps</li>
+                <li>30-45s descanso</li>
+                <li>Flexionar/estirar entre series</li>
+            </ul>
+        </div>
+
+        <h2>5.4 Enfriamiento</h2>
+        <ul>
+            <li>Estiramientos estáticos: 60s por músculo trabajado</li>
+            <li>Hidratación inmediata</li>
+            <li>Nutrición post-entreno en 30-60 min</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con FST-7</h1>
+
+        <h2>6.1 Microciclos y Mesociclos</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Énfasis</th>
+                <th>FST-7</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Tensión Mecánica (pesado)</td>
+                <td>FST-7 ligero (5 series)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Híbrido</td>
+                <td>FST-7 estándar (7 series)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Volumen Alto</td>
+                <td>FST-7 completo + Burn</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Deload</td>
+                <td>Sin FST-7</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Integración con Y3T y NEXUS</h2>
+        <p>FST-7 se integra perfectamente con el sistema Y3T de Neil Hill:</p>
+        <ul>
+            <li><strong>Y3T Semana 1 (Pesado):</strong> Sin FST-7 o versión corta</li>
+            <li><strong>Y3T Semana 2 (Moderado):</strong> FST-7 estándar</li>
+            <li><strong>Y3T Semana 3 (Alto Volumen):</strong> FST-7 Burn completo</li>
+        </ul>
+
+        <h2>6.3 Fases BIG vs RIPPED</h2>
+        <div class="highlight-box">
+            <strong>FST-7 Big and Ripped</strong> es un programa de Hany Rambod con dos fases:
+            <ul>
+                <li><strong>Fase BIG (4-6 sem):</strong> Superávit calórico, FST-7 completo, énfasis en tamaño</li>
+                <li><strong>Fase RIPPED (4-6 sem):</strong> Déficit moderado, FST-7 reducido, mantener masa</li>
+            </ul>
+        </div>
+
+        <h2>6.4 Descargas (Deloads)</h2>
+        <div class="warning-box">
+            <strong>⚠️ FST-7 es demandante.</strong> Deload cada 3-4 semanas. Durante deload: eliminar FST-7, mantener
+            solo ejercicios compuestos ligeros.
+        </div>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>FST-7 puede integrarse en ciclos de cualquier duración. Las recomendaciones varían según nivel:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (6+ meses)</td>
+                <td>6-8 semanas</td>
+                <td>Adaptación gradual al pump extremo, 5 series iniciales</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas</td>
+                <td>FST-7 clásico con 7 series, estilo competición</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>3-4 semanas (Pump→Growth→Burn)</td>
+                <td>FST-7 intensivo con variantes, frecuencia alta</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación FST-7:</strong> Phil Heath y Derek Lunsford usan FST-7 todo el año. La aplicación
+            NEXUS adapta las opciones de duración según tu nivel.
+        </div>
+
+        <h1 class="page-break">7. Progresión en FST-7</h1>
+
+        <h2>7.1 Progresión de Carga</h2>
+        <ul>
+            <li>Aumentar peso solo cuando puedas completar 7x12 cómodamente</li>
+            <li>Incremento típico: 2.5-5kg cada 2-3 semanas</li>
+            <li>El pump es más importante que el peso</li>
+        </ul>
+
+        <h2>7.2 Progresión de Reps</h2>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Reps FST-7</th>
+            </tr>
+            <tr>
+                <td>Principiante</td>
+                <td>7 x 10-12</td>
+            </tr>
+            <tr>
+                <td>Intermedio</td>
+                <td>7 x 12-15</td>
+            </tr>
+            <tr>
+                <td>Avanzado</td>
+                <td>7 x 15 + Drop Set final</td>
+            </tr>
+        </table>
+
+        <h2>7.3 Reducción de Descanso</h2>
+        <ul>
+            <li><strong>Inicio:</strong> 45 segundos entre series</li>
+            <li><strong>Progresión:</strong> Reducir a 30 segundos gradualmente</li>
+            <li><strong>Avanzado:</strong> 20-25 segundos (muy demandante)</li>
+        </ul>
+
+        <h1 class="page-break">8. Nutrición y Suplementación para FST-7</h1>
+
+        <h2>8.1 Requerimientos Calóricos</h2>
+        <ul>
+            <li><strong>Fase BIG:</strong> TDEE + 300-500 kcal</li>
+            <li><strong>Fase RIPPED:</strong> TDEE - 300-500 kcal</li>
+            <li><strong>Mantenimiento:</strong> TDEE + 100-200 kcal días FST-7</li>
+        </ul>
+
+        <h2>8.2 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Recomendación</th>
+                <th>Razón</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>1.8-2.2g/kg</td>
+                <td>Reparación muscular</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>4-6g/kg días entreno</td>
+                <td>Glucógeno para pump</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1g/kg</td>
+                <td>Hormonas</td>
+            </tr>
+        </table>
+
+        <h2>8.3 Hidratación</h2>
+        <div class="success-box">
+            <strong>💧 CRÍTICO para FST-7:</strong> Mínimo 4 litros de agua diarios. El pump depende de hidratación
+            adecuada. Deshidratación = pump pobre.
+        </div>
+
+        <h2>8.4 Suplementación</h2>
+        <ul>
+            <li><strong>Citrulina Malato:</strong> 6-8g pre-entreno (vasodilatación, pump)</li>
+            <li><strong>Creatina:</strong> 5g/día (volumen celular)</li>
+            <li><strong>Beta-Alanina:</strong> 3-5g/día (buffer ácido láctico)</li>
+            <li><strong>EAAs:</strong> 10-15g intra-entreno</li>
+            <li><strong>Electrolitos:</strong> Sodio, potasio durante entreno</li>
+        </ul>
+
+        <h1 class="page-break">9. Ejemplos de Rutinas FST-7 por Grupo Muscular</h1>
+
+        <h2>9.1 Pecho</h2>
+        <div class="code-block">RUTINA FST-7 PECHO:
+            A. Press Inclinado Mancuernas: 4x6-8
+            B. Press Horizontal Máquina: 3x8-10
+            C. Aperturas Inclinadas Cable: 3x10-12
+
+            FINISHER FST-7:
+            D. Pec Deck: 7x10-12 (30s descanso)
+            Entre series: Pose "Most Muscular" 20s
+
+            Duración: ~50 minutos</div>
+
+        <h2>9.2 Espalda</h2>
+        <div class="code-block">RUTINA FST-7 ESPALDA:
+            A. Jalón Agarre Ancho: 4x6-8
+            B. Remo Barra: 3x8-10
+            C. Remo Máquina 1 Brazo: 3x10-12
+
+            FINISHER FST-7:
+            D. Pullover Polea: 7x10-12 (30s descanso)
+            Entre series: Estiramiento colgado 15s
+
+            Duración: ~55 minutos</div>
+
+        <h2>9.3 Piernas</h2>
+        <div class="code-block">RUTINA FST-7 PIERNAS:
+            A. Prensa 45°: 4x8-10
+            B. Hack Squat: 3x10-12
+            C. Zancadas: 3x10/pierna
+            D. Curl Femoral: 3x10-12
+
+            FINISHER FST-7:
+            E. Extensión Cuádriceps: 7x10-12 (30s descanso)
+            Entre series: Flexión cuádriceps 15s
+
+            Duración: ~60 minutos</div>
+
+        <h2>9.4 Hombros</h2>
+        <div class="code-block">RUTINA FST-7 HOMBROS:
+            A. Press Militar Máquina: 4x6-8
+            B. Elevaciones Laterales Mancuernas: 3x10-12
+            C. Face Pulls: 3x12-15
+
+            FINISHER FST-7:
+            D. Elevaciones Laterales Máquina: 7x10-12 (30s)
+            Entre series: Pose "Side Chest" 15s
+
+            Duración: ~45 minutos</div>
+
+        <h2>9.5 Brazos</h2>
+        <div class="code-block">RUTINA FST-7 BRAZOS:
+            BÍCEPS:
+            A. Curl Barra: 3x8-10
+            B. Curl Predicador: 3x10-12
+            C. Curl Cable (FST-7): 7x10-12 (30s)
+
+            TRÍCEPS:
+            D. Press Cerrado Máquina: 3x8-10
+            E. Extensión Sobre Cabeza: 3x10-12
+            F. Extensión Polea (FST-7): 7x10-12 (30s)
+
+            Duración: ~50 minutos</div>
+
+        <h2 class="page-break">9.6 Estructuras por Nivel de Intensidad</h2>
+
+        <h3>Full Body (3 días/semana) - Intermedio</h3>
+        <div class="highlight-box">
+            <strong>🎯 Full Body con FST-7:</strong> Rotar el FST-7 en cada sesión para un grupo muscular diferente.
+            Esto permite frecuencia moderada sin sobrecargar la recuperación.
+        </div>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupos</th>
+                <th>FST-7 Finisher</th>
+                <th>Descanso FST-7</th>
+            </tr>
+            <tr>
+                <td>Lunes (A)</td>
+                <td>Pecho + Espalda + Piernas</td>
+                <td>Pec Deck: 7x10-12</td>
+                <td><span style="color:#DC2626;">30s</span></td>
+            </tr>
+            <tr>
+                <td>Miércoles (B)</td>
+                <td>Hombros + Brazos + Piernas</td>
+                <td>Pullover Polea: 7x10-12</td>
+                <td><span style="color:#DC2626;">30s</span></td>
+            </tr>
+            <tr>
+                <td>Viernes (C)</td>
+                <td>Pecho + Espalda + Hombros</td>
+                <td>Extensión Cuádriceps: 7x10-12</td>
+                <td><span style="color:#DC2626;">30s</span></td>
+            </tr>
+        </table>
+
+        <h3>Upper/Lower (4 días) - Intermedio-Avanzado</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>FST-7</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Upper A</td>
+                <td>Pecho: Pec Deck 7x12</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Lower A</td>
+                <td>Cuádriceps: Extensión 7x12</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Upper B</td>
+                <td>Espalda: Pullover 7x12</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Lower B</td>
+                <td>Femoral: Curl 7x12</td>
+            </tr>
+        </table>
+
+        <h3>Bro Split (5-6 días) - Avanzado</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupo</th>
+                <th>FST-7 Finisher</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Pecho</td>
+                <td>Pec Deck 7x12</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Espalda</td>
+                <td>Pullover Polea 7x12</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Piernas</td>
+                <td>Extensión + Curl 7x12 cada uno</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Hombros</td>
+                <td>Elevaciones Laterales 7x12</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Brazos</td>
+                <td>Curl Cable + Extensión Polea 7x12</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">9.7 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatible con FST-7</th>
+                <th>Recomendación</th>
+            </tr>
+            <tr>
+                <td>Y3T</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>FST-7 como finisher en Week 3</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Ambos buscan pump - alternar</td>
+            </tr>
+            <tr>
+                <td>MTUT</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>MTUT normal + FST-7 finisher</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Demasiado volumen</td>
+            </tr>
+            <tr>
+                <td>Blood & Guts</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>Solo grupos pequeños ocasionalmente</td>
+            </tr>
+        </table>
+
+        <h2>9.8 Calculadora de Cargas (%1RM)</h2>
+        <table>
+            <tr>
+                <th>Variante</th>
+                <th>% 1RM</th>
+                <th>Reps Objetivo</th>
+                <th>Series</th>
+            </tr>
+            <tr>
+                <td>FST-7 Clásico</td>
+                <td>50-60%</td>
+                <td>8-12</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>FST-7 Burn</td>
+                <td>40-50%</td>
+                <td>12-15 + drop</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>FST-7 Stretch</td>
+                <td>50-60%</td>
+                <td>10-12</td>
+                <td>7</td>
+            </tr>
+        </table>
+
+        <h2>9.9 Guía de Progresión Semanal</h2>
+        <div class="highlight-box">
+            <strong>Cómo Progresar en FST-7:</strong>
+            <ol>
+                <li><strong>Prioridad 1:</strong> Reducir descanso (45s → 35s → 30s)</li>
+                <li><strong>Prioridad 2:</strong> Aumentar reps (8 → 10 → 12)</li>
+                <li><strong>Prioridad 3:</strong> Aumentar peso 2.5kg y reiniciar reps</li>
+                <li><strong>El pump manda:</strong> Si pierdes pump, baja intensidad</li>
+            </ol>
+        </div>
+
+        <h2>9.10 Selector de Metodología por Objetivo</h2>
+        <table>
+            <tr>
+                <th>Tu Objetivo</th>
+                <th>¿FST-7 es para ti?</th>
+                <th>Alternativa</th>
+            </tr>
+            <tr>
+                <td>Grupos rezagados</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Finisher efectivo</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Preparación competición</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Fuerza máxima</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Heavy Duty</td>
+            </tr>
+            <tr>
+                <td>Entrenamiento único</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Y3T, SST</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <ul>
+            <li><strong>Sin pump:</strong> Cambiar ejercicio o reducir peso</li>
+            <li><strong>Dolor articular:</strong> Elegir ejercicio diferente</li>
+            <li><strong>Fatiga excesiva:</strong> Reducir a 5 series</li>
+        </ul>
+
+        <h2>10.2 Descanso y Recuperación</h2>
+        <ul>
+            <li><strong>Sueño:</strong> 7-9 horas</li>
+            <li><strong>Frecuencia por grupo:</strong> 1x semana con FST-7 completo</li>
+            <li><strong>No hacer FST-7 al mismo grupo 2 días seguidos</strong></li>
+        </ul>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li><strong>Usar MÁQUINAS</strong> para FST-7 (más seguro con fatiga)</li>
+            <li><strong>Nunca sacrificar forma por reps</strong></li>
+            <li><strong>Calentamiento obligatorio</strong></li>
+        </ul>
+
+        <h2 class="page-break">10.4 Guía Práctica de Implementación Paso a Paso</h2>
+
+        <h3>Paso 1: Selección del Ejercicio FST-7</h3>
+        <div class="code-block">CRITERIOS PARA ELEGIR EJERCICIO FST-7:
+            ✅ Ejercicio de AISLAMIENTO
+            ✅ En MÁQUINA o POLEA (no pesos libres)
+            ✅ Permite CONTRACCIÓN MÁXIMA en el pico
+            ✅ Puedes sentir el músculo trabajar
+            ✅ No requiere estabilización compleja</div>
+
+        <h3>Paso 2: Determinar Peso Inicial</h3>
+        <table>
+            <tr>
+                <th>Tu Nivel</th>
+                <th>Peso FST-7</th>
+                <th>Reps Objetivo</th>
+            </tr>
+            <tr>
+                <td>Primera vez</td>
+                <td>50% de tu 10RM normal</td>
+                <td>10-12 cómodas</td>
+            </tr>
+            <tr>
+                <td>Intermedio</td>
+                <td>60-65% 10RM</td>
+                <td>10-12 con esfuerzo</td>
+            </tr>
+            <tr>
+                <td>Avanzado</td>
+                <td>70% 10RM</td>
+                <td>8-12, fallo serie 7</td>
+            </tr>
+        </table>
+
+        <h3>Paso 3: Tu Primera Sesión FST-7</h3>
+        <div class="code-block">PRIMERA SESIÓN FST-7 (Ejemplo: Pecho)
+
+            FASE 1: COMPUESTOS (25-30 min)
+            ├─ Press Inclinado: 4x8-10
+            ├─ Press Horizontal: 3x10
+            └─ Descanso: 90s entre series
+
+            FASE 2: FST-7 FINISHER (15 min)
+            ├─ Ejercicio: Pec Deck
+            ├─ Peso: 50% de lo que usas normalmente
+            ├─ Serie 1: 12 reps → 30s descanso → Flexión 15s
+            ├─ Serie 2: 12 reps → 30s descanso → Flexión 15s
+            ├─ ... (continuar hasta serie 7)
+            └─ Serie 7: Al fallo
+
+            FASE 3: ENFRIAMIENTO (5 min)
+            └─ Estiramiento pecho 60s</div>
+
+        <h3>Paso 4: Troubleshooting</h3>
+        <table>
+            <tr>
+                <th>Problema</th>
+                <th>Causa Probable</th>
+                <th>Solución</th>
+            </tr>
+            <tr>
+                <td>No siento pump</td>
+                <td>Peso muy alto o ejercicio incorrecto</td>
+                <td>Bajar peso 20%, cambiar ejercicio</td>
+            </tr>
+            <tr>
+                <td>No puedo terminar 7 series</td>
+                <td>Peso muy alto</td>
+                <td>Reducir 10-15%</td>
+            </tr>
+            <tr>
+                <td>Dolor articular</td>
+                <td>Ejercicio no apto</td>
+                <td>Cambiar a otro ejercicio de aislamiento</td>
+            </tr>
+            <tr>
+                <td>Mareo</td>
+                <td>Deshidratación o respiración</td>
+                <td>Hidratarse, respirar entre series</td>
+            </tr>
+        </table>
+
+        <h3>Paso 5: Transición Post-FST-7</h3>
+        <div class="code-block">DESPUÉS DE 4-6 SEMANAS DE FST-7:
+
+            OPCIONES:
+            1. Ciclo nuevo: Reiniciar con más peso (+5%)
+            2. Cambiar metodología: Rotar a SST o MTUT
+            3. Deload: 1 semana sin FST-7, solo compuestos ligeros
+            4. Cambiar ejercicio FST-7: Nuevo ejercicio para mismo grupo</div>
+
+        <h1 class="page-break">Apéndice A: Datos para Creación de Rutinas</h1>
+
+        <h2>A.1 Base de Datos de Ejercicios FST-7</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Ejercicios FST-7 IDEALES</th>
+                <th>Ejercicios PROHIBIDOS</th>
+            </tr>
+            <tr>
+                <td><strong>Pecho</strong></td>
+                <td>Pec deck, Cruces cable bajo, Aperturas máquina</td>
+                <td>Press barra, Press mancuernas pesado</td>
+            </tr>
+            <tr>
+                <td><strong>Espalda</strong></td>
+                <td>Pulldown, Cable row sentado, Pullover máquina</td>
+                <td>Peso muerto, Remo barra</td>
+            </tr>
+            <tr>
+                <td><strong>Piernas</strong></td>
+                <td>Extensiones, Curl femoral acostado, Abductores</td>
+                <td>Sentadilla, Prensa pesada</td>
+            </tr>
+            <tr>
+                <td><strong>Hombros</strong></td>
+                <td>Elevaciones laterales cable, Face pulls</td>
+                <td>Press militar, Press Arnold</td>
+            </tr>
+            <tr>
+                <td><strong>Brazos</strong></td>
+                <td>Curl cable, Extensión polea, Curl predicador máquina</td>
+                <td>Curl barra pesado, Fondos pesados</td>
+            </tr>
+        </table>
+
+        <h2>A.2 Plantillas de Split Recomendados FST-7</h2>
+        <div class="highlight-box">
+            <strong>Splits Óptimos para FST-7:</strong>
+            <ul>
+                <li><strong>Push/Pull/Legs (6 días):</strong> 1 FST-7 finisher por sesión</li>
+                <li><strong>Bro Split (5-6 días):</strong> 1-2 FST-7 por grupo rezagado</li>
+                <li><strong>Upper/Lower (4 días):</strong> 1 FST-7 para grupo rezagado por sesión</li>
+            </ul>
+        </div>
+
+        <h2>A.3 Semana Tipo Completa FST-7</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Ejercicios Compuestos</th>
+                <th>FST-7 Finisher</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Push</td>
+                <td>Press inclinado, Press hombro, Fondos</td>
+                <td>Pec deck 7x10 (30s)</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Pull</td>
+                <td>Remo Hammer, Dominadas, Curl predicador</td>
+                <td>Pulldown 7x10 (30s)</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Legs</td>
+                <td>Prensa, Sentadilla hack, Curl femoral</td>
+                <td>Extensiones 7x12 (30s)</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td colspan="3">DESCANSO</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Push</td>
+                <td>Press banca, Cruces, Elevaciones laterales</td>
+                <td>Elevaciones cable 7x12 (30s)</td>
+            </tr>
+            <tr>
+                <td>Sábado</td>
+                <td>Pull</td>
+                <td>Remo cable, Jalón, Curl martillo</td>
+                <td>Curl cable 7x10 (30s)</td>
+            </tr>
+            <tr>
+                <td>Domingo</td>
+                <td colspan="3">DESCANSO</td>
+            </tr>
+        </table>
+
+        <h2>A.4 Protocolo de Calentamiento FST-7</h2>
+        <div class="success-box">
+            <strong>Calentamiento para FST-7:</strong>
+            <ul>
+                <li><strong>Compuestos primero:</strong> Hacer calentamiento normal para ejercicios principales</li>
+                <li><strong>Pre-FST:</strong> 1 set ligero (30%) x 15 reps del ejercicio FST-7</li>
+                <li><strong>Hidratación:</strong> Beber agua entre CADA serie FST-7</li>
+                <li><strong>FST-7:</strong> Iniciar con peso que permita 10-12 reps en todas las 7 series</li>
+            </ul>
+        </div>
+
+        <h2>A.5 Sistema de Deload FST-7</h2>
+        <div class="warning-box">
+            <strong>Reglas de Deload FST-7:</strong>
+            <ul>
+                <li><strong>Frecuencia:</strong> Cada 6-8 semanas</li>
+                <li><strong>Duración:</strong> 1 semana SIN FST-7</li>
+                <li><strong>Entrenamiento:</strong> Solo ejercicios compuestos normales</li>
+                <li><strong>Alternativa:</strong> Reducir a 4 series en vez de 7</li>
+                <li><strong>Señales:</strong> Pump disminuido, fatiga extrema, dolor articular</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">Apéndice B: Datos Técnicos para Aplicación</h1>
+
+        <h2>B.1 Glosario de Términos FST-7</h2>
+        <table>
+            <tr>
+                <th>Término</th>
+                <th>Definición</th>
+                <th>Uso en App</th>
+            </tr>
+            <tr>
+                <td><code>FST-7</code></td>
+                <td>Fascia Stretch Training - 7 series al final</td>
+                <td>Tipo de finisher</td>
+            </tr>
+            <tr>
+                <td><code>Finisher</code></td>
+                <td>Ejercicio final de aislamiento con 7 series</td>
+                <td>Marcador especial</td>
+            </tr>
+            <tr>
+                <td><code>Pump</code></td>
+                <td>Congestión muscular - objetivo principal</td>
+                <td>Rating 1-5</td>
+            </tr>
+            <tr>
+                <td><code>Fascia</code></td>
+                <td>Tejido conectivo que envuelve el músculo</td>
+                <td>Info educativa</td>
+            </tr>
+            <tr>
+                <td><code>Posing</code></td>
+                <td>Contraer/flexionar entre series</td>
+                <td>Recordatorio timer</td>
+            </tr>
+        </table>
+
+        <h2>B.2 Configuración de Timer para App</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Timer Descanso</th>
+                <th>Acción</th>
+                <th>Alerta</th>
+            </tr>
+            <tr>
+                <td>Entre series FST-7</td>
+                <td>30-45s</td>
+                <td>Beber agua + posar</td>
+                <td>Beep "GO" al terminar</td>
+            </tr>
+            <tr>
+                <td>Contador de series</td>
+                <td>N/A</td>
+                <td>Mostrar: 1/7, 2/7... 7/7</td>
+                <td>"¡ÚLTIMA SERIE!" en 7</td>
+            </tr>
+            <tr>
+                <td>Post-FST-7</td>
+                <td>180s</td>
+                <td>Estirar grupo trabajado</td>
+                <td>Sugerencia stretch</td>
+            </tr>
+        </table>
+
+        <h2>B.3 Indicadores de Éxito</h2>
+        <div class="success-box">
+            <strong>¿Cómo saber si FST-7 está funcionando?</strong>
+            <ul>
+                <li><strong>Inmediato:</strong> Pump extremo en series 5-7</li>
+                <li><strong>Semana 2-4:</strong> Pump más fácil de lograr</li>
+                <li><strong>Semana 4-8:</strong> Grupo rezagado visiblemente más lleno</li>
+                <li><strong>Señal negativa:</strong> Sin pump = peso muy alto o descanso muy largo</li>
+            </ul>
+        </div>
+
+        <h2>B.4 Protocolos de Transición</h2>
+        <div class="highlight-box">
+            <strong>Cómo cambiar DESDE FST-7:</strong>
+            <ul>
+                <li><strong>→ Y3T:</strong> FST-7 como finisher en Week 3 (combinar)</li>
+                <li><strong>→ SST:</strong> Transición suave - ambos buscan pump</li>
+                <li><strong>→ MTUT:</strong> Mantener FST-7 como finisher con base MTUT</li>
+                <li><strong>→ Heavy Duty:</strong> Eliminar gradualmente FST-7 antes de HIT</li>
+            </ul>
+        </div>
+
+        <h2>B.5 Plantilla de Tracking</h2>
+        <table>
+            <tr>
+                <th>Campo</th>
+                <th>Obligatorio</th>
+                <th>Ejemplo</th>
+            </tr>
+            <tr>
+                <td>Ejercicio FST-7</td>
+                <td>✓</td>
+                <td>Pec Deck</td>
+            </tr>
+            <tr>
+                <td>Peso</td>
+                <td>✓</td>
+                <td>35kg</td>
+            </tr>
+            <tr>
+                <td>Reps por serie</td>
+                <td>✓</td>
+                <td>12,11,10,10,9,8,8</td>
+            </tr>
+            <tr>
+                <td>Descanso usado</td>
+                <td>✓</td>
+                <td>35s</td>
+            </tr>
+            <tr>
+                <td>Pump final (1-5)</td>
+                <td>✓</td>
+                <td>4/5</td>
+            </tr>
+            <tr>
+                <td>¿Agua entre series?</td>
+                <td>Recomendado</td>
+                <td>Sí/No</td>
+            </tr>
+        </table>
+
+        <h2>B.6 FAQ / Troubleshooting</h2>
+        <div class="warning-box">
+            <strong>Problemas Comunes FST-7:</strong>
+            <ul>
+                <li><strong>Sin pump:</strong> Peso muy alto - reduce 20%, enfócate en squeeze</li>
+                <li><strong>No completo 7 series:</strong> Reduce peso o aumenta descanso a 45s</li>
+                <li><strong>Reps caen mucho:</strong> Normal - objetivo es mantener 8+ en serie 7</li>
+                <li><strong>Muy cansado para FST-7:</strong> Reduce ejercicios compuestos antes</li>
+                <li><strong>Sin tiempo:</strong> Haz FST-7 solo para grupos rezagados</li>
+            </ul>
+        </div>
+
+        <h2 class="page-break">10.5 Especialización de Grupos Débiles</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con FST-7</strong>
+            <p>FST-7 fue DISEÑADO específicamente para grupos rezagados. Las 7 series finisher con
+                30s de descanso maximizan el pump y estiran la fascia, lo cual es especialmente
+                beneficioso para grupos que no responden a entrenamiento convencional.</p>
+        </div>
+
+        <h3>Estrategia FST-7 para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>FST-7 Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Variante Recomendada</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+1 FST-7</td>
+                <td>2x/semana</td>
+                <td>FST-7 Clásico (7x10-12)</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+2 FST-7</td>
+                <td>3x/semana</td>
+                <td>FST-7 Burn (7x12-15)</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+3 FST-7</td>
+                <td>4x/semana</td>
+                <td>FST-7 Stretch + posing intensivo</td>
+            </tr>
+        </table>
+
+        <h3>Grupos Comunes a Priorizar</h3>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Ejercicio FST-7 Ideal</th>
+                <th>Variante</th>
+                <th>Posing Entre Series</th>
+            </tr>
+            <tr>
+                <td>Pecho Superior</td>
+                <td>Cruces cable inclinado</td>
+                <td>FST-7 Stretch</td>
+                <td>Most Muscular 20s</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Curl cable polea baja</td>
+                <td>FST-7 Clásico</td>
+                <td>Doble bíceps frontal 15s</td>
+            </tr>
+            <tr>
+                <td>Deltoides Lateral</td>
+                <td>Elevaciones cable</td>
+                <td>FST-7 Burn</td>
+                <td>Side chest pose 15s</td>
+            </tr>
+            <tr>
+                <td>Femoral</td>
+                <td>Curl femoral acostado</td>
+                <td>FST-7 Clásico</td>
+                <td>Flexión posterior 15s</td>
+            </tr>
+        </table>
+
+        <div class="code-block">EJEMPLO: ESPECIALIZACIÓN BÍCEPS CON FST-7
+
+            FRECUENCIA: 3x/semana (Lunes, Miércoles, Viernes)
+            DURACIÓN: 12 minutos extra por sesión
+
+            PROTOCOLO POR DÍA:
+
+            DÍA 1 (PULL):
+            - Al FINAL después de espalda
+            - Curl Cable Polea Baja: 7x10-12 @ 30s descanso
+            - Pose doble bíceps 15s entre cada serie
+
+            DÍA 2 (ARMS):
+            - Curl predicador normal: 3x8-10
+            - FST-7 Curl Cable: 7x12 @ 30s descanso
+
+            DÍA 3 (PULL):
+            - Solo FST-7 como "pump day"
+            - Curl Cable Unilateral: 7x10 @ 35s descanso
+
+            RESULTADO: 4-6 semanas = bíceps visiblemente más llenos y redondeados</div>
+
+        <h3>Reglas de Especialización FST-7</h3>
+        <div class="warning-box">
+            <strong>⚠️ Reglas Importantes:</strong>
+            <ul>
+                <li><strong>FST-7 SIEMPRE al final:</strong> Nunca al inicio - el grupo debe estar pre-fatigado</li>
+                <li><strong>Máximo 2 FST-7 por sesión:</strong> Uno para grupo grande + uno para rezagado</li>
+                <li><strong>Hidratación crítica:</strong> 500ml agua durante las 7 series</li>
+                <li><strong>Posing obligatorio:</strong> Flexionar músculo 15-20s entre CADA serie</li>
+                <li><strong>Evaluar por pump:</strong> Si no hay pump extremo, bajar peso 10%</li>
+                <li><strong>No reducir descanso:</strong> Mantener 30s mínimo para recuperación parcial</li>
+            </ul>
+        </div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <p><strong>FST-7 es una herramienta poderosa para hipertrofia</strong> cuando se usa correctamente. Las 7
+                series de aislamiento al final del entrenamiento maximizan el pump, estiran la fascia, y entregan
+                nutrientes al músculo para crecimiento óptimo.</p>
+        </div>
+
+        <div class="success-box">
+            <strong>✅ Resumen de Éxito FST-7:</strong><br>
+            • FST-7 SIEMPRE al final del entrenamiento<br>
+            • Usar ejercicios de AISLAMIENTO en máquinas/poleas<br>
+            • 7 series x 8-12 reps, 30-45s descanso<br>
+            • Flexionar músculo entre series<br>
+            • El PUMP es el objetivo, no el peso máximo<br>
+            • Hidratación crítica (4L agua/día)
+        </div>
+
+        <h3>Beneficios Clave del FST-7</h3>
+        <ul>
+            <li><strong>Expansión Fascial:</strong> Único método que enfoca en estirar la fascia desde adentro</li>
+            <li><strong>Pump Extremo:</strong> Maximiza flujo sanguíneo y entrega de nutrientes</li>
+            <li><strong>Versatilidad:</strong> Se puede usar continuamente sin deloads obligatorios</li>
+            <li><strong>Bajo Impacto Articular:</strong> Cargas moderadas reducen riesgo de lesión</li>
+            <li><strong>Mejora Estética:</strong> Músculos más llenos y redondeados</li>
+            <li><strong>Sin Spotter:</strong> Seguro para entrenar solo usando máquinas</li>
+        </ul>
+
+        <h3>Atletas Conocidos que Usan FST-7</h3>
+        <ul>
+            <li><strong>Hany Rambod</strong> - Creador del sistema ("Pro Creator")</li>
+            <li><strong>Phil Heath</strong> - 7x Mr. Olympia</li>
+            <li><strong>Big Ramy</strong> - 2x Mr. Olympia</li>
+            <li><strong>Jay Cutler</strong> - 4x Mr. Olympia</li>
+            <li><strong>Derek Lunsford</strong> - 1x Mr. Olympia</li>
+        </ul>
+
+        <h3>Comparación Rápida</h3>
+        <table>
+            <tr>
+                <th>Aspecto</th>
+                <th>FST-7</th>
+                <th>SST</th>
+                <th>MTUT</th>
+            </tr>
+            <tr>
+                <td>Intensidad vía</td>
+                <td>Pump (7 series)</td>
+                <td>Descansos variables</td>
+                <td>TUT (tiempo)</td>
+            </tr>
+            <tr>
+                <td>Carga típica</td>
+                <td>60-70% 1RM</td>
+                <td>60-80% 1RM</td>
+                <td>40-50% 1RM</td>
+            </tr>
+            <tr>
+                <td>TUT por serie</td>
+                <td>30-50s (x7)</td>
+                <td>60-90s por mini-serie</td>
+                <td>80-130s</td>
+            </tr>
+            <tr>
+                <td>Estrés articular</td>
+                <td>Bajo</td>
+                <td>Medio</td>
+                <td>Muy bajo ⭐</td>
+            </tr>
+            <tr>
+                <td>Duración recomendada</td>
+                <td>Continuo ⭐</td>
+                <td>4-6 semanas</td>
+                <td>4-6 semanas</td>
+            </tr>
+            <tr>
+                <td>Spotter requerido</td>
+                <td>No ⭐</td>
+                <td>Preferible</td>
+                <td>No</td>
+            </tr>
+        </table>
+
+        <div
+            style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, var(--dark), #1E293B); color: white; border-radius: 12px;">
+            <h2 style="color: var(--primary); margin-bottom: 15px;">FST-7 - Fascia Stretch Training</h2>
+            <p style="opacity: 0.9;">Metodología Maestra Unificada</p>
+            <p style="opacity: 0.7; font-size: 0.9rem;">Basado en trabajo de Hany Rambod</p>
+            <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Diciembre 2025</p>
+        </div>
+    </div>
+
+    <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Duración del Ciclo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Principiante (1‑2 años)</td>
+                <td>6‑8 semanas</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2‑5 años)</td>
+                <td>4‑6 semanas</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>3‑4 semanas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Estructura</th>
+                <th>Días por semana</th>
+                <th>Nivel recomendado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio‑Avanzado</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5‑6</td>
+                <td>Avanzado</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

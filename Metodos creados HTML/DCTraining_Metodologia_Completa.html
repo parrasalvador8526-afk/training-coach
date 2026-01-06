@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DC Training - Doggcrapp</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #7C3AED;
+            --secondary: #8B5CF6;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 10pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>DC TRAINING</h1>
+        <p class="subtitle">Doggcrapp Training</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Sistema de alto intensidad basado en Rest-Pause extremo,
+            estiramientos cargados y rotación de ejercicios para máxima hipertrofia con mínimo volumen.</p>
+        <p class="author">Creador: Dante Trudel · Bodybuilding Coach</p>
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 ATLETAS DESTACADOS DC:</strong>
+            </p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> David Henry (IFBB Pro) ·
+                <strong>2.</strong> Dusty Hanshaw (NPC) ·
+                <strong>3.</strong> Mark Dugdale (IFBB Pro) ·
+                <strong>4.</strong> Shelby Starnes (Prep Coach) ·
+                <strong>5.</strong> Scott Stevenson (PhD)
+            </p>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Rest-Pause Extremo · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al DC Training</li>
+                <li><strong>2.</strong> Objetivos del DC Training</li>
+                <li><strong>3.</strong> Principios Básicos del DC</li>
+                <li class="sub">3.1 Rest-Pause</li>
+                <li class="sub">3.2 Extreme Stretching</li>
+                <li class="sub">3.3 Rotación de Ejercicios</li>
+                <li class="sub">3.4 Fallo Muscular en DC</li>
+                <li><strong>4.</strong> Métodos y Técnicas del DC</li>
+                <li class="sub">4.1 Protocolo Rest-Pause</li>
+                <li class="sub">4.2 Straight Sets (Espalda/Piernas)</li>
+                <li class="sub">4.3 Técnica de Estiramientos</li>
+                <li class="sub">4.4 Control del Tempo</li>
+                <li><strong>5.</strong> Estructura de una Sesión DC</li>
+                <li><strong>6.</strong> Periodización con DC</li>
+                <li class="sub">6.1 Blast y Cruise</li>
+                <li><strong>7.</strong> Progresión en DC</li>
+                <li><strong>8.</strong> Nutrición y Suplementación</li>
+                <li><strong>9.</strong> Rutinas 2-Way Split</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al DC Training</h1>
+        <div class="highlight-box">
+            <strong>DC Training (Doggcrapp)</strong> es un sistema de alta intensidad creado por <strong>Dante
+                Trudel</strong> que combina Rest-Pause extremo, estiramientos cargados post-entrenamiento y rotación de
+            ejercicios para maximizar hipertrofia con volumen mínimo.
+        </div>
+        <p>El DC Training se basa en el principio de que la intensidad supera al volumen. Una serie llevada al fallo
+            absoluto con Rest-Pause genera más crecimiento que múltiples series mediocres.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">1</div>
+                <div class="label">Serie por Ejercicio</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">RP</div>
+                <div class="label">Rest-Pause</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">60-90s</div>
+                <div class="label">Stretch</div>
+            </div>
+        </div>
+
+        <h3>Los 3 Pilares del DC Training</h3>
+        <ul>
+            <li><strong>Rest-Pause:</strong> Una serie al fallo con micro-descansos para más reps</li>
+            <li><strong>Extreme Stretching:</strong> Estiramientos de 60-90 segundos post-ejercicio</li>
+            <li><strong>Rotación:</strong> 3 ejercicios por grupo que rotan cada sesión</li>
+        </ul>
+
+        <h1>2. Objetivos del DC Training</h1>
+        <ul>
+            <li><strong>Máxima Hipertrofia:</strong> Intensidad brutal genera adaptación</li>
+            <li><strong>Eficiencia:</strong> Sesiones de 45-60 minutos</li>
+            <li><strong>Progresión Constante:</strong> Romper PRs cada sesión</li>
+            <li><strong>Fascia Expandida:</strong> Los estiramientos amplían el potencial muscular</li>
+            <li><strong>Frecuencia Alta:</strong> Cada músculo 2x/semana</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del DC</h1>
+
+        <h2>3.1 Rest-Pause</h2>
+        <div class="code-block">PROTOCOLO REST-PAUSE DC:
+
+            1. Selecciona un peso para 11-15 reps
+            2. Haz reps hasta el FALLO ABSOLUTO (ejemplo: 11 reps)
+            3. Rack el peso, respira 10-15 segundos
+            4. Haz más reps al fallo (ejemplo: 4 reps)
+            5. Rack, respira 10-15 segundos
+            6. Haz más reps al fallo (ejemplo: 2 reps)
+
+            TOTAL: 11+4+2 = 17 reps (anótalo en tu log)</div>
+
+        <h2>3.2 Extreme Stretching</h2>
+        <div class="warning-box">
+            <strong>⚠️ Estiramientos CARGADOS de 60-90 segundos:</strong>
+            <p>Después del ejercicio principal, mantén una posición estirada con peso durante 60-90 segundos. Esto
+                expande la fascia y aumenta el flujo sanguíneo.</p>
+        </div>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Estiramiento</th>
+                <th>Duración</th>
+            </tr>
+            <tr>
+                <td>Pecho</td>
+                <td>Fly con mancuernas en estiramiento</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Espalda</td>
+                <td>Colgarse de barra con peso</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Cuádriceps</td>
+                <td>Sissy squat hold</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Isquios</td>
+                <td>Stiff leg hold</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Hombros</td>
+                <td>Hang from bar</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Incline curl hold</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Tríceps</td>
+                <td>Overhead extension hold</td>
+                <td>60-90s</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Rotación de Ejercicios</h2>
+        <div class="highlight-box">
+            <strong>Sistema de 3 Ejercicios:</strong>
+            <p>Selecciona 3 ejercicios por grupo muscular. Cada sesión usas UNO diferente, rotando A→B→C→A...</p>
+            <ul>
+                <li><strong>Pecho A:</strong> Press Inclinado Smith</li>
+                <li><strong>Pecho B:</strong> Press Hammer</li>
+                <li><strong>Pecho C:</strong> Press Declinado</li>
+            </ul>
+        </div>
+
+        <h2>3.4 Fallo Muscular en DC</h2>
+        <div class="danger-box">
+            <strong>❌ DC Training = FALLO ABSOLUTO:</strong>
+            <p>Cada set Rest-Pause debe llevarse al fallo técnico completo. Si puedes hacer 1 rep más, hazla. Sin
+                excusas.</p>
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del DC</h1>
+
+        <h2>4.1 Protocolo Rest-Pause</h2>
+        <div class="method-card">
+            <h4>Rest-Pause para Upper Body</h4>
+            <div class="code-block">EJEMPLO PRESS INCLINADO:
+                Calentamiento: 2×10 ligero
+                Set Rest-Pause:
+                - 12 reps → rack 15 breaths
+                - 5 reps → rack 15 breaths
+                - 3 reps → DONE
+                TOTAL: 20 reps @ 100kg (PR!)</div>
+        </div>
+
+        <h2>4.2 Straight Sets (Espalda/Piernas)</h2>
+        <div class="warning-box">
+            <strong>⚠️ Excepción para Espalda y Piernas:</strong>
+            <p>Para ejercicios compuestos pesados (Peso Muerto, Remo, Sentadilla), usar 2-3 straight sets en lugar de
+                Rest-Pause por seguridad.</p>
+        </div>
+        <div class="code-block">EJEMPLO SENTADILLA:
+            Set 1: 10-12 reps al fallo
+            Set 2 (widowmaker): 20+ reps
+            TOTAL: 2 sets brutales</div>
+
+        <h2>4.3 Técnica de Estiramientos</h2>
+        <div class="code-block">ESTIRAMIENTO PECHO:
+            1. Toma mancuernas moderadas
+            2. Acuéstate en banco inclinado
+            3. Abre brazos a posición estirada
+            4. Mantén 60-90 segundos
+            5. El dolor es intenso pero soportable
+
+            ⚠️ NO relajes, mantén tensión constante</div>
+
+        <h2>4.4 Control del Tempo</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Tempo</th>
+            </tr>
+            <tr>
+                <td>Concéntrica</td>
+                <td>EXPLOSIVA</td>
+            </tr>
+            <tr>
+                <td>Excéntrica</td>
+                <td>3-4 segundos controlada</td>
+            </tr>
+            <tr>
+                <td>Pausa inferior</td>
+                <td>1 segundo</td>
+            </tr>
+        </table>
+
+        <h2>4.5 RPE/RIR en DC Training</h2>
+        <table>
+            <tr>
+                <th>Tipo de Set</th>
+                <th>RPE Target</th>
+                <th>RIR</th>
+            </tr>
+            <tr>
+                <td>Rest-Pause (Upper)</td>
+                <td>10 (al fallo)</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>Straight Sets (Piernas/Espalda)</td>
+                <td>10 (al fallo)</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>Widowmaker</td>
+                <td>10+ (más allá del fallo)</td>
+                <td>-1 a -2</td>
+            </tr>
+            <tr>
+                <td>Cruise Phase</td>
+                <td>7-8</td>
+                <td>2-3</td>
+            </tr>
+        </table>
+
+        <h2>4.6 Compatibilidad con Otras Metodologías</h2>
+        <div class="success-box">
+            <strong>✅ Compatible con:</strong>
+            <ul>
+                <li><strong>FST-7:</strong> Puedes añadir FST-7 en fase Cruise para pump adicional</li>
+                <li><strong>Heavy Duty:</strong> Filosofía similar de alta intensidad/bajo volumen</li>
+                <li><strong>Blood & Guts:</strong> Yates también usaba un set al fallo</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ Incompatible con:</strong>
+            <ul>
+                <li><strong>GVT:</strong> Filosofías completamente opuestas (volumen vs. intensidad)</li>
+                <li><strong>DUP:</strong> El día potencia de DUP contradice el enfoque DC</li>
+                <li><strong>5/3/1:</strong> La progresión lenta de 5/3/1 no aplica a DC</li>
+                <li><strong>SST:</strong> Demasiado estrés metabólico combinado</li>
+            </ul>
+        </div>
+
+        <h2>4.7 Cuándo Usar DC Training</h2>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar DC cuando:</strong>
+            <ul>
+                <li>Tienes 2+ años de experiencia entrenando</li>
+                <li>Dominas la técnica de todos los ejercicios</li>
+                <li>Puedes ir al fallo absoluto (mentalmente y físicamente)</li>
+                <li>Tienes acceso a máquinas (más seguro para fallo)</li>
+                <li>Puedes dormir 8+ horas diarias</li>
+                <li>Estás en superávit calórico (+500 kcal mínimo)</li>
+                <li>No tienes lesiones activas</li>
+                <li>Quieres resultados extremos rápidamente</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar DC cuando:</strong>
+            <ul>
+                <li><strong>Principiante:</strong> No tienes la base técnica para fallo seguro</li>
+                <li><strong>Déficit calórico:</strong> Imposible recuperarse de la intensidad</li>
+                <li><strong>Problemas articulares:</strong> Los estiramientos extremos agravan lesiones</li>
+                <li><strong>Sin spotter:</strong> Fallo absoluto con pesos libres es peligroso</li>
+                <li><strong>Estrés elevado:</strong> El SNC ya está comprometido</li>
+                <li><strong>Competición powerlifting:</strong> DC no optimiza fuerza máxima</li>
+            </ul>
+        </div>
+
+        <h2>4.8 Limitantes del Sistema DC</h2>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Extremadamente demandante para el SNC</li>
+                <li>DOMS severo las primeras semanas</li>
+                <li>Requiere mentalidad de "ir a la guerra" cada sesión</li>
+                <li>Los estiramientos son muy dolorosos</li>
+                <li>No es sostenible sin fases Cruise</li>
+                <li>Mayor riesgo de lesión si la técnica falla</li>
+                <li>Difícil de ejecutar en gimnasios concurridos</li>
+            </ul>
+        </div>
+
+        <h2>4.9 Ejemplo: Pecho en Rotación DC</h2>
+        <table>
+            <tr>
+                <th>Sesión</th>
+                <th>Ejercicio</th>
+                <th>Rest-Pause</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Día 1</td>
+                <td>Press Inclinado Smith</td>
+                <td>100kg: 12+5+3</td>
+                <td>20 reps</td>
+            </tr>
+            <tr>
+                <td>Día 4</td>
+                <td>Press Hammer</td>
+                <td>90kg: 11+4+2</td>
+                <td>17 reps</td>
+            </tr>
+            <tr>
+                <td>Día 8</td>
+                <td>Press Declinado</td>
+                <td>95kg: 13+5+3</td>
+                <td>21 reps</td>
+            </tr>
+            <tr>
+                <td>Día 11</td>
+                <td>Press Inclinado Smith</td>
+                <td>100kg: 13+5+4</td>
+                <td>22 reps ✅ PR</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>Rotación:</strong> En la sesión 4 (día 11), vuelves al Press Inclinado Smith y DEBES superar las 20
+            reps anteriores.
+        </div>
+
+        <h1 class="page-break">5. Estructura de una Sesión DC</h1>
+
+        <h2>División 2-Way Split</h2>
+        <table>
+            <tr>
+                <th>Día A</th>
+                <th>Día B</th>
+            </tr>
+            <tr>
+                <td>Pecho</td>
+                <td>Bíceps</td>
+            </tr>
+            <tr>
+                <td>Hombros</td>
+                <td>Antebrazos</td>
+            </tr>
+            <tr>
+                <td>Tríceps</td>
+                <td>Espalda</td>
+            </tr>
+            <tr>
+                <td>Espalda Anchura</td>
+                <td>Piernas</td>
+            </tr>
+        </table>
+
+        <h2>Estructura de Sesión</h2>
+        <div class="code-block">SESIÓN DC TÍPICA (45-60 min):
+
+            1. Calentamiento general: 5 min
+            2. Grupo 1:
+            - Calentamiento específico: 2×10
+            - Rest-Pause set: 1 set
+            - Estiramiento: 60-90s
+            3. Grupo 2-4: Repetir formato
+            4. Cardio opcional: 15-30 min LISS</div>
+
+        <h1 class="page-break">6. Periodización con DC</h1>
+
+        <h2>6.1 Blast y Cruise</h2>
+        <div class="highlight-box">
+            <strong>Ciclos de 4-8 semanas:</strong>
+            <ul>
+                <li><strong>BLAST (4-8 semanas):</strong> DC Training completo, máxima intensidad</li>
+                <li><strong>CRUISE (2-4 semanas):</strong> Volumen moderado, sin fallo, recuperación</li>
+            </ul>
+        </div>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Duración</th>
+                <th>Intensidad</th>
+                <th>Fallo</th>
+            </tr>
+            <tr>
+                <td>Blast</td>
+                <td>4-8 semanas</td>
+                <td>Máxima</td>
+                <td>Cada set</td>
+            </tr>
+            <tr>
+                <td>Cruise</td>
+                <td>2-4 semanas</td>
+                <td>Moderada</td>
+                <td>RIR 2-3</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Señales para Iniciar Cruise</h2>
+        <div class="warning-box">
+            <strong>⚠️ Inicia Cruise cuando:</strong>
+            <ul>
+                <li>No progresas (más reps o peso) en 2 sesiones consecutivas del mismo ejercicio</li>
+                <li>Dolor articular persistente</li>
+                <li>Fatiga general excesiva</li>
+                <li>Pérdida de apetito</li>
+                <li>Problemas de sueño</li>
+                <li>Motivación en el suelo</li>
+            </ul>
+        </div>
+
+        <h2>6.3 Estructura del Cruise</h2>
+        <div class="code-block">SESIÓN CRUISE (50% intensidad):
+
+            Mismos ejercicios que Blast PERO:
+            - 3×8-12 en vez de Rest-Pause
+            - RIR 2-3 (sin fallo)
+            - Estiramientos más cortos (30-45s)
+            - Mismo split 2-way
+            - Duración: 2-4 semanas</div>
+
+        <h2>6.4 Macrociclo Anual DC</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Semanas</th>
+                <th>Tipo</th>
+                <th>Objetivo</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1-6</td>
+                <td>Blast</td>
+                <td>Hipertrofia inicial</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>7-10</td>
+                <td>Cruise</td>
+                <td>Recuperación, consolidar ganancias</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>11-18</td>
+                <td>Blast</td>
+                <td>Hipertrofia avanzada</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>19-22</td>
+                <td>Cruise</td>
+                <td>Recuperación</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>23-30</td>
+                <td>Blast</td>
+                <td>Hipertrofia peak</td>
+            </tr>
+        </table>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>La duración óptima de las fases Blast en DC Training varía según el nivel de experiencia del atleta,
+            basándose
+            en evidencia científica sobre tolerancia al fallo muscular y fatiga del SNC:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Blast Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (1-2 años)</td>
+                <td>4-6 semanas</td>
+                <td>Menor tolerancia al fallo absoluto, SNC menos entrenado</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>6-8 semanas</td>
+                <td>Óptimo para desarrollo máximo, señales claras de fatiga</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>4-6 semanas</td>
+                <td>Fatiga del SNC más rápida, requiere Cruise más frecuente</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación DC:</strong> La aplicación NEXUS adapta automáticamente las opciones de duración
+            según tu nivel. DC Training requiere escuchar al cuerpo - iniciar Cruise cuando progresión se estanca.
+        </div>
+
+        <h2>6.6 Estructuras por Nivel de Intensidad</h2>
+        <table>
+            <tr>
+                <th>Split</th>
+                <th>Días/Semana</th>
+                <th>Frecuencia</th>
+                <th>Nivel Recomendado</th>
+                <th>Uso Ideal</th>
+            </tr>
+            <tr>
+                <td>2-Way Split (A/B)</td>
+                <td>3-4</td>
+                <td>2x/semana</td>
+                <td>Todos</td>
+                <td>Split OFICIAL DC - único recomendado</td>
+            </tr>
+            <tr>
+                <td>3-Way Split</td>
+                <td>3</td>
+                <td>1x/semana</td>
+                <td>Avanzado (modificado)</td>
+                <td>Mayor recuperación por grupo</td>
+            </tr>
+        </table>
+        <div class="warning-box">
+            <strong>⚠️ Nota:</strong> DC Training originalmente SOLO usa 2-Way Split. Otras divisiones son
+            modificaciones
+            no oficiales.
+        </div>
+
+        <h1>7. Progresión en DC</h1>
+
+        <h2>7.1 Regla de Progresión Principal</h2>
+        <div class="success-box">
+            <strong>✅ Regla de Progresión DC:</strong>
+            <p>Cada sesión debes SUPERAR el total de reps del ejercicio de la sesión anterior con el mismo peso, O usar
+                más peso para las mismas reps.</p>
+        </div>
+        <table>
+            <tr>
+                <th>Situación</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>Más reps que la última vez</td>
+                <td>✅ PR - mantener peso</td>
+            </tr>
+            <tr>
+                <td>Mismas reps con más peso</td>
+                <td>✅ PR - subiste peso</td>
+            </tr>
+            <tr>
+                <td>Menos reps que la última vez</td>
+                <td>❌ Mal día - mantener peso</td>
+            </tr>
+            <tr>
+                <td>2 sesiones sin progreso</td>
+                <td>⚠️ Iniciar Cruise</td>
+            </tr>
+        </table>
+
+        <h2>7.2 El Logbook (Cuaderno de Entrenamiento)</h2>
+        <div class="highlight-box">
+            <strong>El Logbook es OBLIGATORIO en DC:</strong>
+            <p>Registrar cada sesión: ejercicio, peso, y TODAS las reps de cada mini-set Rest-Pause.</p>
+        </div>
+        <div class="code-block">FORMATO LOGBOOK:
+            Fecha | Ejercicio | Peso | RP1 | RP2 | RP3 | TOTAL
+            01/12 | Press Inc | 100kg | 12 | 5 | 3 | 20
+            05/12 | Press Ham | 90kg | 11 | 4 | 2 | 17
+            09/12 | Press Dec | 95kg | 13 | 5 | 3 | 21
+            13/12 | Press Inc | 100kg | 13 | 5 | 4 | 22 ← PR!</div>
+
+        <h2>7.3 Progresión a Largo Plazo</h2>
+        <table>
+            <tr>
+                <th>Meses</th>
+                <th>Expectativas</th>
+            </tr>
+            <tr>
+                <td>1-3</td>
+                <td>Adaptación a intensidad, DOMS severo, PRs frecuentes</td>
+            </tr>
+            <tr>
+                <td>4-6</td>
+                <td>PRs menos frecuentes pero más significativos</td>
+            </tr>
+            <tr>
+                <td>7-12</td>
+                <td>Ganancias notables de masa, PRs mensuales</td>
+            </tr>
+        </table>
+        <div class="success-box">
+            <strong>✅ Resultados esperados en 12 meses (con dieta perfecta):</strong>
+            <ul>
+                <li>+5-10 kg de masa muscular</li>
+                <li>Mejora dramática en densidad muscular</li>
+                <li>Mejor conexión mente-músculo</li>
+                <li>Tolerancia al dolor incrementada</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">8. Nutrición y Suplementación</h1>
+
+        <h2>8.1 Requerimientos</h2>
+        <div class="warning-box">
+            <strong>⚠️ DC Training requiere SUPERÁVIT:</strong>
+            <p>Mínimo +500 kcal sobre mantenimiento. La intensidad demanda calorías.</p>
+        </div>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.0-2.5 g/kg</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>4-6 g/kg</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1 g/kg</td>
+            </tr>
+        </table>
+
+        <h2>8.2 Suplementación</h2>
+        <ul>
+            <li><strong>Creatina:</strong> 5g diarios (muy recomendado)</li>
+            <li><strong>Proteína Whey:</strong> Post-entreno inmediato</li>
+            <li><strong>Glucosamina:</strong> Para salud articular (estiramientos intensos)</li>
+        </ul>
+
+        <h1 class="page-break">9. Rutinas 2-Way Split</h1>
+
+        <div class="highlight-box">
+            <strong>📋 PARÁMETROS DC TRAINING ESTÁNDAR:</strong>
+            <ul>
+                <li><strong>Rest-Pause:</strong> 1 set al fallo + 2 extensiones (15 breaths entre cada)</li>
+                <li><strong>Reps Target:</strong> 11-15+5+3 (total ~20 reps)</li>
+                <li><strong>Straight Sets:</strong> 2-3 sets al fallo (espalda/piernas)</li>
+                <li><strong>Widowmaker:</strong> 1 set de 20+ reps (piernas)</li>
+                <li><strong>Extreme Stretch:</strong> 60-90 segundos post-ejercicio</li>
+            </ul>
+        </div>
+
+        <h2>9.1 Día A: Pecho/Hombros/Tríceps/Espalda Anchura</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Ejercicio</th>
+                <th>Protocolo</th>
+                <th>Reps Target</th>
+                <th>Stretch</th>
+            </tr>
+            <tr>
+                <td>Pecho</td>
+                <td>Press Inc Smith (A/B/C)</td>
+                <td>Rest-Pause</td>
+                <td>11-15+5+3</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Hombros</td>
+                <td>Press Militar Máquina</td>
+                <td>Rest-Pause</td>
+                <td>11-15+5+3</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Deltoides Lateral</td>
+                <td>Elevaciones Laterales</td>
+                <td>3×10-15</td>
+                <td>Straight sets</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Tríceps</td>
+                <td>Press Cerrado/Fondos</td>
+                <td>Rest-Pause</td>
+                <td>11-15+5+3</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Espalda Anchura</td>
+                <td>Dominadas/Jalón</td>
+                <td>2 sets al fallo</td>
+                <td>10-12+6-8</td>
+                <td>60-90s</td>
+            </tr>
+        </table>
+        <div class="method-card">
+            <h4>Día A - Sesión Completa</h4>
+            <div class="code-block">CALENTAMIENTO: 5 min cardio + movilidad
+
+                PECHO (Ejercicio A, B, o C rotando):
+                - Calentamiento específico: 2×10
+                - Rest-Pause: 11-15+5+3 (total ~20 reps)
+                - Estiramiento: Fly position 60-90s
+
+                HOMBROS:
+                - Rest-Pause Press: 11-15+5+3
+                - Laterales: 3×10-15 (straight)
+                - Estiramiento: Hang 60-90s
+
+                TRÍCEPS:
+                - Rest-Pause: 11-15+5+3
+                - Estiramiento: Overhead 60-90s
+
+                ESPALDA ANCHURA:
+                - Dominadas: 2 sets al fallo
+                - Estiramiento: Hang con peso 60-90s
+
+                DURACIÓN TOTAL: 45-55 minutos</div>
+        </div>
+
+        <h2>9.2 Día B: Bíceps/Antebrazos/Espalda Grosor/Piernas</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Ejercicio</th>
+                <th>Protocolo</th>
+                <th>Reps Target</th>
+                <th>Stretch</th>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Curl Barra/Predicador</td>
+                <td>Rest-Pause</td>
+                <td>11-15+5+3</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Antebrazos</td>
+                <td>Curl Inverso</td>
+                <td>2×15</td>
+                <td>Straight sets</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Espalda Grosor</td>
+                <td>Remo Máquina</td>
+                <td>2 sets al fallo</td>
+                <td>10-12+6-8</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Espalda Grosor</td>
+                <td>Peso Muerto</td>
+                <td>1×10 + Widowmaker</td>
+                <td>10+20+</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Cuádriceps</td>
+                <td>Sentadilla/Prensa</td>
+                <td>1×10-12 + Widowmaker</td>
+                <td>12+20+</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Isquiotibiales</td>
+                <td>Curl Femoral</td>
+                <td>Rest-Pause</td>
+                <td>15-20+8+5</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Gemelos</td>
+                <td>Gemelos Sentado</td>
+                <td>DC Extreme Stretch</td>
+                <td>10-12</td>
+                <td>3 min!</td>
+            </tr>
+        </table>
+        <div class="method-card">
+            <h4>Día B - Sesión Completa</h4>
+            <div class="code-block">BÍCEPS:
+                - Rest-Pause Curl Barra: 11-15+5+3
+                - Estiramiento Incline: 60-90s
+
+                ANTEBRAZOS:
+                - Curl Inverso: 2×15
+                - Estiramiento: 60-90s
+
+                ESPALDA GROSOR:
+                - Remo Máquina: 2 sets al fallo
+                - Peso Muerto: 1×10 pesado + widowmaker 20+
+                - Estiramiento: Hang con peso 60-90s
+
+                PIERNAS (LA PARTE MÁS BRUTAL):
+                - Sentadilla: 1×10-12 al fallo
+                - Widowmaker: 20+ reps (no parar hasta completar)
+                - Curl Femoral: Rest-Pause 15-20+8+5
+                - Gemelos: 10-12 + extreme stretch 3 min!
+                - Estiramientos: 60-90s cada grupo
+
+                DURACIÓN TOTAL: 55-65 minutos
+                ⚠️ Las piernas en DC son DEVASTADORAS</div>
+        </div>
+
+        <h2>9.3 Rotación de Ejercicios por Grupo</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Ejercicio A</th>
+                <th>Ejercicio B</th>
+                <th>Ejercicio C</th>
+            </tr>
+            <tr>
+                <td>Pecho</td>
+                <td>Press Inclinado Smith</td>
+                <td>Press Hammer</td>
+                <td>Press Declinado</td>
+            </tr>
+            <tr>
+                <td>Hombros</td>
+                <td>Press Militar Máquina</td>
+                <td>Press Smith Sentado</td>
+                <td>Press Mancuernas</td>
+            </tr>
+            <tr>
+                <td>Tríceps</td>
+                <td>Press Cerrado Smith</td>
+                <td>Fondos Paralelas</td>
+                <td>Extensión Overhead</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Curl Barra EZ</td>
+                <td>Curl Predicador</td>
+                <td>Curl Inclinado</td>
+            </tr>
+            <tr>
+                <td>Espalda</td>
+                <td>Remo Hammer</td>
+                <td>Remo T-Bar</td>
+                <td>Remo Cable Bajo</td>
+            </tr>
+            <tr>
+                <td>Piernas</td>
+                <td>Sentadilla Hack</td>
+                <td>Prensa 45°</td>
+                <td>Sentadilla Frontal</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>Rotación:</strong> Cada día uses ejercicio A, siguiente día B, siguiente C, vuelves a A. Así cada
+            ejercicio se hace cada 6-8 días.
+        </div>
+
+        <h2 class="page-break">9.4 Semana Típica DC</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Sesión</th>
+                <th>Ejercicios Rotativos</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Día A</td>
+                <td>Pecho A, Hombros A, Tríceps A</td>
+                <td>Primer ciclo</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Descanso/Cardio</td>
+                <td>-</td>
+                <td>LISS 20-30 min opcional</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Día B</td>
+                <td>Bíceps A, Espalda A, Piernas A</td>
+                <td>Día más brutal</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Descanso/Cardio</td>
+                <td>-</td>
+                <td>Recuperación</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Día A</td>
+                <td>Pecho B, Hombros B, Tríceps B</td>
+                <td>Segundo ciclo</td>
+            </tr>
+            <tr>
+                <td>Sábado</td>
+                <td>Descanso</td>
+                <td>-</td>
+                <td>Recuperación total</td>
+            </tr>
+            <tr>
+                <td>Domingo</td>
+                <td>Día B</td>
+                <td>Bíceps B, Espalda B, Piernas B</td>
+                <td>Segundo ciclo B</td>
+            </tr>
+        </table>
+
+        <h2>9.5 Protocolo Estiramientos Extremos</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Estiramiento</th>
+                <th>Posición</th>
+                <th>Duración</th>
+            </tr>
+            <tr>
+                <td>Pecho</td>
+                <td>Fly Inclinado Hold</td>
+                <td>Posición estirada con mancuernas</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Espalda</td>
+                <td>Hang con Peso</td>
+                <td>Colgado de barra, cinturón con peso</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Hombros</td>
+                <td>Doorway Stretch</td>
+                <td>Brazos en marco de puerta, inclinarse</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Tríceps</td>
+                <td>Overhead DB Hold</td>
+                <td>DB detrás de cabeza, posición estirada</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Incline Curl Hold</td>
+                <td>Banco 45°, brazos colgando</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Cuádriceps</td>
+                <td>Sissy Squat Hold</td>
+                <td>Posición sissy squat, mantener</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Isquiotibiales</td>
+                <td>Stiff Leg Hold</td>
+                <td>Peso muerto rumano, mantener abajo</td>
+                <td>60-90s</td>
+            </tr>
+            <tr>
+                <td>Gemelos</td>
+                <td>Calf Machine Hold</td>
+                <td>Posición baja en máquina gemelos</td>
+                <td>2-3 min!</td>
+            </tr>
+        </table>
+
+        <h2>9.6 Tabla Resumen de Parámetros DC</h2>
+        <table>
+            <tr>
+                <th>Parámetro</th>
+                <th>Rest-Pause</th>
+                <th>Straight Sets</th>
+                <th>Widowmaker</th>
+            </tr>
+            <tr>
+                <td>Sets</td>
+                <td>1 (extendido)</td>
+                <td>2-3</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>Reps Objetivo</td>
+                <td>11-15+5+3 ≈20</td>
+                <td>10-12+6-8</td>
+                <td>20+</td>
+            </tr>
+            <tr>
+                <td>Intensidad</td>
+                <td>Al fallo absoluto</td>
+                <td>Al fallo</td>
+                <td>Más allá del fallo</td>
+            </tr>
+            <tr>
+                <td>Descanso Inter-Set</td>
+                <td>10-15 breaths (20-30s)</td>
+                <td>90-120s</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Tempo</td>
+                <td>X-0-3-0</td>
+                <td>X-0-3-0</td>
+                <td>X-0-2-0</td>
+            </tr>
+            <tr>
+                <td>Grupos Aplicables</td>
+                <td>Pecho, Hombros, Brazos</td>
+                <td>Espalda, Dominadas</td>
+                <td>Piernas (Squat, Leg Press)</td>
+            </tr>
+            <tr>
+                <td>Extreme Stretch</td>
+                <td>60-90s</td>
+                <td>60-90s</td>
+                <td>60-90s (gemelos 3 min)</td>
+            </tr>
+            <tr>
+                <td>Frecuencia</td>
+                <td>2x/semana por músculo</td>
+                <td>2x/semana</td>
+                <td>2x/semana</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <ul>
+            <li>Si las articulaciones duelen, reduce intensidad de estiramientos</li>
+            <li>Si no progresas 2 semanas seguidas, inicia Cruise</li>
+        </ul>
+
+        <h2>10.2 Recuperación</h2>
+        <div class="danger-box">
+            <strong>❌ DC Training es BRUTAL:</strong>
+            <p>Requiere 8+ horas de sueño, nutrición perfecta, y períodos de Cruise. No es sostenible sin descansos
+                programados.</p>
+        </div>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li>Los estiramientos deben doler pero NO lesionar</li>
+            <li>Usar máquinas cuando sea posible para mayor seguridad</li>
+            <li>Nunca sacrificar técnica por más reps en Rest-Pause</li>
+        </ul>
+
+        <h2 class="page-break">10.4 Especialización de Grupos Débiles</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con DC Training</strong>
+            <p>DC Training permite especialización agregando el grupo débil a AMBOS días del split,
+                y usando una rotación de 4 ejercicios en lugar de 3.</p>
+        </div>
+
+        <h3>Estrategia DC Training para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Series Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Técnica Recomendada</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+3-4 series</td>
+                <td>3x/semana</td>
+                <td>Añadir a Día A y B</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+6-8 series</td>
+                <td>4x/semana</td>
+                <td>Rotación 4 ejercicios + stretch extra</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+9-12 series</td>
+                <td>5-6x/semana</td>
+                <td>Rest-Pause diario + extreme stretch</td>
+            </tr>
+        </table>
+
+        <h3>Grupos Comunes a Priorizar</h3>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Protocolo DC</th>
+                <th>Extreme Stretch</th>
+                <th>Frecuencia</th>
+            </tr>
+            <tr>
+                <td>Pantorrillas</td>
+                <td>Rest-Pause 15+8+5</td>
+                <td>3 min bajo carga</td>
+                <td>Día A + Día B</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Rest-Pause 12+5+3</td>
+                <td>Incline curl hold 90s</td>
+                <td>Añadir a Día A</td>
+            </tr>
+            <tr>
+                <td>Deltoides Posterior</td>
+                <td>Straight sets 2×15</td>
+                <td>Doorway stretch 90s</td>
+                <td>Ambos días</td>
+            </tr>
+            <tr>
+                <td>Trapecios</td>
+                <td>Rest-Pause 12+6+4</td>
+                <td>Hang con peso 90s</td>
+                <td>Día B espalda</td>
+            </tr>
+        </table>
+
+        <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS DC TRAINING
+
+            FRECUENCIA: Ambos días del split (4x/semana)
+            DURACIÓN: 10-12 minutos extra por sesión
+
+            PROTOCOLO DANTE TRUDEL:
+            1. Gemelo Sentado: Rest-Pause 15+8+5
+            (15 breaths entre cada mini-set)
+            2. EXTREME STRETCH: 3 minutos bajo carga
+            (posición baja en máquina de gemelos)
+            3. Rotación: 4 ejercicios en lugar de 3
+
+            RESULTADO ESPERADO: 6-8 semanas para desarrollo proporcional</div>
+
+        <h3>Reglas de Especialización DC Training</h3>
+        <div class="warning-box">
+            <strong>⚠️ Reglas Importantes:</strong>
+            <ul>
+                <li><strong>Grupo prioritario PRIMERO:</strong> Antes del trabajo principal del día</li>
+                <li><strong>Extreme Stretch obligatorio:</strong> Clave para grupos pequeños</li>
+                <li><strong>Rotación expandida:</strong> 4 ejercicios para grupo débil vs 3 normales</li>
+                <li><strong>Cruise incluido:</strong> Reducir intensidad en fases de recuperación</li>
+            </ul>
+        </div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <strong>DC Training</strong> es para quienes buscan resultados extremos con compromiso extremo. No es para
+            principiantes ni para quienes no pueden ir al fallo absoluto. Pero para aquellos dispuestos a sufrir, los
+            resultados son excepcionales.
+        </div>
+
+        <div
+            style="margin-top: 40px; padding: 20px; border-top: 2px solid #ddd; text-align: center; font-size: 12px; color: #999;">
+            <p><strong>NEXUS - 10 Metodologías de Hipertrofia v3.1</strong></p>
+            <p>Y3T • Heavy Duty • Blood & Guts • MTUT • SST • FST-7 • GVT • DUP • 5/3/1 • DC Training</p>
+        </div>
+    </div>
+
+    <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Duración del Ciclo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Principiante (1‑2 años)</td>
+                <td>6‑8 semanas</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2‑5 años)</td>
+                <td>4‑6 semanas</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>3‑4 semanas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Estructura</th>
+                <th>Días por semana</th>
+                <th>Nivel recomendado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio‑Avanzado</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5‑6</td>
+                <td>Avanzado</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

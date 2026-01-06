@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS-RP Coach | Entrenamiento Inteligente</title>
+    <meta name="description"
+        content="Sistema de autorregulación inteligente inspirado en RP Hypertrophy App, sincronizado con 11 metodologías de entrenamiento.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/rp-coach.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- ========== HEADER ========== -->
+        <header class="header">
+            <div class="header__logo">
+                <div class="header__logo-icon">🧠</div>
+                <div>
+                    <h1 class="header__title">NEXUS-RP <span class="text-gradient">Coach</span></h1>
+                    <p class="header__subtitle">Entrenamiento Inteligente Autorregulado</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="docs/RP_Coach_Protocolo.html" class="btn btn--secondary btn--sm"
+                    style="text-decoration: none;">
+                    📖 Guía de Protocolo
+                </a>
+                <span class="rp-badge">✨ RP Style</span>
+                <select id="methodology-selector" class="form-select" style="width: auto; min-width: 200px;">
+                    <option value="Y3T">Cargando metodologías...</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- ========== NAVIGATION ========== -->
+        <nav class="nav-tabs">
+            <!-- ENTRENAR es la PRIMERA pestaña y está ACTIVA por defecto -->
+            <button class="nav-tab active" data-module="workout"
+                style="background: linear-gradient(135deg, #10B981, #059669); color: white;">
+                <span class="nav-tab__icon">🏋️</span>
+                ENTRENAR
+            </button>
+            <button class="nav-tab" data-module="dashboard">
+                <span class="nav-tab__icon">📊</span>
+                Dashboard
+            </button>
+            <button class="nav-tab" data-module="autoregulation">
+                <span class="nav-tab__icon">🎯</span>
+                Autorregulación
+            </button>
+            <button class="nav-tab" data-module="rir">
+                <span class="nav-tab__icon">💪</span>
+                RIR
+            </button>
+            <button class="nav-tab" data-module="volume">
+                <span class="nav-tab__icon">📈</span>
+                Volumen
+            </button>
+            <button class="nav-tab" data-module="logger">
+                <span class="nav-tab__icon">📝</span>
+                Registro
+            </button>
+            <button class="nav-tab" data-module="overload">
+                <span class="nav-tab__icon">🏋️</span>
+                Sobrecarga
+            </button>
+            <button class="nav-tab" data-module="templates">
+                <span class="nav-tab__icon">📋</span>
+                Templates
+            </button>
+        </nav>
+
+        <!-- ========== MÓDULO: DASHBOARD ========== -->
+        <section id="module-dashboard" class="module-section hidden">
+            <!-- Widget de Próximo Entrenamiento -->
+            <div id="next-workout-widget" class="card card--highlight mb-2">
+                <div class="card__header">
+                    <h3 class="card__title">🎯 Próximo Entrenamiento</h3>
+                    <span class="rp-badge" id="week-badge">Semana 1</span>
+                </div>
+                <div id="next-workout-content">
+                    <p class="text-muted">Cargando rutina...</p>
+                </div>
+                <button id="btn-start-workout" class="btn btn--primary btn--block mt-2"
+                    style="background: linear-gradient(135deg, #10B981, #059669);">
+                    🚀 INICIAR ENTRENAMIENTO
+                </button>
+            </div>
+
+            <div class="dashboard-grid" id="dashboard-stats">
+                <div class="stat-box">
+                    <div class="stat-box__value">0</div>
+                    <div class="stat-box__label">Sesiones Totales</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box__value">0</div>
+                    <div class="stat-box__label">Últimos 30 días</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box__value">0</div>
+                    <div class="stat-box__label">Series Totales</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box__value">0</div>
+                    <div class="stat-box__label">Volumen Total</div>
+                </div>
+            </div>
+
+            <!-- AUTOREGULATION STATUS - Conectado a AutoregulationEngine -->
+            <div id="autoregulation-status" class="card mt-2">
+                <div class="card__header">
+                    <h3 class="card__title">🧠 Estado de Autorregulación</h3>
+                    <span id="mesocycle-phase-badge" class="rp-badge">Acumulación</span>
+                </div>
+
+                <!-- Fatiga Acumulada -->
+                <div class="form-group">
+                    <label class="form-label flex-between">
+                        <span>📊 Fatiga Acumulada</span>
+                        <span id="fatigue-value" class="text-primary">0%</span>
+                    </label>
+                    <div class="volume-bar" style="height: 12px; margin-top: 8px;">
+                        <div id="fatigue-bar" class="volume-bar__zone volume-bar__mev"
+                            style="width: 0%; left: 0; transition: width 0.3s ease; background: linear-gradient(90deg, #10B981, #F59E0B, #EF4444);">
+                        </div>
+                    </div>
+                    <div class="range-value" style="font-size: 0.75rem;">
+                        <span>Sin fatiga</span>
+                        <span>Moderada</span>
+                        <span>Alta</span>
+                    </div>
+                </div>
+
+                <!-- Semana del Mesociclo -->
+                <div class="module-grid mt-2" style="gap: 8px;">
+                    <div class="stat-box" style="padding: 8px;">
+                        <div id="current-week" class="stat-box__value" style="font-size: 1.5rem;">1</div>
+                        <div class="stat-box__label">Semana</div>
+                    </div>
+                    <div class="stat-box" style="padding: 8px;">
+                        <div id="weekly-volume" class="stat-box__value" style="font-size: 1.5rem;">0</div>
+                        <div class="stat-box__label">Series Semana</div>
+                    </div>
+                    <div class="stat-box" style="padding: 8px;">
+                        <div id="recovery-score" class="stat-box__value" style="font-size: 1.5rem;">100%</div>
+                        <div class="stat-box__label">Recuperación</div>
+                    </div>
+                </div>
+
+                <!-- Recomendación de Deload -->
+                <div id="deload-recommendation" class="alert alert--info mt-2 hidden">
+                    <span>😴</span>
+                    <div>
+                        <strong>Recomendación de Deload</strong>
+                        <p id="deload-message">Tu fatiga acumulada indica que deberías considerar una semana de
+                            descarga.</p>
+                    </div>
+                </div>
+
+                <!-- Metodología activa -->
+                <div id="active-methodology-info" class="alert mt-2" style="background: rgba(139, 92, 246, 0.1);">
+                    <span>🎯</span>
+                    <div>
+                        <strong id="dashboard-methodology-name">Metodología Activa</strong>
+                        <p id="dashboard-methodology-type" style="font-size: 0.85rem;">Tipo: VOLUME | Frecuencia deload
+                            sugerida</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRÁFICAS DE PROGRESO -->
+            <div id="dashboard-charts" class="mt-2"></div>
+
+            <!-- ALERTAS INTELIGENTES -->
+            <div id="smart-alerts-section" class="mt-2">
+                <div class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">🧠 Alertas Inteligentes</h3>
+                        <button id="btn-refresh-alerts" class="btn btn--secondary btn--sm">🔄</button>
+                    </div>
+                    <div id="alerts-container">
+                        <p class="text-muted">Analizando rendimiento...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATUS DE SINCRONIZACIÓN NEXUS -->
+            <div id="nexus-sync-status" class="alert alert--info mt-2">
+                <span>🔗</span>
+                <div>
+                    <strong>Estado de Sincronización NEXUS</strong>
+                    <p id="sync-status-text">Verificando conexión...</p>
+                </div>
+            </div>
+
+            <!-- CRONÓMETRO DE DESCANSO -->
+            <div id="timer-section" class="mt-2"></div>
+
+            <div class="card">
+                <div class="card__header">
+                    <h3 class="card__title">Tendencia de Recuperación</h3>
+                    <div class="card__icon">📊</div>
+                </div>
+                <div id="recovery-trend">
+                    <p class="text-muted">Registra sesiones para ver tu tendencia de recuperación</p>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card__header">
+                    <h3 class="card__title">Guía Rápida</h3>
+                    <div class="card__icon">💡</div>
+                </div>
+                <div class="module-grid">
+                    <div class="alert alert--info">
+                        <span>🎯</span>
+                        <span><strong>Autorregulación:</strong> Evalúa pump, agujetas y fatiga para ajustar tu próxima
+                            semana</span>
+                    </div>
+                    <div class="alert alert--info">
+                        <span>💪</span>
+                        <span><strong>RIR Dinámico:</strong> El esfuerzo exacto según semana y metodología</span>
+                    </div>
+                    <div class="alert alert--info">
+                        <span>📈</span>
+                        <span><strong>Volumen:</strong> Rango óptimo de series (MEV→MAV→MRV)</span>
+                    </div>
+                    <div class="alert alert--info">
+                        <span>🏋️</span>
+                        <span><strong>Sobrecarga:</strong> Calcula el peso para tu próxima sesión</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MÓDULO: AUTORREGULACIÓN ========== -->
+        <section id="module-autoregulation" class="module-section hidden">
+            <div class="card card--highlight">
+                <div class="card__header">
+                    <h3 class="card__title">🎯 Autorregulación Inteligente</h3>
+                    <span class="rp-badge">RP Style</span>
+                </div>
+                <p class="mb-2">Evalúa cómo te sientes después del entrenamiento para ajustar tu próxima semana
+                    automáticamente.</p>
+
+                <!-- Slider: Pump -->
+                <div class="form-group mt-3">
+                    <label class="form-label flex-between">
+                        <span>💪 Nivel de Pump (Bombeo)</span>
+                        <span id="value-pump" class="text-primary">3</span>
+                    </label>
+                    <input type="range" id="slider-pump" class="range-slider" min="1" max="5" value="3">
+                    <div class="range-value">
+                        <span>Sin pump</span>
+                        <span id="label-pump" class="text-center">Pump moderado</span>
+                        <span>Pump extremo</span>
+                    </div>
+                </div>
+
+                <!-- Slider: Soreness -->
+                <div class="form-group mt-2">
+                    <label class="form-label flex-between">
+                        <span>😣 Nivel de Agujetas (Soreness)</span>
+                        <span id="value-soreness" class="text-primary">3</span>
+                    </label>
+                    <input type="range" id="slider-soreness" class="range-slider" min="1" max="5" value="3">
+                    <div class="range-value">
+                        <span>Sin molestias</span>
+                        <span id="label-soreness" class="text-center">Moderado</span>
+                        <span>Muy adolorido</span>
+                    </div>
+                </div>
+
+                <!-- Slider: Fatigue -->
+                <div class="form-group mt-2">
+                    <label class="form-label flex-between">
+                        <span>😴 Nivel de Fatiga</span>
+                        <span id="value-fatigue" class="text-primary">3</span>
+                    </label>
+                    <input type="range" id="slider-fatigue" class="range-slider" min="1" max="5" value="3">
+                    <div class="range-value">
+                        <span>Descansado</span>
+                        <span id="label-fatigue" class="text-center">Fatiga normal</span>
+                        <span>Agotado</span>
+                    </div>
+                </div>
+
+                <button id="btn-evaluate" class="btn btn--primary btn--block mt-3">
+                    🧠 Evaluar y Obtener Recomendación
+                </button>
+            </div>
+
+            <!-- Resultado -->
+            <div id="autoregulation-result" class="mt-2"></div>
+        </section>
+
+        <!-- ========== MÓDULO: RIR DINÁMICO ========== -->
+        <section id="module-rir" class="module-section hidden">
+            <div class="card card--highlight">
+                <div class="card__header">
+                    <h3 class="card__title">💪 RIR Dinámico por Semana</h3>
+                    <span class="rp-badge">RP Style</span>
+                </div>
+                <p class="mb-2">El esfuerzo exacto (Repeticiones en Reserva) según la semana del mesociclo.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Semana del Mesociclo</label>
+                    <select id="week-selector" class="form-select">
+                        <option value="1">Semana 1 - Acumulación</option>
+                        <option value="2">Semana 2 - Progresión</option>
+                        <option value="3">Semana 3 - Intensificación</option>
+                        <option value="4">Semana 4 - Peak</option>
+                        <option value="5">Semana 5 - Deload</option>
+                    </select>
+                </div>
+
+                <div class="flex-center gap-2 mt-3">
+                    <div class="stat-box" style="flex: 1;">
+                        <div id="rir-value" class="stat-box__value">3</div>
+                        <div class="stat-box__label">RIR Target</div>
+                    </div>
+                </div>
+
+                <p id="rir-description" class="text-center mt-2">Acumulación inicial - Técnica con reserva</p>
+
+                <!-- Indicadores de semana -->
+                <div class="flex-center mt-3">
+                    <div id="week-indicators" class="rir-indicator">
+                        <div class="rir-dot active">3</div>
+                        <div class="rir-dot">2</div>
+                        <div class="rir-dot">1</div>
+                        <div class="rir-dot">0</div>
+                        <div class="rir-dot">4</div>
+                    </div>
+                </div>
+
+                <div class="alert alert--info mt-3">
+                    <span>ℹ️</span>
+                    <span id="methodology-note">Progresión estándar de mesociclo.</span>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <h4>¿Qué es el RIR?</h4>
+                <p class="text-muted mt-1">
+                    <strong>RIR (Reps in Reserve)</strong> indica cuántas repeticiones más podrías haber hecho.<br>
+                    RIR 3 = podrías hacer 3 más | RIR 0 = llegaste al fallo
+                </p>
+                <table class="data-table mt-2">
+                    <tr>
+                        <th>RIR</th>
+                        <th>RPE</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>4+</td>
+                        <td>6</td>
+                        <td>Calentamiento / Deload</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>7</td>
+                        <td>Trabajo moderado</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>8</td>
+                        <td>Esfuerzo considerable</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>9</td>
+                        <td>Muy cerca del fallo</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>10</td>
+                        <td>Fallo muscular</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- ========== MÓDULO: VOLUMEN MEV-MRV ========== -->
+        <section id="module-volume" class="module-section hidden">
+            <div class="card card--highlight">
+                <div class="card__header">
+                    <h3 class="card__title">📈 Volumen MEV → MRV</h3>
+                    <span class="rp-badge">RP Style</span>
+                </div>
+                <p class="mb-2">Rango óptimo de series semanales por grupo muscular.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Grupo Muscular</label>
+                    <select id="muscle-selector" class="form-select" onchange="RPCoachApp.switchModule('volume')">
+                        <option value="chest">💪 Pecho</option>
+                        <option value="back">🔙 Espalda</option>
+                        <option value="shoulders">🎯 Hombros</option>
+                        <option value="quadriceps">🦵 Cuádriceps</option>
+                        <option value="hamstrings">🦿 Isquiotibiales</option>
+                        <option value="biceps">💪 Bíceps</option>
+                        <option value="triceps">💪 Tríceps</option>
+                        <option value="calves">🦶 Pantorrillas</option>
+                        <option value="abs">🎯 Abdominales</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nivel de Experiencia</label>
+                    <select id="experience-selector" class="form-select" onchange="RPCoachApp.switchModule('volume')">
+                        <option value="beginner">Principiante (menos volumen necesario)</option>
+                        <option value="intermediate" selected>Intermedio (estándar)</option>
+                        <option value="advanced">Avanzado (más volumen tolerado)</option>
+                    </select>
+                </div>
+
+                <!-- Barra de volumen visual -->
+                <div id="volume-bar" class="volume-bar mt-3">
+                    <div class="volume-bar__zone volume-bar__mev" style="width: 40%; left: 0;">MEV: 8</div>
+                    <div class="volume-bar__zone volume-bar__mav" style="width: 40%; left: 40%;">MAV: 12-16</div>
+                    <div class="volume-bar__zone volume-bar__mrv" style="width: 20%; left: 80%;">MRV: 20</div>
+                </div>
+
+                <!-- Tabla de valores -->
+                <table id="volume-table" class="data-table mt-2">
+                    <tr>
+                        <th>Zona</th>
+                        <th>Series/Semana</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td class="text-warning">MEV</td>
+                        <td>8</td>
+                        <td>Mínimo Efectivo</td>
+                    </tr>
+                    <tr>
+                        <td class="text-success">MAV</td>
+                        <td>12-16</td>
+                        <td>Rango Óptimo</td>
+                    </tr>
+                    <tr>
+                        <td class="text-danger">MRV</td>
+                        <td>20</td>
+                        <td>Máximo Recuperable</td>
+                    </tr>
+                </table>
+
+                <div class="alert alert--warning mt-2">
+                    <span>⚠️</span>
+                    <span>Los valores se ajustan según la metodología seleccionada y tu nivel de experiencia.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MÓDULO: SESSION LOGGER ========== -->
+        <section id="module-logger" class="module-section hidden">
+            <div class="card card--highlight">
+                <div class="card__header">
+                    <h3 class="card__title">📝 Registro de Sesión</h3>
+                    <span class="rp-badge">RP Style</span>
+                </div>
+
+                <form id="session-form">
+                    <div class="module-grid">
+                        <div class="form-group">
+                            <label class="form-label">Ejercicio</label>
+                            <input type="text" id="log-exercise" class="form-input" placeholder="Ej: Press Banca"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Grupo Muscular</label>
+                            <select id="log-muscle" class="form-select">
+                                <option value="chest">Pecho</option>
+                                <option value="back">Espalda</option>
+                                <option value="shoulders">Hombros</option>
+                                <option value="quadriceps">Cuádriceps</option>
+                                <option value="hamstrings">Isquios</option>
+                                <option value="biceps">Bíceps</option>
+                                <option value="triceps">Tríceps</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="module-grid">
+                        <div class="form-group">
+                            <label class="form-label">Peso (kg)</label>
+                            <input type="number" id="log-weight" class="form-input" placeholder="80" step="0.5"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Reps</label>
+                            <input type="number" id="log-reps" class="form-input" placeholder="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">RPE</label>
+                            <input type="number" id="log-rpe" class="form-input" placeholder="8" min="1" max="10"
+                                step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Calificación (1-10)</label>
+                            <input type="number" id="log-rating" class="form-input" placeholder="8" min="1" max="10">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--block mt-2">
+                        💾 Guardar Sesión
+                    </button>
+                </form>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card__header">
+                    <h3 class="card__title">Registros Recientes</h3>
+                    <div class="card__icon">📋</div>
+                </div>
+                <div id="recent-logs">
+                    <p class="text-muted">No hay registros recientes</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MÓDULO: SOBRECARGA PROGRESIVA ========== -->
+        <section id="module-overload" class="module-section hidden">
+            <div class="card card--highlight">
+                <div class="card__header">
+                    <h3 class="card__title">🏋️ Sobrecarga Progresiva</h3>
+                    <span class="rp-badge">RP Style</span>
+                </div>
+                <p class="mb-2">Calcula el peso y reps para tu próxima sesión basándote en tu rendimiento anterior.</p>
+
+                <h4 class="mt-3">Última Sesión</h4>
+                <div class="module-grid mt-1">
+                    <div class="form-group">
+                        <label class="form-label">Ejercicio</label>
+                        <input type="text" id="overload-exercise" class="form-input" placeholder="Press Banca">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Peso Usado (kg)</label>
+                        <input type="number" id="overload-weight" class="form-input" placeholder="80" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reps Completadas</label>
+                        <input type="number" id="overload-reps" class="form-input" placeholder="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">RPE Alcanzado</label>
+                        <input type="number" id="overload-rpe" class="form-input" placeholder="8" min="1" max="10"
+                            step="0.5">
+                    </div>
+                </div>
+
+                <h4 class="mt-3">Objetivos</h4>
+                <div class="module-grid mt-1">
+                    <div class="form-group">
+                        <label class="form-label">Reps Objetivo</label>
+                        <input type="number" id="overload-target-reps" class="form-input" placeholder="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">RIR Objetivo</label>
+                        <input type="number" id="overload-target-rir" class="form-input" placeholder="2" min="0"
+                            max="5">
+                    </div>
+                </div>
+
+                <button id="btn-calculate-overload" class="btn btn--primary btn--block mt-2">
+                    🧮 Calcular Próxima Sesión
+                </button>
+            </div>
+
+            <!-- Resultado -->
+            <div id="overload-result" class="mt-2"></div>
+
+            <div class="card mt-2">
+                <h4>Reglas de Progresión</h4>
+                <table class="data-table mt-1">
+                    <tr>
+                        <th>Condición</th>
+                        <th>Acción</th>
+                    </tr>
+                    <tr>
+                        <td>Reps objetivo + RIR ≤ 1</td>
+                        <td class="text-success">Subir peso (+2.5-5kg)</td>
+                    </tr>
+                    <tr>
+                        <td>Reps objetivo + RIR 2-3</td>
+                        <td class="text-primary">Añadir 1-2 reps</td>
+                    </tr>
+                    <tr>
+                        <td>Reps objetivo + RIR ≥ 4</td>
+                        <td class="text-warning">Subir peso más</td>
+                    </tr>
+                    <tr>
+                        <td>No alcanzas reps</td>
+                        <td class="text-muted">Mantener y trabajar</td>
+                    </tr>
+                    <tr>
+                        <td>Fallo significativo</td>
+                        <td class="text-danger">Reducir peso 5-10%</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- ========== MÓDULO: TEMPLATES ========== -->
+        <section id="module-templates" class="module-section hidden">
+            <div class="card card--highlight">
+                <div class="card__header">
+                    <h3 class="card__title">📋 Templates de Entrenamiento</h3>
+                    <span class="rp-badge">RP Style</span>
+                </div>
+                <p class="mb-2">Plantillas pre-diseñadas por metodología y tipo de split.</p>
+
+                <div class="module-grid">
+                    <div class="form-group">
+                        <label class="form-label">Metodología</label>
+                        <select id="template-methodology" class="form-select">
+                            <option value="Y3T">Y3T - Neil Hill</option>
+                            <option value="HeavyDuty">Heavy Duty - Mentzer</option>
+                            <option value="BloodAndGuts">Blood & Guts - Yates</option>
+                            <option value="FST7">FST-7 - Hany Rambod</option>
+                            <option value="SST">SST - Estrés Metabólico</option>
+                            <option value="MTUT">MTUT - Tempo Lento</option>
+                            <option value="RestPause">Rest-Pause - Carrasco</option>
+                            <option value="GVT">GVT - 10x10</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Split</label>
+                        <select id="template-split" class="form-select">
+                            <option value="push_pull_legs">Push/Pull/Legs (6 días)</option>
+                            <option value="upper_lower">Upper/Lower (4 días)</option>
+                            <option value="bro_split">Bro Split (5 días)</option>
+                            <option value="hit_3day">HIT 3 Días</option>
+                            <option value="full_body">Full Body (3 días)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="btn-generate-template" class="btn btn--primary btn--block mt-2">
+                    🎯 Ver Template
+                </button>
+            </div>
+
+            <!-- Vista del Template -->
+            <div id="template-view" class="mt-2"></div>
+
+            <!-- Día de ejemplo -->
+            <div class="card mt-2">
+                <div class="card__header">
+                    <h4>Splits Disponibles</h4>
+                    <div class="card__icon">📊</div>
+                </div>
+                <table class="data-table">
+                    <tr>
+                        <th>Split</th>
+                        <th>Días</th>
+                        <th>Ideal Para</th>
+                    </tr>
+                    <tr>
+                        <td>Push/Pull/Legs</td>
+                        <td>6</td>
+                        <td class="text-success">Y3T, FST-7, SST</td>
+                    </tr>
+                    <tr>
+                        <td>Upper/Lower</td>
+                        <td>4</td>
+                        <td class="text-success">Y3T, Rest-Pause, DUP</td>
+                    </tr>
+                    <tr>
+                        <td>Bro Split</td>
+                        <td>5</td>
+                        <td class="text-success">HIT, FST-7, SST</td>
+                    </tr>
+                    <tr>
+                        <td>HIT 3 Días</td>
+                        <td>3</td>
+                        <td class="text-success">Heavy Duty, B&G</td>
+                    </tr>
+                    <tr>
+                        <td>Full Body</td>
+                        <td>3</td>
+                        <td class="text-success">GVT, 5/3/1</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- ========== MÓDULO: ACTIVE WORKOUT ========== -->
+        <!-- Esta sección está VISIBLE por defecto (ENTRENAR es la pestaña activa) -->
+        <section id="module-workout" class="module-section">
+            <!-- Estado: Sin rutina activa -->
+            <div id="no-routine-state" class="card card--highlight">
+                <div class="card__header">
+                    <h3 class="card__title">🏋️ Bienvenido a ENTRENAR</h3>
+                    <span class="rp-badge">Nuevo</span>
+                </div>
+                <p class="mb-2">Selecciona una metodología y crea tu rutina personalizada, o importa una existente desde
+                    NEXUS.</p>
+
+                <!-- Preview de parámetros actuales -->
+                <div id="current-methodology-preview" class="alert alert--info mb-2">
+                    <span>📋</span>
+                    <div>
+                        <strong id="preview-methodology-name">Y3T - Week 1 Heavy</strong>
+                        <p id="preview-methodology-params">Sets: 3-4 | Reps: 6-10 | Descanso: 150s | RIR: 2</p>
+                    </div>
+                </div>
+
+                <button id="btn-create-routine" class="btn btn--primary btn--block mt-2"
+                    style="font-size: 1.1rem; padding: 1rem;">
+                    ✨ Crear Nueva Rutina
+                </button>
+                <button id="btn-import-nexus" class="btn btn--secondary btn--block mt-1">
+                    📥 Importar desde NEXUS
+                </button>
+            </div>
+
+            <!-- Estado: Entrenamiento activo -->
+            <div id="active-workout-state" class="hidden">
+                <!-- Header del ejercicio actual -->
+                <div class="card card--highlight">
+                    <div class="card__header">
+                        <h3 id="current-exercise-name" class="card__title">Press Banca</h3>
+                        <span id="exercise-progress" class="rp-badge">1/4</span>
+                    </div>
+                    <div class="flex-between mb-2">
+                        <span id="set-progress">Set <strong>1</strong> de 4</span>
+                        <span id="target-rir">RIR Target: <strong>2</strong></span>
+                    </div>
+
+                    <!-- Sugerencia inteligente -->
+                    <div id="smart-suggestion" class="alert alert--info mb-2">
+                        <span>💡</span>
+                        <span id="suggestion-text">Basado en tu última sesión: 80kg x 10</span>
+                    </div>
+
+                    <!-- Inputs del set -->
+                    <div class="module-grid">
+                        <div class="form-group">
+                            <label class="form-label">Peso (kg)</label>
+                            <input type="number" id="workout-weight" class="form-input" placeholder="80" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Reps</label>
+                            <input type="number" id="workout-reps" class="form-input" placeholder="10">
+                        </div>
+                    </div>
+
+                    <!-- RPE Slider -->
+                    <div class="form-group mt-2">
+                        <label class="form-label flex-between">
+                            <span>📊 RPE (Esfuerzo Percibido)</span>
+                            <span id="workout-rpe-value" class="text-primary">7</span>
+                        </label>
+                        <input type="range" id="workout-rpe" class="range-slider" min="5" max="10" step="0.5" value="7">
+                        <div class="range-value">
+                            <span>Fácil</span>
+                            <span>Moderado</span>
+                            <span>Fallo</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-complete-set" class="btn btn--primary btn--block mt-2"
+                        style="background: linear-gradient(135deg, #10B981, #059669);">
+                        ✓ SET COMPLETADO
+                    </button>
+                </div>
+
+                <!-- Feedback del set -->
+                <div id="set-feedback" class="alert mt-2 hidden">
+                    <span id="feedback-icon">✅</span>
+                    <div>
+                        <strong id="feedback-message">¡Perfecto!</strong>
+                        <p id="feedback-suggestion">Justo en el target RIR</p>
+                    </div>
+                </div>
+
+                <!-- Timer de descanso -->
+                <div id="workout-timer" class="card mt-2 hidden">
+                    <div class="card__header">
+                        <h4>⏱️ Descanso</h4>
+                        <span id="timer-countdown" class="stat-box__value">02:00</span>
+                    </div>
+                    <button id="btn-skip-timer" class="btn btn--secondary btn--block mt-1">
+                        ⏭️ Saltar Timer
+                    </button>
+                </div>
+
+                <!-- Sets completados -->
+                <div class="card mt-2">
+                    <h4>📋 Sets Completados</h4>
+                    <div id="completed-sets-list" class="mt-1">
+                        <p class="text-muted">Aún no has completado sets</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Feedback por ejercicio -->
+            <div id="exercise-feedback-modal" class="card mt-2 hidden">
+                <div class="card__header">
+                    <h4>🎯 Feedback del Ejercicio</h4>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">💪 Nivel de Pump (1-5)</label>
+                    <input type="range" id="feedback-pump" class="range-slider" min="1" max="5" value="3">
+                </div>
+                <div class="form-group mt-2">
+                    <label class="form-label">🦴 Comodidad Articular (1-5)</label>
+                    <input type="range" id="feedback-joints" class="range-slider" min="1" max="5" value="4">
+                </div>
+                <button id="btn-submit-feedback" class="btn btn--primary btn--block mt-2">
+                    ✓ Siguiente Ejercicio
+                </button>
+            </div>
+
+            <!-- Modal: Crear rutina - Versión Mejorada -->
+            <div id="create-routine-modal" class="card mt-2 hidden">
+                <div class="card__header">
+                    <h4>✨ Crear Nueva Rutina</h4>
+                    <button id="btn-close-modal" class="btn btn--sm"
+                        style="background: rgba(255,255,255,0.1);">✕</button>
+                </div>
+
+                <!-- Paso 1: Metodología -->
+                <div class="form-group">
+                    <label class="form-label">1️⃣ Metodología de Entrenamiento</label>
+                    <select id="routine-methodology" class="form-select">
+                        <option value="Y3T">Y3T - Neil Hill (Ondulación Semanal)</option>
+                        <option value="HeavyDuty">Heavy Duty - Mike Mentzer (HIT)</option>
+                        <option value="BloodAndGuts">Blood & Guts - Dorian Yates</option>
+                        <option value="FST7">FST-7 - Hany Rambod (Fascia)</option>
+                        <option value="SST">SST - Sarcoplasm Stimulating</option>
+                        <option value="MTUT">MTUT - Tiempo Bajo Tensión</option>
+                        <option value="RestPause">Rest-Pause - Raúl Carrasco</option>
+                        <option value="GVT">GVT - German Volume Training</option>
+                        <option value="DUP">DUP - Daily Undulating</option>
+                        <option value="531">5/3/1 - Jim Wendler</option>
+                        <option value="DCTraining">DC Training - Doggcrapp</option>
+                    </select>
+                </div>
+
+                <!-- Paso 2: Protocolo/Intensidad (dinámico) -->
+                <div class="form-group mt-2" id="protocol-selector-container">
+                    <label class="form-label">2️⃣ Nivel de Intensidad / Protocolo</label>
+                    <select id="routine-protocol" class="form-select">
+                        <option value="Y3T-W1">Week 1 Heavy (6-10 reps, RIR 2)</option>
+                        <option value="Y3T-W2">Week 2 Moderate (10-14 reps)</option>
+                        <option value="Y3T-W3">Week 3 Annihilation (15-30+ reps)</option>
+                    </select>
+                    <p class="text-muted mt-1" id="protocol-description" style="font-size: 0.85rem;">
+                        📋 Cargas pesadas de 6-10 reps con enfoque en fuerza. Descanso: 120-180s
+                    </p>
+                </div>
+
+                <!-- Paso 3: Split -->
+                <div class="form-group mt-2">
+                    <label class="form-label">3️⃣ División de Entrenamiento</label>
+                    <select id="routine-split" class="form-select">
+                        <option value="push_pull_legs">Push/Pull/Legs (6 días)</option>
+                        <option value="upper_lower">Upper/Lower (4 días)</option>
+                        <option value="bro_split">Bro Split (5 días)</option>
+                        <option value="hit_3day">HIT 3 Días</option>
+                        <option value="full_body">Full Body (3 días)</option>
+                    </select>
+                </div>
+
+                <!-- Paso 4: Nivel -->
+                <div class="form-group mt-2">
+                    <label class="form-label">4️⃣ Nivel de Experiencia</label>
+                    <select id="routine-level" class="form-select">
+                        <option value="beginner">Principiante (volumen reducido)</option>
+                        <option value="intermediate" selected>Intermedio (volumen estándar)</option>
+                        <option value="advanced">Avanzado (volumen alto + técnicas)</option>
+                    </select>
+                </div>
+
+                <!-- Resumen de parámetros -->
+                <div id="routine-summary" class="alert alert--info mt-2">
+                    <span>📊</span>
+                    <div>
+                        <strong>Parámetros de la Rutina:</strong>
+                        <p id="summary-text">Sets: 3-4 | Reps: 6-10 | RIR: 2 | Descanso: 150s</p>
+                    </div>
+                </div>
+
+                <button id="btn-generate-routine" class="btn btn--primary btn--block mt-2"
+                    style="font-size: 1.1rem; padding: 1rem; background: linear-gradient(135deg, #10B981, #059669);">
+                    🚀 GENERAR RUTINA
+                </button>
+                <button id="btn-cancel-routine" class="btn btn--secondary btn--block mt-1">
+                    Cancelar
+                </button>
+            </div>
+        </section>
+
+        <!-- ========== FOOTER ========== -->
+        <footer class="card mt-3" style="text-align: center; padding: 20px;">
+            <p class="text-muted">
+                <strong>NEXUS-RP Coach</strong> v1.0 | Inspirado en RP Hypertrophy App<br>
+                Sincronizado con 11 metodologías de entrenamiento
+            </p>
+            <p class="mt-1" style="font-size: 0.8rem; color: var(--text-muted);">
+                Heavy Duty · Blood & Guts · DC Training · 5/3/1 · MTUT · Y3T · DUP · FST-7 · SST · GVT · Rest-Pause
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <!-- Módulos -->
+    <script src="js/modules/autoregulation.js"></script>
+    <script src="js/modules/rir-dynamic.js"></script>
+    <script src="js/modules/volume-mev-mrv.js"></script>
+    <script src="js/modules/session-logger.js"></script>
+    <script src="js/modules/progressive-overload.js"></script>
+    <script src="js/data/methodologies-sync.js"></script>
+
+    <!-- Módulos Mejorados (RP App Style) -->
+    <script src="js/modules/enhanced-session-logger.js"></script>
+    <script src="js/modules/training-templates.js"></script>
+    <script src="js/modules/rest-timer.js"></script>
+    <script src="js/modules/progress-charts.js"></script>
+
+    <!-- Motor de Metodologías (PRIMERO) -->
+    <script src="js/modules/methodology-engine.js"></script>
+    <script src="js/modules/autoregulation-engine.js"></script>
+
+    <!-- Módulos de Integración -->
+    <script src="js/modules/routine-generator.js"></script>
+    <script src="js/modules/active-workout.js"></script>
+    <script src="js/modules/nexus-bridge.js"></script>
+    <script src="js/modules/smart-alerts.js"></script>
+    <script src="js/modules/workout-ui-controller.js"></script>
+
+    <!-- Controlador Principal -->
+    <script src="js/rp-coach.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Herramientas Avanzadas NEXUS - Guía de Implementación</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #8B5CF6;
+            --secondary: #06B6D4;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            padding: 6px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc .sub {
+            padding-left: 20px;
+            font-size: 0.9rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #8B5CF615, #06B6D410);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #FEF3C7;
+            border-left: 4px solid var(--accent);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: #D1FAE5;
+            border-left: 4px solid var(--success);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: var(--dark);
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #E2E8F0;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cover">
+        <h1>🛠️ HERRAMIENTAS AVANZADAS</h1>
+        <div class="subtitle">Guía de Implementación para NEXUS</div>
+        <p style="font-size: 1.2rem; max-width: 600px; opacity: 0.85;">6 Herramientas Innovadoras para Optimización del
+            Entrenamiento</p>
+        <div style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px;">
+            <p style="font-size: 0.9rem;">Potencial Genético · Readiness Score · Sincronización Circadiana<br>
+                Tiempo hasta Objetivo · Matriz de Transición · Grupos Rezagados</p>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">NEXUS v3.1 - Módulo Avanzado</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción y Objetivos</li>
+                <li><strong>2.</strong> Herramienta 1: Potencial Genético Máximo</li>
+                <li><strong>3.</strong> Herramienta 2: Readiness Score (Fatiga)</li>
+                <li><strong>4.</strong> Herramienta 3: Sincronización Circadiana</li>
+                <li><strong>5.</strong> Herramienta 4: Tiempo hasta Objetivo</li>
+                <li><strong>6.</strong> Herramienta 5: Matriz de Transición</li>
+                <li><strong>7.</strong> Herramienta 6: Grupos Rezagados</li>
+                <li><strong>8.</strong> Guía de Uso en Consola</li>
+                <li><strong>9.</strong> Integración con las 11 Metodologías</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción</h1>
+        <div class="highlight-box">
+            <strong>Objetivo:</strong> Proporcionar herramientas de análisis avanzado que complementen las 10
+            metodologías
+            de NEXUS, permitiendo tomar decisiones informadas sobre entrenamiento, nutrición y periodización.
+        </div>
+
+        <div class="success-box">
+            <strong>✅ Estado: VERIFICADO Y FUNCIONANDO</strong>
+            <p>Todas las herramientas han sido verificadas en la consola del navegador y funcionan correctamente.</p>
+        </div>
+
+        <h1 class="page-break">2. Herramienta 1: Potencial Genético</h1>
+        <p>Calcula el límite máximo de masa muscular que puedes alcanzar de forma natural usando fórmulas científicas.
+        </p>
+
+        <h3>Fórmulas Utilizadas:</h3>
+        <table>
+            <tr>
+                <th>Fórmula</th>
+                <th>Autor</th>
+                <th>Datos Requeridos</th>
+                <th>Precisión</th>
+            </tr>
+            <tr>
+                <td>FFMI Máximo</td>
+                <td>Martin Berkhan</td>
+                <td>Solo altura</td>
+                <td>Estimación rápida</td>
+            </tr>
+            <tr>
+                <td>Detallada</td>
+                <td>Casey Butt</td>
+                <td>Altura + muñeca + tobillo</td>
+                <td>Muy precisa</td>
+            </tr>
+        </table>
+
+        <h3>Uso en Consola:</h3>
+        <div class="code-block">// Fórmula Berkhan (altura en cm)
+            HerramientasNEXUS.PotencialGenetico.calcularBerkhan(175)
+            // Resultado: 76.6 kg de masa magra máxima
+
+            // Fórmula Casey Butt (altura, muñeca, tobillo en cm)
+            HerramientasNEXUS.PotencialGenetico.calcularCaseyButt(175, 17, 23)
+            // Resultado: { pesoCompeticion: X, peso10Grasa: Y, peso15Grasa: Z }</div>
+
+        <h1 class="page-break">3. Herramienta 2: Readiness Score</h1>
+        <p>Evalúa tu nivel de fatiga acumulada y determina si necesitas un deload.</p>
+
+        <h3>Factores Evaluados:</h3>
+        <ul>
+            <li>Metodología actual (cada una tiene diferente impacto en SNC)</li>
+            <li>Semana del ciclo (fatiga se acumula)</li>
+            <li>Horas de sueño (crítico para recuperación)</li>
+            <li>Nivel de estrés (1-10)</li>
+            <li>Días desde último deload</li>
+        </ul>
+
+        <h3>Interpretación del Score:</h3>
+        <table>
+            <tr>
+                <th>Score</th>
+                <th>Nivel</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>80-100</td>
+                <td>🟢 ÓPTIMO</td>
+                <td>Entrena con máxima intensidad</td>
+            </tr>
+            <tr>
+                <td>60-79</td>
+                <td>🔵 BUENO</td>
+                <td>Entrena normal, monitorea</td>
+            </tr>
+            <tr>
+                <td>40-59</td>
+                <td>🟡 MODERADO</td>
+                <td>Reduce volumen 20-30%</td>
+            </tr>
+            <tr>
+                <td>20-39</td>
+                <td>🟠 BAJO</td>
+                <td>Considera deload</td>
+            </tr>
+            <tr>
+                <td>0-19</td>
+                <td>🔴 CRÍTICO</td>
+                <td>⚠️ DELOAD OBLIGATORIO</td>
+            </tr>
+        </table>
+
+        <h3>Uso en Consola:</h3>
+        <div class="code-block">HerramientasNEXUS.ReadinessScore.calcularScore({
+            metodologia: 'gvt', // ID de metodología
+            semanaActual: 3, // Semana del ciclo
+            horasSueno: 7, // Horas promedio
+            nivelEstres: 5, // 1-10
+            diasDesdeDeload: 25 // Días
+            })
+            // Resultado: 59 (MODERADO)</div>
+
+        <h1 class="page-break">4. Herramienta 3: Sincronización Circadiana</h1>
+        <p>Optimiza tus horarios de entrenamiento según tu cronotipo natural.</p>
+
+        <h3>Cronotipos:</h3>
+        <table>
+            <tr>
+                <th>Cronotipo</th>
+                <th>Hora Óptima Entreno</th>
+                <th>Hora Pico Fuerza</th>
+                <th>Carbos Concentrar</th>
+            </tr>
+            <tr>
+                <td>Alondra (madrugador)</td>
+                <td>6:00-10:00</td>
+                <td>9:00-11:00</td>
+                <td>6:00-14:00</td>
+            </tr>
+            <tr>
+                <td>Neutral</td>
+                <td>10:00-18:00</td>
+                <td>14:00-17:00</td>
+                <td>8:00-18:00</td>
+            </tr>
+            <tr>
+                <td>Búho (nocturno)</td>
+                <td>16:00-21:00</td>
+                <td>17:00-20:00</td>
+                <td>14:00-22:00</td>
+            </tr>
+        </table>
+
+        <h3>Uso en Consola:</h3>
+        <div class="code-block">// Determinar cronotipo (hora despertar, hora dormir en formato 24h)
+            HerramientasNEXUS.SincronizacionCircadiana.determinarCronotipo(7, 23)
+            // Resultado: 'buho'
+
+            // Obtener recomendaciones
+            HerramientasNEXUS.SincronizacionCircadiana.obtenerRecomendacion('buho')
+            // Resultado: { entreno: '16:00-21:00', fuerza: '17:00-20:00', carbos: '14:00-22:00' }</div>
+
+        <h1 class="page-break">5. Herramienta 4: Tiempo hasta Objetivo</h1>
+        <p>Estima semanas/meses realistas para alcanzar tus metas de composición corporal.</p>
+
+        <h3>Tasas Realistas:</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Pérdida Grasa/Semana</th>
+                <th>Ganancia Músculo/Mes</th>
+            </tr>
+            <tr>
+                <td>Principiante</td>
+                <td>0.8% peso corporal</td>
+                <td>0.9-1.8 kg</td>
+            </tr>
+            <tr>
+                <td>Intermedio</td>
+                <td>0.6% peso corporal</td>
+                <td>0.45-0.9 kg</td>
+            </tr>
+            <tr>
+                <td>Avanzado</td>
+                <td>0.4% peso corporal</td>
+                <td>0.22-0.45 kg</td>
+            </tr>
+        </table>
+
+        <h3>Uso en Consola:</h3>
+        <div class="code-block">// Tiempo para perder grasa (peso, %grasa actual, %grasa objetivo, nivel)
+            HerramientasNEXUS.TiempoHastaObjetivo.semanasParaPerderGrasa(80, 20, 12, 'intermedio')
+            // Resultado: { pesoObjetivo: 72.7, pesoAPerder: 7.3, semanas: 15, meses: 3.5 }
+
+            // Tiempo para ganar músculo
+            HerramientasNEXUS.TiempoHastaObjetivo.mesesParaGanarMusculo(65, 75, 'intermedio')
+            // Resultado: { musculoAGanar: 10, meses: 40, anos: 3.3 }</div>
+
+        <h1 class="page-break">6. Herramienta 5: Matriz de Transición</h1>
+        <p>Guía de cómo cambiar entre metodologías sin perder adaptaciones.</p>
+
+        <h3>Compatibilidad entre Metodologías:</h3>
+        <div class="warning-box">
+            <strong>⚠️ Regla General:</strong> Metodologías del mismo tipo (TM-TM o EM-EM) tienen mayor compatibilidad.
+            Transiciones entre tipos opuestos (Heavy Duty → GVT) requieren más tiempo.
+        </div>
+
+        <table>
+            <tr>
+                <th>Transición</th>
+                <th>Compatibilidad</th>
+                <th>Semanas Transición</th>
+            </tr>
+            <tr>
+                <td>Heavy Duty → Blood & Guts</td>
+                <td>9/10</td>
+                <td>1 semana</td>
+            </tr>
+            <tr>
+                <td>GVT → SST</td>
+                <td>9/10</td>
+                <td>1 semana</td>
+            </tr>
+            <tr>
+                <td>Y3T → DUP</td>
+                <td>8/10</td>
+                <td>1 semana</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty → GVT</td>
+                <td>3/10</td>
+                <td>4 semanas</td>
+            </tr>
+        </table>
+
+        <h3>Uso en Consola:</h3>
+        <div class="code-block">HerramientasNEXUS.MatrizTransicion.obtenerRecomendacion('heavy-duty', 'gvt')
+            // Resultado: {
+            // semanas: 4,
+            // compatibilidad: 3,
+            // recomendacion: "Metodologías muy diferentes. Incluir semana de deload entre ambas."
+            // }</div>
+
+        <h1 class="page-break">7. Herramienta 6: Grupos Rezagados</h1>
+        <p>Identifica qué músculos necesitan más atención basándose en proporciones ideales.</p>
+
+        <h3>Proporciones Ideales (Culturismo):</h3>
+        <table>
+            <tr>
+                <th>Proporción</th>
+                <th>Ratio Ideal</th>
+                <th>Ejemplo</th>
+            </tr>
+            <tr>
+                <td>Hombros / Cintura</td>
+                <td>1.618 (Proporción Áurea)</td>
+                <td>115cm / 71cm</td>
+            </tr>
+            <tr>
+                <td>Pecho / Cintura</td>
+                <td>1.4</td>
+                <td>100cm / 71cm</td>
+            </tr>
+            <tr>
+                <td>Bíceps / Antebrazo</td>
+                <td>1.2</td>
+                <td>40cm / 33cm</td>
+            </tr>
+            <tr>
+                <td>Muslo / Pantorrilla</td>
+                <td>1.3</td>
+                <td>60cm / 46cm</td>
+            </tr>
+        </table>
+
+        <h3>Uso en Consola:</h3>
+        <div class="code-block">// Calcular scores de proporción
+            const scores = HerramientasNEXUS.GruposRezagados.calcularScore({
+            hombros: 110, pecho: 100, cintura: 80,
+            biceps: 35, antebrazo: 30, muslo: 55, pantorrilla: 40
+            });
+
+            // Identificar rezagados
+            HerramientasNEXUS.GruposRezagados.identificarRezagados(scores)
+            // Resultado: [{ grupo: 'hombros', score: 85, prioridad: 'ALTA', volumenExtra: '+50%' }]</div>
+
+        <h1 class="page-break">8. Guía de Uso en Consola</h1>
+        <div class="success-box">
+            <strong>✅ Pasos para usar las herramientas:</strong>
+            <ol>
+                <li>Abre la aplicación NEXUS en Chrome</li>
+                <li>Presiona F12 para abrir DevTools</li>
+                <li>Ve a la pestaña "Console"</li>
+                <li>Escribe <code>HerramientasNEXUS</code> y presiona Enter para ver todas las herramientas</li>
+                <li>Usa las funciones como se muestra en los ejemplos</li>
+            </ol>
+        </div>
+
+        <h3>Verificar que todo funciona:</h3>
+        <div class="code-block">// Test rápido - copia y pega esto en consola:
+            console.log('HerramientasNEXUS:', typeof window.HerramientasNEXUS);
+            console.log('Potencial 175cm:', HerramientasNEXUS.PotencialGenetico.calcularBerkhan(175));
+            console.log('Readiness:', HerramientasNEXUS.ReadinessScore.calcularScore({
+            metodologia:'y3t', semanaActual:2, horasSueno:8, nivelEstres:3, diasDesdeDeload:14
+            }));</div>
+
+        <h1 class="page-break">9. Integración con las 11 Metodologías</h1>
+        <p>Las herramientas están sincronizadas con todas las metodologías de NEXUS:</p>
+
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Fatiga SNC</th>
+                <th>Fatiga Muscular</th>
+                <th>Recuperación</th>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td>9/10</td>
+                <td>7/10</td>
+                <td>4 días</td>
+            </tr>
+            <tr>
+                <td>Blood & Guts</td>
+                <td>9/10</td>
+                <td>8/10</td>
+                <td>5 días</td>
+            </tr>
+            <tr>
+                <td>DC Training</td>
+                <td>8/10</td>
+                <td>9/10</td>
+                <td>5 días</td>
+            </tr>
+            <tr>
+                <td>5/3/1</td>
+                <td>7/10</td>
+                <td>6/10</td>
+                <td>3 días</td>
+            </tr>
+            <tr>
+                <td>MTUT</td>
+                <td>5/10</td>
+                <td>8/10</td>
+                <td>3 días</td>
+            </tr>
+            <tr>
+                <td>Y3T</td>
+                <td>6/10</td>
+                <td>7/10</td>
+                <td>4 días</td>
+            </tr>
+            <tr>
+                <td>DUP</td>
+                <td>6/10</td>
+                <td>6/10</td>
+                <td>3 días</td>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td>4/10</td>
+                <td>8/10</td>
+                <td>3 días</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td>5/10</td>
+                <td>9/10</td>
+                <td>4 días</td>
+            </tr>
+            <tr>
+                <td>GVT</td>
+                <td>6/10</td>
+                <td>10/10</td>
+                <td>5 días</td>
+            </tr>
+            <tr>
+                <td>Rest-Pause System</td>
+                <td>8/10</td>
+                <td>9/10</td>
+                <td>4-5 días</td>
+            </tr>
+        </table>
+
+        <div class="highlight-box" style="margin-top: 40px;">
+            <p style="text-align: center; font-size: 1.1rem;">
+                <strong>📁 Archivo:</strong> js/modules/herramientas-avanzadas.js<br><br>
+                <strong>Integrado con:</strong> NEXUS v3.2<br>
+                Heavy Duty · Blood & Guts · DC Training · 5/3/1 · MTUT · Y3T · DUP · FST-7 · SST · GVT · Rest-Pause
+            </p>
+        </div>
+    </div>
+
+</body>
+
+</html>

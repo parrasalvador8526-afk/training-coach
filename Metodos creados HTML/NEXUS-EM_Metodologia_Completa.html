@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS-EM - Estrés Metabólico Progresivo (5 Semanas)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #10B981;
+            --secondary: #22C55E;
+            --accent: #06B6D4;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--warning);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>NEXUS-EM</h1>
+        <p class="subtitle">Estrés Metabólico Progresivo - 5 Semanas</p>
+        <p style="font-size: 1.1rem; max-width: 700px;">Metodología híbrida que utiliza <strong>5 intensificadores de
+                estrés metabólico</strong>, uno por semana, combinando técnicas de GVT, SST y FST-7.</p>
+        <p class="author">NEXUS v3.3 · Metodología Híbrida de Estrés Metabólico</p>
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🟢 UN INTENSIFICADOR POR
+                    SEMANA:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>S1:</strong> Bomba Controlada (GVT) · <strong>S2:</strong> Myo Reps (SST) · <strong>S3:</strong>
+                RIV (SST) · <strong>S4:</strong> FST-7 · <strong>S5:</strong> Drop Sets
+            </p>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">% RM: 60-75% · RIR: 0-1 · 5 Semanas · 5
+            Intensificadores</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE COMPLETO</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción a NEXUS-EM</li>
+                <li><strong>2.</strong> Objetivos del NEXUS-EM</li>
+                <li><strong>3.</strong> Principios Básicos</li>
+                <li class="sub">3.1 Estrés Metabólico · 3.2 Conexión Mente-Músculo · 3.3 Oclusión y Bomba · 3.4 Fallo
+                    Metabólico</li>
+                <li><strong>4.</strong> Los 5 Intensificadores en Detalle</li>
+                <li class="sub">4.1 Bomba Controlada · 4.2 Myo Reps · 4.3 RIV · 4.4 FST-7 · 4.5 Drop Sets</li>
+                <li><strong>5.</strong> Estructura de una Sesión</li>
+                <li class="sub">5.1 Calentamiento · 5.2 Ejercicios Principales · 5.3 Finisher · 5.4 Enfriamiento</li>
+                <li><strong>6.</strong> Periodización y Progresión</li>
+                <li class="sub">6.1 Microciclos · 6.2 Progresión de Densidad · 6.3 Deloads · 6.4 Duración por Nivel</li>
+                <li><strong>7.</strong> Nutrición y Suplementación para Bomba</li>
+                <li><strong>8.</strong> Rutinas por Grupo Muscular</li>
+                <li class="sub">8.1 Pecho · 8.2 Espalda · 8.3 Piernas · 8.4 Hombros · 8.5 Brazos</li>
+                <li><strong>9.</strong> Estructuras por División</li>
+                <li class="sub">9.1 Bro Split · 9.2 PPL · 9.3 Upper/Lower · 9.4 Full Body</li>
+                <li><strong>10.</strong> Calculadora de Parámetros</li>
+                <li><strong>11.</strong> Consideraciones Importantes</li>
+                <li><strong>12.</strong> Apéndice: Datos Técnicos</li>
+                <li><strong>13.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción a NEXUS-EM</h1>
+        <div class="highlight-box">
+            <strong>NEXUS-EM (Estrés Metabólico Progresivo)</strong> es una metodología de 5 semanas donde cada semana
+            se enfoca en UN intensificador de estrés metabólico, para máxima bomba y crecimiento sarcoplasmático.
+        </div>
+        <p>A diferencia de NEXUS-TM que enfatiza cargas pesadas, NEXUS-EM prioriza la acumulación de metabolitos
+            (lactato, iones de hidrógeno) y la congestión muscular como mecanismo primario de hipertrofia.</p>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">5</div>
+                <div class="label">Semanas</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">5</div>
+                <div class="label">Intensificadores</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">60-75%</div>
+                <div class="label">Rango 1RM</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">0-1</div>
+                <div class="label">RIR</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">60-75min</div>
+                <div class="label">Por Sesión</div>
+            </div>
+        </div>
+        <h3>Origen y Filosofía</h3>
+        <p>NEXUS-EM combina las mejores técnicas de estrés metabólico de 3 metodologías:</p>
+        <ul>
+            <li><strong>GVT (German Volume Training):</strong> Alto volumen para bomba extrema</li>
+            <li><strong>SST (Borge Fagerli):</strong> Myo Reps y RIV para máxima densidad</li>
+            <li><strong>FST-7 (Hany Rambod):</strong> 7 sets finalizadores para expansión fascial</li>
+        </ul>
+
+        <h1>2. Objetivos del NEXUS-EM</h1>
+        <ul>
+            <li><strong>Maximizar Estrés Metabólico:</strong> Acumulación de lactato y metabolitos</li>
+            <li><strong>Hipertrofia Sarcoplasmática:</strong> Crecimiento del fluido celular y glucógeno</li>
+            <li><strong>Bomba Muscular:</strong> Máxima congestión para flujo de nutrientes</li>
+            <li><strong>Vascularidad:</strong> Mayor densidad capilar y venas visibles</li>
+            <li><strong>Resistencia Muscular:</strong> Capacidad de mantener tensión bajo fatiga metabólica</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del NEXUS-EM</h1>
+
+        <h2>3.1 Estrés Metabólico</h2>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th>Cómo Maximizarlo</th>
+                <th>Resultado</th>
+            </tr>
+            <tr>
+                <td>Acumulación de lactato</td>
+                <td>Descansos cortos (30-90s)</td>
+                <td>Señalización anabólica</td>
+            </tr>
+            <tr>
+                <td>Hipoxia muscular</td>
+                <td>Tensión continua, sin lockout</td>
+                <td>Liberación de factores de crecimiento</td>
+            </tr>
+            <tr>
+                <td>Hinchazón celular</td>
+                <td>Alto volumen, bomba</td>
+                <td>Stretch mecánico de membrana</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Conexión Mente-Músculo</h2>
+        <div class="warning-box">
+            <strong>En NEXUS-EM, la conexión mente-músculo es MÁS importante que el peso.</strong>
+            <ul>
+                <li>Enfocarse en SENTIR el músculo trabajar</li>
+                <li>Tempo controlado siempre (2-1-2 mínimo)</li>
+                <li>Visualizar la contracción y el estiramiento</li>
+                <li>Si no sientes bomba → BAJA el peso</li>
+            </ul>
+        </div>
+
+        <h2>3.3 Oclusión y Bomba</h2>
+        <ul>
+            <li><strong>Tensión continua:</strong> No bloquear articulaciones (sin lockout)</li>
+            <li><strong>Tempo controlado:</strong> 2-1-2 mínimo para crear oclusión natural</li>
+            <li><strong>Descansos cortos:</strong> Mantener sangre en el músculo</li>
+            <li><strong>Hidratación:</strong> Esencial para volumen celular y bomba</li>
+        </ul>
+
+        <h2>3.4 Fallo Metabólico vs Mecánico</h2>
+        <table>
+            <tr>
+                <th>Tipo de Fallo</th>
+                <th>Qué Es</th>
+                <th>En NEXUS-EM</th>
+            </tr>
+            <tr>
+                <td>Fallo Mecánico</td>
+                <td>No puedes mover el peso</td>
+                <td>Ocasional</td>
+            </tr>
+            <tr>
+                <td>Fallo Metabólico</td>
+                <td>Ardor extremo, no puedes contraer</td>
+                <td>OBJETIVO PRINCIPAL</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">4. Los 5 Intensificadores en Detalle</h1>
+
+        <h2>4.1 Bomba Controlada (Semana 1)</h2>
+        <div class="code-block">PROTOCOLO BOMBA CONTROLADA:
+            Origen: GVT (German Volume Training)
+            Aplicación: Ejercicios compuestos y aislamientos
+
+            OPCIÓN A - GVT Clásico:
+            10 sets x 10 reps @ 60% 1RM
+            Descanso: 60-90 segundos
+            Tempo: 3-0-2 (lento y controlado)
+
+            PARÁMETROS:
+            • % 1RM: 60-65%
+            • TUT por set: 40-60 segundos
+            • TUT total: 400-600 segundos (6-10 min)
+            • RPE: 6-7 sets 1-5, 8-9 sets 6-10
+            • Bomba esperada: ⭐⭐⭐⭐
+
+            OPCIÓN B - Alto Volumen Modificado:
+            3-4 sets x 15-20 reps @ 60-65%
+            Descanso: 45-60 segundos
+
+            REGLA: Si NO sientes bomba → BAJA el peso</div>
+
+        <h2>4.2 Myo Reps (Semana 2)</h2>
+        <div class="code-block">PROTOCOLO MYO REPS:
+            Origen: SST (Borge Fagerli)
+            Aplicación: Aislamientos y máquinas
+
+            ESTRUCTURA:
+            1. Set activador: 15-25 reps @ 70% → RIR 1 (casi fallo)
+            2. Pausa: 3-5 respiraciones (5-10 segundos)
+            3. Mini-set 1: 4-5 reps
+            4. Pausa: 3-5 respiraciones
+            5. Mini-set 2: 3-4 reps
+            6. Pausa: 3-5 respiraciones
+            7. Mini-set 3: 2-3 reps
+            8. PARAR cuando no puedas completar 3 reps
+
+            PARÁMETROS:
+            • % 1RM: 70-75%
+            • TUT total: 60-90 segundos
+            • Reps totales: 25-40 (set activador + mini-sets)
+            • Pausa intra-set: 5-10 segundos (3-5 respiraciones)
+            • RPE: 9-10 en cada mini-set
+            • Bomba esperada: ⭐⭐⭐⭐⭐</div>
+
+        <h2>4.3 RIV - Repeticiones Intra-Volumen (Semana 3)</h2>
+        <div class="code-block">PROTOCOLO RIV:
+            Origen: SST
+            Aplicación: Aislamientos, cables, máquinas
+
+            ESTRUCTURA:
+            8 reps → NO SOLTAR PESO → 10s respirando
+            4 reps → NO SOLTAR PESO → 10s
+            4 reps → FIN
+
+            PARÁMETROS:
+            • % 1RM: 70-75%
+            • TUT total: 60-80 segundos (continuo)
+            • Reps totales: 16-20
+            • Pausa: 10 segundos SIN SOLTAR el peso
+            • RPE: 9-10 en cada fase
+            • Bomba esperada: ⭐⭐⭐⭐⭐
+
+            VARIANTE AVANZADA:
+            10 reps → 5s → 5 reps → 5s → 5 reps → 5s → 5 reps
+
+            REGLA CRÍTICA: Mantener el peso durante las pausas = tensión continua</div>
+
+        <h2>4.4 FST-7 (Semana 4)</h2>
+        <div class="code-block">PROTOCOLO FST-7:
+            Origen: Hany Rambod
+            Aplicación: SOLO aislamientos (finisher)
+
+            ESTRUCTURA DE SESIÓN:
+            1. Ejercicios base: 2-3 ejercicios normales (3-4 sets x 8-12)
+            2. FST-7 Finisher: ÚLTIMO ejercicio
+
+            FST-7 FINISHER:
+            7 sets x 10-12 reps @ 65-70%
+            Descanso: 30 SEGUNDOS EXACTOS (usar timer)
+            ENTRE SETS: Estirar el músculo 15-20s
+
+            PARÁMETROS:
+            • % 1RM: 65-70%
+            • TUT por set: 30-40 segundos
+            • TUT total: 210-280 segundos (3.5-4.5 min de trabajo)
+            • Descanso total: 180 segundos (6 x 30s)
+            • RPE: 8-10 (aumentando cada set)
+            • Bomba esperada: ⭐⭐⭐⭐⭐⭐
+
+            EJERCICIOS IDEALES FST-7:
+            • Pecho: Pec Deck, Cruces poleas
+            • Espalda: Pulldown brazos rectos
+            • Hombros: Elevaciones laterales cable
+            • Bíceps: Curl cable bajo
+            • Tríceps: Pushdown
+            • Cuádriceps: Extensiones
+            • Isquios: Curl femoral</div>
+
+        <h2>4.5 Drop Sets (Semana 5)</h2>
+        <div class="code-block">PROTOCOLO DROP SETS:
+            Origen: SST / Tradicional
+            Aplicación: Aislamientos, máquinas (cambio rápido de peso)
+
+            DROP SET SIMPLE (último set):
+            10-12 reps @ 70% → FALLO
+            → Reducir 20-30% INMEDIATAMENTE (0 segundos)
+            8-10 reps @ 50% → FALLO
+
+            PARÁMETROS:
+            • % 1RM inicial: 70%
+            • Reducción por drop: 20-30%
+            • TUT por drop: 25-35 segundos
+            • TUT total (doble drop): 50-70 segundos
+            • Descanso entre drops: 0 SEGUNDOS
+            • RPE: 10 en cada drop
+            • Bomba esperada: ⭐⭐⭐⭐⭐⭐
+
+            DROP SET DOBLE:
+            10 @ 70% → DROP -20% → 8 @ 55% → DROP -20% → 10-12 @ 40%
+
+            DROP SET TRIPLE (1 por sesión máximo):
+            8-10 @ 75% → DROP → 8 → DROP → 10 → DROP → 15+
+
+            ⚠️ MÁXIMO 2-3 drop sets por grupo muscular por sesión</div>
+
+        <h1 class="page-break">5. Estructura de una Sesión</h1>
+
+        <h2>5.1 Calentamiento (10-15 min)</h2>
+        <div class="code-block">CALENTAMIENTO NEXUS-EM:
+
+            GENERAL (5 min):
+            • Cardio ligero: bici estática IDEAL (bomba de piernas)
+            • Objetivo: elevar temperatura, flujo sanguíneo
+
+            MOVILIDAD (3-5 min):
+            • Rotaciones articulares
+            • Estiramientos dinámicos
+
+            PRE-BOMBA (2-3 min):
+            • 1-2 sets x 20-25 reps @ 40% en ejercicio principal
+            • Objetivo: empezar a sentir el músculo
+            • Tempo: 3-0-2 (muy controlado)</div>
+
+        <h2>5.2 Ejercicios Principales (35-45 min)</h2>
+        <ul>
+            <li><strong>2-3 ejercicios</strong> por grupo muscular</li>
+            <li>Aplicar intensificador de la semana</li>
+            <li>Tempo controlado SIEMPRE (2-1-2 mínimo)</li>
+            <li>Conexión mente-músculo prioritaria</li>
+            <li>Descansos según intensificador (30-90s)</li>
+        </ul>
+
+        <h2>5.3 Finisher (10-15 min)</h2>
+        <ul>
+            <li><strong>FST-7 o Drop Set</strong> según semana</li>
+            <li>Solo en aislamientos (máquinas, cables)</li>
+            <li>Objetivo: bomba MÁXIMA final</li>
+        </ul>
+
+        <h2>5.4 Enfriamiento (5 min)</h2>
+        <ul>
+            <li>Estiramiento cargado: 30-60 segundos bajo tensión</li>
+            <li>Posing/Flexión: 10-15 segundos contracción isométrica</li>
+            <li>Mantener bomba el mayor tiempo posible</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización y Progresión</h1>
+
+        <h2>6.1 Estructura del Microciclo (5 semanas)</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Intensificador</th>
+                <th>Densidad</th>
+                <th>Bomba Esperada</th>
+            </tr>
+            <tr>
+                <td>S1</td>
+                <td>Bomba Controlada</td>
+                <td>⭐⭐</td>
+                <td>⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S2</td>
+                <td>Myo Reps</td>
+                <td>⭐⭐⭐</td>
+                <td>⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S3</td>
+                <td>RIV</td>
+                <td>⭐⭐⭐⭐</td>
+                <td>⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S4</td>
+                <td>FST-7</td>
+                <td>⭐⭐⭐⭐</td>
+                <td>⭐⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td>S5</td>
+                <td>Drop Sets</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td>⭐⭐⭐⭐⭐⭐</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Progresión de Densidad</h2>
+        <table>
+            <tr>
+                <th>Ciclo</th>
+                <th>Progresión</th>
+            </tr>
+            <tr>
+                <td>Ciclo 1-2</td>
+                <td>Reducir descansos 5-10 segundos manteniendo peso</td>
+            </tr>
+            <tr>
+                <td>Ciclo 3+</td>
+                <td>Aumentar peso 2.5-5% manteniendo descansos originales</td>
+            </tr>
+        </table>
+
+        <h2>6.3 Deloads</h2>
+        <div class="warning-box">
+            <strong>Deload cada 2 ciclos (10 semanas):</strong>
+            <ul>
+                <li>Volumen: Reducir 40-50%</li>
+                <li>Descansos: Aumentar a 90-120 segundos</li>
+                <li>Intensificadores: NINGUNO</li>
+                <li>Duración: 1 semana completa</li>
+            </ul>
+        </div>
+
+        <h2>6.4 Duración del Ciclo por Nivel</h2>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Experiencia</th>
+                <th>Ciclos Continuos</th>
+                <th>Deload</th>
+            </tr>
+            <tr>
+                <td>Intermedio</td>
+                <td>1-3 años</td>
+                <td>1 ciclo (5 sem)</td>
+                <td>Cada 5 sem</td>
+            </tr>
+            <tr>
+                <td>Intermedio-Avanzado</td>
+                <td>3-5 años</td>
+                <td>2 ciclos (10 sem)</td>
+                <td>Cada 10 sem</td>
+            </tr>
+            <tr>
+                <td>Avanzado</td>
+                <td>5+ años</td>
+                <td>2-3 ciclos</td>
+                <td>Cada 10-15 sem</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">7. Nutrición y Suplementación para Bomba</h1>
+
+        <h2>7.1 Requerimientos Calóricos</h2>
+        <ul>
+            <li><strong>Volumen/Masa:</strong> TDEE + 200-400 kcal</li>
+            <li><strong>Recomposición:</strong> TDEE (mantenimiento)</li>
+            <li><strong>Definición:</strong> Déficit moderado (-300 kcal) - bomba reducida pero funciona</li>
+        </ul>
+
+        <h2>7.2 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+                <th>Razón</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.0-2.2 g/kg</td>
+                <td>Reparación muscular</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>5-7 g/kg</td>
+                <td>GLUCÓGENO = BOMBA</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.7-0.9 g/kg</td>
+                <td>Hormonas</td>
+            </tr>
+        </table>
+        <div class="success-box">
+            <strong>SIN CARBOHIDRATOS NO HAY BOMBA.</strong> El glucógeno muscular es esencial para la congestión. Los
+            carbohidratos son el macronutriente MÁS importante para NEXUS-EM.
+        </div>
+
+        <h2>7.3 Timing Nutricional</h2>
+        <div class="code-block">PRE-ENTRENO (60-90 min antes):
+            • 50-70g carbohidratos (mezcla complejos + simples)
+            • 25-30g proteína
+            • Bajo en grasa
+            • 500ml agua mínimo
+
+            INTRA-ENTRENO:
+            • 30-40g carbohidratos simples (dextrosa, maltodextrina)
+            • 500ml+ agua con electrolitos
+            • Objetivo: mantener glucógeno, evitar calambres
+
+            POST-ENTRENO (30-60 min):
+            • 50-80g carbohidratos (para reponer glucógeno)
+            • 30-40g proteína (whey ideal)</div>
+
+        <h2>7.4 Suplementación para Máxima Bomba</h2>
+        <table>
+            <tr>
+                <th>Suplemento</th>
+                <th>Dosis</th>
+                <th>Momento</th>
+                <th>Efecto</th>
+            </tr>
+            <tr>
+                <td>Citrulina Malato</td>
+                <td>6-8g</td>
+                <td>30 min pre</td>
+                <td>Bomba +50%, vasodilatación</td>
+            </tr>
+            <tr>
+                <td>Glicerol</td>
+                <td>2-3g</td>
+                <td>Pre-entreno</td>
+                <td>Hidratación celular, volumen</td>
+            </tr>
+            <tr>
+                <td>Betaína</td>
+                <td>2.5g</td>
+                <td>Diario</td>
+                <td>Volumen celular</td>
+            </tr>
+            <tr>
+                <td>Creatina</td>
+                <td>5g</td>
+                <td>Diario</td>
+                <td>ATP, hidratación muscular</td>
+            </tr>
+            <tr>
+                <td>Sal/Electrolitos</td>
+                <td>Al gusto</td>
+                <td>Pre + Intra</td>
+                <td>Bomba, prevención calambres</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">8. Rutinas por Grupo Muscular</h1>
+
+        <h2>8.1 Pecho</h2>
+        <div class="code-block">RUTINA NEXUS-EM PECHO:
+
+            A. PRESS BANCA (Base):
+            S1 (Bomba): 10x10 @ 60% | TUT/set: 40-60s | Desc: 60-90s
+            S2 (Myo): 20 + 5-4-4-3 @ 70% | TUT total: 70-90s
+            S3 (RIV): 3x (8-4-4) @ 70% | TUT: 60-80s | Desc: 2 min
+            S4: Normal 3x10-12 @ 70% (reservar FST-7 para finisher)
+            S5 (Drop): 3x10 + doble drop última @ 70%→55%→40%
+
+            B. PRESS INCLINADO MANCUERNAS:
+            S1: 3x15-20 @ 60% | TUT: 50-70s | Desc: 60s
+            S2-S3: Aplicar Myo/RIV
+            S4-S5: 3x10-12 normal
+            Tempo: 2-1-2 siempre
+
+            C. APERTURAS INCLINADO:
+            3 x 12-15 reps @ ligero | TUT: 45-60s | Desc: 45-60s
+            Squeeze en contracción 2s
+            S4: Puede ser FST-7 finisher
+
+            D. PEC DECK (FST-7 FINISHER - Semana 4):
+            7 x 10-12 @ 65% | TUT/set: 30-40s | Desc: 30s EXACTOS
+            Entre sets: Estirar pecho 15-20s
+
+            E. CRUCES POLEA (DROP SET FINISHER - Semana 5):
+            3x12 normal + TRIPLE DROP en última serie
+            12 @ 70% → 10 @ 55% → 12 @ 40% → fallo
+
+            DURACIÓN TOTAL: ~60 minutos
+            BOMBA ESPERADA: ⭐⭐⭐⭐⭐</div>
+
+        <h2>8.2 Espalda</h2>
+        <div class="code-block">RUTINA NEXUS-EM ESPALDA:
+
+            A. JALÓN AL PECHO (Base):
+            S1 (Bomba): 10x10 @ 60% | TUT/set: 40-60s | Desc: 60s
+            S2 (Myo): 18 + 5-4-4-3 @ 70% | TUT total: 70-90s
+            S3 (RIV): 3x (8-4-4) @ 70% | TUT: 60-80s
+            S4: Normal 3x10-12
+            S5 (Drop): 3x10 + drop última
+            Tempo: 2-2-2 (squeeze en contracción)
+
+            B. REMO CABLE SENTADO:
+            S1: 4x15 @ 60% | TUT: 50-70s | Desc: 60s
+            S2: Myo Reps ideal aquí
+            S3: RIV funciona muy bien
+            Tempo: 2-2-2
+
+            C. REMO MANCUERNA:
+            3 x 10-12 reps cada lado | TUT: 35-45s | Desc: 60s
+            Squeeze en contracción 2s
+
+            D. PULLDOWN BRAZOS RECTOS (FST-7 - Semana 4):
+            7 x 12-15 @ 60% | TUT/set: 35-50s | Desc: 30s
+            IDEAL para espalda FST-7
+
+            E. PULLDOWN AGARRE CERRADO (DROP - Semana 5):
+            3x12 + DOBLE DROP última serie
+
+            DURACIÓN TOTAL: ~60 minutos</div>
+
+        <h2>8.3 Piernas</h2>
+        <div class="code-block">RUTINA NEXUS-EM PIERNAS:
+
+            CUÁDRICEPS:
+            A. PRENSA 45° (Base):
+            S1 (Bomba): 10x10 @ 60% | TUT/set: 50-70s | Desc: 60-90s
+            S2 (Myo): 20 + 5-5-4-4 @ 70% | TUT total: 80-100s
+            S3 (RIV): 3x (10-5-5) @ 70% | TUT: 70-90s
+            S5 (Drop): 3x12 + TRIPLE DROP
+            ⚠️ No lockear rodillas (tensión continua)
+
+            B. HACK SQUAT:
+            3 x 12-15 reps @ 65% | TUT: 45-60s | Desc: 60-90s
+            S2-S3: Aplicar Myo o RIV
+
+            C. EXTENSIONES CUÁDRICEPS (FST-7 - Semana 4):
+            7 x 12-15 @ 60% | TUT/set: 35-50s | Desc: 30s
+            IDEAL para cuádriceps - máxima bomba
+
+            ISQUIOS:
+            D. CURL FEMORAL TUMBADO:
+            S1-S3: 3-4x12-15 | TUT: 40-55s | Desc: 60s
+            S4: FST-7 (7x12)
+            S5: 3x12 + Drop
+
+            E. PESO MUERTO RUMANO (ligero, bomba):
+            3 x 12-15 reps @ 60% | TUT: 50-65s | Desc: 60s
+            Enfoque: estiramiento y contracción
+
+            GEMELOS:
+            F. ELEVACIONES GEMELO:
+            4 x 15-20 reps | TUT: 40-60s | Pausa arriba 2s
+            S2: Myo Reps funciona bien
+
+            DURACIÓN TOTAL: ~65-70 minutos</div>
+
+        <h2>8.4 Hombros</h2>
+        <div class="code-block">RUTINA NEXUS-EM HOMBROS:
+
+            A. PRESS HOMBRO MÁQUINA (Base):
+            S1 (Bomba): 4x15 @ 60% | TUT/set: 50-65s | Desc: 60-90s
+            S2 (Myo): 18 + 5-4-3-3 @ 70% | TUT total: 65-85s
+            S3 (RIV): 3x (8-4-4) @ 70% | TUT: 55-75s
+            S4-S5: 3x10-12 normal
+            Tempo: 2-1-2
+
+            B. ELEVACIONES LATERALES MANCUERNAS:
+            S1-S3: 4x15-20 @ muy ligero | TUT: 50-70s | Desc: 30-45s
+            S5: DROP SETS ideales aquí (cambio rápido de mancuernas)
+
+            C. ELEVACIONES LATERALES CABLE (FST-7 - Semana 4):
+            7 x 12-15 @ ligero | TUT/set: 35-50s | Desc: 30s
+            IDEAL para deltoide lateral
+
+            D. PÁJAROS MÁQUINA:
+            3 x 15-20 reps | TUT: 50-65s | Desc: 45s
+            Squeeze en contracción 2s
+
+            E. FACE PULLS:
+            3 x 15-20 reps | TUT: 45-60s | Desc: 45s
+            Salud del hombro
+
+            DURACIÓN TOTAL: ~50 minutos</div>
+
+        <h2>8.5 Brazos</h2>
+        <div class="code-block">RUTINA NEXUS-EM BRAZOS:
+
+            BÍCEPS:
+            A. CURL BARRA (Base):
+            S1: 4x15 @ 60% | TUT/set: 45-60s | Desc: 60-90s
+            S2 (Myo): 15 + 5-4-3-3 @ 70% | TUT total: 60-80s
+            S3 (RIV): 3x (8-4-4) @ 70% | TUT: 55-75s
+            Tempo: 2-1-2
+
+            B. CURL MARTILLO:
+            3 x 12-15 reps | TUT: 40-55s | Desc: 45-60s
+            S5: Drop Sets
+
+            C. CURL CABLE BAJO (FST-7 - Semana 4):
+            7 x 12-15 @ ligero | Desc: 30s
+            IDEAL para bíceps
+
+            TRÍCEPS:
+            D. PUSHDOWN CABLE:
+            S1: 4x15 @ 60% | TUT: 45-60s
+            S2 (Myo): 15 + 5-4-4-3
+            S4 (FST-7): 7x12 | Desc: 30s
+
+            E. EXTENSIÓN OVERHEAD CABLE:
+            3 x 12-15 reps | TUT: 40-55s | Desc: 60s
+            S3: RIV funciona muy bien
+
+            F. FONDOS EN BANCO (Finisher):
+            2-3 x fallo | TUT: variable
+            S5: Drop (peso corporal → asistido)
+
+            DURACIÓN TOTAL: ~45 minutos</div>
+
+        <h1 class="page-break">9. Estructuras por División</h1>
+
+        <h2>9.1 Bro Split (5 días) - RECOMENDADO para NEXUS-EM</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupo</th>
+                <th>FST-7 Finisher (S4)</th>
+                <th>Drop Set Finisher (S5)</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Pecho</td>
+                <td>Pec Deck</td>
+                <td>Cruces Polea</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Espalda</td>
+                <td>Pulldown Recto</td>
+                <td>Jalón Cerrado</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hombros + Traps</td>
+                <td>Elevaciones Cable</td>
+                <td>Elevaciones MC</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Piernas</td>
+                <td>Extensiones</td>
+                <td>Prensa</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Brazos</td>
+                <td>Curl Cable + Pushdown</td>
+                <td>Curl + Ext</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>Bro Split es IDEAL para NEXUS-EM</strong> porque permite máximo volumen y bomba por grupo muscular
+            con tiempo suficiente para FST-7 finisher.
+        </div>
+
+        <h2>9.2 PPL - Push/Pull/Legs (6 días)</h2>
+        <div class="code-block">PUSH A (Lunes):
+            • Press Banca: Intensificador EM | 2-3 working sets
+            • Press Inclinado: 3x12 | Tempo: 2-1-2
+            • Elevaciones Lat: 4x15 | Desc: 45s
+            • Pushdown: Intensificador EM
+
+            PULL A (Martes):
+            • Jalón: Intensificador EM
+            • Remo Cable: 3x12
+            • Face Pulls: 3x15
+            • Curl Barra: Intensificador EM
+
+            LEGS A (Miércoles):
+            • Prensa: Intensificador EM
+            • Hack Squat: 3x12
+            • Curl Femoral: 3x15
+            • Gemelos: 4x15
+
+            PUSH B / PULL B / LEGS B: Similar con variaciones</div>
+
+        <h2>9.3 Upper/Lower (4 días)</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Ejercicios EM</th>
+                <th>Finisher</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Upper (Bomba)</td>
+                <td>Press, Jalón, Laterales, Curl, Pushdown</td>
+                <td>Según semana</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Lower (Bomba)</td>
+                <td>Prensa, Hack, Curl Femoral, Gemelos</td>
+                <td>Extensiones</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Upper (Volumen)</td>
+                <td>Inclinado, Remo, Face Pulls, Brazos</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Lower (Volumen)</td>
+                <td>RDL, Extensiones, Walking Lunges</td>
+                <td>-</td>
+            </tr>
+        </table>
+
+        <h2>9.4 Full Body (3 días)</h2>
+        <div class="code-block">FULL BODY A:
+            • Prensa: Intensificador EM (10x10 o Myo)
+            • Press Máquina: 3x12-15
+            • Jalón: 3x12-15
+            • Curl + Pushdown: 2x15 cada uno superset
+
+            FULL BODY B:
+            • Hack Squat: Intensificador EM
+            • Press Inclinado: 3x12
+            • Remo Cable: 3x12
+            • Laterales: 3x15
+
+            FULL BODY C:
+            • Sentadilla Goblet: 3x15
+            • Fondos Asistidos: 3x12
+            • Dominadas Asistidas: 3x10
+            • FST-7 Finisher (rotativo)</div>
+
+        <h1 class="page-break">10. Calculadora de Parámetros</h1>
+
+        <h2>10.1 Tabla de % 1RM por Intensificador</h2>
+        <table>
+            <tr>
+                <th>Intensificador</th>
+                <th>% 1RM</th>
+                <th>Reps/Set</th>
+                <th>TUT (seg)</th>
+                <th>Descanso</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>Bomba (GVT)</td>
+                <td>60%</td>
+                <td>10</td>
+                <td>40-60</td>
+                <td>60-90s</td>
+                <td>6-9</td>
+            </tr>
+            <tr>
+                <td>Myo (Activador)</td>
+                <td>70-75%</td>
+                <td>15-25</td>
+                <td>50-80</td>
+                <td>-</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td>Myo (Mini-sets)</td>
+                <td>70-75%</td>
+                <td>3-5</td>
+                <td>10-15</td>
+                <td>5-10s</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>RIV (Fase 1)</td>
+                <td>70-75%</td>
+                <td>8-10</td>
+                <td>25-35</td>
+                <td>10s</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td>RIV (Fase 2-3)</td>
+                <td>70-75%</td>
+                <td>4-5</td>
+                <td>12-18</td>
+                <td>10s</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td>65-70%</td>
+                <td>10-12</td>
+                <td>30-40</td>
+                <td>30s</td>
+                <td>8-10</td>
+            </tr>
+            <tr>
+                <td>Drop (Inicial)</td>
+                <td>70%</td>
+                <td>10-12</td>
+                <td>30-40</td>
+                <td>0s</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Drop (Segundo)</td>
+                <td>50-55%</td>
+                <td>8-10</td>
+                <td>25-35</td>
+                <td>0s</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Drop (Tercero)</td>
+                <td>35-40%</td>
+                <td>12-15+</td>
+                <td>35-50</td>
+                <td>-</td>
+                <td>10</td>
+            </tr>
+        </table>
+
+        <h2>10.2 Guía de Progresión</h2>
+        <div class="success-box">
+            <strong>Cómo Progresar en NEXUS-EM:</strong>
+            <ol>
+                <li><strong>Cada sesión:</strong> Registrar bomba percibida (1-10) y reps totales</li>
+                <li><strong>Si bomba ≥ 8:</strong> Reducir descanso 5-10s próxima sesión</li>
+                <li><strong>Si bomba ≤ 5:</strong> Reducir peso 5-10%, revisar carbos</li>
+                <li><strong>Ciclo 2+:</strong> Mantener descansos, subir peso 2.5kg</li>
+                <li><strong>Cada 2 ciclos:</strong> Deload obligatorio</li>
+            </ol>
+        </div>
+
+        <h1 class="page-break">11. Consideraciones Importantes</h1>
+
+        <h2>11.1 Escuchar al Cuerpo</h2>
+        <table>
+            <tr>
+                <th>Señal</th>
+                <th>Significado</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>No sientes bomba</td>
+                <td>Peso muy alto o carbos bajos</td>
+                <td>Bajar peso, revisar nutrición</td>
+            </tr>
+            <tr>
+                <td>Calambres frecuentes</td>
+                <td>Deshidratación, electrolitos</td>
+                <td>Más agua, potasio, sal</td>
+            </tr>
+            <tr>
+                <td>DOMS incapacitante</td>
+                <td>Exceso de volumen/intensidad</td>
+                <td>Más calentamiento, deload parcial</td>
+            </tr>
+            <tr>
+                <td>Fatiga extrema</td>
+                <td>Posible sobreentrenamiento</td>
+                <td>Revisar sueño, deload</td>
+            </tr>
+        </table>
+
+        <h2>11.2 Descanso y Recuperación</h2>
+        <ul>
+            <li><strong>Sueño:</strong> 7-9 horas (importante para síntesis proteica)</li>
+            <li><strong>Entre sesiones mismo grupo:</strong> Mínimo 48-72 horas</li>
+            <li><strong>Cardio:</strong> LISS post-entreno puede ayudar a aclarar lactato</li>
+        </ul>
+
+        <h2>11.3 Prevención de Lesiones</h2>
+        <ul>
+            <li><strong>Tempo controlado:</strong> SIEMPRE, especialmente en fallo</li>
+            <li><strong>Máquinas preferibles:</strong> Más seguras para técnicas de fallo</li>
+            <li><strong>No forzar rango:</strong> Si hay dolor, reducir ROM</li>
+        </ul>
+
+        <h2>11.4 Especialización de Grupos Débiles (NEXUS-EM)</h2>
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con Estrés Metabólico</strong>
+            <p>En NEXUS-EM, la especialización se logra maximizando la congestión (pump) y la frecuencia
+                del grupo débil. La ventaja del estrés metabólico es que permite mayor frecuencia
+                que la tensión mecánica pura.</p>
+        </div>
+
+        <h3>Estrategia NEXUS-EM para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Técnica Adicional</th>
+                <th>Frecuencia</th>
+                <th>Protocolo</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+1 Finisher (FST-7)</td>
+                <td>2-3x/semana</td>
+                <td>Agregar FST-7 al final de sesiones de otros grupos</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+1 Sesión "Feeder"</td>
+                <td>4-5x/semana</td>
+                <td>Sesiones cortas (15 min) de bombeo puro antes de dormir</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>Myo-Reps Diarias</td>
+                <td>5-6x/semana</td>
+                <td>1 ejercicio, 1 activación + 4-5 mini-sets diarios</td>
+            </tr>
+        </table>
+
+        <h3>Protocolos "Feeder Workouts" (Bombeo)</h3>
+        <div class="code-block">OBJETIVO: Llevar sangre y nutrientes sin fatiga sistémica.
+
+            PROTOCOLO (Hacer en casa o al final de sesión):
+            1. Selecciona 1 ejercicio de aislamiento (ej. Laterales, Curl)
+            2. Peso MUY ligero (20% 1RM)
+            3. Realiza 3 series de 50 reps seguidas
+            4. Descanso mínimo (30s)
+            5. NO llegar al fallo muscular real, solo quemazón extrema
+
+            *Perfecto para: Hombros, Brazos, Gemelos</div>
+
+        <h1>12. Apéndice: Datos Técnicos</h1>
+
+        <h2>12.1 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatible</th>
+                <th>Recomendación</th>
+            </tr>
+            <tr>
+                <td>NEXUS-TM</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Alternar mesociclos EM→TM</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Origen de Myo Reps y RIV</td>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Integrado en S4</td>
+            </tr>
+            <tr>
+                <td>GVT</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Origen de Bomba Controlada</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Filosofías opuestas</td>
+            </tr>
+            <tr>
+                <td>5/3/1</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Enfoque en fuerza, no bomba</td>
+            </tr>
+        </table>
+
+        <h2>12.2 Selector por Objetivo</h2>
+        <table>
+            <tr>
+                <th>Tu Objetivo</th>
+                <th>¿NEXUS-EM es para ti?</th>
+                <th>Alternativa</th>
+            </tr>
+            <tr>
+                <td>Bomba máxima</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Vascularidad</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Definición/Cutting</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Fuerza máxima</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>NEXUS-TM</td>
+            </tr>
+            <tr>
+                <td>Dieta keto/low carb</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>NEXUS-TM</td>
+            </tr>
+        </table>
+
+        <h1>13. Conclusión</h1>
+        <div class="highlight-box">
+            <strong>NEXUS-EM</strong> representa la fusión de las 3 metodologías más efectivas para estrés metabólico.
+            Con 5 semanas, 5 intensificadores progresivos, y parámetros detallados de TUT, RPE y descanso, maximizarás
+            bomba e hipertrofia sarcoplasmática.
+        </div>
+
+        <p style="text-align: center; margin-top: 40px; color: #999;">
+            <strong>NEXUS-EM · Estrés Metabólico Progresivo · v3.3</strong><br>
+            Sistema NEXUS - 13 Metodologías de Hipertrofia
+        </p>
+    </div>
+</body>
+
+</html>

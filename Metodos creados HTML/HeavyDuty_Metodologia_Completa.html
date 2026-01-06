@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Heavy Duty - Metodología Maestra Unificada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #DC2626;
+            --secondary: #EF4444;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .tempo-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tempo-badge.riv {
+            background: #10B981;
+            color: white;
+        }
+
+        .tempo-badge.ct {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .tempo-badge.rt {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .tempo-badge.isom {
+            background: #06B6D4;
+            color: white;
+        }
+
+        .tempo-badge.neg {
+            background: #EF4444;
+            color: white;
+        }
+
+        .use-when {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .use-when>div {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .use-when>div:first-child {
+            background: #ECFDF5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .riv-visual {
+            display: flex;
+            justify-content: space-around;
+            background: #1E293B;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .riv-phase {
+            flex: 1;
+            padding: 10px;
+            min-width: 60px;
+        }
+
+        .riv-phase .time {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #10B981;
+        }
+
+        .riv-phase .label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Tempo Color Classes */
+        .tempo-con {
+            color: #06B6D4;
+            font-weight: 700;
+            background: rgba(6, 182, 212, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-ecc {
+            color: #F59E0B;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tempo-iso {
+            color: #10B981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>HEAVY DUTY</h1>
+        <p class="subtitle">High Intensity Training</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Metodología de entrenamiento de alta intensidad desarrollada por
+            Mike Mentzer
+            basada en series únicas al fallo absoluto, bajo volumen y máxima recuperación.</p>
+        <p class="author">Creador: Mike Mentzer · IFBB Pro, Mr. Universe</p>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 10 ATLETAS DESTACADOS HEAVY
+                    DUTY:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Mike Mentzer (Creador, Mr. Universe 300pts) ·
+                <strong>2.</strong> Dorian Yates (6x Mr. Olympia) ·
+                <strong>3.</strong> Ray Mentzer (Mr. America) ·
+                <strong>4.</strong> Casey Viator (Mr. America) ·
+                <strong>5.</strong> John Heart (Mr. America Natural) ·
+                <strong>6.</strong> Arthur Jones (Creator Nautilus/HIT) ·
+                <strong>7.</strong> Mike Matarazzo† (IFBB Pro) ·
+                <strong>8.</strong> Markus Reinhardt (Natural Pro) ·
+                <strong>9.</strong> Lee Labrada (IFBB Pro) ·
+                <strong>10.</strong> Aaron Baker (IFBB Pro)
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Entrenamiento Breve, Intenso e Infrecuente · NEXUS
+            v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al Heavy Duty</li>
+                <li><strong>2.</strong> Objetivos del Heavy Duty</li>
+                <li><strong>3.</strong> Principios Básicos del Heavy Duty</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT)</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en Heavy Duty</li>
+                <li><strong>4.</strong> Métodos y Técnicas del Heavy Duty</li>
+                <li class="sub">4.1 Serie Única al Fallo (Core HIT)</li>
+                <li class="sub">4.2 Forced Reps (Repeticiones Forzadas)</li>
+                <li class="sub">4.3 Negativas (Excéntricas Supramáximas)</li>
+                <li class="sub">4.4 Rest-Pause (Descanso-Pausa)</li>
+                <li class="sub">4.5 Pre-Exhaustion (Pre-Agotamiento)</li>
+                <li class="sub">4.6 Superseries HIT</li>
+                <li class="sub">4.7 RPE en Heavy Duty</li>
+                <li class="sub">4.8 Compatibilidad con Otras Metodologías</li>
+                <li class="sub">4.9 Ejemplo: Rutina Pecho Heavy Duty</li>
+                <li><strong>5.</strong> Estructura de una Sesión Heavy Duty</li>
+                <li class="sub">5.1 Calentamiento y Series de Aproximación</li>
+                <li class="sub">5.2 Ejercicios Principales (Heavy Duty Core)</li>
+                <li class="sub">5.3 Ejercicios Accesorios</li>
+                <li class="sub">5.4 Enfriamiento y Estiramiento</li>
+                <li><strong>6.</strong> Periodización con Heavy Duty</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Ondulación de Intensidad y Volumen</li>
+                <li class="sub">6.3 Fases de Acumulación, Intensificación y Realización</li>
+                <li class="sub">6.4 Descargas (Deloads)</li>
+                <li class="sub">6.5 Duración del Ciclo por Nivel de Experiencia</li>
+                <li><strong>7.</strong> Progresión en Heavy Duty</li>
+                <li class="sub">7.1 Progresión de Carga y Reps</li>
+                <li class="sub">7.2 Manipulación de Variables (TUT, Descanso, Intensificadores)</li>
+                <li class="sub">7.3 Progresión a Largo Plazo</li>
+                <li><strong>8.</strong> Nutrición y Suplementación para Heavy Duty</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Timing Nutricional</li>
+                <li class="sub">8.4 Suplementación Clave</li>
+                <li><strong>9.</strong> Ejemplos de Rutinas Heavy Duty por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas | 9.4 Hombros | 9.5 Brazos</li>
+                <li class="sub">9.6 Estructuras por Nivel de Intensidad</li>
+                <li class="sub" style="padding-left: 40px;">• Full Body | Upper/Lower | Torso/Pierna | Bro Split</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Descanso y Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía Práctica de Implementación Paso a Paso</li>
+                <li class="sub" style="padding-left: 40px;">• Calcular 1RM | Equipo | Primera Sesión | Troubleshooting |
+                    Post-Heavy Duty</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al Heavy Duty</h1>
+        <div class="highlight-box">
+            <strong>Heavy Duty (High Intensity Training)</strong> es una metodología de entrenamiento creada por
+            <strong>Mike Mentzer</strong> basada en el principio de entrenamientos breves, intensos e infrecuentes.
+            El concepto central es llevar cada serie al fallo muscular absoluto para maximizar el estímulo de
+            crecimiento.
+        </div>
+
+        <p>A diferencia de métodos de alto volumen, Heavy Duty utiliza el mínimo número de series efectivas
+            (típicamente 1-2 working sets por ejercicio) llevadas más allá del fallo, con recuperación extendida
+            entre sesiones (4-7 días por grupo muscular).</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">1-2</div>
+                <div class="label">Sets por Ejercicio</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">6-10</div>
+                <div class="label">Reps al Fallo</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4-7</div>
+                <div class="label">Días Recuperación</div>
+            </div>
+        </div>
+
+        <h3>Origen y Filosofía</h3>
+        <p>Mike Mentzer, influenciado por Arthur Jones (creador de Nautilus/HIT), desarrolló Heavy Duty basándose en:
+        </p>
+        <ul>
+            <li><strong>Intensidad sobre Volumen:</strong> Un set al fallo absoluto es suficiente para estimular
+                crecimiento</li>
+            <li><strong>Recuperación como Prioridad:</strong> El músculo crece DURANTE el descanso, no en el gym</li>
+            <li><strong>Eficiencia Máxima:</strong> Sesiones de 30-45 minutos, 3-4 veces por semana máximo</li>
+            <li><strong>Técnicas Post-Fallo:</strong> Forced reps, negativas, rest-pause para ir MÁS ALLÁ del fallo</li>
+        </ul>
+
+        <h1>2. Objetivos del Heavy Duty</h1>
+        <ul>
+            <li><strong>Máxima Intensidad:</strong> Cada set debe ser el más intenso posible</li>
+            <li><strong>Hipertrofia Eficiente:</strong> Máximo resultado con mínimo volumen</li>
+            <li><strong>Fuerza Funcional:</strong> Progresión de carga como indicador principal</li>
+            <li><strong>Prevenir Sobreentrenamiento:</strong> Menos es más cuando la intensidad es extrema</li>
+            <li><strong>Longevidad:</strong> Menos desgaste articular por menor volumen total</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del Heavy Duty</h1>
+
+        <h2>3.1 Intensidad vs Volumen</h2>
+        <p>Heavy Duty se basa en el principio de que la intensidad y el volumen tienen una relación inversa:</p>
+        <table>
+            <tr>
+                <th>Concepto</th>
+                <th>Heavy Duty</th>
+                <th>Alto Volumen Tradicional</th>
+            </tr>
+            <tr>
+                <td>Working Sets</td>
+                <td>1-2 por ejercicio</td>
+                <td>3-5 por ejercicio</td>
+            </tr>
+            <tr>
+                <td>Intensidad</td>
+                <td>100% (fallo absoluto + más allá)</td>
+                <td>70-90% (RIR 1-3)</td>
+            </tr>
+            <tr>
+                <td>Frecuencia</td>
+                <td>1x por semana/grupo</td>
+                <td>2x por semana/grupo</td>
+            </tr>
+            <tr>
+                <td>Duración sesión</td>
+                <td>30-45 minutos</td>
+                <td>60-90 minutos</td>
+            </tr>
+        </table>
+
+        <h2>3.2 El Fallo Muscular Absoluto</h2>
+        <p>En Heavy Duty, el fallo no es el final - es el principio:</p>
+        <ul>
+            <li><strong>Fallo Concéntrico:</strong> No puedes completar otra repetición por ti mismo</li>
+            <li><strong>Más Allá del Fallo:</strong> 2-3 forced reps asistidas por spotter</li>
+            <li><strong>Negativa Final:</strong> Resistir la fase excéntrica 4-6 segundos</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ Regla de Oro HIT:</strong> Si puedes hacer otra serie con la misma intensidad,
+            la primera serie NO fue lo suficientemente intensa. Un working set bien ejecutado debe dejarte incapaz de
+            repetirlo.
+        </div>
+
+        <h2>3.3 Rangos de Repeticiones en HIT</h2>
+        <table>
+            <tr>
+                <th>Grupo Muscular</th>
+                <th>Reps al Fallo</th>
+                <th>Técnica Post-Fallo</th>
+            </tr>
+            <tr>
+                <td>Tren Superior</td>
+                <td>6-10 reps</td>
+                <td>2-3 forced reps + negativa</td>
+            </tr>
+            <tr>
+                <td>Tren Inferior</td>
+                <td>12-20 reps</td>
+                <td>Rest-pause o partials</td>
+            </tr>
+        </table>
+
+        <h2>3.4 Recuperación: El Factor Clave</h2>
+        <div class="highlight-box">
+            <strong>El músculo crece DURANTE el descanso, no durante el entrenamiento.</strong>
+            <ul>
+                <li><strong>Mínimo 4 días:</strong> Entre sesiones del mismo grupo muscular</li>
+                <li><strong>Ideal 5-7 días:</strong> Para entrenamientos de máxima intensidad</li>
+                <li><strong>Señales de sobreentrenamiento:</strong> Fuerza estancada, fatiga crónica, insomnio</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del Heavy Duty</h1>
+
+        <div class="highlight-box">
+            <strong>Técnicas de Intensificación HIT</strong>
+            <p>Heavy Duty utiliza técnicas específicas para ir MÁS ALLÁ del fallo muscular normal.
+                Cada técnica extiende el set después del punto donde normalmente terminarías.</p>
+        </div>
+
+        <h3>¿Cuándo Usar Heavy Duty?</h3>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar Heavy Duty cuando:</strong>
+            <ul>
+                <li>Tienes al menos 2+ años de experiencia entrenando</li>
+                <li>Tu técnica es PERFECTA en los ejercicios que vas a usar</li>
+                <li>Tienes spotter confiable disponible</li>
+                <li>Buscas máxima eficiencia (poco tiempo, máximo estímulo)</li>
+                <li>Estás en fase de volumen o mantenimiento calórico</li>
+                <li>Tu recuperación es excelente (7-8h sueño, nutrición óptima)</li>
+            </ul>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar Heavy Duty cuando:</strong>
+            <ul>
+                <li><strong>Principiante (&lt;2 años):</strong> No tienes la conexión mente-músculo para fallo verdadero
+                </li>
+                <li><strong>Sin spotter:</strong> Muchas técnicas (forced reps, negativas) requieren asistencia</li>
+                <li><strong>Lesiones activas:</strong> El fallo absoluto puede agravar problemas</li>
+                <li><strong>Déficit calórico severo:</strong> La recuperación será insuficiente</li>
+                <li><strong>Técnica deficiente:</strong> El fallo con mala técnica = lesión</li>
+                <li><strong>Fatiga acumulada:</strong> HIT requiere SNC fresco</li>
+            </ul>
+        </div>
+
+        <h3>Limitantes del Sistema Heavy Duty</h3>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Requiere spotter confiable para técnicas avanzadas</li>
+                <li>Mayor riesgo de lesión comparado con entrenamiento tradicional</li>
+                <li>Puede causar DOMS severo las primeras semanas</li>
+                <li>No es ideal para atletas que necesitan entrenar frecuentemente</li>
+            </ul>
+        </div>
+
+        <h3>🔧 Cómo Crear Rutinas Heavy Duty</h3>
+        <div class="highlight-box">
+            <strong>Guía para Diseñar tus Propias Rutinas Heavy Duty:</strong>
+            <ol>
+                <li><strong>Split recomendado:</strong> 4 días (Día 1: Pecho/Biceps, Día 2: Piernas, Día 3:
+                    Espalda/Tríceps, Día 4: Hombros)</li>
+                <li><strong>Ejercicios por grupo:</strong> 2-4 ejercicios máximo</li>
+                <li><strong>Working sets:</strong> 1-2 por ejercicio (NO más)</li>
+                <li><strong>Estructura del set:</strong>
+                    <ul>
+                        <li>Warm-ups: 3 sets progresivos (30%/50%/70%)</li>
+                        <li>Working set: Al fallo absoluto</li>
+                        <li>Técnica post-fallo: Forced reps O negativas O rest-pause</li>
+                    </ul>
+                </li>
+                <li><strong>Frecuencia:</strong> Cada grupo muscular 1x por semana únicamente</li>
+                <li><strong>Deload:</strong> Cada 4-6 semanas, reducir intensidad 50%</li>
+            </ol>
+        </div>
+
+        <h3>📊 Especificaciones Técnicas para Aplicación</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Técnica</th>
+                <th>Nivel</th>
+                <th>Descanso</th>
+                <th>TUT/Serie</th>
+                <th>Equipamiento</th>
+                <th>Duración Sesión</th>
+            </tr>
+            <tr>
+                <td><code>HD-SU</code></td>
+                <td>Serie Única al Fallo</td>
+                <td>Avanzado</td>
+                <td>2-3 min</td>
+                <td>40-60s</td>
+                <td>Pesos libres, máquinas</td>
+                <td>30-45 min</td>
+            </tr>
+            <tr>
+                <td><code>HD-FR</code></td>
+                <td>Forced Reps</td>
+                <td>Avanzado</td>
+                <td>+3 min post</td>
+                <td>+10-15s extra</td>
+                <td>Requiere SPOTTER</td>
+                <td>+2 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>HD-NEG</code></td>
+                <td>Negativas Supramáximas</td>
+                <td>Avanzado+</td>
+                <td>3-4 min</td>
+                <td>4-6s por rep</td>
+                <td>SPOTTER obligatorio</td>
+                <td>+3 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>HD-RP</code></td>
+                <td>Rest-Pause</td>
+                <td>Intermedio+</td>
+                <td>10-15s (micro)</td>
+                <td>60-90s total</td>
+                <td>Cualquiera</td>
+                <td>+2 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>HD-PRE</code></td>
+                <td>Pre-Exhaustion</td>
+                <td>Avanzado</td>
+                <td>0-10s entre</td>
+                <td>80-120s combo</td>
+                <td>Máquinas cercanas</td>
+                <td>+5 min/combo</td>
+            </tr>
+            <tr>
+                <td><code>HD-SS</code></td>
+                <td>Superseries HIT</td>
+                <td>Intermedio+</td>
+                <td>0s entre ejerc.</td>
+                <td>60-90s total</td>
+                <td>Equipo cercano</td>
+                <td>+3 min/superserie</td>
+            </tr>
+        </table>
+
+        <h2>4.1 Serie Única al Fallo (Core HIT)</h2>
+        <div class="method-card">
+            <h4>El Fundamento de Heavy Duty</h4>
+            <p>
+                <strong style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px;">1 WORKING
+                    SET</strong>
+                <span
+                    style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">FALLO
+                    ABSOLUTO</span>
+            </p>
+            <div class="code-block">PROTOCOLO SERIE ÚNICA:
+
+                Warm-up 1: 15 reps @ 30% 1RM
+                Warm-up 2: 10 reps @ 50% 1RM
+                Warm-up 3: 6 reps @ 70% 1RM
+
+                WORKING SET: 6-10 reps @ 80-85% 1RM
+                → Hasta fallo concéntrico absoluto
+                → + 2-3 forced reps con spotter
+                → + 1 negativa lenta (4-6 segundos)
+
+                Descanso: 2-3 minutos antes del siguiente ejercicio</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Todos los ejercicios de la rutina<br>• Tienes spotter
+                    disponible<br>• Técnica perfecta</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Técnica insegura<br>• Sin
+                    calentamiento previo<br>• Fatiga extrema del SNC</div>
+            </div>
+        </div>
+
+        <h2>4.2 Forced Reps (Repeticiones Forzadas)</h2>
+        <div class="method-card">
+            <h4>Ir Más Allá del Fallo</h4>
+            <p>
+                <strong style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px;">REQUIERE
+                    SPOTTER</strong>
+            </p>
+            <div class="code-block">PROTOCOLO FORCED REPS:
+
+                1. Llegar al fallo concéntrico (no puedes subir el peso solo)
+                2. Spotter asiste MÍNIMAMENTE para completar más reps
+                3. Realizar 2-3 reps adicionales con asistencia
+                4. Cada forced rep debe ser extremadamente difícil
+
+                ⚠️ REGLA: El spotter NO debe hacer el trabajo,
+                solo quitar 10-20% del peso con sus manos</div>
+            <div class="use-when">
+                <div><strong>✅ USAR EN:</strong><br>• Press banca, press militar<br>• Curl bíceps, extensiones<br>•
+                    Cualquier ejercicio con spotter</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR EN:</strong><br>• Peso muerto, sentadilla
+                    profunda<br>• Ejercicios de espalda<br>• Sin spotter confiable</div>
+            </div>
+        </div>
+
+        <h2>4.3 Negativas (Excéntricas Supramáximas)</h2>
+        <div class="method-card">
+            <h4>Máximo Daño Muscular Controlado</h4>
+            <p>
+                <strong style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px;">105-120%
+                    1RM</strong>
+                <span
+                    style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">MÁXIMA
+                    TENSIÓN MECÁNICA</span>
+            </p>
+            <div class="code-block">PROTOCOLO NEGATIVAS:
+
+                Peso: 105-120% de tu máximo concéntrico
+                Spotter ayuda a subir el peso (fase concéntrica)
+                TÚ controlas la bajada en 4-6 segundos
+                Repeticiones: 4-6 por set
+
+                APLICACIÓN:
+                • Después del working set normal
+                • O como set dedicado de negativas
+                • Requiere spotter o máquina asistida</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Máquinas con asistencia<br>• Press banca con spotter<br>•
+                    Quieres máximo daño muscular</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Sin spotter o máquina
+                    asistida<br>• DOMS severo previo<br>• Tendones/articulaciones sensibles</div>
+            </div>
+        </div>
+
+        <h2>4.4 Rest-Pause (Descanso-Pausa)</h2>
+        <div class="method-card">
+            <h4>Extender el Set con Micro-Descansos</h4>
+            <p>
+                <strong style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px;">80% 1RM</strong>
+            </p>
+            <div class="code-block">PROTOCOLO REST-PAUSE HIT:
+
+                1. Serie al fallo (6-8 reps)
+                2. Rack el peso, descanso 10-15 segundos
+                3. Más reps al fallo (2-4 reps)
+                4. Rack, descanso 10-15 segundos
+                5. Más reps al fallo (1-3 reps)
+
+                Total: 12-17 reps con peso de 6-8RM
+                Tiempo total: ~60-90 segundos</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Sin spotter disponible<br>• Ejercicios en máquinas/poleas<br>•
+                    Quieres más volumen efectivo</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Pesos libres pesados<br>•
+                    Técnica fatiga-dependiente<br>• Ejercicios de equilibrio</div>
+            </div>
+        </div>
+
+        <h2>4.5 Pre-Exhaustion (Pre-Agotamiento)</h2>
+        <div class="method-card">
+            <h4>Aislamiento antes de Compuesto</h4>
+            <div class="code-block">PROTOCOLO PRE-EXHAUSTION:
+
+                1. Ejercicio de AISLAMIENTO al fallo
+                Ejemplo: Aperturas pecho
+
+                2. Inmediatamente (0-10 segundos)
+                Ejercicio COMPUESTO al fallo
+                Ejemplo: Press banca
+
+                OBJETIVO: El músculo target falla ANTES que
+                los músculos secundarios en el compuesto</div>
+            <div class="use-when">
+                <div><strong>✅ USAR PARA:</strong><br>• Pecho (aperturas → press)<br>• Cuádriceps (extensiones →
+                    prensa)<br>• Dorsales (pullover → jalón)</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ejercicios técnicos
+                    complejos<br>• Hombros (riesgo de lesión)<br>• Fatiga extrema previa</div>
+            </div>
+        </div>
+
+        <h2>4.6 Superseries HIT</h2>
+        <div class="method-card">
+            <h4>Dos Ejercicios Sin Descanso</h4>
+            <div class="code-block">TIPOS DE SUPERSERIES EN HEAVY DUTY:
+
+                AGONISTA-AGONISTA (mismo músculo):
+                Press inclinado → Press plano (sin descanso)
+
+                AGONISTA-ANTAGONISTA (músculos opuestos):
+                Curl bíceps → Extensión tríceps (sin descanso)
+
+                ⚠️ USAR CON MODERACIÓN:
+                Solo 1-2 superseries por sesión en HIT</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Tiempo limitado<br>• Grupos pequeños (brazos)<br>• Efecto de
+                    bomba deseado</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Grupos grandes (piernas)<br>•
+                    Ejercicios compuestos pesados<br>• Ya usaste otras técnicas post-fallo</div>
+            </div>
+        </div>
+
+        <h2>4.7 Ejemplo: Rutina Pecho Heavy Duty</h2>
+        <div class="code-block">SESIÓN DE PECHO - HEAVY DUTY (25-30 min):
+
+            1. PRESS INCLINADO MANCUERNAS
+            Warm-up: 15/10/6 reps progresivos
+            Working Set: 8 reps al fallo + 2 forced reps + negativa 5s
+            Descanso: 3 min
+
+            2. PRESS BANCA SMITH
+            Warm-up: 10/6 reps
+            Working Set: 6-8 reps al fallo + rest-pause (3 mini-sets)
+            Descanso: 3 min
+
+            3. PEC DECK (MÁQUINA)
+            Sin warm-up (ya calentado)
+            Working Set: 10-12 reps al fallo + drop set (-30%)
+
+            ───────────────────────────────────────
+            TOTAL: 3 ejercicios, 3 working sets
+            TIEMPO: 25-30 minutos
+            FRECUENCIA: 1x por semana para pecho</div>
+
+        <h1 class="page-break">5. Estructura de una Sesión Heavy Duty</h1>
+
+        <h2>5.1 Calentamiento y Series de Aproximación</h2>
+        <div class="code-block">CALENTAMIENTO Heavy Duty (10-15 min):
+
+            1. Cardio ligero: 5 min (elevación temperatura)
+            2. Movilidad articular: 3-5 min
+            3. Series de aproximación:
+            - Serie 1: 15 reps @ 30% 1RM (activación)
+            - Serie 2: 10 reps @ 50% 1RM (patrón motor)
+            - Serie 3: 6 reps @ 70% 1RM (preparación SNC)</div>
+
+        <h2>5.2 Ejercicios Principales (Heavy Duty Core)</h2>
+        <ul>
+            <li>1-2 protocolos Heavy Duty completos por grupo muscular grande</li>
+            <li>Elegir el protocolo según objetivo semanal (TM vs EM)</li>
+            <li>Descanso entre protocolos: 3-5 minutos</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios</h2>
+        <ul>
+            <li>2-3 ejercicios complementarios con técnica normal</li>
+            <li>3 series de 8-12 reps, RIR 1-2</li>
+            <li>Opción: aplicar mini-protocolo Heavy Duty (versión corta)</li>
+        </ul>
+
+        <h2>5.4 Enfriamiento y Estiramiento</h2>
+        <ul>
+            <li>Estiramientos estáticos: 30-60s por músculo trabajado</li>
+            <li>Respiración profunda: 2-3 minutos</li>
+            <li>Hidratación inmediata</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con Heavy Duty</h1>
+
+        <h2>6.1 Microciclos y Mesociclos</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Énfasis</th>
+                <th>Protocolos Heavy Duty Principales</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Tensión Mecánica (80/20)</td>
+                <td>Heavy Duty-RT, Heavy Duty-NEG</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Híbrido (50/50)</td>
+                <td>Heavy Duty-CT, Heavy Duty-TM</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Estrés Metabólico (30/70)</td>
+                <td>Heavy Duty-RIV, Heavy Duty-ISOM</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Deload</td>
+                <td>Sin protocolos Heavy Duty, volumen reducido</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Ondulación de Intensidad y Volumen</h2>
+        <p>Heavy Duty permite manipular intensidad mediante selección de protocolo, no solo carga:</p>
+        <ul>
+            <li><strong>Alta Intensidad:</strong> Heavy Duty-NEG, Heavy Duty-RT → cargas pesadas, bajo volumen</li>
+            <li><strong>Alto Volumen:</strong> Heavy Duty-RIV completo → cargas moderadas, TUT extremo</li>
+        </ul>
+
+        <h2>6.3 Fases de Acumulación, Intensificación y Realización</h2>
+        <ul>
+            <li><strong>Acumulación (4-6 sem):</strong> Heavy Duty-RIV, Heavy Duty-CT → volumen alto</li>
+            <li><strong>Intensificación (2-4 sem):</strong> Heavy Duty-RT, Heavy Duty-NEG → cargas máximas</li>
+            <li><strong>Realización (1-2 sem):</strong> Reducir Heavy Duty, mantener cargas</li>
+        </ul>
+
+        <h2>6.4 Descargas (Deloads)</h2>
+        <div class="warning-box">
+            <strong>⚠️ Heavy Duty es ALTAMENTE demandante.</strong> Deload cada 3-4 semanas es obligatorio.
+            Durante deload: eliminar protocolos Heavy Duty, mantener 40-50% del volumen normal.
+        </div>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>Heavy Duty (estilo Mike Mentzer) requiere menos frecuencia pero máxima intensidad. La duración del ciclo
+            varía según nivel:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (2+ años req.)</td>
+                <td>6-8 semanas</td>
+                <td>Adaptación al fallo absoluto + técnicas post-fallo</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas</td>
+                <td>Estilo Mentzer clásico, balance recuperación/estímulo</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>4 semanas intensivo</td>
+                <td>Frecuencia reducida (1x/sem por grupo), deload obligatorio</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación HD:</strong> Heavy Duty NO es para principiantes (<2 años). Requiere spotter. La
+                aplicación NEXUS adapta las opciones de duración según tu nivel. </div>
+
+                <h1 class="page-break">7. Progresión en Heavy Duty</h1>
+
+                <h2>7.1 Progresión de Carga y Reps</h2>
+                <ul>
+                    <li><strong>Aumentar reps por fase:</strong> Si completas más reps en cada mini-serie, mantén peso
+                    </li>
+                    <li><strong>Aumentar peso:</strong> Solo cuando Heavy Duty-RIV se siente "fácil" (raro)</li>
+                    <li><strong>Progresión típica:</strong> 2.5-5kg cada 2-3 semanas</li>
+                </ul>
+
+                <h2>7.2 Manipulación de Variables</h2>
+                <table>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Progresión</th>
+                    </tr>
+                    <tr>
+                        <td>Descansos RIV</td>
+                        <td>Reducir 5s en cada fase cuando dominas protocolo</td>
+                    </tr>
+                    <tr>
+                        <td>Fases CT</td>
+                        <td>Aumentar duración excéntrica/concéntrica (+1s)</td>
+                    </tr>
+                    <tr>
+                        <td>Hold Isométrico</td>
+                        <td>Extender de 3s a 5s gradualmente</td>
+                    </tr>
+                </table>
+
+                <h2>7.3 Progresión a Largo Plazo</h2>
+                <ul>
+                    <li><strong>Mes 1-2:</strong> Dominar Heavy Duty-RIV y Heavy Duty-CT</li>
+                    <li><strong>Mes 3-4:</strong> Incorporar Heavy Duty-RT y Heavy Duty-NEG</li>
+                    <li><strong>Mes 5+:</strong> Heavy Duty-TM personalizado según respuesta</li>
+                </ul>
+
+                <h1 class="page-break">8. Nutrición y Suplementación para Heavy Duty</h1>
+
+                <h2>8.1 Requerimientos Calóricos</h2>
+                <p>Heavy Duty genera alto gasto calórico por TUT extremo. Ajustar según objetivo:</p>
+                <ul>
+                    <li><strong>Volumen:</strong> Superávit 300-500 kcal</li>
+                    <li><strong>Definición:</strong> Déficit moderado 15-20% (Heavy Duty demandante)</li>
+                    <li><strong>Mantenimiento:</strong> TDEE + 200-300 kcal días Heavy Duty</li>
+                </ul>
+
+                <h2>8.2 Macronutrientes</h2>
+                <table>
+                    <tr>
+                        <th>Macro</th>
+                        <th>Recomendación Heavy Duty</th>
+                        <th>Razón</th>
+                    </tr>
+                    <tr>
+                        <td>Proteína</td>
+                        <td>2.2-2.5g/kg</td>
+                        <td>Síntesis y reparación muscular</td>
+                    </tr>
+                    <tr>
+                        <td>Carbohidratos</td>
+                        <td>4-6g/kg días Heavy Duty</td>
+                        <td>Reposición glucógeno (alto TUT)</td>
+                    </tr>
+                    <tr>
+                        <td>Grasas</td>
+                        <td>0.8-1g/kg</td>
+                        <td>Función hormonal</td>
+                    </tr>
+                </table>
+
+                <h2>8.3 Timing Nutricional</h2>
+                <ul>
+                    <li><strong>Pre-entreno (1-2h antes):</strong> Comida completa con carbos complejos</li>
+                    <li><strong>Intra-entreno:</strong> EAAs + carbohidratos simples (opcional pero beneficioso)</li>
+                    <li><strong>Post-entreno (30-60 min):</strong> Proteína + carbos rápidos</li>
+                </ul>
+
+                <h2>8.4 Suplementación Clave</h2>
+                <ul>
+                    <li><strong>Creatina:</strong> 5g/día (rendimiento y recuperación)</li>
+                    <li><strong>Citrulina Malato:</strong> 6-8g pre-entreno (bomba, resistencia)</li>
+                    <li><strong>Beta-Alanina:</strong> 3-5g/día (buffer ácido láctico)</li>
+                    <li><strong>EAAs:</strong> 10-15g intra-entreno (anti-catabolismo)</li>
+                </ul>
+
+                <h1 class="page-break">9. Ejemplos de Rutinas Heavy Duty por Grupo Muscular</h1>
+
+                <h2>9.1 Pecho</h2>
+                <div class="code-block">RUTINA Heavy Duty PECHO:
+
+                    A. Press Máquina Inclinado: 1x Heavy Duty-RIV Completo
+                    Peso: 70% 1RM → 8-9 mini-series al fallo
+                    Descanso después: 4-5 min
+
+                    B. Press Máquina Horizontal: 1x Heavy Duty-CT
+                    Peso inicial: 70% 1RM, reducción progresiva
+
+                    C. Aperturas Cable: 3x12-15 (técnica normal)
+                    + Contracción Pico 2s cada rep
+
+                    Duración: ~40 minutos</div>
+
+                <h2>9.2 Espalda</h2>
+                <div class="code-block">RUTINA Heavy Duty ESPALDA:
+
+                    A. Jalón Máquina: 1x Heavy Duty-RIV Completo
+                    Peso: 65-70% 1RM
+
+                    B. Remo Máquina: 1x Heavy Duty-CT
+                    Énfasis excéntrico en Fase 2
+
+                    C. Pulldown Brazos Rectos: 3x15 (técnica normal)
+                    + Isometría final 20s última serie
+
+                    Duración: ~45 minutos</div>
+
+                <h2>9.3 Piernas</h2>
+                <div class="code-block">RUTINA Heavy Duty PIERNAS:
+
+                    A. Prensa 45°: 1x Heavy Duty-RIV Completo
+                    Peso: 60-65% 1RM (¡cuidado con fatiga!)
+
+                    B. Extensión Cuádriceps: 1x Heavy Duty-CT
+
+                    C. Curl Femoral: 1x Heavy Duty-RT
+                    4 mini-series al fallo
+
+                    D. Gemelos Sentado: 3x15-20 + Isometría final
+
+                    Duración: ~50 minutos</div>
+
+                <h2>9.4 Hombros</h2>
+                <div class="code-block">RUTINA Heavy Duty HOMBROS:
+
+                    A. Press Hombro Máquina: 1x Heavy Duty-RT
+                    Peso: 75-80% 1RM
+
+                    B. Elevaciones Laterales Máquina: 1x Heavy Duty-RIV (versión corta)
+                    Solo 5 mini-series: 45-30-15-30-45
+
+                    C. Pájaros Máquina: 3x12-15 + Contracción Pico
+
+                    Duración: ~35 minutos</div>
+
+                <h2>9.5 Brazos</h2>
+                <div class="code-block">RUTINA Heavy Duty BRAZOS:
+
+                    BÍCEPS:
+                    A. Curl Máquina: 1x Heavy Duty-RIV (versión corta)
+                    B. Curl Scott: 2x10-12 + Isometría final
+
+                    TRÍCEPS:
+                    C. Extensión Polea: 1x Heavy Duty-CT
+                    D. Press Cerrado Máquina: 2x10-12
+
+                    Duración: ~30 minutos</div>
+
+                <h2 class="page-break">9.6 Estructuras por Nivel de Intensidad</h2>
+
+                <div class="highlight-box">
+                    <strong>🎯 Elige tu estructura según experiencia y disponibilidad.</strong>
+                    Heavy Duty funciona en cualquier división, pero algunas son más eficientes que otras.
+                </div>
+
+                <h3>Full Body (3 días/semana) - Intermedio</h3>
+                <div class="code-block">ESTRUCTURA FULL BODY Heavy Duty:
+                    Frecuencia: Lun/Mié/Vie
+                    Protocolo: 1 Heavy Duty Core por grupo grande
+
+                    DÍA A (Empuje + Piernas):
+                    - Press Máquina: 1x Heavy Duty-CT
+                    - Prensa: 1x Heavy Duty-RIV (corto)
+                    - Hombros + Tríceps: 2 ejercicios normales
+
+                    DÍA B (Tirón + Piernas):
+                    - Jalón: 1x Heavy Duty-RIV
+                    - Curl Femoral: 1x Heavy Duty-CT
+                    - Bíceps + Espalda: 2 ejercicios normales
+
+                    DÍA C (Híbrido):
+                    - Combinación según fatiga</div>
+
+                <h3>Upper/Lower (4 días/semana) - Intermedio-Avanzado</h3>
+                <table>
+                    <tr>
+                        <th>Día</th>
+                        <th>Enfoque</th>
+                        <th>Protocolos Heavy Duty</th>
+                    </tr>
+                    <tr>
+                        <td>Lunes</td>
+                        <td>Upper A (Empuje)</td>
+                        <td>1x RIV Pecho + 1x CT Hombros</td>
+                    </tr>
+                    <tr>
+                        <td>Martes</td>
+                        <td>Lower A (Cuádriceps)</td>
+                        <td>1x RIV Prensa + 1x CT Extensión</td>
+                    </tr>
+                    <tr>
+                        <td>Jueves</td>
+                        <td>Upper B (Tirón)</td>
+                        <td>1x RIV Espalda + 1x RT Bíceps</td>
+                    </tr>
+                    <tr>
+                        <td>Viernes</td>
+                        <td>Lower B (Posterior)</td>
+                        <td>1x CT Curl Femoral + 1x ISOM Gemelos</td>
+                    </tr>
+                </table>
+
+                <h3>Torso/Pierna (4 días/semana) - Avanzado</h3>
+                <div class="code-block">TORSO (Lun/Jue):
+                    A. Pecho: 1x Heavy Duty-RIV o CT
+                    B. Espalda: 1x Heavy Duty-RIV o CT
+                    C. Hombros: 1x Heavy Duty-RT
+                    D. Brazos: Trabajo accesorio
+
+                    PIERNA (Mar/Vie):
+                    A. Cuádriceps: 1x Heavy Duty-RIV
+                    B. Femoral: 1x Heavy Duty-CT
+                    C. Gemelos: 1x Heavy Duty-ISOM
+                    D. Glúteo: Trabajo accesorio</div>
+
+                <h3>Bro Split (5-6 días/semana) - Avanzado</h3>
+                <table>
+                    <tr>
+                        <th>Día</th>
+                        <th>Grupo</th>
+                        <th>Protocolos Heavy Duty</th>
+                    </tr>
+                    <tr>
+                        <td>Lunes</td>
+                        <td>Pecho</td>
+                        <td>1x RIV + 1x CT + Accesorios</td>
+                    </tr>
+                    <tr>
+                        <td>Martes</td>
+                        <td>Espalda</td>
+                        <td>1x RIV + 1x NEG + Accesorios</td>
+                    </tr>
+                    <tr>
+                        <td>Miércoles</td>
+                        <td>Piernas</td>
+                        <td>1x RIV Prensa + 1x CT Curl + Gemelos</td>
+                    </tr>
+                    <tr>
+                        <td>Jueves</td>
+                        <td>Hombros</td>
+                        <td>1x RT + 1x ISOM + Accesorios</td>
+                    </tr>
+                    <tr>
+                        <td>Viernes</td>
+                        <td>Brazos</td>
+                        <td>1x RIV corto Bíceps + 1x CT Tríceps</td>
+                    </tr>
+                </table>
+
+                <h2 class="page-break">9.7 Compatibilidad con Otras Metodologías</h2>
+                <table>
+                    <tr>
+                        <th>Metodología</th>
+                        <th>Compatible con Heavy Duty</th>
+                        <th>Recomendación</th>
+                    </tr>
+                    <tr>
+                        <td>Blood & Guts</td>
+                        <td style="background:#10B981; color:white;">✅ SÍ</td>
+                        <td>Misma filosofía HIT - combinar técnicas</td>
+                    </tr>
+                    <tr>
+                        <td>MTUT</td>
+                        <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                        <td>Usar MTUT en warm-ups</td>
+                    </tr>
+                    <tr>
+                        <td>Y3T</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>Filosofías opuestas</td>
+                    </tr>
+                    <tr>
+                        <td>SST</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>Demasiado volumen de fallo</td>
+                    </tr>
+                    <tr>
+                        <td>FST-7</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>Alto volumen innecesario</td>
+                    </tr>
+                </table>
+
+                <h2>9.8 Calculadora de Cargas (%1RM)</h2>
+                <table>
+                    <tr>
+                        <th>Técnica</th>
+                        <th>% 1RM</th>
+                        <th>Reps Objetivo</th>
+                        <th>RPE</th>
+                    </tr>
+                    <tr>
+                        <td>Working Set</td>
+                        <td>75-85%</td>
+                        <td>6-10</td>
+                        <td>10 (fallo)</td>
+                    </tr>
+                    <tr>
+                        <td>Forced Reps</td>
+                        <td>75-85% + asistencia</td>
+                        <td>+2-3</td>
+                        <td>10+</td>
+                    </tr>
+                    <tr>
+                        <td>Negativas</td>
+                        <td>100-120%</td>
+                        <td>4-6s cada</td>
+                        <td>10+</td>
+                    </tr>
+                </table>
+
+                <h2>9.9 Guía de Progresión Semanal</h2>
+                <div class="highlight-box">
+                    <strong>Cómo Progresar en Heavy Duty:</strong>
+                    <ol>
+                        <li><strong>Cada sesión:</strong> Anota reps + peso exacto</li>
+                        <li><strong>Si completaste 10 reps:</strong> Sube 2.5-5kg próxima sesión</li>
+                        <li><strong>Si no llegaste a 6 reps:</strong> Mantén peso</li>
+                        <li><strong>Cada 4-6 semanas:</strong> Deload obligatorio (50% intensidad)</li>
+                    </ol>
+                </div>
+
+                <h2>9.10 Selector de Metodología por Objetivo</h2>
+                <table>
+                    <tr>
+                        <th>Tu Objetivo</th>
+                        <th>¿Heavy Duty es para ti?</th>
+                        <th>Alternativa</th>
+                    </tr>
+                    <tr>
+                        <td>Fuerza máxima</td>
+                        <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Tiempo limitado</td>
+                        <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Masa muscular volumen</td>
+                        <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                        <td>Y3T</td>
+                    </tr>
+                    <tr>
+                        <td>Sin spotter</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>MTUT</td>
+                    </tr>
+                    <tr>
+                        <td>Principiante</td>
+                        <td style="background:#DC2626; color:white;">❌ NO</td>
+                        <td>Y3T Week 1-2</td>
+                    </tr>
+                </table>
+
+                <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+                <h2>10.1 Escuchar al Cuerpo</h2>
+                <ul>
+                    <li><strong>Fatiga excesiva:</strong> Reducir protocolos RIV, usar CT o RT</li>
+                    <li><strong>Dolor articular:</strong> Cambiar a ejercicios de máquina, reducir ROM</li>
+                    <li><strong>Falta de bomba:</strong> Verificar hidratación y carbohidratos</li>
+                </ul>
+
+                <h2>10.2 Descanso y Recuperación</h2>
+                <ul>
+                    <li><strong>Sueño:</strong> 7-9 horas (crítico para Heavy Duty)</li>
+                    <li><strong>Entre sesiones mismo grupo:</strong> Mínimo 48-72h</li>
+                    <li><strong>Cardio:</strong> LISS preferible, evitar HIIT días Heavy Duty</li>
+                </ul>
+
+                <h2>10.3 Prevención de Lesiones</h2>
+                <ul>
+                    <li><strong>Usar MÁQUINAS:</strong> Más seguro con fatiga extrema de Heavy Duty</li>
+                    <li><strong>Calentamiento extenso:</strong> 10-15 min obligatorio</li>
+                    <li><strong>Si no completas protocolo:</strong> Reduce peso, no fuerces</li>
+                </ul>
+
+                <h2 class="page-break">10.4 Guía Práctica de Implementación Paso a Paso</h2>
+
+                <div class="highlight-box">
+                    <strong>🎯 Esta sección contiene información práctica esencial</strong> que necesitas antes de tu
+                    primera
+                    sesión Heavy Duty. Sigue estos pasos en orden.
+                </div>
+
+                <h3>Paso 1: Calcular tu 1RM Estimado</h3>
+
+                <div class="highlight-box">
+                    <strong>¿Qué es el 1RM?</strong>
+                    <p>El <strong>1RM (One Rep Max)</strong> es el peso máximo que puedes levantar UNA sola vez. En
+                        Heavy
+                        Duty
+                        usamos
+                        diferentes porcentajes según el protocolo (60-85% 1RM).</p>
+                </div>
+
+                <div class="code-block">FÓRMULA EPLEY:
+                    1RM Estimado = Peso usado × (1 + Repeticiones / 30)
+
+                    EJEMPLO:
+                    Si haces 10 reps con 80kg en Prensa:
+                    1RM = 80 × (1 + 10/30) = 80 × 1.33 = 106kg
+
+                    Para Heavy Duty-RIV (65% de 106kg) = 69kg ← Peso de trabajo</div>
+
+                <h4>Tabla de Porcentajes Heavy Duty</h4>
+                <table>
+                    <tr>
+                        <th>Protocolo</th>
+                        <th>% 1RM</th>
+                        <th>Ejemplo (1RM=100kg)</th>
+                    </tr>
+                    <tr>
+                        <td>Heavy Duty-RIV</td>
+                        <td>60-70%</td>
+                        <td>60-70kg</td>
+                    </tr>
+                    <tr>
+                        <td>Heavy Duty-CT</td>
+                        <td>70% inicial</td>
+                        <td>70kg → reduce</td>
+                    </tr>
+                    <tr>
+                        <td>Heavy Duty-RT</td>
+                        <td>75-85%</td>
+                        <td>75-85kg</td>
+                    </tr>
+                    <tr>
+                        <td>Heavy Duty-NEG</td>
+                        <td>105-120%</td>
+                        <td>105-120kg (con ayuda)</td>
+                    </tr>
+                </table>
+
+                <h3>Paso 2: Checklist de Equipo</h3>
+                <table>
+                    <tr>
+                        <th>Grupo Muscular</th>
+                        <th>Máquinas Recomendadas</th>
+                    </tr>
+                    <tr>
+                        <td>Pecho</td>
+                        <td>Press máquina, Pec deck, Cruces polea</td>
+                    </tr>
+                    <tr>
+                        <td>Espalda</td>
+                        <td>Jalón máquina, Remo máquina, Pulldown</td>
+                    </tr>
+                    <tr>
+                        <td>Piernas</td>
+                        <td>Prensa, Extensión, Curl femoral, Hack squat</td>
+                    </tr>
+                    <tr>
+                        <td>Hombros</td>
+                        <td>Press máquina, Elevaciones laterales máquina</td>
+                    </tr>
+                    <tr>
+                        <td>Brazos</td>
+                        <td>Curl máquina, Extensión polea</td>
+                    </tr>
+                </table>
+
+                <h3>Paso 3: Tu Primera Sesión Heavy Duty</h3>
+                <div class="code-block">DÍA 1 - PRIMERA SESIÓN Heavy Duty (Ejemplo: Pecho)
+                    Duración: ~40-50 minutos
+
+                    FASE 1: CALENTAMIENTO (15 min)
+                    ├─ 5 min cardio ligero
+                    ├─ Movilidad articular
+                    └─ Series aproximación en press máquina
+
+                    FASE 2: Heavy Duty CORE (25-30 min)
+                    ├─ Ejercicio 1: Press Máquina [Heavy Duty-RIV versión CORTA]
+                    │ • Peso: 65% 1RM
+                    │ • SOLO: 45-30-15-30-45 (5 mini-series, no 8)
+                    │ • Primera vez = versión reducida
+                    │
+                    └─ Ejercicio 2: Aperturas Cable [Normal]
+                    • 3×12-15 + Contracción pico
+                    • Acostumbrarte a técnica Heavy Duty
+
+                    FASE 3: ENFRIAMIENTO (5 min)
+                    └─ Estiramientos estáticos</div>
+
+                <h3>Paso 4: Troubleshooting</h3>
+                <table>
+                    <tr>
+                        <th>Problema</th>
+                        <th>Causa</th>
+                        <th>Solución</th>
+                    </tr>
+                    <tr>
+                        <td>No completo todas las mini-series</td>
+                        <td>Peso muy alto</td>
+                        <td>Reduce 10-15% para próxima sesión</td>
+                    </tr>
+                    <tr>
+                        <td>No siento bomba</td>
+                        <td>Descansos muy largos o poca hidratación</td>
+                        <td>Cronometra descansos, toma agua</td>
+                    </tr>
+                    <tr>
+                        <td>Mareo durante Heavy Duty-RIV</td>
+                        <td>Falta respiración</td>
+                        <td>Respira entre mini-series, nunca aguantes</td>
+                    </tr>
+                    <tr>
+                        <td>DOMS extremo (+72h)</td>
+                        <td>Demasiado volumen</td>
+                        <td>Reduce a versión corta, aumenta gradualmente</td>
+                    </tr>
+                </table>
+
+                <h3>Paso 5: Transición Post-Heavy Duty</h3>
+                <div class="code-block">DESPUÉS DE CICLO Heavy Duty (4-6 semanas):
+
+                    SEMANA TRANSICIÓN:
+                    • Eliminar protocolos Heavy Duty completos
+                    • Mantener solo ejercicios normales
+                    • Carga: 70-75% 1RM
+                    • Objetivo: Reconectar con tensión mecánica
+
+                    SIGUIENTE CICLO:
+                    • Opción 1: Reiniciar Heavy Duty con progresión
+                    • Opción 2: Cambiar a metodología TM (Heavy Duty, etc.)
+                    • Opción 3: Híbrido según respuesta</div>
+
+                <h1 class="page-break">Apéndice A: Datos para Creación de Rutinas</h1>
+
+                <h2>A.1 Base de Datos de Ejercicios Heavy Duty</h2>
+                <table>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Ejercicios IDEALES</th>
+                        <th>Ejercicios PROHIBIDOS</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Pecho</strong></td>
+                        <td>Press inclinado Hammer, Press banca, Aperturas máquina</td>
+                        <td>Cruces cable (muy aislamiento)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Espalda</strong></td>
+                        <td>Remo Hammer, Jalón agarre neutro, Dominadas</td>
+                        <td>Face pulls (muy ligero)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Piernas</strong></td>
+                        <td>Prensa 45°, Sentadilla, Curl femoral, Extensiones</td>
+                        <td>Zancadas (inestable para fallo)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hombros</strong></td>
+                        <td>Press militar máquina, Elevaciones laterales</td>
+                        <td>Press Arnold (muy complejo)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Brazos</strong></td>
+                        <td>Curl predicador, Extensión triceps máquina</td>
+                        <td>Ejercicios con técnica difícil</td>
+                    </tr>
+                </table>
+
+                <h2>A.2 Plantillas de Split Recomendados</h2>
+                <div class="highlight-box">
+                    <strong>Splits Óptimos Heavy Duty:</strong>
+                    <ul>
+                        <li><strong>Full Body (3 días):</strong> L/M/V - Un ejercicio por grupo al fallo</li>
+                        <li><strong>Upper/Lower (4 días):</strong> L-Upper, M-Lower, J-Upper, V-Lower</li>
+                        <li><strong>Push/Pull/Legs (3 días):</strong> L-Push, M-Pull, V-Legs - Máxima recuperación</li>
+                    </ul>
+                </div>
+
+                <h2>A.3 Semana Tipo Completa (Upper/Lower)</h2>
+                <table>
+                    <tr>
+                        <th>Día</th>
+                        <th>Grupo</th>
+                        <th>Ejercicios</th>
+                        <th>Series</th>
+                    </tr>
+                    <tr>
+                        <td>Lunes</td>
+                        <td>Upper</td>
+                        <td>Press inclinado, Remo Hammer, Press hombro, Curl predicador</td>
+                        <td>1 working set cada uno</td>
+                    </tr>
+                    <tr>
+                        <td>Martes</td>
+                        <td>Lower</td>
+                        <td>Prensa, Curl femoral, Extensiones, Pantorrillas</td>
+                        <td>1 working set cada uno</td>
+                    </tr>
+                    <tr>
+                        <td>Miércoles</td>
+                        <td colspan="3">DESCANSO OBLIGATORIO</td>
+                    </tr>
+                    <tr>
+                        <td>Jueves</td>
+                        <td>Upper</td>
+                        <td>Press banca, Jalón, Elevaciones laterales, Fondos</td>
+                        <td>1 working set cada uno</td>
+                    </tr>
+                    <tr>
+                        <td>Viernes</td>
+                        <td>Lower</td>
+                        <td>Sentadilla, Peso muerto rumano, Extensiones, Pantorrillas</td>
+                        <td>1 working set cada uno</td>
+                    </tr>
+                    <tr>
+                        <td>Sáb-Dom</td>
+                        <td colspan="3">DESCANSO OBLIGATORIO</td>
+                    </tr>
+                </table>
+
+                <h2>A.4 Protocolo de Calentamiento Heavy Duty</h2>
+                <div class="success-box">
+                    <strong>Calentamiento OBLIGATORIO HIT:</strong>
+                    <ul>
+                        <li><strong>Set 1:</strong> 30% 1RM x 12 reps (fluido, sin pausa)</li>
+                        <li><strong>Set 2:</strong> 50% 1RM x 8 reps (controlado)</li>
+                        <li><strong>Set 3:</strong> 70% 1RM x 4 reps (cerca del tempo de trabajo)</li>
+                        <li><strong>Descanso:</strong> 2-3 minutos antes del working set</li>
+                        <li><strong>Working Set:</strong> TODO AL FALLO + técnica post-fallo</li>
+                    </ul>
+                </div>
+
+                <h2>A.5 Sistema de Deload Heavy Duty</h2>
+                <div class="warning-box">
+                    <strong>Reglas de Deload HIT:</strong>
+                    <ul>
+                        <li><strong>Frecuencia:</strong> Cada 4-6 semanas (MÁS frecuente que Y3T)</li>
+                        <li><strong>Duración:</strong> 5-7 días completos</li>
+                        <li><strong>Cargas:</strong> 50% de las cargas normales</li>
+                        <li><strong>Fallo:</strong> NINGÚN fallo durante deload</li>
+                        <li><strong>Técnicas post-fallo:</strong> PROHIBIDAS en deload</li>
+                        <li><strong>Señales urgentes:</strong> Pérdida de fuerza 2 sesiones seguidas = deload inmediato
+                        </li>
+                    </ul>
+                </div>
+
+                <h1 class="page-break">Apéndice B: Datos Técnicos para Aplicación</h1>
+
+                <h2>B.1 Glosario de Términos Heavy Duty</h2>
+                <table>
+                    <tr>
+                        <th>Término</th>
+                        <th>Definición</th>
+                        <th>Uso en App</th>
+                    </tr>
+                    <tr>
+                        <td><code>Working Set</code></td>
+                        <td>Serie única de trabajo al fallo absoluto</td>
+                        <td>Indicador principal</td>
+                    </tr>
+                    <tr>
+                        <td><code>Fallo Absoluto</code></td>
+                        <td>Imposibilidad de mover el peso ni 1mm más</td>
+                        <td>RPE 10 automático</td>
+                    </tr>
+                    <tr>
+                        <td><code>Forced Reps</code></td>
+                        <td>Reps asistidas después del fallo</td>
+                        <td>Requiere flag "spotter"</td>
+                    </tr>
+                    <tr>
+                        <td><code>Negativas</code></td>
+                        <td>Fase excéntrica supramáxima (100-120% 1RM)</td>
+                        <td>Timer 4-6s por rep</td>
+                    </tr>
+                    <tr>
+                        <td><code>Pre-Exhaustion</code></td>
+                        <td>Aislamiento antes de compuesto</td>
+                        <td>Secuencia de ejercicios</td>
+                    </tr>
+                </table>
+
+                <h2>B.2 Configuración de Timer para App</h2>
+                <table>
+                    <tr>
+                        <th>Fase</th>
+                        <th>Timer Descanso</th>
+                        <th>Timer TUT</th>
+                        <th>Alerta</th>
+                    </tr>
+                    <tr>
+                        <td>Warm-up sets</td>
+                        <td>60s</td>
+                        <td>N/A</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Working Set</td>
+                        <td>120-180s post</td>
+                        <td>40-60s</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Post Forced Reps</td>
+                        <td>180-240s</td>
+                        <td>+10-15s</td>
+                        <td>Beep "recuperar"</td>
+                    </tr>
+                </table>
+
+                <h2>B.3 Indicadores de Éxito</h2>
+                <div class="success-box">
+                    <strong>¿Cómo saber si Heavy Duty está funcionando?</strong>
+                    <ul>
+                        <li><strong>Semana 2-3:</strong> Más reps o más peso en working set</li>
+                        <li><strong>Semana 4-6:</strong> Fuerza aumentando consistentemente</li>
+                        <li><strong>Señal positiva:</strong> Energía alta fuera del gym, sin fatiga crónica</li>
+                        <li><strong>Señal negativa:</strong> Pérdida de fuerza 2 sesiones = deload inmediato</li>
+                    </ul>
+                </div>
+
+                <h2>B.4 Protocolos de Transición</h2>
+                <div class="highlight-box">
+                    <strong>Cómo cambiar DESDE Heavy Duty:</strong>
+                    <ul>
+                        <li><strong>→ Y3T:</strong> 1 semana sin fallo, luego Y3T Week 1</li>
+                        <li><strong>→ Blood & Guts:</strong> Transición directa (misma filosofía)</li>
+                        <li><strong>→ MTUT:</strong> 1 semana deload, luego MTUT con peso reducido</li>
+                        <li><strong>→ FST-7:</strong> No recomendado (filosofías opuestas)</li>
+                    </ul>
+                </div>
+
+                <h2>B.5 Plantilla de Tracking</h2>
+                <table>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Obligatorio</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                    <tr>
+                        <td>Ejercicio</td>
+                        <td>✓</td>
+                        <td>Press inclinado Hammer</td>
+                    </tr>
+                    <tr>
+                        <td>Peso Working Set</td>
+                        <td>✓</td>
+                        <td>100kg</td>
+                    </tr>
+                    <tr>
+                        <td>Reps al fallo</td>
+                        <td>✓</td>
+                        <td>8</td>
+                    </tr>
+                    <tr>
+                        <td>Forced Reps</td>
+                        <td>Si aplica</td>
+                        <td>+2</td>
+                    </tr>
+                    <tr>
+                        <td>Técnica post-fallo</td>
+                        <td>Si aplica</td>
+                        <td>Negativas x3</td>
+                    </tr>
+                    <tr>
+                        <td>Notas</td>
+                        <td>Opcional</td>
+                        <td>Spotter: Juan</td>
+                    </tr>
+                </table>
+
+                <h2>B.6 FAQ / Troubleshooting</h2>
+                <div class="warning-box">
+                    <strong>Problemas Comunes Heavy Duty:</strong>
+                    <ul>
+                        <li><strong>No llego al fallo:</strong> Peso muy ligero - sube 5-10%</li>
+                        <li><strong>Sin spotter disponible:</strong> Usa máquinas con topes de seguridad</li>
+                        <li><strong>Dolor articular:</strong> Reduce técnicas post-fallo, prioriza máquinas</li>
+                        <li><strong>Estancamiento:</strong> Cambia ejercicio, mantén principio HIT</li>
+                        <li><strong>Fatiga extrema:</strong> Deload inmediato, posiblemente demasiadas técnicas</li>
+                    </ul>
+                </div>
+
+                <h2 class="page-break">10.5 Especialización de Grupos Débiles</h2>
+
+                <div class="highlight-box">
+                    <strong>🎯 Priorización de Grupos Rezagados</strong>
+                    <p>Cuando un grupo muscular está más débil o menos desarrollado que el resto del cuerpo,
+                        el volumen estándar no es suficiente. Heavy Duty ofrece estrategias específicas para
+                        grupos prioritarios.</p>
+                </div>
+
+                <h3>Estrategia Heavy Duty para Grupos Débiles</h3>
+                <table>
+                    <tr>
+                        <th>Nivel</th>
+                        <th>Series Extra/Semana</th>
+                        <th>Frecuencia</th>
+                        <th>Técnica Recomendada</th>
+                    </tr>
+                    <tr>
+                        <td>Moderado</td>
+                        <td>+3-4 series</td>
+                        <td>3x/semana</td>
+                        <td>Pre-exhaust + 1 set HIT</td>
+                    </tr>
+                    <tr>
+                        <td>Alto</td>
+                        <td>+6-8 series</td>
+                        <td>4x/semana</td>
+                        <td>Pre-exhaust + Rest-Pause</td>
+                    </tr>
+                    <tr>
+                        <td>Especialización</td>
+                        <td>+9-12 series</td>
+                        <td>5-6x/semana</td>
+                        <td>Pre-exhaust + Negativas + Rest-Pause</td>
+                    </tr>
+                </table>
+
+                <h3>Grupos Comunes a Priorizar</h3>
+                <table>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Ejercicio Pre-Exhaust</th>
+                        <th>Ejercicio HIT Principal</th>
+                        <th>Protocolo Recomendado</th>
+                    </tr>
+                    <tr>
+                        <td>Pantorrillas</td>
+                        <td>Gemelo Sentado 2x20</td>
+                        <td>Gemelo de Pie</td>
+                        <td>Rest-Pause 15+8+5</td>
+                    </tr>
+                    <tr>
+                        <td>Bíceps</td>
+                        <td>Curl Predicador 2x15</td>
+                        <td>Curl Barra</td>
+                        <td>Negativas 6-8 + 3 neg</td>
+                    </tr>
+                    <tr>
+                        <td>Deltoides Posterior</td>
+                        <td>Face Pulls 2x20</td>
+                        <td>Remo al Mentón</td>
+                        <td>Pre-exhaust + HIT</td>
+                    </tr>
+                    <tr>
+                        <td>Trapecios</td>
+                        <td>Shrugs Ligeros 2x20</td>
+                        <td>Shrugs Pesados</td>
+                        <td>Rest-Pause 12+6+4</td>
+                    </tr>
+                    <tr>
+                        <td>Antebrazos</td>
+                        <td>Curl Muñeca 2x20</td>
+                        <td>Farmer's Walk</td>
+                        <td>Fallo + Isométrico 30s</td>
+                    </tr>
+                </table>
+
+                <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS CON HEAVY DUTY
+
+                    FRECUENCIA: Al inicio de CADA sesión (5-6x/semana)
+                    DURACIÓN: 10-12 minutos extra por sesión
+
+                    PROTOCOLO:
+                    1. Pre-Exhaust: Gemelo Sentado 2×20 @ ligero (bomba)
+                    2. Ejercicio Principal HIT:
+                    - Gemelo de Pie Máquina
+                    - Rest-Pause: 15+8+5 @ 75% (fallo cada fase)
+                    - Pausa arriba 2 segundos (contracción máxima)
+                    3. Estiramiento cargado: 60 segundos bajo tensión
+
+                    VOLUMEN SEMANAL: ~18-24 series (vs 6-8 normal)
+                    RESULTADO ESPERADO: Después de 6-8 semanas, grupo alcanza desarrollo proporcional</div>
+
+                <h3>Reglas de Especialización Heavy Duty</h3>
+                <div class="warning-box">
+                    <strong>⚠️ Reglas Importantes:</strong>
+                    <ul>
+                        <li><strong>Grupo prioritario PRIMERO:</strong> Siempre al inicio de la sesión cuando estás más
+                            fresco</li>
+                        <li><strong>Máximo 1-2 grupos:</strong> No priorizar más de 2 grupos simultáneamente</li>
+                        <li><strong>Duración:</strong> Ciclo de especialización de 6-8 semanas, luego reevaluar</li>
+                        <li><strong>Reducir otro volumen:</strong> Si añades 6+ series al grupo débil, reduce 2-3 series
+                            de grupos fuertes</li>
+                        <li><strong>Deload:</strong> El grupo prioritario también descansa en semanas de deload</li>
+                    </ul>
+                </div>
+
+                <h1>11. Conclusión</h1>
+                <div class="highlight-box">
+                    <p><strong>Heavy Duty es una herramienta poderosa para hipertrofia sarcoplásmica</strong> cuando se
+                        usa
+                        correctamente. Los protocolos de descansos variables y múltiples tipos de contracción ofrecen
+                        versatilidad única para romper mesetas y generar crecimiento por vías metabólicas.</p>
+                    <p>La clave es <strong>dominar un protocolo antes de añadir otros</strong>, respetar los deloads, y
+                        escuchar al cuerpo. Heavy Duty no es para entrenar todos los días del año, sino para ciclos
+                        específicos de
+                        4-6 semanas seguidos de períodos de recuperación o metodologías complementarias.</p>
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Resumen de Éxito Heavy Duty:</strong><br>
+                    • Domina Heavy Duty-RIV primero (protocolo más versátil)<br>
+                    • Usa máquinas para seguridad con fatiga extrema<br>
+                    • Deload cada 3-4 semanas es obligatorio<br>
+                    • Nutrición alta en carbohidratos para reposición<br>
+                    • Combina con metodologías TM en mesociclos largos
+                </div>
+
+                <h3>Atletas Conocidos que Usan Heavy Duty</h3>
+                <ul>
+                    <li><strong>Mike Mentzer</strong> - Creador del sistema</li>
+                    <li><strong>Atletas IFBB Pro</strong> - Uso en fases de volumen y definición</li>
+                    <li><strong>Culturistas naturales</strong> - Popular por sus protocolos sin fallo absoluto</li>
+                </ul>
+
+                <h3>Comparación Rápida</h3>
+                <table>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>Heavy Duty</th>
+                        <th>MTUT</th>
+                        <th>FST-7</th>
+                    </tr>
+                    <tr>
+                        <td>Intensidad vía</td>
+                        <td>Descansos variables</td>
+                        <td>TUT (tiempo)</td>
+                        <td>Pump (7 series)</td>
+                    </tr>
+                    <tr>
+                        <td>Carga típica</td>
+                        <td>60-80% 1RM</td>
+                        <td>40-50% 1RM</td>
+                        <td>60-70% 1RM</td>
+                    </tr>
+                    <tr>
+                        <td>TUT por serie</td>
+                        <td>60-90s por mini-serie</td>
+                        <td>80-130s</td>
+                        <td>30-50s (x7)</td>
+                    </tr>
+                    <tr>
+                        <td>Estrés articular</td>
+                        <td>Medio</td>
+                        <td>Muy bajo ⭐</td>
+                        <td>Bajo</td>
+                    </tr>
+                    <tr>
+                        <td>Duración recomendada</td>
+                        <td>4-6 semanas</td>
+                        <td>4-6 semanas</td>
+                        <td>Continuo</td>
+                    </tr>
+                    <tr>
+                        <td>Spotter requerido</td>
+                        <td>Preferible</td>
+                        <td>No ⭐</td>
+                        <td>No</td>
+                    </tr>
+                </table>
+
+                <div
+                    style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, var(--dark), #1E293B); color: white; border-radius: 12px;">
+                    <h2 style="color: var(--primary); margin-bottom: 15px;">Heavy Duty - High Intensity Training</h2>
+                    <p style="opacity: 0.9;">Metodología Maestra Unificada</p>
+                    <p style="opacity: 0.7; font-size: 0.9rem;">Basado en trabajo de Mike Mentzer</p>
+                    <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Diciembre 2025</p>
+                </div>
+        </div>
+
+        <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nivel de Experiencia</th>
+                    <th>Duración del Ciclo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Principiante (1‑2 años)</td>
+                    <td>6‑8 semanas</td>
+                </tr>
+                <tr>
+                    <td>Intermedio (2‑5 años)</td>
+                    <td>4‑6 semanas</td>
+                </tr>
+                <tr>
+                    <td>Avanzado (5+ años)</td>
+                    <td>3‑4 semanas</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Estructura</th>
+                    <th>Días por semana</th>
+                    <th>Nivel recomendado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Full Body</td>
+                    <td>3</td>
+                    <td>Principiante</td>
+                </tr>
+                <tr>
+                    <td>Upper/Lower</td>
+                    <td>4</td>
+                    <td>Intermedio‑Avanzado</td>
+                </tr>
+                <tr>
+                    <td>Torso/Pierna</td>
+                    <td>4</td>
+                    <td>Avanzado</td>
+                </tr>
+                <tr>
+                    <td>Bro Split</td>
+                    <td>5‑6</td>
+                    <td>Avanzado</td>
+                </tr>
+            </tbody>
+        </table>
+</body>
+
+</html>

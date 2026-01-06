@@ -1,0 +1,1209 @@
+{
+  "version": "1.1",
+  "generatedAt": "2025-12-30",
+  "totalProtocols": 41,
+  "methodologies": {
+    "Y3T": {
+      "id": "Y3T",
+      "name": "Y3T (Yoda 3 Training)",
+      "creator": "Neil Hill",
+      "level": [
+        "Principiante",
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "Ondulación semanal con tres fases distintas",
+      "sessionDuration": "60-90 min",
+      "frequency": "5-6 días/semana",
+      "volume": "Alto",
+      "intensity": "Variable",
+      "requiresSpotter": false,
+      "protocols": [
+        {
+          "id": "Y3T-W1",
+          "name": "Week 1 Heavy",
+          "description": "Cargas pesadas, 6-10 reps, enfoque en fuerza",
+          "reps": "6-10",
+          "sets": "3-4",
+          "rest": "120-180s",
+          "rpe": "8-9",
+          "tut": "40-60s"
+        },
+        {
+          "id": "Y3T-W2",
+          "name": "Week 2 Moderate",
+          "description": "Cargas moderadas, 10-14 reps, controlado",
+          "reps": "10-14",
+          "sets": "3-4",
+          "rest": "60-90s",
+          "rpe": "7-8",
+          "tut": "50-70s"
+        },
+        {
+          "id": "Y3T-W3",
+          "name": "Week 3 Annihilation",
+          "description": "Alto volumen, técnicas intensas, pump máximo",
+          "reps": "15-30+",
+          "sets": "3-5",
+          "rest": "30-60s",
+          "rpe": "9-10",
+          "tut": "60-90s"
+        },
+        {
+          "id": "Y3T-DL",
+          "name": "Deload",
+          "description": "Semana de recuperación",
+          "reps": "12-15",
+          "sets": "2-3",
+          "rest": "90s",
+          "rpe": "5-6",
+          "tut": "30-40s"
+        },
+        {
+          "id": "Y3T-MOD",
+          "name": "Modificado Principiante",
+          "description": "Versión reducida para principiantes",
+          "reps": "8-12",
+          "sets": "2-3",
+          "rest": "90-120s",
+          "rpe": "6-7",
+          "tut": "40-50s"
+        },
+        {
+          "id": "Y3T-INT",
+          "name": "Intensificado Avanzado",
+          "description": "Con técnicas adicionales post-fallo",
+          "reps": "Varies",
+          "sets": "4-5",
+          "rest": "45-90s",
+          "rpe": "10",
+          "tut": "70-100s"
+        }
+      ],
+      "compatibleWith": [
+        "FST-7",
+        "SST",
+        "MTUT"
+      ],
+      "incompatibleWith": [
+        "Heavy Duty",
+        "Blood & Guts"
+      ],
+      "warmup": {
+        "week1": "3 sets progresivos (30% → 50% → 70%)",
+        "week2": "2 sets progresivos (40% → 60%)",
+        "week3": "1 set ligero (40%) + movilidad"
+      },
+      "deload": {
+        "frequency": "Cada 6-9 semanas",
+        "duration": "1 semana",
+        "intensity": "50%"
+      },
+      "timerConfig": {
+        "week1": {
+          "rest": 150,
+          "alertAt": 30
+        },
+        "week2": {
+          "rest": 75,
+          "alertAt": 15
+        },
+        "week3": {
+          "rest": 45,
+          "alertAt": 10
+        }
+      }
+    },
+    "HeavyDuty": {
+      "id": "HD",
+      "name": "Heavy Duty",
+      "creator": "Mike Mentzer",
+      "level": [
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "HIT - Mínimo estímulo, máxima intensidad",
+      "sessionDuration": "30-45 min",
+      "frequency": "3-4 días/semana",
+      "volume": "Muy Bajo",
+      "intensity": "Máxima",
+      "requiresSpotter": true,
+      "protocols": [
+        {
+          "id": "HD-SU",
+          "name": "Serie Única al Fallo",
+          "description": "1 working set hasta fallo muscular absoluto",
+          "reps": "6-10",
+          "sets": "1",
+          "rest": "120-180s",
+          "rpe": "10",
+          "tut": "40-60s"
+        },
+        {
+          "id": "HD-FR",
+          "name": "Forced Reps",
+          "description": "Reps asistidas después del fallo",
+          "reps": "+2-3",
+          "sets": "1",
+          "rest": "180-240s",
+          "rpe": "10+",
+          "tut": "+10-15s"
+        },
+        {
+          "id": "HD-NEG",
+          "name": "Negativas",
+          "description": "Fase excéntrica supramáxima",
+          "reps": "3-5",
+          "sets": "1",
+          "rest": "240s",
+          "rpe": "10+",
+          "tut": "4-6s por rep",
+          "load": "100-120% 1RM"
+        },
+        {
+          "id": "HD-RP",
+          "name": "Rest-Pause",
+          "description": "Micro descansos intra-serie",
+          "reps": "Varies",
+          "sets": "1",
+          "rest": "10-15s micro",
+          "rpe": "10",
+          "tut": "Varies"
+        },
+        {
+          "id": "HD-PE",
+          "name": "Pre-Exhaustion",
+          "description": "Aislamiento antes de compuesto",
+          "reps": "10-12 + 6-8",
+          "sets": "1+1",
+          "rest": "0s entre",
+          "rpe": "10",
+          "tut": "60-80s"
+        },
+        {
+          "id": "HD-SS",
+          "name": "Superseries HIT",
+          "description": "Dos ejercicios sin descanso",
+          "reps": "8-10 + 8-10",
+          "sets": "1",
+          "rest": "0s entre",
+          "rpe": "10",
+          "tut": "50-70s"
+        }
+      ],
+      "compatibleWith": [
+        "Blood & Guts"
+      ],
+      "incompatibleWith": [
+        "Y3T",
+        "SST",
+        "FST-7"
+      ],
+      "warmup": {
+        "set1": "30% x 12 reps",
+        "set2": "50% x 8 reps",
+        "set3": "70% x 4 reps"
+      },
+      "deload": {
+        "frequency": "Cada 4-6 semanas",
+        "duration": "5-7 días",
+        "intensity": "50%",
+        "noFailure": true
+      },
+      "timerConfig": {
+        "warmup": {
+          "rest": 60
+        },
+        "workingSet": {
+          "rest": 150,
+          "alertAt": 30
+        },
+        "postForcedReps": {
+          "rest": 210,
+          "alertAt": 60
+        }
+      }
+    },
+    "BloodAndGuts": {
+      "id": "BG",
+      "name": "Blood & Guts",
+      "creator": "Dorian Yates",
+      "level": [
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "HIT estilo Dorian - Intensidad máxima",
+      "sessionDuration": "45-60 min",
+      "frequency": "4 días/semana",
+      "volume": "Bajo",
+      "intensity": "Máxima",
+      "requiresSpotter": true,
+      "protocols": [
+        {
+          "id": "BG-DY",
+          "name": "Dorian Yates Original",
+          "description": "2 warm-ups + 1 working set al fallo",
+          "reps": "8-10",
+          "sets": "1",
+          "rest": "120s",
+          "rpe": "10",
+          "tut": "40-60s"
+        },
+        {
+          "id": "BG-FR",
+          "name": "Forced Reps Dorian",
+          "description": "2-3 reps asistidas post-fallo",
+          "reps": "+2-3",
+          "sets": "1",
+          "rest": "180s",
+          "rpe": "10+",
+          "tut": "+10s"
+        },
+        {
+          "id": "BG-NEG",
+          "name": "Negativas Controladas",
+          "description": "Excéntricas lentas 4-6s",
+          "reps": "3-4",
+          "sets": "1",
+          "rest": "240s",
+          "rpe": "10+",
+          "tut": "4-6s por rep"
+        },
+        {
+          "id": "BG-RP",
+          "name": "Rest-Pause Dorian",
+          "description": "Descanso 10-15s, continuar",
+          "reps": "Varies",
+          "sets": "1",
+          "rest": "10-15s micro",
+          "rpe": "10",
+          "tut": "Varies"
+        },
+        {
+          "id": "BG-PAR",
+          "name": "Partials",
+          "description": "Reps parciales post-fallo",
+          "reps": "4-6",
+          "sets": "1",
+          "rest": "0s",
+          "rpe": "10+",
+          "tut": "+15-20s"
+        },
+        {
+          "id": "BG-DS",
+          "name": "Drop Sets",
+          "description": "Reducir peso, continuar sin descanso",
+          "reps": "8→8→8",
+          "sets": "3 drops",
+          "rest": "0s",
+          "rpe": "10+",
+          "tut": "60-90s",
+          "loadReduction": "20-30% por drop"
+        }
+      ],
+      "compatibleWith": [
+        "Heavy Duty",
+        "MTUT"
+      ],
+      "incompatibleWith": [
+        "Y3T",
+        "SST"
+      ],
+      "warmup": {
+        "set1": "30% x 15 reps",
+        "set2": "50% x 10 reps"
+      },
+      "deload": {
+        "frequency": "Cada 6-8 semanas",
+        "duration": "1 semana",
+        "intensity": "60%"
+      },
+      "timerConfig": {
+        "betweenExercises": {
+          "rest": 120,
+          "alertAt": 30
+        },
+        "postWorkingSet": {
+          "rest": 180
+        },
+        "postNegatives": {
+          "rest": 240
+        }
+      }
+    },
+    "MTUT": {
+      "id": "MTUT",
+      "name": "MTUT (Método Tiempo Bajo Tensión)",
+      "creator": "Varios",
+      "level": [
+        "Principiante",
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "Tiempo bajo tensión extremo",
+      "sessionDuration": "45-60 min",
+      "frequency": "3-4 días/semana",
+      "volume": "Moderado",
+      "intensity": "Moderada",
+      "requiresSpotter": false,
+      "protocols": [
+        {
+          "id": "MTUT-TCE",
+          "name": "Tempo Concéntrico Extremo",
+          "description": "Fase concéntrica ultra-lenta (4s+)",
+          "reps": "6-8",
+          "sets": "3",
+          "rest": "60-90s",
+          "rpe": "8-9",
+          "tut": "40-60s",
+          "tempo": "4-1-2",
+          "load": "40-50% 1RM"
+        },
+        {
+          "id": "MTUT-TEE",
+          "name": "Tempo Excéntrico Extremo",
+          "description": "Fase excéntrica ultra-lenta (4s+)",
+          "reps": "6-8",
+          "sets": "3",
+          "rest": "60-90s",
+          "rpe": "8-9",
+          "tut": "50-70s",
+          "tempo": "2-1-4",
+          "load": "45-55% 1RM"
+        },
+        {
+          "id": "MTUT-VE",
+          "name": "Variante Equilibrada",
+          "description": "Ambas fases lentas",
+          "reps": "5-7",
+          "sets": "3",
+          "rest": "45-60s",
+          "rpe": "8-9",
+          "tut": "45-65s",
+          "tempo": "3-2-3",
+          "load": "40-50% 1RM"
+        },
+        {
+          "id": "MTUT-ISO",
+          "name": "Isométricos Integrados",
+          "description": "Pausas isométricas en puntos clave",
+          "reps": "5-6",
+          "sets": "3",
+          "rest": "75s",
+          "rpe": "9",
+          "tut": "50-70s",
+          "tempo": "2-3-2"
+        },
+        {
+          "id": "MTUT-SH",
+          "name": "Shock Sets",
+          "description": "Combinación de tempos sin descanso",
+          "reps": "15-20 total",
+          "sets": "1",
+          "rest": "120s post",
+          "rpe": "10",
+          "tut": "90-120s",
+          "load": "30-40% 1RM"
+        },
+        {
+          "id": "MTUT-SS",
+          "name": "Superseries MTUT",
+          "description": "Dos ejercicios con tempo lento",
+          "reps": "6-8 + 6-8",
+          "sets": "2-3",
+          "rest": "90s post",
+          "rpe": "9",
+          "tut": "80-100s"
+        }
+      ],
+      "compatibleWith": [
+        "Y3T",
+        "FST-7",
+        "SST",
+        "Blood & Guts"
+      ],
+      "incompatibleWith": [],
+      "warmup": {
+        "mobility": "5 min articular",
+        "set1": "30% x 8 reps @ tempo normal",
+        "set2": "40% x 5 reps @ tempo MTUT"
+      },
+      "deload": {
+        "frequency": "Cada 6-8 semanas",
+        "duration": "1 semana tempo normal",
+        "intensity": "Subir peso 20%, tempo 2-0-2"
+      },
+      "timerConfig": {
+        "TCE": {
+          "rest": 75,
+          "repBeeps": "4 durante concéntrico"
+        },
+        "TEE": {
+          "rest": 75,
+          "repBeeps": "4 durante excéntrico"
+        },
+        "VE": {
+          "rest": 52,
+          "repBeeps": "3-2-3 pattern"
+        }
+      }
+    },
+    "SST": {
+      "id": "SST",
+      "name": "SST (Sarcoplasm Stimulating Training)",
+      "creator": "Varios",
+      "level": [
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "Estrés metabólico extremo",
+      "sessionDuration": "45-75 min",
+      "frequency": "4-5 días/semana",
+      "volume": "Moderado",
+      "intensity": "Alta (múltiples fallos)",
+      "requiresSpotter": false,
+      "protocols": [
+        {
+          "id": "SST-RIV",
+          "name": "Rest Interval Variable",
+          "description": "Descansos crecientes 5s→25s entre mini-sets",
+          "reps": "Hasta fallo x 6-9",
+          "sets": "1 protocolo",
+          "rest": "5s→10s→15s→20s→25s",
+          "rpe": "10 por fallo",
+          "tut": "3-5 min total",
+          "failures": "6-9",
+          "load": "60-70% 1RM"
+        },
+        {
+          "id": "SST-CT",
+          "name": "Contracción Tipo",
+          "description": "Alternar tipos de contracción",
+          "reps": "Varies",
+          "sets": "1 protocolo",
+          "rest": "10-20s",
+          "rpe": "10",
+          "tut": "2-3 min",
+          "failures": "3-4",
+          "load": "65-75% 1RM"
+        },
+        {
+          "id": "SST-RT",
+          "name": "Rest Time",
+          "description": "Micro descansos fijos",
+          "reps": "Hasta fallo x 3-4",
+          "sets": "1 protocolo",
+          "rest": "10-15s fijo",
+          "rpe": "10",
+          "tut": "2 min",
+          "failures": "3-4",
+          "load": "75-80% 1RM"
+        },
+        {
+          "id": "SST-TM",
+          "name": "Tempo Manipulation",
+          "description": "Cambios de tempo dentro del set",
+          "reps": "12-15 total",
+          "sets": "1",
+          "rest": "90s post",
+          "rpe": "9-10",
+          "tut": "60-90s"
+        },
+        {
+          "id": "SST-ISOM",
+          "name": "Isométrico SST",
+          "description": "Holds isométricos en puntos de fallo",
+          "reps": "5-6 + holds",
+          "sets": "1",
+          "rest": "120s post",
+          "rpe": "10",
+          "tut": "45-60s"
+        },
+        {
+          "id": "SST-NEG",
+          "name": "Negativas SST",
+          "description": "Excéntricas lentas post-fallo",
+          "reps": "8-10 + 3-4 neg",
+          "sets": "1",
+          "rest": "120s post",
+          "rpe": "10+",
+          "tut": "50-70s"
+        }
+      ],
+      "compatibleWith": [
+        "FST-7",
+        "Y3T",
+        "MTUT"
+      ],
+      "incompatibleWith": [
+        "Heavy Duty",
+        "Blood & Guts"
+      ],
+      "warmup": {
+        "general": "5 min cardio + movilidad",
+        "set1": "30% x 15 reps",
+        "set2": "50% x 10 reps",
+        "hydration": "500ml agua pre-protocolo"
+      },
+      "deload": {
+        "frequency": "Cada 4-6 semanas",
+        "duration": "1 semana sin SST",
+        "training": "Ejercicios normales 3x10-12"
+      },
+      "timerConfig": {
+        "RIV": {
+          "rest": [
+            5,
+            10,
+            15,
+            20,
+            25
+          ],
+          "alertOnComplete": true
+        },
+        "CT": {
+          "rest": 15,
+          "alertOnChange": true
+        },
+        "RT": {
+          "rest": 12,
+          "alertGo": true
+        }
+      }
+    },
+    "FST7": {
+      "id": "FST7",
+      "name": "FST-7 (Fascia Stretch Training)",
+      "creator": "Hany Rambod",
+      "level": [
+        "Principiante",
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "Estiramiento de fascia con 7 series finales",
+      "sessionDuration": "60-75 min",
+      "frequency": "5-6 días/semana",
+      "volume": "Alto (finisher)",
+      "intensity": "Moderada-Alta",
+      "requiresSpotter": false,
+      "protocols": [
+        {
+          "id": "FST7-CL",
+          "name": "FST-7 Clásico",
+          "description": "7 series al final con 30-45s descanso",
+          "reps": "8-12",
+          "sets": "7",
+          "rest": "30-45s",
+          "rpe": "8-9",
+          "tut": "Varies",
+          "load": "50-60% 1RM"
+        },
+        {
+          "id": "FST7-BN",
+          "name": "FST-7 Burn",
+          "description": "Con drop set en serie final",
+          "reps": "12-15 + drop",
+          "sets": "7",
+          "rest": "30-45s",
+          "rpe": "10",
+          "tut": "Varies",
+          "load": "40-50% 1RM"
+        },
+        {
+          "id": "FST7-ST",
+          "name": "FST-7 Stretch",
+          "description": "Con énfasis en posición de estiramiento",
+          "reps": "10-12",
+          "sets": "7",
+          "rest": "30-45s",
+          "rpe": "8-9",
+          "tut": "Varies",
+          "load": "50-60% 1RM"
+        },
+        {
+          "id": "FST7-DL",
+          "name": "FST-7 Double",
+          "description": "Dos grupos con FST-7 en misma sesión",
+          "reps": "8-12",
+          "sets": "7+7",
+          "rest": "30-45s",
+          "rpe": "9",
+          "tut": "Varies"
+        },
+        {
+          "id": "FST7-HY",
+          "name": "FST-7 Híbrido",
+          "description": "Combinado con otra metodología",
+          "reps": "10-12",
+          "sets": "5-7",
+          "rest": "35-45s",
+          "rpe": "8-9",
+          "tut": "Varies"
+        }
+      ],
+      "compatibleWith": [
+        "Y3T",
+        "SST",
+        "MTUT"
+      ],
+      "incompatibleWith": [
+        "Heavy Duty"
+      ],
+      "warmup": {
+        "compounds": "Calentamiento normal",
+        "preFST": "1 set ligero (30%) x 15 reps",
+        "hydration": "Beber agua entre cada serie"
+      },
+      "deload": {
+        "frequency": "Cada 6-8 semanas",
+        "duration": "1 semana sin FST-7",
+        "alternative": "Reducir a 4 series"
+      },
+      "timerConfig": {
+        "betweenSets": {
+          "rest": 35,
+          "alertGo": true
+        },
+        "setCounter": {
+          "display": "1/7",
+          "finalAlert": "¡ÚLTIMA SERIE!"
+        },
+        "postFST": {
+          "rest": 180,
+          "suggestion": "Estirar grupo"
+        }
+      }
+    },
+    "RestPause": {
+      "id": "RP",
+      "name": "Rest-Pause System (Raúl Carrasco)",
+      "creator": "Raúl Carrasco",
+      "level": [
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "Micro-descansos para múltiples fallos en una serie extendida",
+      "sessionDuration": "45-60 min",
+      "frequency": "4-5 días/semana",
+      "volume": "Moderado",
+      "intensity": "Alta",
+      "requiresSpotter": false,
+      "protocols": [
+        {
+          "id": "RP-RC",
+          "name": "Rest-Pause Clásico Carrasco",
+          "description": "10-12 reps al fallo + 10-20s + 4-6 reps + 10-20s + 2-4 reps",
+          "reps": "16-22 total",
+          "sets": "1 serie extendida",
+          "rest": "10-20s micro",
+          "rpe": "10",
+          "tut": "90-120s",
+          "load": "70-80% 1RM",
+          "sequences": "2-3"
+        },
+        {
+          "id": "RP-EXT",
+          "name": "Rest-Pause Extendido",
+          "description": "4 secuencias para volumen extremo",
+          "reps": "22-30 total",
+          "sets": "1 serie extendida",
+          "rest": "15-20s micro",
+          "rpe": "10+",
+          "tut": "120-150s",
+          "load": "65-75% 1RM",
+          "sequences": "4"
+        },
+        {
+          "id": "RP-MYO",
+          "name": "Myo-Reps Style",
+          "description": "Set activación + mini-sets de 3-5 reps",
+          "reps": "12-15 + 4-5 mini",
+          "sets": "1 serie extendida",
+          "rest": "3-5 respiraciones",
+          "rpe": "9-10",
+          "tut": "60-90s",
+          "load": "70-80% 1RM"
+        },
+        {
+          "id": "RP-DS",
+          "name": "Rest-Pause + Drop Sets",
+          "description": "Rest-Pause seguido de drop set",
+          "reps": "10+4 + AMRAP",
+          "sets": "1 serie extendida",
+          "rest": "10s + 0s (drop)",
+          "rpe": "10+",
+          "tut": "120-180s",
+          "load": "75%→55% 1RM",
+          "dropPercent": "30%"
+        },
+        {
+          "id": "RP-NEG",
+          "name": "Rest-Pause Excéntrico",
+          "description": "Énfasis en fase excéntrica de 4 segundos",
+          "reps": "8+4-6",
+          "sets": "1 serie extendida",
+          "rest": "15s micro",
+          "rpe": "10",
+          "tut": "100-130s",
+          "load": "70-75% 1RM",
+          "tempo": "2-0-4"
+        },
+        {
+          "id": "RP-ISO",
+          "name": "Rest-Pause Isométrico",
+          "description": "Con holds isométricos en contracción máxima",
+          "reps": "8+4+2",
+          "sets": "1 serie extendida",
+          "rest": "10-15s micro",
+          "rpe": "10",
+          "tut": "80-100s",
+          "load": "65-70% 1RM",
+          "holdDuration": "3-5s"
+        }
+      ],
+      "compatibleWith": [
+        "Heavy Duty",
+        "Blood & Guts",
+        "DC Training"
+      ],
+      "incompatibleWith": [
+        "SST",
+        "GVT"
+      ],
+      "warmup": {
+        "set1": "30% x 15 reps",
+        "set2": "50% x 10 reps"
+      },
+      "deload": {
+        "frequency": "Cada 3-4 semanas",
+        "duration": "1 semana",
+        "intensity": "50%, sin RP",
+        "training": "3x10-12 normal"
+      },
+      "timerConfig": {
+        "microRest": {
+          "rest": 15,
+          "alertGo": true
+        },
+        "postSet": {
+          "rest": 150,
+          "alertAt": 30
+        },
+        "sequences": {
+          "count": 3,
+          "alertOnComplete": true
+        }
+      }
+    }
+  },
+  "cycles": {
+    "beginner": {
+      "name": "Principiante: Construcción de Base",
+      "duration": "12 semanas",
+      "weeks": [
+        {
+          "week": 1,
+          "methodology": "Y3T",
+          "phase": "W1"
+        },
+        {
+          "week": 2,
+          "methodology": "Y3T",
+          "phase": "W2"
+        },
+        {
+          "week": 3,
+          "methodology": "Y3T",
+          "phase": "W3"
+        },
+        {
+          "week": 4,
+          "methodology": "MTUT",
+          "phase": "TCE"
+        },
+        {
+          "week": 5,
+          "methodology": "MTUT",
+          "phase": "TEE"
+        },
+        {
+          "week": 6,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        },
+        {
+          "week": 7,
+          "methodology": "Y3T",
+          "phase": "W1"
+        },
+        {
+          "week": 8,
+          "methodology": "Y3T",
+          "phase": "W2"
+        },
+        {
+          "week": 9,
+          "methodology": "Y3T",
+          "phase": "W3"
+        },
+        {
+          "week": 10,
+          "methodology": "FST7",
+          "phase": "Classic"
+        },
+        {
+          "week": 11,
+          "methodology": "FST7",
+          "phase": "Classic"
+        },
+        {
+          "week": 12,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        }
+      ]
+    },
+    "intermediate": {
+      "name": "Intermedio: Masa y Definición",
+      "duration": "12 semanas",
+      "weeks": [
+        {
+          "week": 1,
+          "methodology": "Y3T",
+          "phase": "W1"
+        },
+        {
+          "week": 2,
+          "methodology": "Y3T",
+          "phase": "W2"
+        },
+        {
+          "week": 3,
+          "methodology": "Y3T",
+          "phase": "W3"
+        },
+        {
+          "week": 4,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        },
+        {
+          "week": 5,
+          "methodology": "SST",
+          "phase": "RIV"
+        },
+        {
+          "week": 6,
+          "methodology": "SST",
+          "phase": "CT"
+        },
+        {
+          "week": 7,
+          "methodology": "FST7",
+          "phase": "Classic"
+        },
+        {
+          "week": 8,
+          "methodology": "FST7",
+          "phase": "Burn"
+        },
+        {
+          "week": 9,
+          "methodology": "FST7",
+          "phase": "Stretch"
+        },
+        {
+          "week": 10,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        },
+        {
+          "week": 11,
+          "methodology": "MTUT",
+          "phase": "TCE"
+        },
+        {
+          "week": 12,
+          "methodology": "MTUT",
+          "phase": "TEE"
+        }
+      ]
+    },
+    "advanced": {
+      "name": "Avanzado: Máxima Intensidad",
+      "duration": "12 semanas",
+      "requiresSpotter": true,
+      "weeks": [
+        {
+          "week": 1,
+          "methodology": "HeavyDuty",
+          "phase": "SU"
+        },
+        {
+          "week": 2,
+          "methodology": "HeavyDuty",
+          "phase": "FR"
+        },
+        {
+          "week": 3,
+          "methodology": "HeavyDuty",
+          "phase": "NEG"
+        },
+        {
+          "week": 4,
+          "methodology": "HeavyDuty",
+          "phase": "RP"
+        },
+        {
+          "week": 5,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        },
+        {
+          "week": 6,
+          "methodology": "BloodAndGuts",
+          "phase": "DY"
+        },
+        {
+          "week": 7,
+          "methodology": "BloodAndGuts",
+          "phase": "FR"
+        },
+        {
+          "week": 8,
+          "methodology": "BloodAndGuts",
+          "phase": "DS"
+        },
+        {
+          "week": 9,
+          "methodology": "BloodAndGuts",
+          "phase": "NEG"
+        },
+        {
+          "week": 10,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        },
+        {
+          "week": 11,
+          "methodology": "Y3T",
+          "phase": "W1"
+        },
+        {
+          "week": 12,
+          "methodology": "Y3T",
+          "phase": "W2"
+        }
+      ]
+    },
+    "specialization": {
+      "name": "Especialización: Grupos Rezagados",
+      "duration": "12 semanas",
+      "weeks": [
+        {
+          "week": 1,
+          "methodology": "FST7",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 2,
+          "methodology": "FST7",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 3,
+          "methodology": "FST7",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 4,
+          "methodology": "FST7",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 5,
+          "methodology": "SST",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 6,
+          "methodology": "SST",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 7,
+          "methodology": "SST",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 8,
+          "methodology": "SST",
+          "phase": "WeakGroup"
+        },
+        {
+          "week": 9,
+          "methodology": "Y3T",
+          "phase": "W1"
+        },
+        {
+          "week": 10,
+          "methodology": "Y3T",
+          "phase": "W2"
+        },
+        {
+          "week": 11,
+          "methodology": "Y3T",
+          "phase": "W3"
+        },
+        {
+          "week": 12,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        }
+      ]
+    },
+    "hybrid": {
+      "name": "Híbrido: Máxima Variedad",
+      "duration": "8 semanas (repetible)",
+      "weeks": [
+        {
+          "week": 1,
+          "methodology": "Y3T",
+          "phase": "W1"
+        },
+        {
+          "week": 2,
+          "methodology": "MTUT",
+          "phase": "VE"
+        },
+        {
+          "week": 3,
+          "methodology": "SST",
+          "phase": "RIV"
+        },
+        {
+          "week": 4,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        },
+        {
+          "week": 5,
+          "methodology": "Y3T",
+          "phase": "W2"
+        },
+        {
+          "week": 6,
+          "methodology": "FST7",
+          "phase": "Classic"
+        },
+        {
+          "week": 7,
+          "methodology": "Y3T",
+          "phase": "W3"
+        },
+        {
+          "week": 8,
+          "methodology": "DELOAD",
+          "phase": "Recovery"
+        }
+      ]
+    }
+  },
+  "exercises": {
+    "byMethodology": {
+      "HeavyDuty": {
+        "ideal": [
+          "Press inclinado Hammer",
+          "Remo Hammer",
+          "Prensa 45°",
+          "Curl predicador",
+          "Press militar máquina"
+        ],
+        "avoid": [
+          "Cruces cable",
+          "Face pulls",
+          "Zancadas",
+          "Press Arnold"
+        ]
+      },
+      "BloodAndGuts": {
+        "ideal": [
+          "Remo Hammer",
+          "Jalón agarre neutro",
+          "Press inclinado Hammer",
+          "Prensa 45°",
+          "Curl predicador"
+        ],
+        "avoid": [
+          "Dominadas",
+          "Press barra plano",
+          "Sentadilla profunda",
+          "Curl barra recta"
+        ]
+      },
+      "MTUT": {
+        "ideal": [
+          "Pec deck",
+          "Remo cable",
+          "Pulldown",
+          "Extensiones",
+          "Curl cable"
+        ],
+        "avoid": [
+          "Press barra libre",
+          "Peso muerto",
+          "Dominadas",
+          "Press militar barra"
+        ]
+      },
+      "SST": {
+        "ideal": [
+          "Pec deck",
+          "Pulldown",
+          "Extensiones",
+          "Curl femoral",
+          "Elevaciones laterales máquina"
+        ],
+        "avoid": [
+          "Press barra",
+          "Peso muerto",
+          "Remo barra",
+          "Sentadilla libre"
+        ]
+      },
+      "FST7": {
+        "ideal": [
+          "Pec deck",
+          "Cruces cable",
+          "Pulldown",
+          "Extensiones",
+          "Curl cable",
+          "Elevaciones laterales cable"
+        ],
+        "avoid": [
+          "Press barra",
+          "Peso muerto",
+          "Remo barra",
+          "Sentadilla",
+          "Prensa pesada"
+        ]
+      }
+    }
+  },
+  "glossary": {
+    "TUT": "Time Under Tension - tiempo bajo tensión por serie",
+    "RPE": "Rate of Perceived Exertion - escala 1-10 de esfuerzo percibido",
+    "RIR": "Reps In Reserve - repeticiones que quedan en el tanque",
+    "Fallo": "Imposibilidad de completar una rep con técnica correcta",
+    "Deload": "Semana de reducción de intensidad/volumen para recuperación",
+    "Working Set": "Serie principal de trabajo con máxima intensidad",
+    "Forced Reps": "Repeticiones asistidas después del fallo muscular",
+    "Negativas": "Fase excéntrica con carga supramáxima",
+    "Rest-Pause": "Micro descansos dentro de una serie para extenderla",
+    "Pre-Exhaustion": "Técnica de fatigar primero con aislamiento",
+    "Drop Set": "Reducir peso y continuar sin descanso",
+    "Pump": "Congestión muscular por acumulación de sangre",
+    "Fascia": "Tejido conectivo que envuelve el músculo",
+    "Tempo": "Velocidad de ejecución (concéntrico-pausa-excéntrico)"
+  }
+}

@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>5/3/1 - Wendler</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #059669;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #22C55E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 10pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>5/3/1</h1>
+        <p class="subtitle">Wendler's Strength Program</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Sistema de progresión mensual basado en 4 movimientos básicos
+            con periodización ondulante que maximiza fuerza a largo plazo.</p>
+        <p class="author">Creador: Jim Wendler · Elite Powerlifter</p>
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 ATLETAS DESTACADOS
+                    5/3/1:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Jim Wendler (Creador, 1000lb Squat) ·
+                <strong>2.</strong> Dave Tate (EliteFTS) ·
+                <strong>3.</strong> Mark Bell (Super Training Gym) ·
+                <strong>4.</strong> Brian Shaw (Adaptación) ·
+                <strong>5.</strong> Louie Simmons (Influencia)
+            </p>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Progresión Mensual · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al 5/3/1</li>
+                <li><strong>2.</strong> Objetivos del 5/3/1</li>
+                <li><strong>3.</strong> Principios Básicos del 5/3/1</li>
+                <li class="sub">3.1 Training Max (TM)</li>
+                <li class="sub">3.2 Los 4 Movimientos Básicos</li>
+                <li class="sub">3.3 Ciclo de 4 Semanas</li>
+                <li class="sub">3.4 Set AMRAP (+)</li>
+                <li><strong>4.</strong> Métodos y Técnicas del 5/3/1</li>
+                <li class="sub">4.1 Semana 1: 5/5/5+</li>
+                <li class="sub">4.2 Semana 2: 3/3/3+</li>
+                <li class="sub">4.3 Semana 3: 5/3/1+</li>
+                <li class="sub">4.4 Semana 4: Deload</li>
+                <li class="sub">4.5 Templates de Asistencia (BBB, FSL, Joker)</li>
+                <li><strong>5.</strong> Estructura de una Sesión 5/3/1</li>
+                <li><strong>6.</strong> Periodización con 5/3/1</li>
+                <li><strong>7.</strong> Progresión en 5/3/1</li>
+                <li><strong>8.</strong> Nutrición y Suplementación</li>
+                <li><strong>9.</strong> Rutinas de los 4 Días</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al 5/3/1</h1>
+        <div class="highlight-box">
+            <strong>5/3/1</strong> es un sistema de entrenamiento creado por <strong>Jim Wendler</strong> basado en
+            progresión mensual usando el 90% del 1RM real como "Training Max" (TM), con ciclos de 4 semanas que rotan
+            entre rangos de 5, 3 y 1 repetición.
+        </div>
+        <p>El nombre "5/3/1" viene de las repeticiones target de las 3 primeras semanas: Semana 1 (5 reps), Semana 2 (3
+            reps), Semana 3 (1 rep). La última serie siempre es AMRAP (As Many Reps As Possible).</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">4</div>
+                <div class="label">Movimientos</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4</div>
+                <div class="label">Semanas/Ciclo</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">90%</div>
+                <div class="label">Training Max</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">+5/10</div>
+                <div class="label">kg/Mes</div>
+            </div>
+        </div>
+
+        <h3>Los 4 Movimientos del 5/3/1</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Movimiento Principal</th>
+                <th>Grupos Trabajados</th>
+            </tr>
+            <tr>
+                <td>Día 1</td>
+                <td>Press Militar</td>
+                <td>Hombros, Tríceps</td>
+            </tr>
+            <tr>
+                <td>Día 2</td>
+                <td>Peso Muerto</td>
+                <td>Espalda Baja, Isquios, Glúteos</td>
+            </tr>
+            <tr>
+                <td>Día 3</td>
+                <td>Press Banca</td>
+                <td>Pecho, Tríceps, Hombros</td>
+            </tr>
+            <tr>
+                <td>Día 4</td>
+                <td>Sentadilla</td>
+                <td>Cuádriceps, Glúteos, Core</td>
+            </tr>
+        </table>
+
+        <h1>2. Objetivos del 5/3/1</h1>
+        <ul>
+            <li><strong>Fuerza a Largo Plazo:</strong> Progresión lenta pero consistente</li>
+            <li><strong>Simplicidad:</strong> 1 movimiento principal por día</li>
+            <li><strong>Sostenibilidad:</strong> No agotar el SNC</li>
+            <li><strong>Flexibilidad:</strong> Múltiples templates de asistencia</li>
+            <li><strong>PRs Consistentes:</strong> Romper records en el set AMRAP</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del 5/3/1</h1>
+
+        <h2>3.1 Training Max (TM)</h2>
+        <div class="warning-box">
+            <strong>⚠️ REGLA FUNDAMENTAL:</strong>
+            <p>El Training Max (TM) es el 90% de tu 1RM real. TODOS los porcentajes se calculan sobre el TM, no sobre tu
+                1RM real.</p>
+            <p><strong>Ejemplo:</strong> Si tu 1RM de Sentadilla es 150kg, tu TM = 135kg</p>
+        </div>
+
+        <h2>3.2 Los 4 Movimientos Básicos</h2>
+        <ul>
+            <li><strong>Press Militar:</strong> Barra desde clavículas hasta overhead</li>
+            <li><strong>Peso Muerto:</strong> Convencional o Sumo</li>
+            <li><strong>Press Banca:</strong> Barra tocando pecho</li>
+            <li><strong>Sentadilla:</strong> Trasera, profundidad completa</li>
+        </ul>
+
+        <h2>3.3 Ciclo de 4 Semanas</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Set 1</th>
+                <th>Set 2</th>
+                <th>Set 3 (+)</th>
+            </tr>
+            <tr>
+                <td>Semana 1 (5s)</td>
+                <td>65% × 5</td>
+                <td>75% × 5</td>
+                <td>85% × 5+</td>
+            </tr>
+            <tr>
+                <td>Semana 2 (3s)</td>
+                <td>70% × 3</td>
+                <td>80% × 3</td>
+                <td>90% × 3+</td>
+            </tr>
+            <tr>
+                <td>Semana 3 (5/3/1)</td>
+                <td>75% × 5</td>
+                <td>85% × 3</td>
+                <td>95% × 1+</td>
+            </tr>
+            <tr>
+                <td>Semana 4 (Deload)</td>
+                <td>40% × 5</td>
+                <td>50% × 5</td>
+                <td>60% × 5</td>
+            </tr>
+        </table>
+
+        <h2>3.4 Set AMRAP (+)</h2>
+        <div class="success-box">
+            <strong>✅ El Set "+" es donde rompes PRs:</strong>
+            <ul>
+                <li>Haz TANTAS reps como puedas con buena técnica</li>
+                <li>Deja 1-2 reps en reserva (no fallar)</li>
+                <li>Registra tus reps para seguir progreso</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del 5/3/1</h1>
+
+        <h2>4.1 Semana 1: 5/5/5+</h2>
+        <div class="code-block">SEMANA 1 - "5s Week"
+            Set 1: 65% TM × 5 reps
+            Set 2: 75% TM × 5 reps
+            Set 3: 85% TM × 5+ reps (AMRAP)
+
+            EJEMPLO (TM = 135kg Sentadilla):
+            Set 1: 88kg × 5
+            Set 2: 101kg × 5
+            Set 3: 115kg × 5+ (target: 8-10 reps)</div>
+
+        <h2>4.2 Semana 2: 3/3/3+</h2>
+        <div class="code-block">SEMANA 2 - "3s Week"
+            Set 1: 70% TM × 3 reps
+            Set 2: 80% TM × 3 reps
+            Set 3: 90% TM × 3+ reps (AMRAP)
+
+            EJEMPLO (TM = 135kg):
+            Set 1: 95kg × 3
+            Set 2: 108kg × 3
+            Set 3: 122kg × 3+ (target: 5-7 reps)</div>
+
+        <h2>4.3 Semana 3: 5/3/1+</h2>
+        <div class="code-block">SEMANA 3 - "5/3/1 Week"
+            Set 1: 75% TM × 5 reps
+            Set 2: 85% TM × 3 reps
+            Set 3: 95% TM × 1+ reps (AMRAP)
+
+            EJEMPLO (TM = 135kg):
+            Set 1: 101kg × 5
+            Set 2: 115kg × 3
+            Set 3: 128kg × 1+ (target: 3-5 reps)</div>
+
+        <h2>4.4 Semana 4: Deload</h2>
+        <div class="code-block">SEMANA 4 - Deload
+            Set 1: 40% TM × 5 reps
+            Set 2: 50% TM × 5 reps
+            Set 3: 60% TM × 5 reps
+
+            Sin asistencia pesada, enfoque en recuperación.</div>
+
+        <h2>4.5 Templates de Asistencia</h2>
+        <div class="method-card">
+            <h4>BBB (Boring But Big)</h4>
+            <div class="code-block">Después de 5/3/1:
+                5×10 @ 50-60% TM del movimiento principal
+
+                EJEMPLO Día Sentadilla:
+                Sentadilla 5/3/1
+                Sentadilla 5×10 @ 50%
+                Curl Femoral 3×10
+                Abs 3×15</div>
+        </div>
+
+        <div class="method-card">
+            <h4>FSL (First Set Last)</h4>
+            <div class="code-block">Después de 5/3/1:
+                Repite el primer set × 5 series
+
+                EJEMPLO Semana 1:
+                Peso Muerto 65%×5, 75%×5, 85%×5+
+                FSL: 65% × 5 × 5 (5 series de 5 reps)</div>
+        </div>
+
+        <h2>4.6 Compatibilidad con Otras Metodologías</h2>
+        <div class="success-box">
+            <strong>✅ Compatible con:</strong>
+            <ul>
+                <li><strong>DUP (fase fuerza):</strong> 5/3/1 puede ser el componente de fuerza en DUP</li>
+                <li><strong>Y3T Semana 1:</strong> Similar enfoque de cargas pesadas</li>
+                <li><strong>GVT (en deload):</strong> GVT como asistencia en semanas 5/3/1</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ Incompatible con:</strong>
+            <ul>
+                <li><strong>Heavy Duty:</strong> Filosofía de al fallo contradice progresión 5/3/1</li>
+                <li><strong>DC Training:</strong> Demasiada intensidad combinada</li>
+                <li><strong>SST fases intensas:</strong> Estrés metabólico extremo interfiere con progresión de fuerza
+                </li>
+            </ul>
+        </div>
+
+        <h2>4.7 Cuándo Usar 5/3/1</h2>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar 5/3/1 cuando:</strong>
+            <ul>
+                <li>Tienes 1+ años de experiencia con movimientos básicos</li>
+                <li>Quieres progreso constante a largo plazo (años)</li>
+                <li>Valoras la simplicidad sobre la complejidad</li>
+                <li>Puedes entrenar 3-4 días por semana</li>
+                <li>Tienes paciencia para progresión mensual</li>
+                <li>Quieres un sistema que funcione para siempre</li>
+                <li>Buscas fuerza como objetivo principal</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar 5/3/1 cuando:</strong>
+            <ul>
+                <li><strong>Principiante total:</strong> Usa programas lineales primero (Starting Strength)</li>
+                <li><strong>Solo buscas hipertrofia:</strong> Mejor usar GVT, SST, o Y3T</li>
+                <li><strong>Competición próxima:</strong> 5/3/1 es muy conservador para peaking</li>
+                <li><strong>Impaciencia:</strong> Progresión mensual puede frustrar</li>
+                <li><strong>Sin acceso a pesas libres:</strong> Los 4 movimientos requieren barras</li>
+            </ul>
+        </div>
+
+        <h2>4.8 Limitantes del Sistema 5/3/1</h2>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Progresión muy lenta para principiantes</li>
+                <li>Puede sentirse aburrido (mismo esquema mes tras mes)</li>
+                <li>No óptimo para hipertrofia máxima</li>
+                <li>Requiere conocer tu 1RM real</li>
+                <li>La semana deload puede sentirse innecesaria</li>
+                <li>No hay variación de ejercicios principales</li>
+            </ul>
+        </div>
+
+        <h2>4.9 Ejemplo: Sentadilla en Ciclo Completo 5/3/1</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Set 1</th>
+                <th>Set 2</th>
+                <th>Set 3 (+)</th>
+                <th>TM = 135kg</th>
+            </tr>
+            <tr>
+                <td>1 (5s)</td>
+                <td>65% × 5</td>
+                <td>75% × 5</td>
+                <td>85% × 5+</td>
+                <td>88kg, 101kg, 115kg</td>
+            </tr>
+            <tr>
+                <td>2 (3s)</td>
+                <td>70% × 3</td>
+                <td>80% × 3</td>
+                <td>90% × 3+</td>
+                <td>95kg, 108kg, 122kg</td>
+            </tr>
+            <tr>
+                <td>3 (5/3/1)</td>
+                <td>75% × 5</td>
+                <td>85% × 3</td>
+                <td>95% × 1+</td>
+                <td>101kg, 115kg, 128kg</td>
+            </tr>
+            <tr>
+                <td>4 (Deload)</td>
+                <td>40% × 5</td>
+                <td>50% × 5</td>
+                <td>60% × 5</td>
+                <td>54kg, 68kg, 81kg</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>Después del ciclo:</strong> TM sube a 140kg (+5kg). Repite el ciclo con nuevos pesos.
+        </div>
+
+        <h1 class="page-break">5. Estructura de una Sesión 5/3/1</h1>
+
+        <h2>5.1 Calentamiento</h2>
+        <div class="code-block">CALENTAMIENTO 5/3/1:
+            1. Cardio ligero: 5 min
+            2. Movilidad: 5 min
+            3. Series de aproximación:
+            - 40% × 5
+            - 50% × 5
+            - 60% × 3
+            4. Iniciar sets de trabajo</div>
+
+        <h2>5.2 Sets Principales (5/3/1)</h2>
+        <ul>
+            <li>3 sets de trabajo según la semana</li>
+            <li>Último set siempre AMRAP</li>
+            <li>Descanso: 3-5 minutos entre sets</li>
+        </ul>
+
+        <h2>5.3 Trabajo de Asistencia</h2>
+        <ul>
+            <li><strong>Push:</strong> 50-100 reps (dips, press mancuernas)</li>
+            <li><strong>Pull:</strong> 50-100 reps (dominadas, remos)</li>
+            <li><strong>Single Leg/Core:</strong> 50-100 reps (lunges, abs)</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con 5/3/1</h1>
+
+        <h2>6.1 Ciclo Mensual</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Enfoque</th>
+                <th>%TM</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Volumen (5s)</td>
+                <td>65-85%</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Intensidad (3s)</td>
+                <td>70-90%</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Peak (5/3/1)</td>
+                <td>75-95%</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Deload</td>
+                <td>40-60%</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Progresión Mensual</h2>
+        <div class="highlight-box">
+            <strong>Después de cada ciclo de 4 semanas:</strong>
+            <ul>
+                <li><strong>Upper Body (Press):</strong> +2.5kg al TM</li>
+                <li><strong>Lower Body (Squat/DL):</strong> +5kg al TM</li>
+            </ul>
+        </div>
+
+        <h2>6.3 Variantes de Ciclo</h2>
+        <table>
+            <tr>
+                <th>Variante</th>
+                <th>Estructura</th>
+                <th>Para Quién</th>
+            </tr>
+            <tr>
+                <td>Clásico</td>
+                <td>3 semanas + 1 deload</td>
+                <td>Estándar, todos</td>
+            </tr>
+            <tr>
+                <td>5/3/1 Forever</td>
+                <td>2 ciclos + 1 semana 7th week protocol</td>
+                <td>Intermedios-Avanzados</td>
+            </tr>
+            <tr>
+                <td>5/3/1 FSL</td>
+                <td>5/3/1 + First Set Last 5×5</td>
+                <td>Más volumen</td>
+            </tr>
+            <tr>
+                <td>5/3/1 BBB</td>
+                <td>5/3/1 + Boring But Big 5×10</td>
+                <td>Hipertrofia</td>
+            </tr>
+        </table>
+
+        <h2>6.4 Macrociclos Anuales</h2>
+        <div class="highlight-box">
+            <strong>Plan Anual 5/3/1:</strong>
+        </div>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Meses</th>
+                <th>Template</th>
+                <th>Objetivo</th>
+            </tr>
+            <tr>
+                <td>Acumulación</td>
+                <td>1-4</td>
+                <td>5/3/1 BBB</td>
+                <td>Construir músculo base</td>
+            </tr>
+            <tr>
+                <td>Intensificación</td>
+                <td>5-8</td>
+                <td>5/3/1 FSL</td>
+                <td>Consolidar fuerza</td>
+            </tr>
+            <tr>
+                <td>Realización</td>
+                <td>9-12</td>
+                <td>5/3/1 Joker Sets</td>
+                <td>Peak de fuerza</td>
+            </tr>
+        </table>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>La duración óptima del mesociclo 5/3/1 varía según el nivel de experiencia del atleta, basándose en evidencia
+            científica sobre capacidad de recuperación y ritmo de progresión:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (1-2 años)</td>
+                <td>6-8 semanas (2 ciclos)</td>
+                <td>Mayor capacidad de recuperación, progresión más agresiva posible</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas (1-1.5 ciclos)</td>
+                <td>Balance óptimo entre progresión y recuperación del SNC</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>4 semanas (1 ciclo)</td>
+                <td>Progresión más lenta, deload más frecuente, usar 7th Week Protocol</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación 5/3/1:</strong> La aplicación NEXUS adapta automáticamente las opciones de duración
+            según tu nivel. 5/3/1 es único porque su ciclo base ya incluye deload integrado (Semana 4).
+        </div>
+
+        <h2>6.6 Estructuras por Nivel de Intensidad</h2>
+        <table>
+            <tr>
+                <th>Split</th>
+                <th>Días/Semana</th>
+                <th>Frecuencia</th>
+                <th>Nivel Recomendado</th>
+                <th>Uso Ideal</th>
+            </tr>
+            <tr>
+                <td>4 Días (Clásico)</td>
+                <td>4</td>
+                <td>1x/semana por lift</td>
+                <td>Todos</td>
+                <td>Estructura original Wendler</td>
+            </tr>
+            <tr>
+                <td>3 Días Full Body</td>
+                <td>3</td>
+                <td>3x/semana</td>
+                <td>Principiante-Intermedio</td>
+                <td>Menos tiempo, más frecuencia</td>
+            </tr>
+            <tr>
+                <td>2 Días (Time Crunch)</td>
+                <td>2</td>
+                <td>2x/semana</td>
+                <td>Cualquiera con poco tiempo</td>
+                <td>Mínimo viable</td>
+            </tr>
+        </table>
+
+        <h1>7. Progresión en 5/3/1</h1>
+
+        <h2>7.1 Progresión de TM</h2>
+        <div class="success-box">
+            <strong>✅ Regla de Oro:</strong>
+            <p>"Start light, progress slow." La progresión lenta de 5-10kg/mes se acumula a 60-120kg/año.</p>
+        </div>
+        <table>
+            <tr>
+                <th>Movimiento</th>
+                <th>Incremento Mensual</th>
+                <th>Incremento Anual</th>
+            </tr>
+            <tr>
+                <td>Press Militar</td>
+                <td>+2.5 kg</td>
+                <td>+30 kg</td>
+            </tr>
+            <tr>
+                <td>Press Banca</td>
+                <td>+2.5 kg</td>
+                <td>+30 kg</td>
+            </tr>
+            <tr>
+                <td>Sentadilla</td>
+                <td>+5 kg</td>
+                <td>+60 kg</td>
+            </tr>
+            <tr>
+                <td>Peso Muerto</td>
+                <td>+5 kg</td>
+                <td>+60 kg</td>
+            </tr>
+        </table>
+
+        <h2>7.2 Ajustes del TM</h2>
+        <div class="warning-box">
+            <strong>⚠️ Cuándo ajustar el TM:</strong>
+            <ul>
+                <li><strong>Reducir 10%:</strong> Si fallas las reps mínimas en el AMRAP</li>
+                <li><strong>Reducir 10%:</strong> Si la técnica se degrada significativamente</li>
+                <li><strong>Mantener:</strong> Si apenas alcanzas las reps mínimas</li>
+                <li><strong>Considerar reset:</strong> Después de 6-12 meses continuos</li>
+            </ul>
+        </div>
+
+        <h2>7.3 Progresión a Largo Plazo</h2>
+        <table>
+            <tr>
+                <th>Años</th>
+                <th>Posible Incremento 1RM</th>
+                <th>Ejemplo Sentadilla</th>
+            </tr>
+            <tr>
+                <td>Año 1</td>
+                <td>+40-60 kg</td>
+                <td>100 → 150 kg</td>
+            </tr>
+            <tr>
+                <td>Año 2</td>
+                <td>+20-40 kg</td>
+                <td>150 → 180 kg</td>
+            </tr>
+            <tr>
+                <td>Año 3+</td>
+                <td>+10-20 kg</td>
+                <td>180 → 200 kg</td>
+            </tr>
+        </table>
+        <div class="success-box">
+            <strong>✅ La paciencia se recompensa:</strong>
+            <p>Un atleta que sigue 5/3/1 consistentemente durante 3 años puede añadir 70-100kg a su Sentadilla y 40-60kg
+                a su Banca.</p>
+        </div>
+
+        <h1 class="page-break">8. Nutrición y Suplementación</h1>
+
+        <h2>8.1 Requerimientos</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.0 g/kg</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>3-5 g/kg</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1 g/kg</td>
+            </tr>
+        </table>
+
+        <h2>8.2 Suplementación</h2>
+        <ul>
+            <li><strong>Creatina:</strong> 5g diarios</li>
+            <li><strong>Proteína Whey:</strong> Para completar requerimientos</li>
+            <li><strong>Vitamina D:</strong> Especialmente en invierno</li>
+        </ul>
+
+        <h1 class="page-break">9. Rutinas de los 4 Días</h1>
+
+        <div class="highlight-box">
+            <strong>📋 PARÁMETROS 5/3/1 ESTÁNDAR:</strong>
+            <ul>
+                <li><strong>5/3/1 Principal:</strong> 3 sets de trabajo según semana (5s, 3s, 5/3/1)</li>
+                <li><strong>BBB (Boring But Big):</strong> 5×10 @ 50-60% TM</li>
+                <li><strong>FSL (First Set Last):</strong> 5×5 @ peso del primer set</li>
+                <li><strong>Asistencia:</strong> 50-100 reps por categoría (Push/Pull/Legs)</li>
+            </ul>
+        </div>
+
+        <h2>9.1 Día 1: Press Militar</h2>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Sets×Reps</th>
+                <th>%TM</th>
+                <th>Descanso</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Press Militar (5/3/1)</td>
+                <td>3 sets</td>
+                <td>Según semana</td>
+                <td>3-5 min</td>
+                <td>Último set AMRAP</td>
+            </tr>
+            <tr>
+                <td>Press Militar (BBB)</td>
+                <td>5×10</td>
+                <td>50%</td>
+                <td>90s</td>
+                <td>Volumen adicional</td>
+            </tr>
+            <tr>
+                <td>Dominadas</td>
+                <td>5×10</td>
+                <td>BW</td>
+                <td>90s</td>
+                <td>Asistencia Pull</td>
+            </tr>
+            <tr>
+                <td>Face Pulls</td>
+                <td>3×15</td>
+                <td>Ligero</td>
+                <td>60s</td>
+                <td>Salud hombros</td>
+            </tr>
+            <tr>
+                <td>Ab Wheel</td>
+                <td>3×15</td>
+                <td>BW</td>
+                <td>60s</td>
+                <td>Core</td>
+            </tr>
+        </table>
+        <div class="method-card">
+            <h4>Sesión Completa Día 1</h4>
+            <div class="code-block">CALENTAMIENTO:
+                - Cardio ligero: 5 min
+                - Movilidad hombros: 5 min
+                - Aproximación: 40%×5, 50%×5, 60%×3
+
+                5/3/1 PRESS MILITAR (Ejemplo Semana 1):
+                Set 1: 65% TM × 5
+                Set 2: 75% TM × 5
+                Set 3: 85% TM × 5+ (AMRAP)
+
+                BBB:
+                Press Militar: 5×10 @ 50% TM, descanso 90s
+
+                ASISTENCIA:
+                Dominadas: 5×10
+                Face Pulls: 3×15
+                Ab Wheel: 3×15
+
+                DURACIÓN TOTAL: ~50 minutos</div>
+        </div>
+
+        <h2>9.2 Día 2: Peso Muerto</h2>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Sets×Reps</th>
+                <th>%TM</th>
+                <th>Descanso</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Peso Muerto (5/3/1)</td>
+                <td>3 sets</td>
+                <td>Según semana</td>
+                <td>4-5 min</td>
+                <td>Último set AMRAP</td>
+            </tr>
+            <tr>
+                <td>Peso Muerto (BBB)</td>
+                <td>5×10</td>
+                <td>50%</td>
+                <td>2 min</td>
+                <td>Volumen adicional</td>
+            </tr>
+            <tr>
+                <td>Curl Femoral</td>
+                <td>3×10</td>
+                <td>Moderado</td>
+                <td>60s</td>
+                <td>Asistencia Legs</td>
+            </tr>
+            <tr>
+                <td>Good Mornings</td>
+                <td>3×10</td>
+                <td>Ligero</td>
+                <td>60s</td>
+                <td>Cadena posterior</td>
+            </tr>
+            <tr>
+                <td>Planchas</td>
+                <td>3×60s</td>
+                <td>BW</td>
+                <td>60s</td>
+                <td>Core</td>
+            </tr>
+        </table>
+        <div class="method-card">
+            <h4>Sesión Completa Día 2</h4>
+            <div class="code-block">5/3/1 PESO MUERTO (Ejemplo Semana 2):
+                Set 1: 70% TM × 3
+                Set 2: 80% TM × 3
+                Set 3: 90% TM × 3+ (AMRAP)
+
+                BBB:
+                Peso Muerto: 5×10 @ 50% TM, descanso 2 min
+                ⚠️ Mantener espalda neutral
+
+                ASISTENCIA:
+                Curl Femoral: 3×10
+                Good Mornings: 3×10
+                Planchas: 3×60s
+
+                DURACIÓN TOTAL: ~55 minutos</div>
+        </div>
+
+        <h2>9.3 Día 3: Press Banca</h2>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Sets×Reps</th>
+                <th>%TM</th>
+                <th>Descanso</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Press Banca (5/3/1)</td>
+                <td>3 sets</td>
+                <td>Según semana</td>
+                <td>3-4 min</td>
+                <td>Último set AMRAP</td>
+            </tr>
+            <tr>
+                <td>Press Banca (BBB)</td>
+                <td>5×10</td>
+                <td>50%</td>
+                <td>90s</td>
+                <td>Volumen adicional</td>
+            </tr>
+            <tr>
+                <td>Remo Barra</td>
+                <td>5×10</td>
+                <td>Moderado</td>
+                <td>90s</td>
+                <td>Asistencia Pull</td>
+            </tr>
+            <tr>
+                <td>Dips</td>
+                <td>3×10</td>
+                <td>BW</td>
+                <td>60s</td>
+                <td>Asistencia Push</td>
+            </tr>
+            <tr>
+                <td>Curl Bíceps</td>
+                <td>3×12</td>
+                <td>Ligero</td>
+                <td>60s</td>
+                <td>Asistencia Pull</td>
+            </tr>
+        </table>
+
+        <h2>9.4 Día 4: Sentadilla</h2>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Sets×Reps</th>
+                <th>%TM</th>
+                <th>Descanso</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Sentadilla (5/3/1)</td>
+                <td>3 sets</td>
+                <td>Según semana</td>
+                <td>4-5 min</td>
+                <td>Último set AMRAP</td>
+            </tr>
+            <tr>
+                <td>Sentadilla (BBB)</td>
+                <td>5×10</td>
+                <td>50%</td>
+                <td>2 min</td>
+                <td>Volumen adicional</td>
+            </tr>
+            <tr>
+                <td>Leg Press</td>
+                <td>3×12</td>
+                <td>Moderado</td>
+                <td>90s</td>
+                <td>Asistencia Legs</td>
+            </tr>
+            <tr>
+                <td>Lunges</td>
+                <td>3×10/pierna</td>
+                <td>BW o ligero</td>
+                <td>60s</td>
+                <td>Asistencia Legs</td>
+            </tr>
+            <tr>
+                <td>Leg Raises</td>
+                <td>3×15</td>
+                <td>BW</td>
+                <td>60s</td>
+                <td>Core</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">9.5 Templates Alternativos</h2>
+
+        <h3>Template FSL (First Set Last)</h3>
+        <div class="code-block">ESTRUCTURA FSL:
+            Día Sentadilla:
+            - 5/3/1 Sentadilla
+            - FSL: 5×5 @ peso del primer set (65%/70%/75% según semana)
+            - Asistencia: 50-100 reps
+
+            FSL es mejor que BBB para fuerza, BBB es mejor para hipertrofia.</div>
+
+        <h3>Template Joker Sets</h3>
+        <div class="code-block">JOKER SETS (Días de "feeling good"):
+            Después del set AMRAP, si te sientes fuerte:
+            - Joker 1: +5% × 3-5 reps
+            - Joker 2: +5% adicional × 1-3 reps
+
+            ⚠️ SOLO usar cuando te sientas excepcionalmente bien.
+            No más de 1-2 Joker sets.</div>
+
+        <h3>Template Triumvirate (Simplificado)</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Principal</th>
+                <th>Asistencia 1</th>
+                <th>Asistencia 2</th>
+            </tr>
+            <tr>
+                <td>Press Militar</td>
+                <td>5/3/1</td>
+                <td>Dips 5×15</td>
+                <td>Dominadas 5×10</td>
+            </tr>
+            <tr>
+                <td>Peso Muerto</td>
+                <td>5/3/1</td>
+                <td>Good Morning 5×12</td>
+                <td>Hanging Leg Raise 5×15</td>
+            </tr>
+            <tr>
+                <td>Press Banca</td>
+                <td>5/3/1</td>
+                <td>DB Press 5×15</td>
+                <td>DB Row 5×10</td>
+            </tr>
+            <tr>
+                <td>Sentadilla</td>
+                <td>5/3/1</td>
+                <td>Leg Press 5×15</td>
+                <td>Leg Curl 5×10</td>
+            </tr>
+        </table>
+
+        <h2>9.6 Divisiones Semanales 5/3/1</h2>
+
+        <h3>Opción A: 4 Días (Clásico)</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Movimiento</th>
+                <th>Template</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Press Militar</td>
+                <td>5/3/1 + BBB</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Peso Muerto</td>
+                <td>5/3/1 + BBB</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Descanso</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Press Banca</td>
+                <td>5/3/1 + BBB</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Sentadilla</td>
+                <td>5/3/1 + BBB</td>
+            </tr>
+        </table>
+
+        <h3>Opción B: 3 Días (Ocupados)</h3>
+        <div class="code-block">SEMANA 1: PM + DL / Banca + SQ / PM + DL
+            SEMANA 2: Banca + SQ / PM + DL / Banca + SQ
+            (Alternar, cada movimiento 1.5x/semana en promedio)</div>
+
+        <h2>9.7 Tabla Resumen de Parámetros 5/3/1</h2>
+        <table>
+            <tr>
+                <th>Parámetro</th>
+                <th>Semana 1 (5s)</th>
+                <th>Semana 2 (3s)</th>
+                <th>Semana 3 (5/3/1)</th>
+                <th>Semana 4 (Deload)</th>
+            </tr>
+            <tr>
+                <td>Set 1</td>
+                <td>65% × 5</td>
+                <td>70% × 3</td>
+                <td>75% × 5</td>
+                <td>40% × 5</td>
+            </tr>
+            <tr>
+                <td>Set 2</td>
+                <td>75% × 5</td>
+                <td>80% × 3</td>
+                <td>85% × 3</td>
+                <td>50% × 5</td>
+            </tr>
+            <tr>
+                <td>Set 3 (+)</td>
+                <td>85% × 5+</td>
+                <td>90% × 3+</td>
+                <td>95% × 1+</td>
+                <td>60% × 5</td>
+            </tr>
+            <tr>
+                <td>BBB</td>
+                <td>5×10 @ 50%</td>
+                <td>5×10 @ 50%</td>
+                <td>5×10 @ 50%</td>
+                <td>Ninguno</td>
+            </tr>
+            <tr>
+                <td>RPE Target</td>
+                <td>7-8</td>
+                <td>8-9</td>
+                <td>9-10</td>
+                <td>5-6</td>
+            </tr>
+            <tr>
+                <td>Descanso 5/3/1</td>
+                <td>3-4 min</td>
+                <td>3-5 min</td>
+                <td>4-5 min</td>
+                <td>2-3 min</td>
+            </tr>
+            <tr>
+                <td>Descanso BBB</td>
+                <td>90s-2 min</td>
+                <td>90s-2 min</td>
+                <td>90s-2 min</td>
+                <td>-</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <ul>
+            <li>Si el AMRAP se siente imposible, termina con técnica limpia</li>
+            <li>Si la barra se mueve lenta, no fuerces más reps</li>
+        </ul>
+
+        <h2>10.2 Recuperación</h2>
+        <div class="warning-box">
+            <strong>⚠️ El Deload es OBLIGATORIO:</strong>
+            <p>Semana 4 es para recuperar. No la saltes.</p>
+        </div>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li>Nunca sacrificar técnica por PRs</li>
+            <li>El TM al 90% mantiene un buffer de seguridad</li>
+            <li>Si hay dolor, reduce TM inmediatamente</li>
+        </ul>
+
+        <h2 class="page-break">10.4 Especialización de Grupos Débiles</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con 5/3/1</strong>
+            <p>Wendler recomienda usar el "Beach Work" para grupos débiles. Aumenta frecuencia y volumen
+                sin afectar los 4 levantamientos principales.</p>
+        </div>
+
+        <h3>Estrategia 5/3/1 para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Series Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Técnica Recomendada</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+3-4 series</td>
+                <td>3x/semana</td>
+                <td>Añadir al trabajo asistencia</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+6-8 series</td>
+                <td>4x/semana</td>
+                <td>Grupo prioritario cada sesión 5/3/1</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+9-12 series</td>
+                <td>5-6x/semana</td>
+                <td>Protocolo "50-100 reps" dedicado</td>
+            </tr>
+        </table>
+
+        <h3>Grupos Comunes a Priorizar</h3>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Añadir a Asistencia</th>
+                <th>Sets × Reps</th>
+                <th>Cuándo</th>
+            </tr>
+            <tr>
+                <td>Pantorrillas</td>
+                <td>Elevaciones gemelo</td>
+                <td>4×15-20</td>
+                <td>Cada día de 5/3/1</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>Curls variados</td>
+                <td>4×10-15</td>
+                <td>Días Upper + Extra</td>
+            </tr>
+            <tr>
+                <td>Deltoides Posterior</td>
+                <td>Face Pulls, Pájaros</td>
+                <td>3×15-20</td>
+                <td>Cada sesión</td>
+            </tr>
+            <tr>
+                <td>Trapecios</td>
+                <td>Shrugs, Farmer's Walk</td>
+                <td>3×12-15</td>
+                <td>Días Deadlift</td>
+            </tr>
+        </table>
+
+        <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS CON 5/3/1
+
+            FRECUENCIA: Al inicio de CADA sesión (4x/semana)
+            DURACIÓN: 8-10 minutos extra por sesión
+
+            PROTOCOLO:
+            1. Pre-5/3/1: Elevaciones gemelo sentado 2×20 @ ligero
+            2. Post-5/3/1: Elevaciones gemelo de pie 3×12-15
+            3. Total semanal: 16-20 series dedicadas
+
+            RESULTADO ESPERADO: 8-12 semanas para desarrollo proporcional</div>
+
+        <h3>Reglas de Especialización 5/3/1</h3>
+        <div class="warning-box">
+            <strong>⚠️ Reglas Importantes (Wendler):</strong>
+            <ul>
+                <li><strong>No afectar principales:</strong> Los 4 levantamientos principales nunca se modifican</li>
+                <li><strong>Grupo prioritario PRIMERO:</strong> Antes de la asistencia regular</li>
+                <li><strong>Máximo 1-2 grupos:</strong> No sobrecargar el sistema</li>
+                <li><strong>Deload incluido:</strong> Reducir volumen prioritario en semana 4</li>
+            </ul>
+        </div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <strong>5/3/1</strong> es el sistema perfecto para quienes buscan progreso a largo plazo sin agotarse. Su
+            simplicidad (4 movimientos, progresión mensual) lo hace sostenible durante años. La clave está en ser
+            paciente y confiar en el proceso.
+        </div>
+
+        <div
+            style="margin-top: 40px; padding: 20px; border-top: 2px solid #ddd; text-align: center; font-size: 12px; color: #999;">
+            <p><strong>NEXUS - 10 Metodologías de Hipertrofia v3.1</strong></p>
+            <p>Y3T • Heavy Duty • Blood & Guts • MTUT • SST • FST-7 • GVT • DUP • 5/3/1 • DC Training</p>
+        </div>
+    </div>
+
+    <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Duración del Ciclo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Principiante (1‑2 años)</td>
+                <td>6‑8 semanas</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2‑5 años)</td>
+                <td>4‑6 semanas</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>3‑4 semanas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Estructura</th>
+                <th>Días por semana</th>
+                <th>Nivel recomendado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio‑Avanzado</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5‑6</td>
+                <td>Avanzado</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

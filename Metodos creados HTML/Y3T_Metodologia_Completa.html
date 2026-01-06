@@ -1,0 +1,2043 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Y3T - Yoda 3 Training</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #8B5CF6;
+            --secondary: #A855F7;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .tempo-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tempo-badge.week1 {
+            background: #DC2626;
+            color: white;
+        }
+
+        .tempo-badge.week2 {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .tempo-badge.week3 {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .use-when {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .use-when>div {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .use-when>div:first-child {
+            background: #F3E8FF;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .y3t-visual {
+            display: flex;
+            justify-content: space-around;
+            background: #1E293B;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .y3t-week {
+            flex: 1;
+            padding: 15px;
+            min-width: 120px;
+            border-right: 1px solid #374151;
+        }
+
+        .y3t-week:last-child {
+            border-right: none;
+        }
+
+        .y3t-week .number {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .y3t-week .label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .y3t-week.w1 .number {
+            color: #EF4444;
+        }
+
+        .y3t-week.w2 .number {
+            color: #F59E0B;
+        }
+
+        .y3t-week.w3 .number {
+            color: #8B5CF6;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>Y3T</h1>
+        <p class="subtitle">Yoda 3 Training</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Sistema de entrenamiento de 3 semanas rotativas desarrollado por
+            Neil "Yoda" Hill para estimular todas las fibras musculares y maximizar hipertrofia completa.</p>
+        <p class="author">Creador: Neil "Yoda" Hill · UK Bodybuilding Coach</p>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 10 ATLETAS DESTACADOS
+                    Y3T:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Flex Lewis (7x 212 Olympia) ·
+                <strong>2.</strong> William Bonac (Arnold Classic) ·
+                <strong>3.</strong> James "Flex" Lewis (UK Champion) ·
+                <strong>4.</strong> Nathan De Asha (IFBB Pro) ·
+                <strong>5.</strong> Ryan Terry (Men's Physique Olympia) ·
+                <strong>6.</strong> Zack Khan (IFBB Pro, UK) ·
+                <strong>7.</strong> James Hollingshead (IFBB Pro) ·
+                <strong>8.</strong> Marc Sheridan (IFBB Pro) ·
+                <strong>9.</strong> Tom Sheridan (IFBB Pro) ·
+                <strong>10.</strong> Ben Pakulski (IFBB Pro, MI40)
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Sistema de 3 Semanas Rotativas · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al Y3T</li>
+                <li><strong>2.</strong> Objetivos del Y3T</li>
+                <li><strong>3.</strong> Principios Básicos del Y3T</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT)</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en Y3T</li>
+                <li><strong>4.</strong> Métodos y Técnicas del Y3T</li>
+                <li class="sub">4.1 Semana 1: Pesado (Heavy Week)</li>
+                <li class="sub">4.2 Semana 2: Moderado (Moderate Week)</li>
+                <li class="sub">4.3 Semana 3: Annihilation (Total Destruction)</li>
+                <li class="sub">4.4 Técnicas de Intensificación Y3T</li>
+                <li class="sub">4.5 Control del Tempo y Negativas</li>
+                <li class="sub">4.6 RPE en Y3T</li>
+                <li class="sub">4.7 Compatibilidad con Otras Metodologías</li>
+                <li class="sub">4.8 Ejercicios Ideales por Semana</li>
+                <li class="sub">4.9 Ejemplo: Rutina Pecho en las 3 Semanas</li>
+                <li><strong>5.</strong> Estructura de una Sesión Y3T</li>
+                <li class="sub">5.1 Calentamiento y Series de Aproximación</li>
+                <li class="sub">5.2 Ejercicios Principales (Y3T Core)</li>
+                <li class="sub">5.3 Ejercicios Accesorios</li>
+                <li class="sub">5.4 Enfriamiento y Estiramiento</li>
+                <li><strong>6.</strong> Periodización con Y3T</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Ondulación de Intensidad y Volumen</li>
+                <li class="sub">6.3 Fases de Acumulación, Intensificación y Realización</li>
+                <li class="sub">6.4 Descargas (Deloads)</li>
+                <li class="sub">6.5 Duración del Ciclo por Nivel de Experiencia</li>
+                <li><strong>7.</strong> Progresión en Y3T</li>
+                <li class="sub">7.1 Progresión de Carga y Reps</li>
+                <li class="sub">7.2 Manipulación de Variables (TUT, Descanso, Intensificadores)</li>
+                <li class="sub">7.3 Progresión a Largo Plazo</li>
+                <li><strong>8.</strong> Nutrición y Suplementación para Y3T</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Timing Nutricional</li>
+                <li class="sub">8.4 Suplementación Clave</li>
+                <li><strong>9.</strong> Ejemplos de Rutinas Y3T por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas | 9.4 Hombros | 9.5 Brazos</li>
+                <li class="sub">9.6 Estructuras por Nivel de Intensidad</li>
+                <li class="sub" style="padding-left: 40px;">• Full Body | Upper/Lower | Torso/Pierna | Bro Split</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Descanso y Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía Práctica de Implementación Paso a Paso</li>
+                <li class="sub" style="padding-left: 40px;">• Calcular 1RM | Equipo | Primera Sesión | Troubleshooting |
+                    Post-Y3T</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al Y3T</h1>
+        <div class="highlight-box">
+            <strong>Y3T (Yoda 3 Training)</strong> es una metodología de entrenamiento creada por
+            <strong>Neil "Yoda" Hill</strong> basada en un sistema de rotación de 3 semanas que estimula todas las
+            fibras musculares mediante la variación sistemática de reps, intensidad y técnicas.
+        </div>
+
+        <p>A diferencia de métodos que usan el mismo estilo cada semana, Y3T rota inteligentemente entre entrenamiento
+            pesado (Semana 1), moderado (Semana 2) y de alto volumen "Annihilation" (Semana 3), asegurando que ningún
+            tipo de fibra muscular escape del estímulo de crecimiento.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">3</div>
+                <div class="label">Semanas por Ciclo</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">6-30+</div>
+                <div class="label">Rango de Reps</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">9</div>
+                <div class="label">Semanas Mesociclo</div>
+            </div>
+        </div>
+
+        <h3>Origen y Filosofía</h3>
+        <p>Neil "Yoda" Hill desarrolló Y3T basándose en su experiencia entrenando campeones IFBB Pro, especialmente
+            Flex Lewis (7x 212 Olympia). El sistema se basa en:</p>
+        <ul>
+            <li><strong>Rotación semanal:</strong> Cada semana tiene un objetivo específico de fibras musculares</li>
+            <li><strong>Prevención de adaptación:</strong> El cuerpo nunca se acostumbra al estímulo</li>
+            <li><strong>Cobertura completa:</strong> Tipo I, IIA y IIB son estimulados cada 3 semanas</li>
+        </ul>
+
+        <h1>2. Objetivos del Y3T</h1>
+        <ul>
+            <li><strong>Hipertrofia Completa:</strong> Estimular fibras Tipo I, IIA y IIB sistemáticamente</li>
+            <li><strong>Prevenir Mesetas:</strong> La rotación constante evita la adaptación</li>
+            <li><strong>Fuerza + Tamaño:</strong> Semana 1 desarrolla fuerza, Semanas 2-3 bomba y tamaño</li>
+            <li><strong>Conexión Mente-Músculo:</strong> Semana 3 maximiza la sensación muscular</li>
+            <li><strong>Longevidad:</strong> Reduce desgaste articular al variar intensidad</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del Y3T</h1>
+
+        <h2>3.1 Tiempo Bajo Tensión (TUT)</h2>
+        <p>Y3T extiende el TUT mediante descansos cortos intra-serie y múltiples fases de fatiga:</p>
+        <table>
+            <tr>
+                <th>Protocolo</th>
+                <th>TUT por Serie</th>
+                <th>TUT Total</th>
+            </tr>
+            <tr>
+                <td>Semana 1 (Heavy)</td>
+                <td>40-60 segundos</td>
+                <td>60-80 segundos por ejercicio</td>
+            </tr>
+            <tr>
+                <td>Semana 2 (Moderate)</td>
+                <td>50-70 segundos</td>
+                <td>70-100 segundos por ejercicio</td>
+            </tr>
+            <tr>
+                <td>Semana 3 (Annihilation)</td>
+                <td>80-120 segundos</td>
+                <td>120-180+ segundos por ejercicio</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Rangos de Repeticiones y Fibras</h2>
+        <table>
+            <tr>
+                <th>Rango</th>
+                <th>Tipo de Fibra</th>
+                <th>Mecanismo</th>
+                <th>Semana Y3T</th>
+            </tr>
+            <tr>
+                <td>6-10 reps</td>
+                <td>Tipo IIB</td>
+                <td>Tensión Mecánica</td>
+                <td>Semana 1 (Heavy)</td>
+            </tr>
+            <tr>
+                <td>10-15 reps</td>
+                <td>Tipo IIA</td>
+                <td>Híbrido TM/EM</td>
+                <td>Semana 2 (Moderate)</td>
+            </tr>
+            <tr>
+                <td>15-30+ reps</td>
+                <td>Tipo I</td>
+                <td>Estrés Metabólico</td>
+                <td>Semana 3 (Annihilation)</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Tipos de Contracción por Semana</h2>
+        <ul>
+            <li><strong>Semana 1:</strong> Énfasis concéntrico explosivo, 4s negativa controlada</li>
+            <li><strong>Semana 2:</strong> Balance concéntrica/excéntrica, tempo 3-1-2</li>
+            <li><strong>Semana 3:</strong> Velocidad rápida para máximas reps, pausas en contracción pico</li>
+        </ul>
+
+        <h2>3.4 Fallo Muscular en Y3T</h2>
+        <div class="warning-box">
+            <strong>⚠️ El fallo varía según la semana:</strong>
+            <ul>
+                <li><strong>Semana 1:</strong> Fallo en última serie, RIR 0-1</li>
+                <li><strong>Semana 2:</strong> Fallo controlado, RIR 1</li>
+                <li><strong>Semana 3:</strong> Fallo TOTAL + intensificadores (drop sets, rest-pause)</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del Y3T</h1>
+
+        <div class="highlight-box">
+            <strong>Introducción al Sistema Y3T de 3 Semanas</strong>
+            <p>El Y3T fue desarrollado por <strong>Neil "Yoda" Hill</strong> como un sistema de periodización semanal
+                que rota entre 3 estilos de entrenamiento distintos. Cada semana tiene un objetivo específico:
+                fuerza máxima (Semana 1), hipertrofia híbrida (Semana 2), y bomba extrema (Semana 3).</p>
+        </div>
+
+        <h3>¿Cuándo Usar Y3T?</h3>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar Y3T cuando:</strong>
+            <ul>
+                <li>Tienes al menos 1-2 años de experiencia entrenando</li>
+                <li>Buscas romper mesetas de hipertrofia</li>
+                <li>Quieres estimular TODAS las fibras musculares (Tipo I, IIA, IIB)</li>
+                <li>Puedes entrenar 4-5 días por semana consistentemente</li>
+                <li>Estás en fase de volumen o mantenimiento calórico</li>
+                <li>Tu recuperación es buena (sueño 7-8h, nutrición adecuada)</li>
+            </ul>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar Y3T cuando:</strong>
+            <ul>
+                <li><strong>Principiante (&lt;1 año):</strong> No tienes la base técnica para intensificadores de Semana
+                    3</li>
+                <li><strong>Déficit calórico severo (&gt;500 kcal):</strong> No puedes recuperarte de Semana 3</li>
+                <li><strong>Lesiones activas:</strong> El volumen de Semana 3 puede agravar problemas articulares</li>
+                <li><strong>Estrés elevado:</strong> Sistema nervioso ya comprometido, el Y3T lo sobrecargará</li>
+                <li><strong>Tiempo limitado (&lt;45 min/sesión):</strong> Las rutinas Y3T requieren tiempo adecuado</li>
+                <li><strong>Sin acceso a máquinas:</strong> Semana 3 requiere máquinas para intensificadores seguros
+                </li>
+            </ul>
+        </div>
+
+        <h3>Limitantes del Sistema Y3T</h3>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Requiere planificación de 9+ semanas (3 ciclos mínimo para ver resultados)</li>
+                <li>Semana 3 es muy demandante para el sistema nervioso central</li>
+                <li>Puede ser difícil progresar en fuerza (enfoque híbrido vs. pura fuerza)</li>
+                <li>Requiere spotter o máquinas para algunas técnicas de Semana 3</li>
+            </ul>
+        </div>
+
+        <h3>🔧 Cómo Crear Rutinas Y3T</h3>
+        <div class="highlight-box">
+            <strong>Guía para Diseñar tus Propias Rutinas Y3T:</strong>
+            <ol>
+                <li><strong>Selecciona tu split:</strong> Upper/Lower, Push/Pull/Legs, o Bro Split (4-5 días)</li>
+                <li><strong>Define ejercicios base:</strong> 4-6 ejercicios por grupo muscular</li>
+                <li><strong>Aplica el protocolo semanal:</strong>
+                    <ul>
+                        <li>Semana 1: Mismos ejercicios, 6-10 reps pesadas, sin intensificadores</li>
+                        <li>Semana 2: Mismos ejercicios, 10-14 reps moderadas, tempo controlado</li>
+                        <li>Semana 3: Priorizar máquinas, 14-30+ reps, drop sets/rest-pause/giant sets</li>
+                    </ul>
+                </li>
+                <li><strong>Progresión:</strong> Cada ciclo de 3 semanas, aumenta peso en Semana 1</li>
+                <li><strong>Deload:</strong> Después de 9 semanas (3 ciclos), 1 semana de descarga</li>
+            </ol>
+        </div>
+
+        <h3>¿Cómo Funciona la Rotación Y3T?</h3>
+        <ul>
+            <li><strong>Semana 1 (Heavy):</strong> Pesos pesados, 6-10 reps, compuestos, fibras Tipo IIB</li>
+            <li><strong>Semana 2 (Moderate):</strong> Pesos moderados, 10-14 reps, híbrido, fibras Tipo IIA</li>
+            <li><strong>Semana 3 (Annihilation):</strong> Pesos ligeros, 14-30+ reps, intensificadores, fibras Tipo I
+            </li>
+            <li><strong>Reinicio:</strong> Vuelta a Semana 1 con aumento de peso progresivo</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ Regla de Oro del Y3T:</strong> Cada semana tiene un PROPÓSITO diferente.
+            No intentes mezclar estilos. Si estás en Semana 1, entrena PESADO. Si estás en Semana 3, busca BOMBA.
+        </div>
+
+        <h3>📊 Especificaciones Técnicas para Aplicación</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Protocolo</th>
+                <th>Nivel</th>
+                <th>Descanso</th>
+                <th>TUT/Serie</th>
+                <th>Equipamiento</th>
+                <th>Duración Sesión</th>
+            </tr>
+            <tr>
+                <td><code>Y3T-W1</code></td>
+                <td>Semana 1 Heavy</td>
+                <td>Intermedio+</td>
+                <td>2-3 min</td>
+                <td>30-40s</td>
+                <td>Pesos libres, máquinas</td>
+                <td>60-75 min</td>
+            </tr>
+            <tr>
+                <td><code>Y3T-W2</code></td>
+                <td>Semana 2 Moderate</td>
+                <td>Intermedio</td>
+                <td>60-90s</td>
+                <td>40-60s</td>
+                <td>Pesos libres, máquinas, poleas</td>
+                <td>60-75 min</td>
+            </tr>
+            <tr>
+                <td><code>Y3T-W3</code></td>
+                <td>Semana 3 Annihilation</td>
+                <td>Avanzado</td>
+                <td>30-45s</td>
+                <td>60-90s</td>
+                <td>Máquinas, poleas (preferibles)</td>
+                <td>45-60 min</td>
+            </tr>
+            <tr>
+                <td><code>Y3T-DS</code></td>
+                <td>Drop Sets (Week 3)</td>
+                <td>Avanzado</td>
+                <td>0s (inmediato)</td>
+                <td>90-120s</td>
+                <td>Máquinas, mancuernas</td>
+                <td>+5 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>Y3T-RP</code></td>
+                <td>Rest-Pause (Week 3)</td>
+                <td>Avanzado</td>
+                <td>10-15s (micro)</td>
+                <td>60-90s</td>
+                <td>Cualquiera</td>
+                <td>+3 min/ejercicio</td>
+            </tr>
+            <tr>
+                <td><code>Y3T-GS</code></td>
+                <td>Giant Sets (Week 3)</td>
+                <td>Avanzado</td>
+                <td>0s entre ejerc.</td>
+                <td>120-180s</td>
+                <td>Máquinas cercanas</td>
+                <td>+8 min/circuito</td>
+            </tr>
+        </table>
+
+        <h3>Matriz de Comparación: Las 3 Semanas</h3>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th style="background:#DC2626;">Semana 1 Heavy</th>
+                <th style="background:#F59E0B;">Semana 2 Moderate</th>
+                <th style="background:#8B5CF6;">Semana 3 Annihilation</th>
+            </tr>
+            <tr>
+                <td><strong>Repeticiones</strong></td>
+                <td>6-10 reps</td>
+                <td>10-14 reps</td>
+                <td>14-30+ reps</td>
+            </tr>
+            <tr>
+                <td><strong>Carga (%1RM)</strong></td>
+                <td>80-85%</td>
+                <td>70-75%</td>
+                <td>50-65%</td>
+            </tr>
+            <tr>
+                <td><strong>Fibras Target</strong></td>
+                <td>Tipo IIB (Fuerza)</td>
+                <td>Tipo IIA (Híbrido)</td>
+                <td>Tipo I (Resistencia)</td>
+            </tr>
+            <tr>
+                <td><strong>Tipo de Ejercicio</strong></td>
+                <td>Compuestos</td>
+                <td>Compuestos + Aislamiento</td>
+                <td>Aislamiento + Máquinas</td>
+            </tr>
+            <tr>
+                <td><strong>Descanso Inter-set</strong></td>
+                <td>2-3 minutos</td>
+                <td>60-90 segundos</td>
+                <td>30-45 segundos</td>
+            </tr>
+            <tr>
+                <td><strong>Intensificadores</strong></td>
+                <td>Ninguno (foco en peso)</td>
+                <td>Pausas, tempo lento</td>
+                <td>Drop sets, rest-pause, giant sets</td>
+            </tr>
+            <tr>
+                <td><strong>Mecanismo Principal</strong></td>
+                <td>Tensión Mecánica</td>
+                <td>Híbrido TM/EM</td>
+                <td>Estrés Metabólico</td>
+            </tr>
+        </table>
+
+        <div class="y3t-visual">
+            <div class="y3t-week w1">
+                <div class="number">S1</div>
+                <div class="label">HEAVY<br>6-10 reps<br>80-85% 1RM</div>
+            </div>
+            <div class="y3t-week w2">
+                <div class="number">S2</div>
+                <div class="label">MODERATE<br>10-14 reps<br>70-75% 1RM</div>
+            </div>
+            <div class="y3t-week w3">
+                <div class="number">S3</div>
+                <div class="label">ANNIHILATION<br>14-30+ reps<br>50-65% 1RM</div>
+            </div>
+        </div>
+
+        <h2>4.1 Semana 1: Heavy (Pesado)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge week1">WEEK 1</span> Entrenamiento de Fuerza Máxima</h4>
+            <p>
+                <strong style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px;">80-85% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TENSIÓN MECÁNICA</span>
+            </p>
+            <div class="code-block">PROTOCOLO SEMANA 1 (HEAVY):
+
+                Ejercicios: 4-5 compuestos pesados por grupo
+                Series: 2-3 working sets por ejercicio
+                Reps: 6-10 (fallo en última serie)
+                Tempo: 4 segundos negativa, explosivo positivo
+                Descanso: 2-3 minutos entre series
+
+                EJEMPLO PECHO:
+                • Press Banca: 3x6-8
+                • Press Inclinado Mancuernas: 3x8-10
+                • Fondos Lastrados: 2x6-8
+                • Pullover: 2x10</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Inicio de mesociclo<br>• Quieres ganancia de fuerza<br>•
+                    Recuperación óptima</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Fatiga acumulada<br>• Déficit
+                    calórico severo<br>• Lesiones activas</div>
+            </div>
+        </div>
+
+        <h2>4.2 Semana 2: Moderate (Moderado)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge week2">WEEK 2</span> Entrenamiento Híbrido</h4>
+            <p>
+                <strong style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px;">70-75% 1RM</strong>
+                <span style="background:#06B6D4; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">💪
+                    TM</span>
+                <span style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡
+                    EM</span>
+            </p>
+            <div class="code-block">PROTOCOLO SEMANA 2 (MODERATE):
+
+                Ejercicios: 5-6 mix compuestos + aislamiento
+                Series: 3-4 working sets por ejercicio
+                Reps: 10-14 (fallo controlado)
+                Tempo: 3-1-2 (3s ecc, 1s pausa, 2s con)
+                Descanso: 60-90 segundos entre series
+
+                EJEMPLO PECHO:
+                • Press Banca: 3x12
+                • Press Inclinado Smith: 3x12
+                • Cruces en Cables: 3x12-14
+                • Pec Deck: 3x12-14</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Balance fuerza-volumen<br>• Conexión mente-músculo<br>• Fase
+                    de transición</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Buscas fuerza pura<br>• Tiempo
+                    muy limitado</div>
+            </div>
+        </div>
+
+        <h2>4.3 Semana 3: Annihilation (Aniquilación)</h2>
+        <div class="method-card">
+            <h4><span class="tempo-badge week3">WEEK 3</span> Destrucción Total - Bomba Extrema</h4>
+            <p>
+                <strong style="background:#8B5CF6; color:white; padding:3px 8px; border-radius:4px;">50-65% 1RM</strong>
+                <span style="background:#F59E0B; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">⚡⚡
+                    ESTRÉS METABÓLICO EXTREMO</span>
+            </p>
+            <div class="code-block">PROTOCOLO SEMANA 3 (ANNIHILATION):
+
+                Ejercicios: 6-8 máquinas + aislamiento
+                Series: 1-2 sets/ejercicio CON INTENSIFICADORES
+                Reps: 14-30+ (hasta fallo absoluto)
+                Técnicas: Drop sets, rest-pause, giant sets, 21s
+                Descanso: 30-45 segundos (mínimo)
+
+                EJEMPLO PECHO:
+                • Pec Deck: 1x20 + triple drop set
+                • Press Máquina: 1x15 + rest-pause (3 mini-sets)
+                • Cable Cruces: Giant set (alto/medio/bajo) x20 cada
+                • Push Ups: 1 set máximo reps</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Fin de mesociclo<br>• Quieres bomba máxima<br>• Preparación
+                    pre-competencia</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Principiante<br>• Déficit
+                    calórico<br>• Fatiga del SNC</div>
+            </div>
+        </div>
+
+        <h2>4.4 Técnicas de Intensificación Y3T</h2>
+        <p>Las siguientes técnicas se usan principalmente en <strong>Semana 3</strong>:</p>
+        <table>
+            <tr>
+                <th>Técnica</th>
+                <th>Descripción</th>
+                <th>Cuándo Usar</th>
+            </tr>
+            <tr>
+                <td><strong>Drop Sets</strong></td>
+                <td>Reducir peso 20-30% y continuar sin descanso (2-3 drops)</td>
+                <td>Último ejercicio del grupo</td>
+            </tr>
+            <tr>
+                <td><strong>Rest-Pause</strong></td>
+                <td>Fallo → 10-15s descanso → más reps (3-4 mini-sets)</td>
+                <td>Ejercicios de aislamiento</td>
+            </tr>
+            <tr>
+                <td><strong>Giant Sets</strong></td>
+                <td>3-4 ejercicios sin descanso para mismo grupo</td>
+                <td>Semana 3, grupos pequeños</td>
+            </tr>
+            <tr>
+                <td><strong>21s</strong></td>
+                <td>7 reps parciales bajas + 7 altas + 7 completas</td>
+                <td>Bíceps, hombros</td>
+            </tr>
+        </table>
+
+        <h2>4.5 Control del Tempo y Negativas</h2>
+        <p>El tempo varía según la semana:</p>
+        <ul>
+            <li><strong>Semana 1:</strong> 4-0-1 (4s negativa, explosivo positivo) - Máxima tensión</li>
+            <li><strong>Semana 2:</strong> 3-1-2 (controlado en ambas fases) - Balance</li>
+            <li><strong>Semana 3:</strong> 2-0-1 (rápido pero controlado) - Más reps, más bomba</li>
+        </ul>
+
+        <h1 class="page-break">5. Estructura de una Sesión Y3T</h1>
+
+        <h2>5.1 Calentamiento y Series de Aproximación</h2>
+        <div class="code-block">CALENTAMIENTO Y3T (10-15 min):
+
+            1. Cardio ligero: 5 min (elevación temperatura)
+            2. Movilidad articular: 3-5 min
+            3. Series de aproximación:
+            - Serie 1: 15 reps @ 30% 1RM (activación)
+            - Serie 2: 10 reps @ 50% 1RM (patrón motor)
+            - Serie 3: 6 reps @ 70% 1RM (preparación SNC)</div>
+
+        <h2>5.2 Ejercicios Principales (Y3T Core)</h2>
+        <ul>
+            <li>1-2 protocolos Y3T completos por grupo muscular grande</li>
+            <li>Elegir el protocolo según objetivo semanal (TM vs EM)</li>
+            <li>Descanso entre protocolos: 3-5 minutos</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios</h2>
+        <ul>
+            <li>2-3 ejercicios complementarios con técnica normal</li>
+            <li>3 series de 8-12 reps, RIR 1-2</li>
+            <li>Opción: aplicar mini-protocolo Y3T (versión corta)</li>
+        </ul>
+
+        <h2>5.4 Enfriamiento y Estiramiento</h2>
+        <ul>
+            <li>Estiramientos estáticos: 30-60s por músculo trabajado</li>
+            <li>Respiración profunda: 2-3 minutos</li>
+            <li>Hidratación inmediata</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con Y3T</h1>
+
+        <h2>6.1 Microciclos y Mesociclos</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Énfasis</th>
+                <th>Protocolos Y3T Principales</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Tensión Mecánica (80/20)</td>
+                <td>Y3T-RT, Y3T-NEG</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Híbrido (50/50)</td>
+                <td>Y3T-CT, Y3T-TM</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Estrés Metabólico (30/70)</td>
+                <td>Y3T-RIV, Y3T-ISOM</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Deload</td>
+                <td>Sin protocolos Y3T, volumen reducido</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Ondulación de Intensidad y Volumen</h2>
+        <p>Y3T permite manipular intensidad mediante selección de protocolo, no solo carga:</p>
+        <ul>
+            <li><strong>Alta Intensidad:</strong> Y3T-NEG, Y3T-RT → cargas pesadas, bajo volumen</li>
+            <li><strong>Alto Volumen:</strong> Y3T-RIV completo → cargas moderadas, TUT extremo</li>
+        </ul>
+
+        <h2>6.3 Fases de Acumulación, Intensificación y Realización</h2>
+        <ul>
+            <li><strong>Acumulación (4-6 sem):</strong> Y3T-RIV, Y3T-CT → volumen alto</li>
+            <li><strong>Intensificación (2-4 sem):</strong> Y3T-RT, Y3T-NEG → cargas máximas</li>
+            <li><strong>Realización (1-2 sem):</strong> Reducir Y3T, mantener cargas</li>
+        </ul>
+
+        <h2>6.4 Descargas (Deloads)</h2>
+        <div class="warning-box">
+            <strong>⚠️ Y3T es ALTAMENTE demandante.</strong> Deload cada 3-4 semanas es obligatorio.
+            Durante deload: eliminar protocolos Y3T, mantener 40-50% del volumen normal.
+        </div>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>Y3T opera en ciclos base de 3 semanas (Heavy→Moderate→Annihilation). La duración total varía según nivel:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (1-2 años)</td>
+                <td>6-8 semanas (2x ciclo Y3T + deload)</td>
+                <td>Mayor capacidad de recuperación, adaptación gradual a Semana 3</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas (ciclo Y3T + deload)</td>
+                <td>Balance entre estímulo y recuperación del SNC</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>3-4 semanas (ciclo Y3T clásico)</td>
+                <td>Fatiga rápida, rotación Heavy→Moderate→Annihilation intacta</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación Y3T:</strong> Completa 3 ciclos (9 semanas) para evaluar progresión real. La
+            aplicación NEXUS adapta automáticamente las opciones de duración según tu nivel.
+        </div>
+
+        <h1 class="page-break">7. Progresión en Y3T</h1>
+
+        <h2>7.1 Progresión de Carga y Reps</h2>
+        <ul>
+            <li><strong>Aumentar reps por fase:</strong> Si completas más reps en cada mini-serie, mantén peso</li>
+            <li><strong>Aumentar peso:</strong> Solo cuando Y3T-RIV se siente "fácil" (raro)</li>
+            <li><strong>Progresión típica:</strong> 2.5-5kg cada 2-3 semanas</li>
+        </ul>
+
+        <h2>7.2 Manipulación de Variables</h2>
+        <table>
+            <tr>
+                <th>Variable</th>
+                <th>Progresión</th>
+            </tr>
+            <tr>
+                <td>Descansos RIV</td>
+                <td>Reducir 5s en cada fase cuando dominas protocolo</td>
+            </tr>
+            <tr>
+                <td>Fases CT</td>
+                <td>Aumentar duración excéntrica/concéntrica (+1s)</td>
+            </tr>
+            <tr>
+                <td>Hold Isométrico</td>
+                <td>Extender de 3s a 5s gradualmente</td>
+            </tr>
+        </table>
+
+        <h2>7.3 Progresión a Largo Plazo</h2>
+        <ul>
+            <li><strong>Mes 1-2:</strong> Dominar Y3T-RIV y Y3T-CT</li>
+            <li><strong>Mes 3-4:</strong> Incorporar Y3T-RT y Y3T-NEG</li>
+            <li><strong>Mes 5+:</strong> Y3T-TM personalizado según respuesta</li>
+        </ul>
+
+        <h1 class="page-break">8. Nutrición y Suplementación para Y3T</h1>
+
+        <h2>8.1 Requerimientos Calóricos</h2>
+        <p>Y3T genera alto gasto calórico por TUT extremo. Ajustar según objetivo:</p>
+        <ul>
+            <li><strong>Volumen:</strong> Superávit 300-500 kcal</li>
+            <li><strong>Definición:</strong> Déficit moderado 15-20% (Y3T demandante)</li>
+            <li><strong>Mantenimiento:</strong> TDEE + 200-300 kcal días Y3T</li>
+        </ul>
+
+        <h2>8.2 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Recomendación Y3T</th>
+                <th>Razón</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.2-2.5g/kg</td>
+                <td>Síntesis y reparación muscular</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>4-6g/kg días Y3T</td>
+                <td>Reposición glucógeno (alto TUT)</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1g/kg</td>
+                <td>Función hormonal</td>
+            </tr>
+        </table>
+
+        <h2>8.3 Timing Nutricional</h2>
+        <ul>
+            <li><strong>Pre-entreno (1-2h antes):</strong> Comida completa con carbos complejos</li>
+            <li><strong>Intra-entreno:</strong> EAAs + carbohidratos simples (opcional pero beneficioso)</li>
+            <li><strong>Post-entreno (30-60 min):</strong> Proteína + carbos rápidos</li>
+        </ul>
+
+        <h2>8.4 Suplementación Clave</h2>
+        <ul>
+            <li><strong>Creatina:</strong> 5g/día (rendimiento y recuperación)</li>
+            <li><strong>Citrulina Malato:</strong> 6-8g pre-entreno (bomba, resistencia)</li>
+            <li><strong>Beta-Alanina:</strong> 3-5g/día (buffer ácido láctico)</li>
+            <li><strong>EAAs:</strong> 10-15g intra-entreno (anti-catabolismo)</li>
+        </ul>
+
+        <h1 class="page-break">9. Ejemplos de Rutinas Y3T por Grupo Muscular</h1>
+
+        <h2>9.1 Pecho</h2>
+        <div class="code-block">RUTINA Y3T PECHO:
+
+            A. Press Máquina Inclinado: 1x Y3T-RIV Completo
+            Peso: 70% 1RM → 8-9 mini-series al fallo
+            Descanso después: 4-5 min
+
+            B. Press Máquina Horizontal: 1x Y3T-CT
+            Peso inicial: 70% 1RM, reducción progresiva
+
+            C. Aperturas Cable: 3x12-15 (técnica normal)
+            + Contracción Pico 2s cada rep
+
+            Duración: ~40 minutos</div>
+
+        <h2>9.2 Espalda</h2>
+        <div class="code-block">RUTINA Y3T ESPALDA:
+
+            A. Jalón Máquina: 1x Y3T-RIV Completo
+            Peso: 65-70% 1RM
+
+            B. Remo Máquina: 1x Y3T-CT
+            Énfasis excéntrico en Fase 2
+
+            C. Pulldown Brazos Rectos: 3x15 (técnica normal)
+            + Isometría final 20s última serie
+
+            Duración: ~45 minutos</div>
+
+        <h2>9.3 Piernas</h2>
+        <div class="code-block">RUTINA Y3T PIERNAS:
+
+            A. Prensa 45°: 1x Y3T-RIV Completo
+            Peso: 60-65% 1RM (¡cuidado con fatiga!)
+
+            B. Extensión Cuádriceps: 1x Y3T-CT
+
+            C. Curl Femoral: 1x Y3T-RT
+            4 mini-series al fallo
+
+            D. Gemelos Sentado: 3x15-20 + Isometría final
+
+            Duración: ~50 minutos</div>
+
+        <h2>9.4 Hombros</h2>
+        <div class="code-block">RUTINA Y3T HOMBROS:
+
+            A. Press Hombro Máquina: 1x Y3T-RT
+            Peso: 75-80% 1RM
+
+            B. Elevaciones Laterales Máquina: 1x Y3T-RIV (versión corta)
+            Solo 5 mini-series: 45-30-15-30-45
+
+            C. Pájaros Máquina: 3x12-15 + Contracción Pico
+
+            Duración: ~35 minutos</div>
+
+        <h2>9.5 Brazos</h2>
+        <div class="code-block">RUTINA Y3T BRAZOS:
+
+            BÍCEPS:
+            A. Curl Máquina: 1x Y3T-RIV (versión corta)
+            B. Curl Scott: 2x10-12 + Isometría final
+
+            TRÍCEPS:
+            C. Extensión Polea: 1x Y3T-CT
+            D. Press Cerrado Máquina: 2x10-12
+
+            Duración: ~30 minutos</div>
+
+        <h2 class="page-break">9.6 Estructuras por Nivel de Intensidad</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Elige tu estructura según experiencia y disponibilidad.</strong>
+            Y3T funciona en cualquier división, pero algunas son más eficientes que otras.
+        </div>
+
+        <h3>Full Body (3 días/semana) - Intermedio</h3>
+        <div class="code-block">ESTRUCTURA FULL BODY Y3T:
+            Frecuencia: Lun/Mié/Vie
+            Protocolo: 1 Y3T Core por grupo grande
+
+            DÍA A (Empuje + Piernas):
+            - Press Máquina: 1x Y3T-CT
+            - Prensa: 1x Y3T-RIV (corto)
+            - Hombros + Tríceps: 2 ejercicios normales
+
+            DÍA B (Tirón + Piernas):
+            - Jalón: 1x Y3T-RIV
+            - Curl Femoral: 1x Y3T-CT
+            - Bíceps + Espalda: 2 ejercicios normales
+
+            DÍA C (Híbrido):
+            - Combinación según fatiga</div>
+
+        <h3>Upper/Lower (4 días/semana) - Intermedio-Avanzado</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Protocolos Y3T</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Upper A (Empuje)</td>
+                <td>1x RIV Pecho + 1x CT Hombros</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Lower A (Cuádriceps)</td>
+                <td>1x RIV Prensa + 1x CT Extensión</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Upper B (Tirón)</td>
+                <td>1x RIV Espalda + 1x RT Bíceps</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Lower B (Posterior)</td>
+                <td>1x CT Curl Femoral + 1x ISOM Gemelos</td>
+            </tr>
+        </table>
+
+        <h3>Torso/Pierna (4 días/semana) - Avanzado</h3>
+        <div class="code-block">TORSO (Lun/Jue):
+            A. Pecho: 1x Y3T-RIV o CT
+            B. Espalda: 1x Y3T-RIV o CT
+            C. Hombros: 1x Y3T-RT
+            D. Brazos: Trabajo accesorio
+
+            PIERNA (Mar/Vie):
+            A. Cuádriceps: 1x Y3T-RIV
+            B. Femoral: 1x Y3T-CT
+            C. Gemelos: 1x Y3T-ISOM
+            D. Glúteo: Trabajo accesorio</div>
+
+        <h3>Bro Split (5-6 días/semana) - Avanzado</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupo</th>
+                <th>Protocolos Y3T</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Pecho</td>
+                <td>1x RIV + 1x CT + Accesorios</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Espalda</td>
+                <td>1x RIV + 1x NEG + Accesorios</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Piernas</td>
+                <td>1x RIV Prensa + 1x CT Curl + Gemelos</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Hombros</td>
+                <td>1x RT + 1x ISOM + Accesorios</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Brazos</td>
+                <td>1x RIV corto Bíceps + 1x CT Tríceps</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">9.7 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatible con Y3T</th>
+                <th>Recomendación</th>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Usar FST-7 como finisher en Week 3</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Protocolos SST en Week 3 Annihilation</td>
+            </tr>
+            <tr>
+                <td>MTUT</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Tempo MTUT en Week 2 Moderate</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Filosofías opuestas (volumen vs intensidad)</td>
+            </tr>
+            <tr>
+                <td>Blood & Guts</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Demasiado intenso para combinar</td>
+            </tr>
+        </table>
+
+        <h2>9.8 Calculadora de Cargas (%1RM)</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>% 1RM</th>
+                <th>Reps Objetivo</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>Week 1 Heavy</td>
+                <td>75-85%</td>
+                <td>6-10</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Week 2 Moderate</td>
+                <td>65-75%</td>
+                <td>10-14</td>
+                <td>7-8</td>
+            </tr>
+            <tr>
+                <td>Week 3 Annihilation</td>
+                <td>50-65%</td>
+                <td>14-30+</td>
+                <td>10 (fallo)</td>
+            </tr>
+        </table>
+
+        <h2>9.9 Guía de Progresión Semanal</h2>
+        <div class="highlight-box">
+            <strong>Cómo Progresar en Y3T:</strong>
+            <ol>
+                <li><strong>Week 1 → Week 1:</strong> Sube peso 2.5-5kg si completaste 10 reps</li>
+                <li><strong>Week 2 → Week 2:</strong> Sube peso 2.5kg si completaste 14 reps</li>
+                <li><strong>Week 3 → Week 3:</strong> Sube peso solo si completaste 30+ reps con técnica</li>
+                <li><strong>Cada 3 ciclos:</strong> Evalúa y ajusta todas las cargas base</li>
+            </ol>
+        </div>
+
+        <h2>9.10 Selector de Metodología por Objetivo</h2>
+        <table>
+            <tr>
+                <th>Tu Objetivo</th>
+                <th>¿Y3T es para ti?</th>
+                <th>Alternativa</th>
+            </tr>
+            <tr>
+                <td>Masa muscular general</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Romper estancamiento</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Fuerza máxima</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>Heavy Duty</td>
+            </tr>
+            <tr>
+                <td>Definición/corte</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>FST-7, SST</td>
+            </tr>
+            <tr>
+                <td>Sin spotter</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>MTUT</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <ul>
+            <li><strong>Fatiga excesiva:</strong> Reducir protocolos RIV, usar CT o RT</li>
+            <li><strong>Dolor articular:</strong> Cambiar a ejercicios de máquina, reducir ROM</li>
+            <li><strong>Falta de bomba:</strong> Verificar hidratación y carbohidratos</li>
+        </ul>
+
+        <h2>10.2 Descanso y Recuperación</h2>
+        <ul>
+            <li><strong>Sueño:</strong> 7-9 horas (crítico para Y3T)</li>
+            <li><strong>Entre sesiones mismo grupo:</strong> Mínimo 48-72h</li>
+            <li><strong>Cardio:</strong> LISS preferible, evitar HIIT días Y3T</li>
+        </ul>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li><strong>Usar MÁQUINAS:</strong> Más seguro con fatiga extrema de Y3T</li>
+            <li><strong>Calentamiento extenso:</strong> 10-15 min obligatorio</li>
+            <li><strong>Si no completas protocolo:</strong> Reduce peso, no fuerces</li>
+        </ul>
+
+        <h2 class="page-break">10.4 Guía Práctica de Implementación Paso a Paso</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Esta sección contiene información práctica esencial</strong> que necesitas antes de tu
+            primera
+            sesión Y3T. Sigue estos pasos en orden.
+        </div>
+
+        <h3>Paso 1: Calcular tu 1RM Estimado</h3>
+
+        <div class="highlight-box">
+            <strong>¿Qué es el 1RM?</strong>
+            <p>El <strong>1RM (One Rep Max)</strong> es el peso máximo que puedes levantar UNA sola vez. En Y3T
+                usamos
+                diferentes porcentajes según el protocolo (60-85% 1RM).</p>
+        </div>
+
+        <div class="code-block">FÓRMULA EPLEY:
+            1RM Estimado = Peso usado × (1 + Repeticiones / 30)
+
+            EJEMPLO:
+            Si haces 10 reps con 80kg en Prensa:
+            1RM = 80 × (1 + 10/30) = 80 × 1.33 = 106kg
+
+            Para Y3T-RIV (65% de 106kg) = 69kg ← Peso de trabajo</div>
+
+        <h4>Tabla de Porcentajes Y3T</h4>
+        <table>
+            <tr>
+                <th>Protocolo</th>
+                <th>% 1RM</th>
+                <th>Ejemplo (1RM=100kg)</th>
+            </tr>
+            <tr>
+                <td>Y3T-RIV</td>
+                <td>60-70%</td>
+                <td>60-70kg</td>
+            </tr>
+            <tr>
+                <td>Y3T-CT</td>
+                <td>70% inicial</td>
+                <td>70kg → reduce</td>
+            </tr>
+            <tr>
+                <td>Y3T-RT</td>
+                <td>75-85%</td>
+                <td>75-85kg</td>
+            </tr>
+            <tr>
+                <td>Y3T-NEG</td>
+                <td>105-120%</td>
+                <td>105-120kg (con ayuda)</td>
+            </tr>
+        </table>
+
+        <h3>Paso 2: Checklist de Equipo</h3>
+        <table>
+            <tr>
+                <th>Grupo Muscular</th>
+                <th>Máquinas Recomendadas</th>
+            </tr>
+            <tr>
+                <td>Pecho</td>
+                <td>Press máquina, Pec deck, Cruces polea</td>
+            </tr>
+            <tr>
+                <td>Espalda</td>
+                <td>Jalón máquina, Remo máquina, Pulldown</td>
+            </tr>
+            <tr>
+                <td>Piernas</td>
+                <td>Prensa, Extensión, Curl femoral, Hack squat</td>
+            </tr>
+            <tr>
+                <td>Hombros</td>
+                <td>Press máquina, Elevaciones laterales máquina</td>
+            </tr>
+            <tr>
+                <td>Brazos</td>
+                <td>Curl máquina, Extensión polea</td>
+            </tr>
+        </table>
+
+        <h3>Paso 3: Tu Primera Sesión Y3T</h3>
+        <div class="code-block">DÍA 1 - PRIMERA SESIÓN Y3T (Ejemplo: Pecho)
+            Duración: ~40-50 minutos
+
+            FASE 1: CALENTAMIENTO (15 min)
+            ├─ 5 min cardio ligero
+            ├─ Movilidad articular
+            └─ Series aproximación en press máquina
+
+            FASE 2: Y3T CORE (25-30 min)
+            ├─ Ejercicio 1: Press Máquina [Y3T-RIV versión CORTA]
+            │ • Peso: 65% 1RM
+            │ • SOLO: 45-30-15-30-45 (5 mini-series, no 8)
+            │ • Primera vez = versión reducida
+            │
+            └─ Ejercicio 2: Aperturas Cable [Normal]
+            • 3×12-15 + Contracción pico
+            • Acostumbrarte a técnica Y3T
+
+            FASE 3: ENFRIAMIENTO (5 min)
+            └─ Estiramientos estáticos</div>
+
+        <h3>Paso 4: Troubleshooting</h3>
+        <table>
+            <tr>
+                <th>Problema</th>
+                <th>Causa</th>
+                <th>Solución</th>
+            </tr>
+            <tr>
+                <td>No completo todas las mini-series</td>
+                <td>Peso muy alto</td>
+                <td>Reduce 10-15% para próxima sesión</td>
+            </tr>
+            <tr>
+                <td>No siento bomba</td>
+                <td>Descansos muy largos o poca hidratación</td>
+                <td>Cronometra descansos, toma agua</td>
+            </tr>
+            <tr>
+                <td>Mareo durante Y3T-RIV</td>
+                <td>Falta respiración</td>
+                <td>Respira entre mini-series, nunca aguantes</td>
+            </tr>
+            <tr>
+                <td>DOMS extremo (+72h)</td>
+                <td>Demasiado volumen</td>
+                <td>Reduce a versión corta, aumenta gradualmente</td>
+            </tr>
+        </table>
+
+        <h3>Paso 5: Transición Post-Y3T</h3>
+        <div class="code-block">DESPUÉS DE CICLO Y3T (4-6 semanas):
+
+            SEMANA TRANSICIÓN:
+            • Eliminar protocolos Y3T completos
+            • Mantener solo ejercicios normales
+            • Carga: 70-75% 1RM
+            • Objetivo: Reconectar con tensión mecánica
+
+            SIGUIENTE CICLO:
+            • Opción 1: Reiniciar Y3T con progresión
+            • Opción 2: Cambiar a metodología TM (Heavy Duty, etc.)
+            • Opción 3: Híbrido según respuesta</div>
+
+        <h1 class="page-break">Apéndice A: Datos para Creación de Rutinas</h1>
+
+        <h2>A.1 Base de Datos de Ejercicios por Semana Y3T</h2>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Week 1 Heavy</th>
+                <th>Week 2 Moderate</th>
+                <th>Week 3 Annihilation</th>
+            </tr>
+            <tr>
+                <td><strong>Pecho</strong></td>
+                <td>Press banca, Press inclinado</td>
+                <td>Aperturas máquina, Press mancuernas</td>
+                <td>Cruces poleas, Pec deck</td>
+            </tr>
+            <tr>
+                <td><strong>Espalda</strong></td>
+                <td>Remo barra, Dominadas</td>
+                <td>Remo máquina, Jalón</td>
+                <td>Face pulls, Pullover</td>
+            </tr>
+            <tr>
+                <td><strong>Piernas</strong></td>
+                <td>Sentadilla, Peso muerto</td>
+                <td>Prensa, Zancadas</td>
+                <td>Extensiones, Curl femoral</td>
+            </tr>
+            <tr>
+                <td><strong>Hombros</strong></td>
+                <td>Press militar</td>
+                <td>Press mancuernas</td>
+                <td>Elevaciones, Face pulls</td>
+            </tr>
+            <tr>
+                <td><strong>Brazos</strong></td>
+                <td>Curl barra, Press cerrado</td>
+                <td>Curl mancuernas, Fondos</td>
+                <td>Curls cable, Extensiones</td>
+            </tr>
+        </table>
+
+        <h2>A.2 Plantillas de Split Recomendados</h2>
+        <div class="highlight-box">
+            <strong>Split Óptimo Y3T: Push/Pull/Legs (5-6 días)</strong>
+            <ul>
+                <li><strong>Día 1:</strong> Push (Pecho, Hombros, Tríceps)</li>
+                <li><strong>Día 2:</strong> Pull (Espalda, Bíceps, Trapecios)</li>
+                <li><strong>Día 3:</strong> Legs (Cuádriceps, Femoral, Glúteos, Pantorrillas)</li>
+                <li><strong>Día 4:</strong> Descanso</li>
+                <li><strong>Día 5:</strong> Push</li>
+                <li><strong>Día 6:</strong> Pull</li>
+                <li><strong>Día 7:</strong> Legs o Descanso</li>
+            </ul>
+        </div>
+
+        <h2>A.3 Semana Tipo Completa</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupo</th>
+                <th>Ejercicios</th>
+                <th>Series x Reps</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Push</td>
+                <td>Press banca, Press inclinado, Aperturas, Press hombro, Fondos</td>
+                <td>3x según semana</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Pull</td>
+                <td>Remo barra, Jalón, Remo máquina, Curl barra, Curl martillo</td>
+                <td>3x según semana</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Legs</td>
+                <td>Sentadilla, Prensa, Extensiones, Curl femoral, Pantorrillas</td>
+                <td>3x según semana</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td colspan="3">DESCANSO</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Push</td>
+                <td>Press mancuernas, Cruces, Elevaciones laterales, Extensiones</td>
+                <td>3x según semana</td>
+            </tr>
+            <tr>
+                <td>Sábado</td>
+                <td>Pull</td>
+                <td>Dominadas, Remo unilateral, Face pulls, Curl concentrado</td>
+                <td>3x según semana</td>
+            </tr>
+            <tr>
+                <td>Domingo</td>
+                <td colspan="3">DESCANSO</td>
+            </tr>
+        </table>
+
+        <h2>A.4 Protocolo de Calentamiento Y3T</h2>
+        <div class="success-box">
+            <strong>Calentamiento por Semana:</strong>
+            <ul>
+                <li><strong>Week 1 Heavy:</strong> 3 sets progresivos (30% → 50% → 70%) antes del working set</li>
+                <li><strong>Week 2 Moderate:</strong> 2 sets progresivos (40% → 60%) antes del working set</li>
+                <li><strong>Week 3 Annihilation:</strong> 1 set ligero (40%) + movilidad articular</li>
+            </ul>
+        </div>
+
+        <h2>A.5 Sistema de Deload Y3T</h2>
+        <div class="warning-box">
+            <strong>Reglas de Deload:</strong>
+            <ul>
+                <li><strong>Frecuencia:</strong> Después de 2-3 ciclos completos (6-9 semanas)</li>
+                <li><strong>Duración:</strong> 1 semana completa</li>
+                <li><strong>Cargas:</strong> 50% de las cargas normales</li>
+                <li><strong>Volumen:</strong> Mantener mismo número de sets, reducir reps 50%</li>
+                <li><strong>Intensificadores:</strong> NINGUNO durante deload</li>
+                <li><strong>Señales para deload:</strong> Fatiga acumulada, dolor articular, pérdida de fuerza</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">Apéndice B: Datos Técnicos para Aplicación</h1>
+
+        <h2>B.1 Glosario de Términos Y3T</h2>
+        <table>
+            <tr>
+                <th>Término</th>
+                <th>Definición</th>
+                <th>Uso en App</th>
+            </tr>
+            <tr>
+                <td><code>TUT</code></td>
+                <td>Time Under Tension - tiempo bajo tensión por serie</td>
+                <td>Timer durante set</td>
+            </tr>
+            <tr>
+                <td><code>RPE</code></td>
+                <td>Rate of Perceived Exertion (1-10)</td>
+                <td>Input post-serie</td>
+            </tr>
+            <tr>
+                <td><code>RIR</code></td>
+                <td>Reps In Reserve - reps que quedan en el tanque</td>
+                <td>Alternativo a RPE</td>
+            </tr>
+            <tr>
+                <td><code>Fallo</code></td>
+                <td>No poder completar una rep con técnica correcta</td>
+                <td>Indicador de intensidad</td>
+            </tr>
+            <tr>
+                <td><code>Deload</code></td>
+                <td>Semana de reducción de intensidad/volumen</td>
+                <td>Programación automática</td>
+            </tr>
+        </table>
+
+        <h2>B.2 Configuración de Timer para App</h2>
+        <table>
+            <tr>
+                <th>Fase Y3T</th>
+                <th>Timer Descanso</th>
+                <th>Timer TUT</th>
+                <th>Alerta</th>
+            </tr>
+            <tr>
+                <td>Week 1 Heavy</td>
+                <td>120-180s</td>
+                <td>40-60s</td>
+                <td>Beep a 30s restantes</td>
+            </tr>
+            <tr>
+                <td>Week 2 Moderate</td>
+                <td>60-90s</td>
+                <td>50-70s</td>
+                <td>Beep a 15s restantes</td>
+            </tr>
+            <tr>
+                <td>Week 3 Annihilation</td>
+                <td>30-60s</td>
+                <td>Continuo</td>
+                <td>Beep cada 10s</td>
+            </tr>
+        </table>
+
+        <h2>B.3 Indicadores de Éxito</h2>
+        <div class="success-box">
+            <strong>¿Cómo saber si Y3T está funcionando?</strong>
+            <ul>
+                <li><strong>Semana 3-4:</strong> Pump más intenso en Week 3</li>
+                <li><strong>Semana 6-8:</strong> Aumento de fuerza en Week 1</li>
+                <li><strong>Semana 8-12:</strong> Medidas aumentando (bíceps, pecho, muslos)</li>
+                <li><strong>Señal negativa:</strong> Fatiga excesiva, pérdida de fuerza = necesitas deload</li>
+            </ul>
+        </div>
+
+        <h2>B.4 Protocolos de Transición</h2>
+        <div class="highlight-box">
+            <strong>Cómo cambiar DESDE Y3T:</strong>
+            <ul>
+                <li><strong>→ Heavy Duty:</strong> 1 semana deload, luego iniciar con 50% volumen HD</li>
+                <li><strong>→ FST-7:</strong> Agregar FST-7 en Week 3 como finisher (transición suave)</li>
+                <li><strong>→ SST:</strong> Reemplazar Week 3 con protocolos SST gradualmente</li>
+                <li><strong>→ MTUT:</strong> Usar MTUT en Week 2 primero, luego expandir</li>
+            </ul>
+        </div>
+
+        <h2>B.5 Plantilla de Tracking</h2>
+        <table>
+            <tr>
+                <th>Campo</th>
+                <th>Week 1</th>
+                <th>Week 2</th>
+                <th>Week 3</th>
+            </tr>
+            <tr>
+                <td>Ejercicio</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>Peso (kg)</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>Reps</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>Total acumulado</td>
+            </tr>
+            <tr>
+                <td>RPE</td>
+                <td>8-9</td>
+                <td>7-8</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Pump (1-5)</td>
+                <td>Opcional</td>
+                <td>Opcional</td>
+                <td>✓ Obligatorio</td>
+            </tr>
+            <tr>
+                <td>Notas</td>
+                <td>Opcional</td>
+                <td>Opcional</td>
+                <td>Opcional</td>
+            </tr>
+        </table>
+
+        <h2>B.6 FAQ / Troubleshooting</h2>
+        <div class="warning-box">
+            <strong>Problemas Comunes Y3T:</strong>
+            <ul>
+                <li><strong>No siento pump en Week 3:</strong> Baja peso 10%, aumenta reps, bebe más agua</li>
+                <li><strong>Muy cansado en Week 1:</strong> Aumenta descanso a 3 min, reduce exercicios</li>
+                <li><strong>Perdí fuerza en Week 1:</strong> Posible sobre-entrenamiento, considera deload</li>
+                <li><strong>Aburrido del ciclo:</strong> Cambia ejercicios manteniendo patrón de movimiento</li>
+                <li><strong>Dolor articular:</strong> Reduce intensificadores, prioriza máquinas</li>
+            </ul>
+        </div>
+
+        <h2 class="page-break">10.5 Especialización de Grupos Débiles</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con Y3T</strong>
+            <p>Y3T ya incluye variación semanal. Para grupos débiles, añade el grupo al inicio
+                de cada sesión sin importar la semana, beneficiándose de todos los rangos.</p>
+        </div>
+
+        <h3>Estrategia Y3T para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Series Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Técnica Recomendada</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+3-4 series</td>
+                <td>3x/semana</td>
+                <td>Seguir protocolo de la semana</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+6-8 series</td>
+                <td>4x/semana</td>
+                <td>Grupo al inicio + semana 3 extra</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+9-12 series</td>
+                <td>5-6x/semana</td>
+                <td>Semana 3 permanente para grupo débil</td>
+            </tr>
+        </table>
+
+        <h3>Grupos Comunes a Priorizar</h3>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Semana 1 (6-10)</th>
+                <th>Semana 2 (10-14)</th>
+                <th>Semana 3 (14-20+)</th>
+            </tr>
+            <tr>
+                <td>Pantorrillas</td>
+                <td>3×8 pesado</td>
+                <td>3×12 moderado</td>
+                <td>3×20 + drops</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>3×6-8</td>
+                <td>3×10-12</td>
+                <td>3×15-20 + iso</td>
+            </tr>
+            <tr>
+                <td>Deltoides Posterior</td>
+                <td>3×10</td>
+                <td>3×12-15</td>
+                <td>3×20 + drops</td>
+            </tr>
+        </table>
+
+        <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS CON Y3T
+
+            FRECUENCIA: Al inicio de CADA sesión (5-6x/semana)
+            DURACIÓN: 10 minutos extra por sesión
+
+            PROTOCOLO SEGÚN SEMANA:
+            - Semana 1: Gemelo de Pie 3×8 @ 80%, pesado, fuerza
+            - Semana 2: Gemelo Sentado 3×12 @ 70%, moderado
+            - Semana 3: Gemelo Máquina 3×20 + drop set, pump extremo
+
+            RESULTADO ESPERADO: 9-12 semanas (3 ciclos) para desarrollo proporcional</div>
+
+        <h3>Reglas de Especialización Y3T</h3>
+        <div class="warning-box">
+            <strong>⚠️ Reglas Importantes:</strong>
+            <ul>
+                <li><strong>Grupo prioritario PRIMERO:</strong> Siempre al inicio cuando estás fresco</li>
+                <li><strong>Seguir la semana:</strong> El grupo débil sigue el mismo rango de reps que el resto</li>
+                <li><strong>Máximo 1-2 grupos:</strong> Y3T ya varía bastante, no sobrecomplicar</li>
+                <li><strong>Evaluar cada ciclo:</strong> Después de 3 semanas, evaluar progreso</li>
+            </ul>
+        </div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <p><strong>Y3T es una herramienta poderosa para hipertrofia sarcoplásmica</strong> cuando se usa
+                correctamente. Los protocolos de descansos variables y múltiples tipos de contracción ofrecen
+                versatilidad única para romper mesetas y generar crecimiento por vías metabólicas.</p>
+            <p>La clave es <strong>dominar un protocolo antes de añadir otros</strong>, respetar los deloads, y
+                escuchar al cuerpo. Y3T no es para entrenar todos los días del año, sino para ciclos específicos de
+                4-6 semanas seguidos de períodos de recuperación o metodologías complementarias.</p>
+        </div>
+
+        <div class="success-box">
+            <strong>✅ Resumen de Éxito Y3T:</strong><br>
+            • Domina Y3T-RIV primero (protocolo más versátil)<br>
+            • Usa máquinas para seguridad con fatiga extrema<br>
+            • Deload cada 3-4 semanas es obligatorio<br>
+            • Nutrición alta en carbohidratos para reposición<br>
+            • Combina con metodologías TM en mesociclos largos
+        </div>
+
+        <h3>Atletas Conocidos que Usan Y3T</h3>
+        <ul>
+            <li><strong>Neil "Yoda" Hill</strong> - Creador del sistema</li>
+            <li><strong>Atletas IFBB Pro</strong> - Uso en fases de volumen y definición</li>
+            <li><strong>Culturistas naturales</strong> - Popular por sus protocolos sin fallo absoluto</li>
+        </ul>
+
+        <h3>Comparación Rápida</h3>
+        <table>
+            <tr>
+                <th>Aspecto</th>
+                <th>Y3T</th>
+                <th>MTUT</th>
+                <th>FST-7</th>
+            </tr>
+            <tr>
+                <td>Intensidad vía</td>
+                <td>Descansos variables</td>
+                <td>TUT (tiempo)</td>
+                <td>Pump (7 series)</td>
+            </tr>
+            <tr>
+                <td>Carga típica</td>
+                <td>60-80% 1RM</td>
+                <td>40-50% 1RM</td>
+                <td>60-70% 1RM</td>
+            </tr>
+            <tr>
+                <td>TUT por serie</td>
+                <td>60-90s por mini-serie</td>
+                <td>80-130s</td>
+                <td>30-50s (x7)</td>
+            </tr>
+            <tr>
+                <td>Estrés articular</td>
+                <td>Medio</td>
+                <td>Muy bajo ⭐</td>
+                <td>Bajo</td>
+            </tr>
+            <tr>
+                <td>Duración recomendada</td>
+                <td>4-6 semanas</td>
+                <td>4-6 semanas</td>
+                <td>Continuo</td>
+            </tr>
+            <tr>
+                <td>Spotter requerido</td>
+                <td>Preferible</td>
+                <td>No ⭐</td>
+                <td>No</td>
+            </tr>
+        </table>
+
+        <div
+            style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, var(--dark), #1E293B); color: white; border-radius: 12px;">
+            <h2 style="color: var(--primary); margin-bottom: 15px;">Y3T - Yoda 3 Training</h2>
+            <p style="opacity: 0.9;">Metodología Maestra Unificada</p>
+            <p style="opacity: 0.7; font-size: 0.9rem;">Basado en trabajo de Neil "Yoda" Hill</p>
+            <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Diciembre 2025</p>
+        </div>
+    </div>
+
+    <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Duración del Ciclo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Principiante (1‑2 años)</td>
+                <td>6‑8 semanas</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2‑5 años)</td>
+                <td>4‑6 semanas</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>3‑4 semanas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Estructura</th>
+                <th>Días por semana</th>
+                <th>Nivel recomendado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio‑Avanzado</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5‑6</td>
+                <td>Avanzado</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

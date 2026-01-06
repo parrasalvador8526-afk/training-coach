@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DUP - Daily Undulating Periodization</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #2563EB;
+            --secondary: #3B82F6;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 10pt;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .dup-visual {
+            display: flex;
+            justify-content: space-around;
+            background: #1E293B;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .dup-day {
+            flex: 1;
+            padding: 15px;
+            min-width: 100px;
+            border-right: 1px solid #374151;
+        }
+
+        .dup-day:last-child {
+            border-right: none;
+        }
+
+        .dup-day .number {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .dup-day.strength .number {
+            color: #EF4444;
+        }
+
+        .dup-day.hypertrophy .number {
+            color: #3B82F6;
+        }
+
+        .dup-day.power .number {
+            color: #10B981;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>DUP</h1>
+        <p class="subtitle">Daily Undulating Periodization</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Sistema de periodización que varía el estímulo diariamente entre
+            Fuerza, Hipertrofia y Potencia para maximizar adaptaciones múltiples simultáneamente.</p>
+        <p class="author">Popularizado por: Dr. Mike Zourdos · Investigador</p>
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 INVESTIGADORES Y ATLETAS
+                    DUP:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Dr. Mike Zourdos (Investigador Principal) ·
+                <strong>2.</strong> Dr. Brad Schoenfeld (Investigador) ·
+                <strong>3.</strong> Greg Nuckols (Stronger by Science) ·
+                <strong>4.</strong> Chad Wesley Smith (Juggernaut) ·
+                <strong>5.</strong> Eric Helms (3DMJ)
+            </p>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">Periodización Ondulante Diaria · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al DUP</li>
+                <li><strong>2.</strong> Objetivos del DUP</li>
+                <li><strong>3.</strong> Principios Básicos del DUP</li>
+                <li class="sub">3.1 Variación Diaria del Estímulo</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en DUP</li>
+                <li><strong>4.</strong> Métodos y Técnicas del DUP</li>
+                <li class="sub">4.1 Día de Fuerza</li>
+                <li class="sub">4.2 Día de Hipertrofia</li>
+                <li class="sub">4.3 Día de Potencia</li>
+                <li class="sub">4.4 Control del Tempo</li>
+                <li class="sub">4.5 RPE/RIR en DUP</li>
+                <li><strong>5.</strong> Estructura de una Sesión DUP</li>
+                <li><strong>6.</strong> Periodización con DUP</li>
+                <li><strong>7.</strong> Progresión en DUP</li>
+                <li><strong>8.</strong> Nutrición y Suplementación</li>
+                <li><strong>9.</strong> Rutinas por Grupo Muscular</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li><strong>11.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al DUP</h1>
+        <div class="highlight-box">
+            <strong>Daily Undulating Periodization (DUP)</strong> es un sistema de periodización donde el estímulo de
+            entrenamiento varía CADA DÍA, alternando entre días de Fuerza (3-5 reps), Hipertrofia (8-12 reps) y Potencia
+            (1-3 reps explosivas).
+        </div>
+        <p>A diferencia de la periodización lineal tradicional donde pasas semanas en cada fase, DUP te permite entrenar
+            TODAS las cualidades físicas cada semana, manteniendo el cuerpo en constante adaptación.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+                <div class="value">3-5</div>
+                <div class="label">Reps Fuerza</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">
+                <div class="value">8-12</div>
+                <div class="label">Reps Hipertrofia</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #10B981, #059669);">
+                <div class="value">1-3</div>
+                <div class="label">Reps Potencia</div>
+            </div>
+        </div>
+
+        <div class="dup-visual">
+            <div class="dup-day strength">
+                <div class="number">DÍA 1</div>
+                <div class="label">FUERZA<br>3-5 reps<br>85%+ 1RM</div>
+            </div>
+            <div class="dup-day hypertrophy">
+                <div class="number">DÍA 2</div>
+                <div class="label">HIPERTROFIA<br>8-12 reps<br>70-80% 1RM</div>
+            </div>
+            <div class="dup-day power">
+                <div class="number">DÍA 3</div>
+                <div class="label">POTENCIA<br>1-3 reps<br>50-60% explosivo</div>
+            </div>
+        </div>
+
+        <h1>2. Objetivos del DUP</h1>
+        <ul>
+            <li><strong>Fuerza + Tamaño + Potencia:</strong> Desarrollar las 3 cualidades simultáneamente</li>
+            <li><strong>Prevenir Adaptación:</strong> El estímulo cambia cada día</li>
+            <li><strong>Mayor Frecuencia:</strong> Entrenar movimientos 3x/semana</li>
+            <li><strong>Flexibilidad:</strong> Adaptarse a recuperación variable</li>
+            <li><strong>Prevención de Lesiones:</strong> Menos estrés repetitivo en articulaciones</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del DUP</h1>
+
+        <h2>3.1 Variación Diaria del Estímulo</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Reps</th>
+                <th>%1RM</th>
+                <th>Mecanismo</th>
+            </tr>
+            <tr>
+                <td>Día 1</td>
+                <td>Fuerza</td>
+                <td>3-5</td>
+                <td>85-90%</td>
+                <td>Tensión Mecánica</td>
+            </tr>
+            <tr>
+                <td>Día 2</td>
+                <td>Hipertrofia</td>
+                <td>8-12</td>
+                <td>70-80%</td>
+                <td>Daño + Metabólico</td>
+            </tr>
+            <tr>
+                <td>Día 3</td>
+                <td>Potencia</td>
+                <td>1-3</td>
+                <td>50-60%</td>
+                <td>Velocidad + SNC</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Rangos de Repeticiones y Fibras</h2>
+        <ul>
+            <li><strong>Fuerza (3-5 reps):</strong> Reclutamiento máximo de fibras Tipo IIB</li>
+            <li><strong>Hipertrofia (8-12 reps):</strong> Balance entre todas las fibras</li>
+            <li><strong>Potencia (1-3 reps):</strong> Velocidad de contracción máxima</li>
+        </ul>
+
+        <h2>3.3 Tipos de Contracción</h2>
+        <ul>
+            <li><strong>Día Fuerza:</strong> Concéntrica controlada, excéntrica 2-3s</li>
+            <li><strong>Día Hipertrofia:</strong> Tempo 3-1-2, contracción pico</li>
+            <li><strong>Día Potencia:</strong> Concéntrica EXPLOSIVA, sin pausa</li>
+        </ul>
+
+        <h2>3.4 Fallo Muscular en DUP</h2>
+        <div class="warning-box">
+            <strong>⚠️ Manejo del fallo por día:</strong>
+            <ul>
+                <li><strong>Día Fuerza:</strong> RIR 1-2 (acercarse pero no fallar)</li>
+                <li><strong>Día Hipertrofia:</strong> RIR 0-1 (fallo en última serie OK)</li>
+                <li><strong>Día Potencia:</strong> RIR 3+ (nunca fallar, mantener velocidad)</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del DUP</h1>
+
+        <h2>4.1 Día de Fuerza</h2>
+        <div class="method-card">
+            <h4 style="color: #EF4444;">🔴 DÍA FUERZA</h4>
+            <div class="code-block">PROTOCOLO DÍA FUERZA:
+                Series: 4-5
+                Reps: 3-5
+                %1RM: 85-90%
+                Descanso: 3-5 minutos
+                Tempo: 2-0-X (X = explosivo)
+                RPE: 8-9
+
+                EJEMPLO:
+                Sentadilla: 5×3 @ 87%
+                Press Banca: 5×5 @ 85%
+                Peso Muerto: 4×3 @ 88%</div>
+        </div>
+
+        <h2>4.2 Día de Hipertrofia</h2>
+        <div class="method-card">
+            <h4 style="color: #3B82F6;">🔵 DÍA HIPERTROFIA</h4>
+            <div class="code-block">PROTOCOLO DÍA HIPERTROFIA:
+                Series: 3-4
+                Reps: 8-12
+                %1RM: 70-80%
+                Descanso: 60-90 segundos
+                Tempo: 3-1-2
+                RPE: 8-10
+
+                EJEMPLO:
+                Sentadilla: 4×10 @ 72%
+                Press Banca: 4×8 @ 77%
+                Remo Barra: 4×10 @ 70%</div>
+        </div>
+
+        <h2>4.3 Día de Potencia</h2>
+        <div class="method-card">
+            <h4 style="color: #10B981;">🟢 DÍA POTENCIA</h4>
+            <div class="code-block">PROTOCOLO DÍA POTENCIA:
+                Series: 6-8
+                Reps: 1-3
+                %1RM: 50-60%
+                Descanso: 2-3 minutos
+                Tempo: X-0-X (máxima velocidad)
+                RPE: 6-7
+
+                EJEMPLO:
+                Sentadilla Salto: 6×3 @ 50%
+                Press Banca Speed: 8×3 @ 55%
+                Power Clean: 5×2 @ 60%</div>
+        </div>
+
+        <h2>4.4 Control del Tempo</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tempo</th>
+                <th>Velocidad Concéntrica</th>
+            </tr>
+            <tr>
+                <td>Fuerza</td>
+                <td>2-0-X</td>
+                <td>Máxima intención, controlado</td>
+            </tr>
+            <tr>
+                <td>Hipertrofia</td>
+                <td>3-1-2</td>
+                <td>Controlado</td>
+            </tr>
+            <tr>
+                <td>Potencia</td>
+                <td>X-0-X</td>
+                <td>EXPLOSIVO máximo</td>
+            </tr>
+        </table>
+
+        <h2>4.5 RPE/RIR en DUP</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>RPE Target</th>
+                <th>RIR Target</th>
+            </tr>
+            <tr>
+                <td>Fuerza</td>
+                <td>8-9</td>
+                <td>1-2</td>
+            </tr>
+            <tr>
+                <td>Hipertrofia</td>
+                <td>8-10</td>
+                <td>0-1</td>
+            </tr>
+            <tr>
+                <td>Potencia</td>
+                <td>6-7</td>
+                <td>3+</td>
+            </tr>
+        </table>
+
+        <h2>4.6 Compatibilidad con Otras Metodologías</h2>
+        <div class="success-box">
+            <strong>✅ Compatible con:</strong>
+            <ul>
+                <li><strong>5/3/1:</strong> DUP complementa bien la estructura de semanas de 5/3/1</li>
+                <li><strong>Y3T Semana 1:</strong> Días de fuerza DUP similares a Y3T Heavy Week</li>
+                <li><strong>GVT (fase recuperación):</strong> Usar DUP días potencia como descanso activo</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ Incompatible con:</strong>
+            <ul>
+                <li><strong>Heavy Duty:</strong> Frecuencia de DUP contradice filosofía HIT</li>
+                <li><strong>DC Training:</strong> Rest-pause y DUP generan demasiada fatiga combinada</li>
+                <li><strong>SST fases intensas:</strong> Estrés metabólico extremo no combina con días potencia</li>
+            </ul>
+        </div>
+
+        <h2>4.7 Cuándo Usar DUP</h2>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar DUP cuando:</strong>
+            <ul>
+                <li>Tienes 1+ años de experiencia entrenando</li>
+                <li>Quieres mejorar fuerza Y tamaño simultáneamente</li>
+                <li>Practicas un deporte que requiere potencia (artes marciales, fútbol, etc.)</li>
+                <li>Te aburres con entrenamientos repetitivos</li>
+                <li>Puedes entrenar 3-4 días por semana consistentemente</li>
+                <li>Tienes buen autoconocimiento de RPE/RIR</li>
+                <li>Quieres flexibilidad para ajustar según tu recuperación diaria</li>
+            </ul>
+        </div>
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar DUP cuando:</strong>
+            <ul>
+                <li><strong>Principiante:</strong> Necesitas dominar técnica con cargas consistentes primero</li>
+                <li><strong>Solo buscas hipertrofia:</strong> Mejor usar GVT o SST</li>
+                <li><strong>Preparación powerlifting cercana:</strong> Mejor periodización lineal las últimas semanas
+                </li>
+                <li><strong>Lesiones activas:</strong> La variación puede agravar problemas</li>
+                <li><strong>Equipamiento limitado:</strong> Día potencia requiere pesas olímpicas idealmente</li>
+                <li><strong>Sin medidor de velocidad:</strong> Día potencia pierde efectividad sin feedback de velocidad
+                </li>
+            </ul>
+        </div>
+
+        <h2>4.8 Limitantes del Sistema DUP</h2>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Requiere buena capacidad de autoregulación (RPE)</li>
+                <li>Día potencia puede ser confuso para algunos (técnica explosiva)</li>
+                <li>No es óptimo para hipertrofia máxima pura</li>
+                <li>Necesita planificación cuidadosa de progresión</li>
+                <li>Alta frecuencia de movimientos puede requerir más movilidad</li>
+                <li>Algunos gimnasios no permiten ejercicios explosivos</li>
+            </ul>
+        </div>
+
+        <h2>4.9 Ejemplo: Bench Press en Semana DUP</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Variante</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Velocidad</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Fuerza</td>
+                <td>Press Banca Plano</td>
+                <td>5×3</td>
+                <td>87%</td>
+                <td>Controlada</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hipertrofia</td>
+                <td>Press Banca Inclinado</td>
+                <td>4×10</td>
+                <td>72%</td>
+                <td>Tempo 3-1-2</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Potencia</td>
+                <td>Press Banca Velocidad</td>
+                <td>8×3</td>
+                <td>55%</td>
+                <td>EXPLOSIVA</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>Nota:</strong> En día potencia, usa bandas o cadenas si es posible para maximizar la curva de fuerza
+            y desarrollar velocidad en todo el rango.
+        </div>
+
+        <h1 class="page-break">5. Estructura de una Sesión DUP</h1>
+
+        <h2>5.1 Calentamiento</h2>
+        <div class="code-block">CALENTAMIENTO DUP:
+            1. Cardio ligero: 5 min
+            2. Movilidad específica: 5 min
+            3. Activación del SNC (día potencia): saltos, lanzamientos
+            4. Series de aproximación:
+            - Día Fuerza: 50%×5, 65%×3, 75%×2, 80%×1
+            - Día Hipertrofia: 50%×8, 65%×5
+            - Día Potencia: 40%×3, 50%×2</div>
+
+        <h2>5.2 Ejercicios Principales</h2>
+        <ul>
+            <li>2-3 ejercicios compuestos principales</li>
+            <li>Seguir el protocolo del día (Fuerza/Hipertrofia/Potencia)</li>
+            <li>Mismos ejercicios toda la semana, diferente estímulo</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios</h2>
+        <ul>
+            <li>2-3 ejercicios accesorios</li>
+            <li>Siempre en rango hipertrofia (8-12 reps)</li>
+            <li>60-90s descanso</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con DUP</h1>
+
+        <h2>6.1 Estructura Semanal</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Grupos</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Fuerza</td>
+                <td>Full Body o Upper</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Descanso</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hipertrofia</td>
+                <td>Full Body o Lower</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Descanso</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Potencia</td>
+                <td>Full Body o Upper</td>
+            </tr>
+            <tr>
+                <td>Sáb-Dom</td>
+                <td>Descanso</td>
+                <td>-</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Mesociclo DUP (4-6 semanas)</h2>
+        <div class="highlight-box">
+            <strong>Progresión típica:</strong>
+            <ul>
+                <li>Semanas 1-2: Establecer línea base</li>
+                <li>Semanas 3-4: Aumentar carga progresivamente</li>
+                <li>Semana 5: Peak (cargas más altas)</li>
+                <li>Semana 6: Deload</li>
+            </ul>
+        </div>
+
+        <h2>6.3 Deloads en DUP</h2>
+        <div class="warning-box">
+            <strong>⚠️ Deload cada 4-6 semanas:</strong>
+            <ul>
+                <li>Reducir volumen 50% en todos los días</li>
+                <li>Mantener frecuencia (3 días) pero bajar intensidad</li>
+                <li>Día Fuerza: 3×3 @ 70% en vez de 5×3 @ 87%</li>
+                <li>Día Hipertrofia: 3×8 @ 60% en vez de 4×10 @ 75%</li>
+                <li>Día Potencia: Mantener velocidad pero menos series</li>
+            </ul>
+        </div>
+
+        <h2>6.4 Fases de Periodización DUP</h2>
+        <table>
+            <tr>
+                <th>Fase</th>
+                <th>Semanas</th>
+                <th>Enfoque Principal</th>
+                <th>Ajustes</th>
+            </tr>
+            <tr>
+                <td>Acumulación</td>
+                <td>1-2</td>
+                <td>Base de volumen</td>
+                <td>RPE bajo (7-8), establecer línea base</td>
+            </tr>
+            <tr>
+                <td>Intensificación</td>
+                <td>3-4</td>
+                <td>Aumentar cargas</td>
+                <td>RPE medio-alto (8-9), progresión semanal</td>
+            </tr>
+            <tr>
+                <td>Peak</td>
+                <td>5</td>
+                <td>Máxima expresión</td>
+                <td>RPE alto (9-10), test de 1RM opcional</td>
+            </tr>
+            <tr>
+                <td>Realización</td>
+                <td>6</td>
+                <td>Deload/Recuperación</td>
+                <td>Volumen reducido, preparar siguiente ciclo</td>
+            </tr>
+        </table>
+
+        <h2>6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+        <p>La duración óptima del ciclo DUP varía según el nivel de experiencia del atleta, basándose en evidencia
+            científica sobre capacidad de adaptación a la variación de estímulos:</p>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración Recomendada</th>
+                <th>Justificación Científica</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante</strong> (1-2 años)</td>
+                <td>6-8 semanas</td>
+                <td>Mayor capacidad de adaptación, aprender autorregulación de RPE</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio</strong> (2-5 años)</td>
+                <td>4-6 semanas</td>
+                <td>Óptimo para desarrollo simultáneo de fuerza, hipertrofia y potencia</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado</strong> (5+ años)</td>
+                <td>3-4 semanas</td>
+                <td>Necesita variación frecuente, énfasis cambiante F→H→P cada bloque</td>
+            </tr>
+        </table>
+        <div class="highlight-box">
+            <strong>💡 Recomendación DUP:</strong> La aplicación NEXUS adapta automáticamente las opciones de duración
+            según tu nivel. DUP permite ciclos más largos que metodologías de alta intensidad (HD, DC).
+        </div>
+
+        <h2>6.6 Estructuras por Nivel de Intensidad</h2>
+        <table>
+            <tr>
+                <th>Split</th>
+                <th>Días/Semana</th>
+                <th>Frecuencia</th>
+                <th>Nivel Recomendado</th>
+                <th>Uso Ideal</th>
+            </tr>
+            <tr>
+                <td>Full Body DUP</td>
+                <td>3</td>
+                <td>3x/semana</td>
+                <td>Principiante-Intermedio</td>
+                <td>Máxima frecuencia de movimientos</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower DUP</td>
+                <td>4</td>
+                <td>2x/semana</td>
+                <td>Intermedio-Avanzado</td>
+                <td>Balance óptimo volumen/frecuencia</td>
+            </tr>
+            <tr>
+                <td>Push/Pull/Legs DUP</td>
+                <td>6</td>
+                <td>2x/semana</td>
+                <td>Avanzado</td>
+                <td>Mayor especialización por patrón</td>
+            </tr>
+        </table>
+
+        <h1>7. Progresión en DUP</h1>
+
+        <h2>7.1 Progresión de Carga por Tipo de Día</h2>
+        <div class="success-box">
+            <strong>✅ Reglas de Progresión por Día:</strong>
+        </div>
+        <table>
+            <tr>
+                <th>Tipo de Día</th>
+                <th>Cuándo Progresar</th>
+                <th>Incremento</th>
+            </tr>
+            <tr>
+                <td>Fuerza</td>
+                <td>Completas todas las reps con RPE < 9</td>
+                <td>+2.5-5 kg</td>
+            </tr>
+            <tr>
+                <td>Hipertrofia</td>
+                <td>RIR > 1 en última serie</td>
+                <td>+1 rep primero, luego +2.5 kg</td>
+            </tr>
+            <tr>
+                <td>Potencia</td>
+                <td>Velocidad consistentemente alta</td>
+                <td>+5% peso O +1-2 series</td>
+            </tr>
+        </table>
+
+        <h2>7.2 Manipulación de Variables</h2>
+        <table>
+            <tr>
+                <th>Variable</th>
+                <th>Día Fuerza</th>
+                <th>Día Hipertrofia</th>
+                <th>Día Potencia</th>
+            </tr>
+            <tr>
+                <td>Series</td>
+                <td>4-6</td>
+                <td>3-4</td>
+                <td>6-10</td>
+            </tr>
+            <tr>
+                <td>Reps</td>
+                <td>1-5</td>
+                <td>8-15</td>
+                <td>1-3</td>
+            </tr>
+            <tr>
+                <td>Intensidad</td>
+                <td>82-92%</td>
+                <td>65-80%</td>
+                <td>50-65%</td>
+            </tr>
+            <tr>
+                <td>Descanso</td>
+                <td>3-5 min</td>
+                <td>60-90s</td>
+                <td>2-3 min</td>
+            </tr>
+        </table>
+        <div class="warning-box">
+            <strong>⚠️ Orden de prioridad para progresar:</strong>
+            <ol>
+                <li>Primero: Mejorar calidad de movimiento y técnica</li>
+                <li>Segundo: Añadir reps dentro del rango prescrito</li>
+                <li>Tercero: Añadir peso (2.5 kg típicamente)</li>
+                <li>Cuarto: Añadir series si es necesario (máx +1/semana)</li>
+            </ol>
+        </div>
+
+        <h2>7.3 Progresión a Largo Plazo</h2>
+        <div class="highlight-box">
+            <strong>Plan de 24 Semanas con DUP:</strong>
+        </div>
+        <table>
+            <tr>
+                <th>Bloque</th>
+                <th>Semanas</th>
+                <th>Enfoque</th>
+                <th>Objetivo</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1-6</td>
+                <td>DUP Clásico</td>
+                <td>Establecer base fuerza/potencia</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>7-12</td>
+                <td>DUP + GVT días hipertrofia</td>
+                <td>Enfatizar masa muscular</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>13-18</td>
+                <td>DUP con énfasis fuerza</td>
+                <td>Peak de fuerza máxima</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>19-24</td>
+                <td>DUP con énfasis potencia</td>
+                <td>Expresión atlética</td>
+            </tr>
+        </table>
+        <div class="success-box">
+            <strong>✅ Resultados esperados en 24 semanas:</strong>
+            <ul>
+                <li>+10-15% en 1RM de levantamientos principales</li>
+                <li>+3-5 kg de masa muscular (en superávit)</li>
+                <li>Mejora significativa en potencia/velocidad</li>
+                <li>Base sólida para cualquier objetivo futuro</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">8. Nutrición y Suplementación</h1>
+
+        <h2>8.1 Requerimientos Calóricos</h2>
+        <ul>
+            <li><strong>Volumen:</strong> +300-500 kcal sobre mantenimiento</li>
+            <li><strong>Recomposición:</strong> Mantenimiento con alta proteína</li>
+        </ul>
+
+        <h2>8.2 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>1.8-2.2 g/kg</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>4-5 g/kg (más en días fuerza)</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1 g/kg</td>
+            </tr>
+        </table>
+
+        <h2>8.3 Suplementación</h2>
+        <ul>
+            <li><strong>Creatina:</strong> 5g diarios</li>
+            <li><strong>Cafeína:</strong> Pre-entreno (especialmente día potencia)</li>
+            <li><strong>Proteína Whey:</strong> Post-entreno</li>
+        </ul>
+
+        <h1 class="page-break">9. Rutinas por Grupo Muscular</h1>
+
+        <div class="highlight-box">
+            <strong>📋 PARÁMETROS DUP ESTÁNDAR:</strong>
+            <ul>
+                <li><strong>Día Fuerza:</strong> 4-5 series × 3-5 reps @ 85-90% 1RM, 3-5 min descanso</li>
+                <li><strong>Día Hipertrofia:</strong> 3-4 series × 8-12 reps @ 70-80% 1RM, 60-90s descanso</li>
+                <li><strong>Día Potencia:</strong> 6-8 series × 1-3 reps @ 50-60% 1RM, 2-3 min descanso, EXPLOSIVO</li>
+            </ul>
+        </div>
+
+        <h2>9.1 Sentadilla DUP (3 Días)</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Fuerza</td>
+                <td>5×3</td>
+                <td>87%</td>
+                <td>2-0-X</td>
+                <td>4 min</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hipertrofia</td>
+                <td>4×10</td>
+                <td>72%</td>
+                <td>3-1-2</td>
+                <td>90s</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Potencia</td>
+                <td>6×3</td>
+                <td>55%</td>
+                <td>X-0-X</td>
+                <td>3 min</td>
+                <td>6-7</td>
+            </tr>
+        </table>
+
+        <h2>9.2 Press Banca DUP (3 Días)</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Fuerza</td>
+                <td>5×5</td>
+                <td>85%</td>
+                <td>2-0-X</td>
+                <td>4 min</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hipertrofia</td>
+                <td>4×8</td>
+                <td>77%</td>
+                <td>3-1-2</td>
+                <td>75s</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Potencia</td>
+                <td>8×3</td>
+                <td>55%</td>
+                <td>X-0-X</td>
+                <td>2 min</td>
+                <td>6-7</td>
+            </tr>
+        </table>
+
+        <h2>9.3 Peso Muerto DUP (3 Días)</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Fuerza</td>
+                <td>4×3</td>
+                <td>88%</td>
+                <td>1-0-X</td>
+                <td>5 min</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hipertrofia</td>
+                <td>3×8</td>
+                <td>75%</td>
+                <td>3-0-2</td>
+                <td>90s</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Potencia</td>
+                <td>5×2</td>
+                <td>60%</td>
+                <td>X-0-X</td>
+                <td>3 min</td>
+                <td>6-7</td>
+            </tr>
+        </table>
+
+        <h2>9.4 Press Militar DUP (3 Días)</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Series×Reps</th>
+                <th>%1RM</th>
+                <th>Tempo</th>
+                <th>Descanso</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Fuerza</td>
+                <td>5×3</td>
+                <td>85%</td>
+                <td>2-0-X</td>
+                <td>4 min</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hipertrofia</td>
+                <td>4×10</td>
+                <td>70%</td>
+                <td>3-1-2</td>
+                <td>75s</td>
+                <td>8-9</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Potencia</td>
+                <td>6×2</td>
+                <td>55%</td>
+                <td>X-0-X</td>
+                <td>2 min</td>
+                <td>6</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">9.5 Semana DUP Full Body Completa</h2>
+
+        <h3>Lunes - Día Fuerza</h3>
+        <div class="method-card">
+            <div class="code-block">CALENTAMIENTO: 5 min cardio + movilidad
+
+                EJERCICIOS PRINCIPALES (Fuerza):
+                A. Sentadilla: 5×3 @ 87%, descanso 4 min
+                B. Press Banca: 5×5 @ 85%, descanso 4 min
+                C. Remo Barra: 4×5 @ 82%, descanso 3 min
+
+                ACCESORIOS (Hipertrofia):
+                D. Curl Bíceps: 3×10 @ 70%, descanso 60s
+                E. Extensiones Tríceps: 3×10 @ 70%, descanso 60s
+
+                DURACIÓN TOTAL: ~60 minutos</div>
+        </div>
+
+        <h3>Miércoles - Día Hipertrofia</h3>
+        <div class="method-card">
+            <div class="code-block">CALENTAMIENTO: 5 min cardio + movilidad
+
+                EJERCICIOS PRINCIPALES (Hipertrofia):
+                A. Sentadilla: 4×10 @ 72%, descanso 90s, tempo 3-1-2
+                B. Press Banca: 4×8 @ 77%, descanso 75s, tempo 3-1-2
+                C. Dominadas: 4×8-10, descanso 90s
+
+                ACCESORIOS:
+                D. Elevaciones Laterales: 3×12, descanso 60s
+                E. Curl Femoral: 3×12, descanso 60s
+                F. Face Pulls: 3×15, descanso 60s
+
+                DURACIÓN TOTAL: ~55 minutos</div>
+        </div>
+
+        <h3>Viernes - Día Potencia</h3>
+        <div class="method-card">
+            <div class="code-block">CALENTAMIENTO: 5 min + Activación SNC (saltos)
+
+                EJERCICIOS PRINCIPALES (Potencia):
+                A. Sentadilla Salto: 6×3 @ 50%, descanso 3 min, EXPLOSIVO
+                B. Press Banca Velocidad: 8×3 @ 55%, descanso 2 min
+                C. Power Clean: 5×2 @ 60%, descanso 3 min
+                D. Box Jumps: 4×5, descanso 2 min
+
+                ACCESORIOS (ligero):
+                E. Pliométricos: 3×5
+                F. Medicine Ball Throws: 3×8
+
+                DURACIÓN TOTAL: ~50 minutos
+                ⚠️ Si la velocidad baja, TERMINA la sesión</div>
+        </div>
+
+        <h2>9.6 Divisiones Semanales DUP</h2>
+
+        <h3>Opción A: Full Body (3 días/semana)</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Movimientos Principales</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Fuerza</td>
+                <td>Sentadilla + Banca + Remo</td>
+                <td>Cargas pesadas, descansos largos</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hipertrofia</td>
+                <td>Sentadilla + Banca + Dominadas</td>
+                <td>Volumen moderado, tempo controlado</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Potencia</td>
+                <td>Saltos + Velocidad + Olympic</td>
+                <td>Velocidad máxima, sin fatiga</td>
+            </tr>
+        </table>
+
+        <h3>Opción B: Upper/Lower (4 días/semana)</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Tipo</th>
+                <th>Ejercicios</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Upper</td>
+                <td>Fuerza</td>
+                <td>Banca + Press + Remo</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Lower</td>
+                <td>Hipertrofia</td>
+                <td>Sentadilla + RDL + Leg Press</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Upper</td>
+                <td>Potencia</td>
+                <td>Banca Velocidad + Push Press</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Lower</td>
+                <td>Fuerza</td>
+                <td>Sentadilla + Peso Muerto</td>
+            </tr>
+        </table>
+
+        <h3>Opción C: Push/Pull/Legs DUP (6 días/semana)</h3>
+        <div class="code-block">SEMANA 1:
+            Lun: Push Fuerza | Mar: Pull Hipertrofia | Mié: Legs Potencia
+            Jue: Push Hipertrofia | Vie: Pull Potencia | Sáb: Legs Fuerza
+
+            SEMANA 2:
+            Lun: Push Potencia | Mar: Pull Fuerza | Mié: Legs Hipertrofia
+            (Rotar tipos de día para cada split)</div>
+
+        <h2>9.7 Tabla Resumen de Parámetros DUP</h2>
+        <table>
+            <tr>
+                <th>Parámetro</th>
+                <th>Día Fuerza</th>
+                <th>Día Hipertrofia</th>
+                <th>Día Potencia</th>
+            </tr>
+            <tr>
+                <td>Series × Reps</td>
+                <td>4-5 × 3-5</td>
+                <td>3-4 × 8-12</td>
+                <td>6-8 × 1-3</td>
+            </tr>
+            <tr>
+                <td>% 1RM</td>
+                <td>85-90%</td>
+                <td>70-80%</td>
+                <td>50-60%</td>
+            </tr>
+            <tr>
+                <td>Tempo</td>
+                <td>2-0-X</td>
+                <td>3-1-2</td>
+                <td>X-0-X</td>
+            </tr>
+            <tr>
+                <td>Descanso</td>
+                <td>3-5 min</td>
+                <td>60-90s</td>
+                <td>2-3 min</td>
+            </tr>
+            <tr>
+                <td>RPE</td>
+                <td>8-9</td>
+                <td>8-10</td>
+                <td>6-7</td>
+            </tr>
+            <tr>
+                <td>RIR</td>
+                <td>1-2</td>
+                <td>0-2</td>
+                <td>3+ (sin fallo)</td>
+            </tr>
+            <tr>
+                <td>Velocidad</td>
+                <td>Controlada</td>
+                <td>Moderada</td>
+                <td>EXPLOSIVA</td>
+            </tr>
+            <tr>
+                <td>Objetivo</td>
+                <td>Tensión Mecánica</td>
+                <td>Daño + Metabólico</td>
+                <td>Velocidad + SNC</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <ul>
+            <li>Si estás fatigado, cambia Fuerza por Hipertrofia</li>
+            <li>La flexibilidad es una ventaja del DUP</li>
+        </ul>
+
+        <h2>10.2 Recuperación</h2>
+        <div class="warning-box">
+            <strong>⚠️ Días Potencia requieren SNC fresco:</strong>
+            <p>Si tu velocidad baja, termina la sesión. La calidad supera la cantidad.</p>
+        </div>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li>La variación de estímulo reduce lesiones por uso repetitivo</li>
+            <li>Nunca sacrificar técnica por peso en día fuerza</li>
+        </ul>
+
+        <h2 class="page-break">10.4 Especialización de Grupos Débiles</h2>
+
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con DUP</strong>
+            <p>DUP permite añadir el grupo débil en los 3 tipos de día, beneficiándose de
+                fuerza, hipertrofia y potencia simultáneamente.</p>
+        </div>
+
+        <h3>Estrategia DUP para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Series Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Técnica Recomendada</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+3-4 series</td>
+                <td>3x/semana</td>
+                <td>Añadir a días Hipertrofia</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+6-8 series</td>
+                <td>3x/semana</td>
+                <td>Incluir en los 3 tipos de día</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+9-12 series</td>
+                <td>5-6x/semana</td>
+                <td>Día extra dedicado al grupo</td>
+            </tr>
+        </table>
+
+        <h3>Grupos Comunes a Priorizar</h3>
+        <table>
+            <tr>
+                <th>Grupo</th>
+                <th>Día Fuerza</th>
+                <th>Día Hipertrofia</th>
+                <th>Día Potencia</th>
+            </tr>
+            <tr>
+                <td>Pantorrillas</td>
+                <td>3×5 @ 85%</td>
+                <td>4×12 @ 70%</td>
+                <td>6×3 saltos</td>
+            </tr>
+            <tr>
+                <td>Bíceps</td>
+                <td>4×5 curl pesado</td>
+                <td>3×12 variaciones</td>
+                <td>Omitir</td>
+            </tr>
+            <tr>
+                <td>Deltoides Posterior</td>
+                <td>3×8 face pulls</td>
+                <td>4×15 face pulls</td>
+                <td>Omitir</td>
+            </tr>
+        </table>
+
+        <div class="code-block">EJEMPLO: ESPECIALIZACIÓN PANTORRILLAS CON DUP
+
+            FRECUENCIA: 3x/semana (cada día DUP)
+            DURACIÓN: 8-10 minutos extra por sesión
+
+            PROTOCOLO:
+            - Día Fuerza: Gemelo de Pie 3×5 @ 85%, descanso 3 min
+            - Día Hipertrofia: Gemelo Sentado 4×12 @ 70%, descanso 60s
+            - Día Potencia: Saltos de Pantorrilla 6×3, descanso 2 min
+
+            RESULTADO ESPERADO: 6-8 semanas para desarrollo proporcional</div>
+
+        <h3>Reglas de Especialización DUP</h3>
+        <div class="warning-box">
+            <strong>⚠️ Reglas Importantes:</strong>
+            <ul>
+                <li><strong>Grupo prioritario PRIMERO:</strong> Al inicio de cada sesión</li>
+                <li><strong>Variar estímulo:</strong> Cada día DUP aplica diferente protocolo</li>
+                <li><strong>Máximo 1-2 grupos:</strong> DUP ya es demandante de por sí</li>
+                <li><strong>Deload incluido:</strong> Reducir volumen en semana 6</li>
+            </ul>
+        </div>
+
+        <h1>11. Conclusión</h1>
+        <div class="highlight-box">
+            <strong>Daily Undulating Periodization</strong> es ideal para quienes quieren desarrollar fuerza, tamaño y
+            potencia simultáneamente. Su flexibilidad y variación constante lo hacen sostenible a largo plazo y efectivo
+            para romper mesetas.
+        </div>
+
+        <div
+            style="margin-top: 40px; padding: 20px; border-top: 2px solid #ddd; text-align: center; font-size: 12px; color: #999;">
+            <p><strong>NEXUS - 10 Metodologías de Hipertrofia v3.1</strong></p>
+            <p>Y3T • Heavy Duty • Blood & Guts • MTUT • SST • FST-7 • GVT • DUP • 5/3/1 • DC Training</p>
+        </div>
+    </div>
+
+    <h2 id="section6-5">6.5 Duración del Ciclo por Nivel de Experiencia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Duración del Ciclo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Principiante (1‑2 años)</td>
+                <td>6‑8 semanas</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2‑5 años)</td>
+                <td>4‑6 semanas</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>3‑4 semanas</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="section6-6">Estructuras / División de entrenamientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Estructura</th>
+                <th>Días por semana</th>
+                <th>Nivel recomendado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio‑Avanzado</td>
+            </tr>
+            <tr>
+                <td>Torso/Pierna</td>
+                <td>4</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5‑6</td>
+                <td>Avanzado</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

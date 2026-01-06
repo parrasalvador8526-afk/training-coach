@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS-TM - Tensión Mecánica Progresiva (5 Semanas)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #DC2626;
+            --secondary: #EF4444;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>NEXUS-TM</h1>
+        <p class="subtitle">Tensión Mecánica Progresiva - 5 Semanas</p>
+        <p style="font-size: 1.1rem; max-width: 700px;">Metodología híbrida que utiliza <strong>5 intensificadores de
+                tensión mecánica</strong>, uno por semana, combinando técnicas de Blood & Guts, DC Training, Heavy Duty
+            y 5/3/1.</p>
+        <p class="author">NEXUS v3.3 · Metodología Híbrida de Tensión Mecánica</p>
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🔴 UN INTENSIFICADOR POR
+                    SEMANA:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>S1:</strong> AMRAP (5/3/1) · <strong>S2:</strong> Cluster Sets · <strong>S3:</strong> Negativas
+                · <strong>S4:</strong> Forzadas · <strong>S5:</strong> Rest-Pause (DC)
+            </p>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">% RM: 75-90% · RIR: 0-2 · 5 Semanas · 5
+            Intensificadores</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE COMPLETO</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción a NEXUS-TM</li>
+                <li><strong>2.</strong> Objetivos del NEXUS-TM</li>
+                <li><strong>3.</strong> Principios Básicos</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT) · 3.2 Rangos de Repeticiones · 3.3 Tipos de Contracción ·
+                    3.4 Fallo Muscular</li>
+                <li><strong>4.</strong> Los 5 Intensificadores en Detalle</li>
+                <li class="sub">4.1 AMRAP · 4.2 Cluster Sets · 4.3 Negativas · 4.4 Forzadas · 4.5 Rest-Pause</li>
+                <li><strong>5.</strong> Estructura de una Sesión</li>
+                <li class="sub">5.1 Calentamiento · 5.2 Ejercicios Principales · 5.3 Accesorios · 5.4 Enfriamiento</li>
+                <li><strong>6.</strong> Periodización y Progresión</li>
+                <li class="sub">6.1 Microciclos · 6.2 Progresión de Carga · 6.3 Deloads · 6.4 Duración por Nivel</li>
+                <li><strong>7.</strong> Nutrición y Suplementación</li>
+                <li><strong>8.</strong> Rutinas por Grupo Muscular</li>
+                <li class="sub">8.1 Pecho · 8.2 Espalda · 8.3 Piernas · 8.4 Hombros · 8.5 Brazos</li>
+                <li><strong>9.</strong> Estructuras por División</li>
+                <li class="sub">9.1 Full Body · 9.2 Upper/Lower · 9.3 Torso/Pierna · 9.4 Bro Split</li>
+                <li><strong>10.</strong> Calculadora de Cargas y Parámetros</li>
+                <li><strong>11.</strong> Consideraciones Importantes</li>
+                <li class="sub">11.1 Escuchar al Cuerpo · 11.2 Recuperación · 11.3 Prevención Lesiones · 11.4 Guía Paso
+                    a Paso</li>
+                <li><strong>12.</strong> Apéndice: Datos Técnicos para Aplicación</li>
+                <li><strong>13.</strong> Conclusión</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción a NEXUS-TM</h1>
+        <div class="highlight-box">
+            <strong>NEXUS-TM (Tensión Mecánica Progresiva)</strong> es una metodología de 5 semanas donde cada semana se
+            enfoca en UN intensificador de tensión mecánica específico, permitiendo dominar cada técnica antes de pasar
+            a la siguiente.
+        </div>
+        <p>A diferencia de métodos que mezclan técnicas, NEXUS-TM utiliza una progresión sistemática de intensificadores
+            que aumentan la demanda del SNC gradualmente, culminando en la semana 5 con el Rest-Pause de DC Training.
+        </p>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">5</div>
+                <div class="label">Semanas</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">5</div>
+                <div class="label">Intensificadores</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">75-90%</div>
+                <div class="label">Rango 1RM</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">0-2</div>
+                <div class="label">RIR</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">45-60min</div>
+                <div class="label">Por Sesión</div>
+            </div>
+        </div>
+        <h3>Origen y Filosofía</h3>
+        <p>NEXUS-TM combina las mejores técnicas de tensión mecánica de 4 metodologías reconocidas:</p>
+        <ul>
+            <li><strong>5/3/1 (Jim Wendler):</strong> AMRAP para progresión de fuerza</li>
+            <li><strong>Heavy Duty (Mike Mentzer):</strong> Cluster Sets para TUT con peso máximo</li>
+            <li><strong>Blood & Guts (Dorian Yates):</strong> Negativas y Forzadas para ir más allá del fallo</li>
+            <li><strong>DC Training (Dante Trudel):</strong> Rest-Pause extremo para reclutamiento máximo</li>
+        </ul>
+
+        <h1>2. Objetivos del NEXUS-TM</h1>
+        <ul>
+            <li><strong>Maximizar Tensión Mecánica:</strong> Cargas pesadas (75-90% 1RM) para máxima tensión en fibras
+                tipo II</li>
+            <li><strong>Dominar Intensificadores:</strong> Una semana completa para perfeccionar cada técnica</li>
+            <li><strong>Fuerza Progresiva:</strong> Aumentar 1RM en ejercicios compuestos cada ciclo</li>
+            <li><strong>Hipertrofia Miofibrilar:</strong> Crecimiento de fibras musculares contráctiles (no solo
+                sarcoplasmática)</li>
+            <li><strong>Minimizar Fatiga Acumulada:</strong> Progresión inteligente que no agota el SNC prematuramente
+            </li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del NEXUS-TM</h1>
+
+        <h2>3.1 Tiempo Bajo Tensión (TUT)</h2>
+        <table>
+            <tr>
+                <th>Objetivo</th>
+                <th>TUT por Set</th>
+                <th>Tempo Recomendado</th>
+            </tr>
+            <tr>
+                <td>Fuerza máxima</td>
+                <td>20-30 segundos</td>
+                <td>2-0-2 o explosivo</td>
+            </tr>
+            <tr>
+                <td>Hipertrofia mecánica</td>
+                <td>30-45 segundos</td>
+                <td>3-1-2</td>
+            </tr>
+            <tr>
+                <td>Negativas/Forzadas</td>
+                <td>40-60 segundos</td>
+                <td>4-6 seg excéntrico</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Rangos de Repeticiones y Fibras</h2>
+        <table>
+            <tr>
+                <th>Reps</th>
+                <th>% 1RM</th>
+                <th>Tipo de Fibra</th>
+                <th>Efecto Principal</th>
+            </tr>
+            <tr>
+                <td>1-5</td>
+                <td>85-100%</td>
+                <td>Tipo IIx (rápidas)</td>
+                <td>Fuerza máxima</td>
+            </tr>
+            <tr>
+                <td>6-8</td>
+                <td>75-85%</td>
+                <td>Tipo IIa + IIx</td>
+                <td>Fuerza-Hipertrofia</td>
+            </tr>
+            <tr>
+                <td>8-12</td>
+                <td>70-80%</td>
+                <td>Tipo IIa</td>
+                <td>Hipertrofia</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Tipos de Contracción</h2>
+        <ul>
+            <li><strong>Concéntrica:</strong> Fase de levantamiento - 1-2 segundos, controlado o explosivo</li>
+            <li><strong>Excéntrica:</strong> Fase de bajada - 3-4 segundos para NEXUS-TM, hasta 6s en negativas</li>
+            <li><strong>Isométrica:</strong> Pausa en contracción máxima - 1-2 segundos para aumentar reclutamiento</li>
+        </ul>
+
+        <h2>3.4 Fallo Muscular en NEXUS-TM</h2>
+        <div class="warning-box">
+            <strong>NEXUS-TM requiere llegar al fallo en working sets.</strong>
+            <ul>
+                <li><strong>S1 AMRAP:</strong> 1 rep antes del fallo técnico</li>
+                <li><strong>S2 Cluster:</strong> Fallo en cada mini-set</li>
+                <li><strong>S3-S4:</strong> Fallo concéntrico + técnica post-fallo</li>
+                <li><strong>S5 Rest-Pause:</strong> Fallo absoluto en cada mini-set</li>
+            </ul>
+        </div>
+
+        <h1 class="page-break">4. Los 5 Intensificadores en Detalle</h1>
+
+        <h2>4.1 AMRAP (Semana 1)</h2>
+        <div class="code-block">PROTOCOLO AMRAP:
+            Origen: 5/3/1 (Jim Wendler)
+            Aplicación: Ejercicios compuestos principales
+
+            ESTRUCTURA:
+            Set 1: 5 reps @ 65% 1RM | Descanso: 3 min
+            Set 2: 5 reps @ 75% 1RM | Descanso: 3-4 min
+            Set 3: 5+ reps @ 85% 1RM (AMRAP - máximas posibles)
+
+            PARÁMETROS:
+            • TUT por set: 25-40 segundos
+            • Tempo: 2-1-2 (controlado)
+            • RPE: 8-9 en sets 1-2, 10 en set 3
+            • Descanso total: 6-7 minutos
+
+            REGLA CRÍTICA: Registrar reps del Set 3 - Es el indicador #1 de progreso</div>
+
+        <h2>4.2 Cluster Sets (Semana 2)</h2>
+        <div class="code-block">PROTOCOLO CLUSTER SETS:
+            Origen: Heavy Duty (Mike Mentzer)
+            Aplicación: Ejercicios compuestos, peso de 4-6RM
+
+            ESTRUCTURA:
+            3 reps → rack 10-15s → 3 reps → 10-15s → 2-3 reps → 10-15s → 2 reps
+
+            PARÁMETROS:
+            • % 1RM: 80-85% (peso de 4-6 reps normales)
+            • TUT total: 60-90 segundos (extendido por pausas)
+            • Tempo: 2-0-2 (sin pausa arriba)
+            • RPE: 9-10 en cada mini-set
+            • Reps totales: 10-15 en un "set extendido"
+            • Descanso post-cluster: 4-5 minutos
+
+            BENEFICIO: Más volumen con peso máximo sin acumulación de fatiga metabólica</div>
+
+        <h2>4.3 Negativas (Semana 3)</h2>
+        <div class="code-block">PROTOCOLO NEGATIVAS:
+            Origen: Blood & Guts (Dorian Yates)
+            Aplicación: Ejercicios con spotter disponible
+
+            ESTRUCTURA:
+            1. Set normal: 6-8 reps @ 85% 1RM → fallo concéntrico
+            2. Negativas: 3-4 reps adicionales
+
+            EJECUCIÓN NEGATIVAS:
+            • Spotter levanta el peso (fase concéntrica)
+            • TÚ bajas el peso en 4-6 segundos (fase excéntrica)
+            • Peso: 100-120% 1RM para negativas puras
+
+            PARÁMETROS:
+            • TUT por negativa: 4-6 segundos
+            • RPE: 10+ (supramáximo)
+            • Descanso post-set: 4-5 minutos
+            • ⚠️ REQUIERE SPOTTER CONFIABLE
+
+            ALTERNATIVA SIN SPOTTER: Usar Cluster Sets</div>
+
+        <h2>4.4 Repeticiones Forzadas (Semana 4)</h2>
+        <div class="code-block">PROTOCOLO FORZADAS:
+            Origen: Blood & Guts (Dorian Yates)
+            Aplicación: Ejercicios compuestos con spotter
+
+            ESTRUCTURA:
+            1. 6-8 reps @ 85-90% 1RM → fallo concéntrico
+            2. Spotter asiste → 2-3 reps forzadas adicionales
+
+            EJECUCIÓN:
+            • Spotter asiste 10-20% de la carga
+            • Solo lo MÍNIMO para pasar punto de estancamiento
+            • TÚ haces el 80-90% del trabajo
+
+            PARÁMETROS:
+            • % 1RM: 85-90%
+            • TUT total: 50-70 segundos
+            • RPE: 10+ (más allá del fallo)
+            • Descanso: 4-5 minutos
+            • ⚠️ REQUIERE SPOTTER
+
+            ALTERNATIVA SIN SPOTTER: Cluster Sets o máquinas con stops</div>
+
+        <h2>4.5 Rest-Pause Extremo (Semana 5)</h2>
+        <div class="code-block">PROTOCOLO REST-PAUSE DC:
+            Origen: DC Training (Dante Trudel)
+            Aplicación: Ejercicio principal de cada grupo
+
+            ESTRUCTURA:
+            Mini-set 1: 6-8 reps @ 85-90% → fallo → 15-20s respirando
+            Mini-set 2: 3-4 reps → fallo → 15-20s respirando
+            Mini-set 3: 2-3 reps → fallo → FIN
+
+            PARÁMETROS:
+            • % 1RM: 85-90%
+            • Reps totales: 11-15 en "set extendido"
+            • TUT total: 60-90 segundos
+            • Pausa intra-set: 15-20 segundos (respiraciones profundas)
+            • RPE: 10 en cada mini-set
+            • Descanso post: 4-5 minutos
+
+            POST-SET OBLIGATORIO:
+            • Estiramiento cargado: 30-60 segundos
+            • Mantener músculo en posición estirada bajo carga ligera</div>
+
+        <h1 class="page-break">5. Estructura de una Sesión</h1>
+
+        <h2>5.1 Calentamiento (10-15 min)</h2>
+        <div class="code-block">CALENTAMIENTO NEXUS-TM:
+
+            GENERAL (5 min):
+            • Cardio ligero: bici estática, remo, caminata
+            • Objetivo: elevar temperatura corporal
+
+            MOVILIDAD (3-5 min):
+            • Rotaciones articulares específicas
+            • Estiramientos dinámicos (no estáticos)
+            • Activación con bandas elásticas
+
+            SERIES DE APROXIMACIÓN (por ejercicio principal):
+            Set 1: 15 reps @ barra vacía o 30% 1RM
+            Set 2: 10 reps @ 50% 1RM
+            Set 3: 6 reps @ 70% 1RM
+            Set 4 (opcional): 3 reps @ 80% (si peso muy pesado)</div>
+
+        <h2>5.2 Ejercicios Principales (25-35 min)</h2>
+        <ul>
+            <li><strong>2-3 ejercicios compuestos</strong> por sesión</li>
+            <li>Aplicar intensificador de la semana al PRIMER ejercicio</li>
+            <li>Segundo ejercicio: intensificador moderado o normal</li>
+            <li>Descansos largos: 3-5 minutos entre sets</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios (10-15 min)</h2>
+        <ul>
+            <li><strong>2-3 ejercicios de aislamiento</strong></li>
+            <li>Sin intensificador o versión muy moderada</li>
+            <li>2-3 sets x 8-12 reps, RIR 1-2</li>
+            <li>Descansos cortos: 90-120 segundos</li>
+        </ul>
+
+        <h2>5.4 Enfriamiento (5 min)</h2>
+        <ul>
+            <li>Estiramiento estático: 30-60 segundos por músculo trabajado</li>
+            <li>Foam rolling opcional: 2-3 minutos zonas tensas</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización y Progresión</h1>
+
+        <h2>6.1 Estructura del Microciclo (5 semanas)</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Intensificador</th>
+                <th>Demanda SNC</th>
+                <th>Volumen</th>
+            </tr>
+            <tr>
+                <td>S1</td>
+                <td>AMRAP</td>
+                <td>⭐⭐⭐</td>
+                <td>Moderado</td>
+            </tr>
+            <tr>
+                <td>S2</td>
+                <td>Cluster Sets</td>
+                <td>⭐⭐⭐⭐</td>
+                <td>Moderado-Alto</td>
+            </tr>
+            <tr>
+                <td>S3</td>
+                <td>Negativas</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td>Bajo</td>
+            </tr>
+            <tr>
+                <td>S4</td>
+                <td>Forzadas</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td>Bajo</td>
+            </tr>
+            <tr>
+                <td>S5</td>
+                <td>Rest-Pause</td>
+                <td>⭐⭐⭐⭐⭐⭐</td>
+                <td>Bajo</td>
+            </tr>
+        </table>
+
+        <h2>6.2 Progresión de Carga</h2>
+        <table>
+            <tr>
+                <th>Cada Ciclo (5 sem)</th>
+                <th>Tren Superior</th>
+                <th>Tren Inferior</th>
+            </tr>
+            <tr>
+                <td>Incremento peso</td>
+                <td>+2.5 kg</td>
+                <td>+5 kg</td>
+            </tr>
+            <tr>
+                <td>Si estancado 2 ciclos</td>
+                <td>Reset -10%</td>
+                <td>Reset -10%</td>
+            </tr>
+        </table>
+
+        <h2>6.3 Deloads</h2>
+        <div class="warning-box">
+            <strong>Deload cada 2 ciclos (10 semanas):</strong>
+            <ul>
+                <li>Peso: 60-70% de lo normal</li>
+                <li>Volumen: Mantener sets, reducir reps a 6-8</li>
+                <li>Intensificadores: NINGUNO</li>
+                <li>RIR: 3-4 (lejos del fallo)</li>
+                <li>Duración: 1 semana completa</li>
+            </ul>
+        </div>
+
+        <h2>6.4 Duración del Ciclo por Nivel de Experiencia</h2>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Experiencia</th>
+                <th>Ciclos Continuos</th>
+                <th>Deload</th>
+            </tr>
+            <tr>
+                <td>Intermedio</td>
+                <td>2-4 años</td>
+                <td>1 ciclo (5 sem)</td>
+                <td>Cada 5 sem</td>
+            </tr>
+            <tr>
+                <td>Intermedio-Avanzado</td>
+                <td>4-6 años</td>
+                <td>2 ciclos (10 sem)</td>
+                <td>Cada 10 sem</td>
+            </tr>
+            <tr>
+                <td>Avanzado</td>
+                <td>6+ años</td>
+                <td>2-3 ciclos</td>
+                <td>Cada 10-15 sem</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">7. Nutrición y Suplementación</h1>
+
+        <h2>7.1 Requerimientos Calóricos</h2>
+        <ul>
+            <li><strong>Volumen/Masa:</strong> TDEE + 300-500 kcal (superávit obligatorio)</li>
+            <li><strong>Recomposición:</strong> TDEE + 100-200 kcal</li>
+            <li><strong>⚠️ NO usar en déficit agresivo</strong> - recuperación insuficiente</li>
+        </ul>
+
+        <h2>7.2 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Cantidad</th>
+                <th>Razón</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.2-2.5 g/kg</td>
+                <td>Alto para reparar daño muscular de TM</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>4-6 g/kg</td>
+                <td>Energía para sets pesados, recuperación SNC</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1 g/kg</td>
+                <td>Hormonas, función cerebral</td>
+            </tr>
+        </table>
+
+        <h2>7.3 Timing Nutricional</h2>
+        <div class="code-block">PRE-ENTRENO (1-2h antes):
+            • 40-60g carbohidratos complejos
+            • 25-30g proteína
+            • Bajo en grasa y fibra
+
+            INTRA-ENTRENO (opcional):
+            • 20-30g carbohidratos simples si sesión >60min
+            • EAAs 10-15g
+
+            POST-ENTRENO (30-60 min):
+            • 40-60g carbohidratos (mezcla rápidos/lentos)
+            • 30-40g proteína (whey ideal)</div>
+
+        <h2>7.4 Suplementación Clave</h2>
+        <table>
+            <tr>
+                <th>Suplemento</th>
+                <th>Dosis</th>
+                <th>Momento</th>
+                <th>Efecto</th>
+            </tr>
+            <tr>
+                <td>Creatina monohidrato</td>
+                <td>5g/día</td>
+                <td>Cualquier momento</td>
+                <td>ATP, fuerza, volumen celular</td>
+            </tr>
+            <tr>
+                <td>Cafeína</td>
+                <td>3-6 mg/kg</td>
+                <td>30-60 min pre</td>
+                <td>Foco, potencia, rendimiento</td>
+            </tr>
+            <tr>
+                <td>Beta-Alanina</td>
+                <td>3-6g/día</td>
+                <td>Dividido</td>
+                <td>Buffer ácido láctico</td>
+            </tr>
+            <tr>
+                <td>Omega-3</td>
+                <td>2-3g EPA+DHA</td>
+                <td>Con comidas</td>
+                <td>Inflamación, recuperación</td>
+            </tr>
+            <tr>
+                <td>Magnesio</td>
+                <td>300-400mg</td>
+                <td>Antes de dormir</td>
+                <td>Sueño, recuperación SNC</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">8. Rutinas por Grupo Muscular</h1>
+
+        <h2>8.1 Pecho</h2>
+        <div class="code-block">RUTINA NEXUS-TM PECHO:
+
+            A. PRESS BANCA (Principal):
+            S1 (AMRAP): 5@65% → 5@75% → 5+@85% | TUT: 30-45s | Desc: 3-4 min
+            S2 (Cluster): 3-3-2-2 @ 82% | TUT: 60-90s | Desc: 4 min
+            S3 (Negativas): 6-8@85% + 3-4 neg 5s | TUT: 50-70s | Desc: 4-5 min
+            S4 (Forzadas): 6-8@87% + 2-3 forz | TUT: 50-70s | Desc: 4-5 min
+            S5 (Rest-Pause): 7-4-3 @ 87% | TUT: 60-90s | Desc: 4 min
+
+            B. PRESS INCLINADO MANCUERNAS:
+            3 x 8-10 reps @ 75-80% | TUT: 30-40s | Desc: 2-3 min
+            S3-S4: Aplicar intensificador moderado en última serie
+
+            C. FONDOS EN PARALELAS (si hay nivel):
+            2 x 8-12 reps o al fallo | TUT: 25-35s | Desc: 2 min
+            S3: Pueden hacerse negativas lastradas (5-6s bajada)
+
+            D. APERTURAS INCLINADO (Accesorio):
+            3 x 12-15 reps | TUT: 35-45s | Desc: 90s
+            Sin intensificador - Conexión mente-músculo
+
+            DURACIÓN TOTAL: ~50 minutos</div>
+
+        <h2>8.2 Espalda</h2>
+        <div class="code-block">RUTINA NEXUS-TM ESPALDA:
+
+            A. PESO MUERTO CONVENCIONAL (Principal):
+            S1 (AMRAP): 5@65% → 5@75% → 5+@85% | TUT: 25-35s | Desc: 4-5 min
+            S2 (Cluster): 3-3-2-2 @ 80% | TUT: 50-70s | Desc: 4-5 min
+            S3-S4: Usar Cluster (no negativas/forzadas por seguridad)
+            S5 (Rest-Pause): 5-3-2 @ 85% | TUT: 40-60s | Desc: 4 min
+            ⚠️ Limitar a 1-2 working sets por seguridad
+
+            B. DOMINADAS / JALÓN (Principal 2):
+            S3: IDEAL para Negativas - peso corporal + lastre
+            6-8 reps + 3-4 negativas de 4-5 segundos
+            TUT: 50-70s | Desc: 3-4 min
+
+            C. REMO BARRA:
+            3 x 6-8 reps @ 80% | TUT: 25-35s | Desc: 2-3 min
+            S4-S5: Aplicar intensificador moderado
+
+            D. REMO CABLE / MÁQUINA (Accesorio):
+            3 x 10-12 reps | TUT: 35-45s | Desc: 90s
+            Squeeze 2s en contracción máxima
+
+            DURACIÓN TOTAL: ~55 minutos</div>
+
+        <h2>8.3 Piernas</h2>
+        <div class="code-block">RUTINA NEXUS-TM PIERNAS:
+
+            A. SENTADILLA (Principal):
+            S1 (AMRAP): 5@65% → 5@75% → 5+@85% | TUT: 30-45s | Desc: 4-5 min
+            S2 (Cluster): 3-3-2-2 @ 80% | TUT: 60-90s | Desc: 4 min
+            S3: Sin negativas (seguridad) - usar AMRAP pesado 3x5 @ 85%
+            S4 (Forzadas): Con spotters laterales | Desc: 4-5 min
+            S5 (Rest-Pause): 6-4-3 @ 85% | TUT: 60-90s | Desc: 4-5 min
+
+            B. PRENSA 45° (Principal 2):
+            S5: Ideal para Rest-Pause (más seguro que sentadilla)
+            3 x 8-10 o 1 x Rest-Pause (8-5-4) | TUT: 50-70s
+
+            C. PESO MUERTO RUMANO:
+            3 x 8-10 reps @ 70-75% | TUT: 40-50s | Desc: 2-3 min
+            S2: Cluster Sets funcionan bien aquí
+
+            D. EXTENSIONES CUÁDRICEPS (Accesorio):
+            3 x 12-15 reps | TUT: 40-50s | Desc: 90s
+
+            E. CURL FEMORAL (Accesorio):
+            3 x 12-15 reps | TUT: 40-50s | Desc: 90s
+
+            DURACIÓN TOTAL: ~60 minutos</div>
+
+        <h2>8.4 Hombros</h2>
+        <div class="code-block">RUTINA NEXUS-TM HOMBROS:
+
+            A. PRESS MILITAR (Principal):
+            S1 (AMRAP): 5@65% → 5@75% → 5+@85% | TUT: 25-35s | Desc: 3-4 min
+            S2 (Cluster): 3-3-2-2 @ 80% | TUT: 50-70s | Desc: 3-4 min
+            S3: Sin negativas (riesgo articular hombro)
+            S4 (Forzadas): Con spotter CUIDADOSO | Desc: 4 min
+            S5 (Rest-Pause): 6-4-3 @ 85% | TUT: 50-70s | Desc: 4 min
+
+            B. PRESS ARNOLD (Secundario):
+            3 x 8-10 reps @ 70-75% | TUT: 35-45s | Desc: 2-3 min
+            S4-S5: Aplicar intensificador ligero
+
+            C. ELEVACIONES LATERALES (Accesorio):
+            4 x 12-15 reps @ muy ligero | TUT: 40-50s | Desc: 60-90s
+            ⚠️ Sin intensificador pesado - riesgo articular
+
+            D. FACE PULLS (Accesorio):
+            3 x 15-20 reps | TUT: 40-60s | Desc: 60s
+            Salud del hombro - no al fallo
+
+            DURACIÓN TOTAL: ~45 minutos</div>
+
+        <h2>8.5 Brazos</h2>
+        <div class="code-block">RUTINA NEXUS-TM BRAZOS:
+
+            BÍCEPS:
+            A. CURL BARRA (Principal):
+            S1 (AMRAP): 8@65% → 8@75% → 8+@85% | TUT: 35-50s | Desc: 2-3 min
+            S4 (Forzadas): 8@85% + 2-3 forzadas | TUT: 45-60s
+            S5 (Rest-Pause): 8-5-4 @ 85% | TUT: 50-70s
+            Desc: 2-3 min
+
+            B. CURL MARTILLO:
+            3 x 10-12 reps por brazo | TUT: 35-45s | Desc: 90s
+
+            C. CURL CONCENTRADO:
+            2 x 12-15 reps | TUT: 40-50s | Desc: 60s
+
+            TRÍCEPS:
+            D. FONDOS EN BANCO (Principal):
+            S3: Ideales para Negativas - lastrado
+            3 x 8-12 o negativas lentas 4-5s | TUT: 35-50s | Desc: 2-3 min
+
+            E. PRESS FRANCÉS:
+            S2 (Cluster): Funciona bien aquí
+            3 x 8-10 reps @ 75% | TUT: 30-40s | Desc: 2-3 min
+
+            F. PUSHDOWN CABLE:
+            3 x 12-15 reps | TUT: 40-50s | Desc: 60s
+
+            DURACIÓN TOTAL: ~40 minutos</div>
+
+        <h1 class="page-break">9. Estructuras por División</h1>
+
+        <h2>9.1 Full Body (3 días/semana) - Intermedio</h2>
+        <div class="code-block">ESTRUCTURA FULL BODY NEXUS-TM:
+            Frecuencia: Lunes/Miércoles/Viernes
+            Protocolo: 1 intensificador TM por grupo grande
+
+            DÍA A (Empuje dominante):
+            • Sentadilla: Intensificador TM | 1-2 working sets
+            • Press Banca: Intensificador TM | 1-2 working sets
+            • Remo Cable: 3x10-12 normal
+            • Curl + Tríceps superset: 2x12 cada uno
+
+            DÍA B (Tirón dominante):
+            • Peso Muerto: Intensificador TM (cuidado S3-S4)
+            • Dominadas: Intensificador TM
+            • Press Inclinado MC: 3x8-10 normal
+            • Hombros + Bíceps: 2x12 cada uno
+
+            DÍA C (Híbrido):
+            • Prensa: Intensificador TM
+            • Press Militar: Intensificador TM
+            • Jalón: 3x10-12 normal
+            • Accesorios según fatiga
+
+            Rotación: A-B-C-A-B-C...</div>
+
+        <h2>9.2 Upper/Lower (4 días/semana) - Intermedio-Avanzado</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Ejercicios TM</th>
+                <th>Accesorios</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Upper A (Fuerza)</td>
+                <td>Press Banca + Dominadas</td>
+                <td>Press Militar, Curl, Tríceps</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Lower A (Fuerza)</td>
+                <td>Sentadilla + RDL</td>
+                <td>Extensiones, Curl Fem, Gemelos</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Descanso</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Upper B (Volumen)</td>
+                <td>Press Inclinado + Remo</td>
+                <td>Laterales, Face Pulls, Brazos</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Lower B (Volumen)</td>
+                <td>Prensa</td>
+                <td>Hip Thrust, Accesorios</td>
+            </tr>
+        </table>
+
+        <h2>9.3 Torso/Pierna (4 días/semana) - Avanzado</h2>
+        <div class="code-block">TORSO A (Lunes):
+            • Press Banca: Intensificador TM
+            • Remo Barra: Intensificador TM
+            • Press Militar: 3x8 normal
+            • Curl + Tríceps: 3x10-12
+
+            PIERNA A (Martes):
+            • Sentadilla: Intensificador TM
+            • RDL: Intensificador TM moderado
+            • Extensiones + Curl: 3x12-15
+            • Gemelos: 4x15
+
+            TORSO B (Jueves):
+            • Press Inclinado: Intensificador TM moderado
+            • Dominadas: Intensificador TM
+            • Elevaciones Lat: 4x15
+            • Face Pulls: 3x15
+
+            PIERNA B (Viernes):
+            • Prensa: Intensificador TM
+            • Hip Thrust: 3x10-12
+            • Gemelos: 4x15
+            • Accesorios según fatiga</div>
+
+        <h2>9.4 Bro Split (5 días/semana) - Avanzado</h2>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupo</th>
+                <th>Ejercicio Principal TM</th>
+                <th>Accesorios</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Pecho</td>
+                <td>Press Banca (Intensificador)</td>
+                <td>Inclinado MC, Fondos, Aperturas</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Espalda</td>
+                <td>Peso Muerto + Dominadas (Int)</td>
+                <td>Remo Barra, Remo Cable</td>
+            </tr>
+            <tr>
+                <td>Miércoles</td>
+                <td>Hombros</td>
+                <td>Press Militar (Intensificador)</td>
+                <td>Arnold, Laterales, Face Pulls</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Piernas</td>
+                <td>Sentadilla (Intensificador)</td>
+                <td>Prensa, RDL, Accesorios</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Brazos</td>
+                <td>Curl Barra + Fondos Banco</td>
+                <td>Curl/Ext variantes, Pushdown</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Calculadora de Cargas y Parámetros</h1>
+
+        <h2>10.1 Tabla de % 1RM por Intensificador</h2>
+        <table>
+            <tr>
+                <th>Intensificador</th>
+                <th>% 1RM</th>
+                <th>Reps Objetivo</th>
+                <th>TUT (seg)</th>
+                <th>RPE</th>
+            </tr>
+            <tr>
+                <td>AMRAP Set 1</td>
+                <td>65%</td>
+                <td>5</td>
+                <td>15-20</td>
+                <td>6-7</td>
+            </tr>
+            <tr>
+                <td>AMRAP Set 2</td>
+                <td>75%</td>
+                <td>5</td>
+                <td>15-20</td>
+                <td>7-8</td>
+            </tr>
+            <tr>
+                <td>AMRAP Set 3</td>
+                <td>85%</td>
+                <td>5+</td>
+                <td>25-40</td>
+                <td>9-10</td>
+            </tr>
+            <tr>
+                <td>Cluster Sets</td>
+                <td>80-85%</td>
+                <td>10-15 total</td>
+                <td>60-90</td>
+                <td>9-10 cada</td>
+            </tr>
+            <tr>
+                <td>Negativas (normal)</td>
+                <td>85%</td>
+                <td>6-8</td>
+                <td>25-35</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Negativas (excéntricas)</td>
+                <td>100-120%</td>
+                <td>3-4</td>
+                <td>16-24</td>
+                <td>10+</td>
+            </tr>
+            <tr>
+                <td>Forzadas (base)</td>
+                <td>85-90%</td>
+                <td>6-8</td>
+                <td>25-35</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Forzadas (adicionales)</td>
+                <td>-</td>
+                <td>+2-3</td>
+                <td>+10-15</td>
+                <td>10+</td>
+            </tr>
+            <tr>
+                <td>Rest-Pause MS1</td>
+                <td>85-90%</td>
+                <td>6-8</td>
+                <td>25-35</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Rest-Pause MS2</td>
+                <td>85-90%</td>
+                <td>3-4</td>
+                <td>12-18</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Rest-Pause MS3</td>
+                <td>85-90%</td>
+                <td>2-3</td>
+                <td>8-12</td>
+                <td>10</td>
+            </tr>
+        </table>
+
+        <h2>10.2 Conversión de 1RM</h2>
+        <div class="highlight-box">
+            <strong>Fórmula de Brzycki:</strong> 1RM = Peso × (36 / (37 - Reps))
+            <p>Ejemplo: Si haces 100kg x 8 reps → 1RM = 100 × (36/29) = ~124kg</p>
+        </div>
+
+        <h2>10.3 Guía de Progresión Semanal</h2>
+        <div class="success-box">
+            <strong>Cómo Progresar en NEXUS-TM:</strong>
+            <ol>
+                <li><strong>Cada sesión:</strong> Anota reps exactas del AMRAP y pesos</li>
+                <li><strong>Si AMRAP ≥ 8 reps:</strong> Sube 2.5kg (upper) o 5kg (lower) próximo ciclo</li>
+                <li><strong>Si AMRAP = 5-7 reps:</strong> Mantén peso</li>
+                <li><strong>Si AMRAP < 5 reps:</strong> Reduce peso 10%</li>
+                <li><strong>Cada 2 ciclos (10 sem):</strong> Deload obligatorio</li>
+            </ol>
+        </div>
+
+        <h1 class="page-break">11. Consideraciones Importantes</h1>
+
+        <h2>11.1 Escuchar al Cuerpo</h2>
+        <table>
+            <tr>
+                <th>Señal</th>
+                <th>Significado</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td>Fatiga extrema S3-S4</td>
+                <td>SNC sobrecargado</td>
+                <td>Reducir volumen accesorios 50%</td>
+            </tr>
+            <tr>
+                <td>Dolor articular</td>
+                <td>Sobrecarga mecánica</td>
+                <td>Deload inmediato, revisar técnica</td>
+            </tr>
+            <tr>
+                <td>Reps AMRAP bajan</td>
+                <td>Fatiga acumulada</td>
+                <td>Reset peso -10%</td>
+            </tr>
+            <tr>
+                <td>Falta de motivación</td>
+                <td>Posible sobreentrenamiento</td>
+                <td>Deload + revisar sueño/nutrición</td>
+            </tr>
+        </table>
+
+        <h2>11.2 Descanso y Recuperación</h2>
+        <ul>
+            <li><strong>Sueño:</strong> 7-9 horas (CRÍTICO para NEXUS-TM - recuperación SNC)</li>
+            <li><strong>Entre sesiones mismo grupo:</strong> Mínimo 48-72 horas</li>
+            <li><strong>Cardio:</strong> LISS preferible (caminata, bici ligera), evitar HIIT días TM</li>
+            <li><strong>Estrés:</strong> Manejar estrés laboral/personal - afecta recuperación SNC</li>
+        </ul>
+
+        <h2>11.3 Prevención de Lesiones</h2>
+        <ul>
+            <li><strong>Calentamiento extenso:</strong> 10-15 minutos OBLIGATORIO</li>
+            <li><strong>Técnica impecable:</strong> Priorizar forma sobre peso siempre</li>
+            <li><strong>Spotter confiable:</strong> Esencial para S3-S4 (Negativas/Forzadas)</li>
+            <li><strong>Si no completas protocolo:</strong> Reduce peso, no fuerces</li>
+            <li><strong>Máquinas:</strong> Preferibles en S3-S5 por seguridad en fallo</li>
+        </ul>
+
+        <h2>11.4 Guía Práctica de Implementación</h2>
+        <div class="code-block">PASO 1: Calcular 1RM
+            • Usa la fórmula de Brzycki o test real (con spotter)
+            • Calcula para: Press Banca, Sentadilla, Peso Muerto, Press Militar
+
+            PASO 2: Primera Semana (AMRAP)
+            • Usa pesos conservadores (65-75-85% calculados)
+            • Registra TODAS las reps del set AMRAP
+            • Evalúa si los pesos son correctos
+
+            PASO 3: Progresión
+            • S2: Sube a Cluster con los mismos pesos
+            • S3-S4: SOLO si tienes spotter confiable
+            • S5: Rest-Pause con los pesos establecidos
+
+            PASO 4: Post-Ciclo
+            • Evalúa progreso (reps AMRAP)
+            • Incrementa pesos según guía
+            • Decide si necesitas deload</div>
+
+        <h2>11.5 Especialización de Grupos Débiles (NEXUS-TM)</h2>
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados con Tensión Mecánica</strong>
+            <p>En NEXUS-TM, el riesgo de fatiga sistémica es alto. Por lo tanto, la especialización
+                no se logra simplemente añadiendo volumen "basura", sino mejorando la calidad de la
+                tensión y la frecuencia de estimulación neural.</p>
+        </div>
+
+        <h3>Estrategia NEXUS-TM para Grupos Débiles</h3>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Estrategia</th>
+                <th>Frecuencia</th>
+                <th>Protocolo</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>Prioridad de Orden</td>
+                <td>2x/semana</td>
+                <td>Colocar el ejercicio del grupo débil SIEMPRE al inicio de la sesión, fresco.</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>Volumen de Calidad (Clusters)</td>
+                <td>2-3x/semana</td>
+                <td>Sustituir el AMRAP por 3 sets de Clusters para acumular más repeticiones efectivas.</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>Frecuencia Diaria (Nuclei Overload)</td>
+                <td>5x/semana</td>
+                <td>Añadir 1 ejercicio aislado ligero (no TM) diario para facilitar recuperación activa.</td>
+            </tr>
+        </table>
+
+        <h3>Protocolo de Cluster Sets para Especialización</h3>
+        <div class="code-block">OBJETIVO: Acumular más reps con peso del 85-90% sin llegar al fallo total del SNC.
+
+            EJEMPLO (Press Banca Rezagado):
+            En lugar de 3x5 tradicional:
+            Set 1: 3 reps, descansa 15s, 3 reps, descansa 15s, 3 reps
+            Descanso completo 3 min
+            Set 2: Repetir
+            Set 3: Repetir
+
+            RESULTADO: 27 reps totales con peso de 5RM (vs 15 reps tradicionales).</div>
+
+        <h1 class="page-break">12. Apéndice: Datos Técnicos para Aplicación</h1>
+
+        <h2>12.1 Parámetros por Ejercicio</h2>
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Tipo</th>
+                <th>Intensificadores Recomendados</th>
+                <th>Evitar</th>
+            </tr>
+            <tr>
+                <td>Press Banca</td>
+                <td>Compuesto</td>
+                <td>AMRAP, Cluster, Forzadas, R-P</td>
+                <td>Negativas solo</td>
+            </tr>
+            <tr>
+                <td>Sentadilla</td>
+                <td>Compuesto</td>
+                <td>AMRAP, Cluster, R-P</td>
+                <td>Negativas, Forzadas sin spots</td>
+            </tr>
+            <tr>
+                <td>Peso Muerto</td>
+                <td>Compuesto</td>
+                <td>AMRAP, Cluster</td>
+                <td>Negativas, Forzadas, R-P extremo</td>
+            </tr>
+            <tr>
+                <td>Dominadas</td>
+                <td>Compuesto</td>
+                <td>AMRAP, Negativas, R-P</td>
+                <td>Forzadas (difícil asistir)</td>
+            </tr>
+            <tr>
+                <td>Press Militar</td>
+                <td>Compuesto</td>
+                <td>AMRAP, Cluster, R-P</td>
+                <td>Negativas (riesgo hombro)</td>
+            </tr>
+            <tr>
+                <td>Curl Barra</td>
+                <td>Aislamiento</td>
+                <td>Cluster, Forzadas, R-P</td>
+                <td>Negativas pesadas</td>
+            </tr>
+        </table>
+
+        <h2>12.2 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatible</th>
+                <th>Recomendación</th>
+            </tr>
+            <tr>
+                <td>NEXUS-EM</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Alternar mesociclos TM→EM</td>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Misma filosofía - integrar técnicas</td>
+            </tr>
+            <tr>
+                <td>Blood & Guts</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Origen de Negativas/Forzadas</td>
+            </tr>
+            <tr>
+                <td>DC Training</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Origen de Rest-Pause</td>
+            </tr>
+            <tr>
+                <td>5/3/1</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Origen de AMRAP</td>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Filosofías opuestas (volumen vs intensidad)</td>
+            </tr>
+            <tr>
+                <td>GVT</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Demasiado volumen, fatiga SNC</td>
+            </tr>
+        </table>
+
+        <h2>12.3 Selector de Metodología por Objetivo</h2>
+        <table>
+            <tr>
+                <th>Tu Objetivo</th>
+                <th>¿NEXUS-TM es para ti?</th>
+                <th>Alternativa</th>
+            </tr>
+            <tr>
+                <td>Fuerza máxima</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Hipertrofia miofibrilar</td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Tiempo limitado (<60min)< /td>
+                <td style="background:#10B981; color:white;">✅ IDEAL</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Bomba/Vascularidad</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>NEXUS-EM</td>
+            </tr>
+            <tr>
+                <td>Sin spotter</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>Usar solo S1-S2-S5</td>
+            </tr>
+            <tr>
+                <td>Principiante</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Y3T, rutina lineal</td>
+            </tr>
+            <tr>
+                <td>Déficit calórico agresivo</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Mantener fuerza básica</td>
+            </tr>
+        </table>
+
+        <h1>13. Conclusión</h1>
+        <div class="highlight-box">
+            <strong>NEXUS-TM</strong> representa la fusión de las 4 metodologías más efectivas para tensión mecánica.
+            Con 5 semanas, 5 intensificadores progresivos, y parámetros detallados para cada ejercicio, maximizarás
+            fuerza e hipertrofia miofibrilar de forma segura y sistemática.
+        </div>
+
+        <p style="text-align: center; margin-top: 40px; color: #999;">
+            <strong>NEXUS-TM · Tensión Mecánica Progresiva · v3.3</strong><br>
+            Sistema NEXUS - 13 Metodologías de Hipertrofia
+        </p>
+    </div>
+</body>
+
+</html>

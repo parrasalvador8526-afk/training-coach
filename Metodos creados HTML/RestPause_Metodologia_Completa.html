@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rest-Pause System - Metodología Maestra Unificada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #DC2626;
+            --secondary: #F97316;
+            --accent: #FBBF24;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+            border-left: 4px solid var(--danger);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc li.sub {
+            padding-left: 20px;
+            font-size: 0.95rem;
+            color: #64748B;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .use-when {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .use-when>div {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .use-when>div:first-child {
+            background: #ECFDF5;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cover">
+        <h1>REST-PAUSE SYSTEM</h1>
+        <p class="subtitle">The Ultimate Rest-Pause System - Raúl Carrasco</p>
+        <p style="font-size: 1.2rem; max-width: 600px;">Sistema de entrenamiento de alta intensidad desarrollado por
+            Raúl Carrasco
+            basado en series extendidas con micro-descansos, múltiples fallos musculares y máximo estrés metabólico.</p>
+        <p class="author">Creador: Raúl Carrasco · IFBB Pro · Coach Elite</p>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>🏆 ATLETAS DESTACADOS
+                    REST-PAUSE:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                <strong>1.</strong> Raúl Carrasco (IFBB Pro, Creador) ·
+                <strong>2.</strong> Dante Trudel (DC Training) ·
+                <strong>3.</strong> Jordan Peters (IFBB Pro) ·
+                <strong>4.</strong> John Meadows† (Mountain Dog) ·
+                <strong>5.</strong> Milos Sarcev (Coach) ·
+                <strong>6.</strong> Ben Pakulski (IFBB Pro) ·
+                <strong>7.</strong> Atletas Team Carrasco
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">España · NEXUS v3.1</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Introducción al Rest-Pause System</li>
+                <li><strong>2.</strong> Objetivos del Rest-Pause System</li>
+                <li><strong>3.</strong> Principios Básicos del Rest-Pause</li>
+                <li class="sub">3.1 Tiempo Bajo Tensión (TUT)</li>
+                <li class="sub">3.2 Rangos de Repeticiones y Fibras</li>
+                <li class="sub">3.3 Tipos de Contracción</li>
+                <li class="sub">3.4 Fallo Muscular en Rest-Pause</li>
+                <li><strong>4.</strong> Métodos y Técnicas del Rest-Pause</li>
+                <li class="sub">4.1 Rest-Pause Clásico Carrasco (RP-RC)</li>
+                <li class="sub">4.2 Rest-Pause Extendido (RP-EXT)</li>
+                <li class="sub">4.3 Myo-Reps Style (RP-MYO)</li>
+                <li class="sub">4.4 Rest-Pause + Drop Sets (RP-DS)</li>
+                <li class="sub">4.5 Rest-Pause con Énfasis Excéntrico (RP-NEG)</li>
+                <li class="sub">4.6 Rest-Pause Isométrico (RP-ISO)</li>
+                <li class="sub">4.7 RPE en Rest-Pause</li>
+                <li class="sub">4.8 Compatibilidad con Otras Metodologías</li>
+                <li><strong>5.</strong> Estructura de una Sesión Rest-Pause</li>
+                <li class="sub">5.1 Calentamiento y Series de Aproximación</li>
+                <li class="sub">5.2 Ejercicios Principales</li>
+                <li class="sub">5.3 Ejercicios Accesorios</li>
+                <li class="sub">5.4 Enfriamiento y Estiramiento</li>
+                <li><strong>6.</strong> Periodización con Rest-Pause</li>
+                <li class="sub">6.1 Microciclos y Mesociclos</li>
+                <li class="sub">6.2 Ondulación de Intensidad y Volumen</li>
+                <li class="sub">6.3 Fases de Acumulación, Intensificación y Realización</li>
+                <li class="sub">6.4 Descargas (Deloads)</li>
+                <li class="sub">6.5 Duración del Ciclo por Nivel de Experiencia</li>
+                <li><strong>7.</strong> Progresión en Rest-Pause</li>
+                <li class="sub">7.1 Progresión de Carga y Reps</li>
+                <li class="sub">7.2 Manipulación de Variables</li>
+                <li class="sub">7.3 Progresión a Largo Plazo</li>
+                <li><strong>8.</strong> Nutrición y Suplementación para Rest-Pause</li>
+                <li class="sub">8.1 Requerimientos Calóricos</li>
+                <li class="sub">8.2 Macronutrientes</li>
+                <li class="sub">8.3 Timing Nutricional</li>
+                <li class="sub">8.4 Suplementación Clave</li>
+                <li><strong>9.</strong> Ejemplos de Rutinas Rest-Pause por Grupo Muscular</li>
+                <li class="sub">9.1 Pecho | 9.2 Espalda | 9.3 Piernas | 9.4 Hombros | 9.5 Brazos</li>
+                <li class="sub">9.6 Estructuras por Nivel de Intensidad</li>
+                <li><strong>10.</strong> Consideraciones Importantes</li>
+                <li class="sub">10.1 Escuchar al Cuerpo</li>
+                <li class="sub">10.2 Descanso y Recuperación</li>
+                <li class="sub">10.3 Prevención de Lesiones</li>
+                <li class="sub">10.4 Guía Práctica de Implementación Paso a Paso</li>
+                <li class="sub">10.5 Especialización de Grupos Débiles</li>
+                <li><strong>11.</strong> Conclusión</li>
+                <li class="sub">11.1 Comparativa Detallada: Rest-Pause vs DC Training</li>
+            </ul>
+        </div>
+
+        <h1>1. Introducción al Rest-Pause System</h1>
+        <div class="highlight-box">
+            <strong>El Rest-Pause System de Raúl Carrasco</strong> es una metodología de entrenamiento de alta
+            intensidad
+            que maximiza la hipertrofia muscular a través de series extendidas con micro-descansos de 10-20 segundos,
+            permitiendo múltiples fallos musculares en una sola serie efectiva.
+        </div>
+
+        <p>Raúl Carrasco, IFBB Pro español y coach de élite, desarrolló este sistema basándose en principios
+            fisiológicos de reclutamiento de fibras musculares tipo II y maximización del estrés metabólico.
+            El método es reconocido por su eficiencia y efectividad tanto en fases de volumen como de definición.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">2-3</div>
+                <div class="label">Secuencias por Serie</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">10-20s</div>
+                <div class="label">Micro-Descansos</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">70-90%</div>
+                <div class="label">1RM Típico</div>
+            </div>
+        </div>
+
+        <h3>Origen: El Método Carrasco</h3>
+        <p>Raúl Carrasco perfeccionó el Rest-Pause clásico añadiendo sus propias variantes:</p>
+        <ul>
+            <li><strong>Múltiples Fallos:</strong> 2-3 secuencias al fallo en una sola serie extendida</li>
+            <li><strong>Micro-Descansos:</strong> 10-20 segundos entre secuencias para recuperación parcial de
+                fosfocreatina</li>
+            <li><strong>Mismo Peso:</strong> Mantener la carga durante todas las secuencias</li>
+            <li><strong>Versatilidad:</strong> Aplicable en volumen y definición</li>
+        </ul>
+
+        <h1>2. Objetivos del Rest-Pause System</h1>
+        <ul>
+            <li><strong>Máximo Reclutamiento de Fibras:</strong> Activar fibras tipo II de alta potencia</li>
+            <li><strong>Estrés Metabólico Extremo:</strong> Acumulación de metabolitos para hipertrofia</li>
+            <li><strong>Eficiencia Temporal:</strong> Más trabajo efectivo en menos tiempo</li>
+            <li><strong>Múltiples Fallos:</strong> 2-3 fallos musculares por serie extendida</li>
+            <li><strong>Progresión Medible:</strong> Aumentar reps totales o peso cada semana</li>
+        </ul>
+
+        <h1 class="page-break">3. Principios Básicos del Rest-Pause</h1>
+
+        <h2>3.1 La Filosofía de Raúl Carrasco</h2>
+        <p>Rest-Pause se basa en maximizar el trabajo muscular a través de descansos mínimos:</p>
+        <div class="highlight-box">
+            <strong>"El Rest-Pause es uno de los métodos más efectivos y seguros para romper mesetas y maximizar la
+                hipertrofia."</strong> — Raúl Carrasco
+        </div>
+        <table>
+            <tr>
+                <th>Concepto</th>
+                <th>Rest-Pause Carrasco</th>
+                <th>Series Tradicionales</th>
+            </tr>
+            <tr>
+                <td>Estructura</td>
+                <td>1 serie extendida con 2-3 secuencias</td>
+                <td>3-4 series separadas</td>
+            </tr>
+            <tr>
+                <td>Descanso</td>
+                <td>10-20 segundos entre secuencias</td>
+                <td>90-180 segundos entre series</td>
+            </tr>
+            <tr>
+                <td>Fallos por ejercicio</td>
+                <td>2-3 fallos en una serie</td>
+                <td>1 fallo (si aplica)</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Tiempo Bajo Tensión (TUT)</h2>
+        <p>El Rest-Pause extiende el TUT efectivo mediante secuencias consecutivas:</p>
+        <ul>
+            <li><strong>TUT por secuencia:</strong> 30-50 segundos</li>
+            <li><strong>TUT total por serie extendida:</strong> 90-150 segundos</li>
+            <li><strong>Tempo recomendado:</strong> 2-1-2 (concéntrico-pausa-excéntrico)</li>
+        </ul>
+
+        <h2>3.3 Rangos de Repeticiones y Fibras</h2>
+        <table>
+            <tr>
+                <th>Secuencia</th>
+                <th>Reps Típicas</th>
+                <th>Fibras Activadas</th>
+            </tr>
+            <tr>
+                <td>Primera (inicial)</td>
+                <td>10-12 reps</td>
+                <td>Tipo I + Tipo IIa</td>
+            </tr>
+            <tr>
+                <td>Segunda</td>
+                <td>4-6 reps</td>
+                <td>Tipo IIa + Tipo IIx</td>
+            </tr>
+            <tr>
+                <td>Tercera</td>
+                <td>2-4 reps</td>
+                <td>Tipo IIx (máximo reclutamiento)</td>
+            </tr>
+        </table>
+
+        <h2>3.4 Fallo Muscular en Rest-Pause</h2>
+        <p>Cada secuencia debe llegar al fallo concéntrico:</p>
+        <ul>
+            <li><strong>Fallo Concéntrico:</strong> Imposibilidad de completar otra repetición</li>
+            <li><strong>Descanso 10-20s:</strong> Recuperación parcial de fosfocreatina (~50-70%)</li>
+            <li><strong>Continuar:</strong> Más repeticiones al fallo con el mismo peso</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ Regla de Carrasco:</strong> "No hagas más de 3 secuencias por serie. Si puedes hacer más, el peso
+            inicial era muy ligero o los descansos muy largos."
+        </div>
+
+        <h1 class="page-break">4. Métodos y Técnicas del Rest-Pause</h1>
+
+        <div class="highlight-box">
+            <strong>Técnicas de Raúl Carrasco</strong>
+            <p>Las siguientes variantes del Rest-Pause permiten adaptar el método a diferentes objetivos y niveles.</p>
+        </div>
+
+        <h3>¿Cuándo Usar Rest-Pause?</h3>
+        <div class="success-box">
+            <strong>✅ INDICACIONES - Usar Rest-Pause cuando:</strong>
+            <ul>
+                <li>Tienes al menos 1+ año de experiencia entrenando</li>
+                <li>Tu técnica es sólida en el ejercicio elegido</li>
+                <li>Buscas romper mesetas de hipertrofia</li>
+                <li>Quieres sesiones más eficientes en tiempo</li>
+                <li>Tienes acceso a máquinas o ejercicios seguros</li>
+            </ul>
+        </div>
+
+        <div class="danger-box">
+            <strong>❌ CONTRAINDICACIONES - NO usar Rest-Pause cuando:</strong>
+            <ul>
+                <li><strong>Principiante total:</strong> Menos de 6 meses de experiencia</li>
+                <li><strong>Ejercicios técnicos:</strong> Peso muerto, sentadilla libre con alta carga</li>
+                <li><strong>Fatiga extrema:</strong> El SNC ya está comprometido</li>
+                <li><strong>Problemas articulares:</strong> El estrés acumulado empeora lesiones</li>
+            </ul>
+        </div>
+
+        <h3>Limitantes del Sistema Rest-Pause</h3>
+        <div class="warning-box">
+            <strong>⚠️ Limitaciones a considerar:</strong>
+            <ul>
+                <li>Demandante para el SNC - requiere 2-3 min descanso post-protocolo</li>
+                <li>No ideal para ejercicios técnicos complejos</li>
+                <li>Puede causar fatiga acumulada si se abusa</li>
+                <li>Mentalmente exigente por múltiples fallos</li>
+            </ul>
+        </div>
+
+        <h3>Tabla de Intensidades y Variantes Rest-Pause</h3>
+        <div class="highlight-box">
+            <p><strong>Notación:</strong> Cada variante tiene características específicas de carga, descanso y mecanismo
+                de hipertrofia.</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variante</th>
+                    <th>Carga %1RM</th>
+                    <th>Descanso</th>
+                    <th>Secuencias</th>
+                    <th>TM%</th>
+                    <th>EM%</th>
+                    <th>Nivel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: rgba(220, 38, 38, 0.1);">
+                    <td><strong>RP Conservador</strong></td>
+                    <td>65-70%</td>
+                    <td>20s</td>
+                    <td>2</td>
+                    <td>40%</td>
+                    <td><strong>60%</strong></td>
+                    <td>Principiante+</td>
+                </tr>
+                <tr style="background: rgba(220, 38, 38, 0.15);">
+                    <td><strong>RP Clásico (Carrasco)</strong></td>
+                    <td>70-80%</td>
+                    <td>10-20s</td>
+                    <td>2-3</td>
+                    <td>50%</td>
+                    <td><strong>50%</strong></td>
+                    <td>Intermedio</td>
+                </tr>
+                <tr style="background: rgba(220, 38, 38, 0.2);">
+                    <td><strong>RP Intensivo</strong></td>
+                    <td>75-85%</td>
+                    <td>10-15s</td>
+                    <td>3</td>
+                    <td><strong>60%</strong></td>
+                    <td>40%</td>
+                    <td>Intermedio+</td>
+                </tr>
+                <tr style="background: rgba(220, 38, 38, 0.25);">
+                    <td><strong>RP Extremo</strong></td>
+                    <td>80-90%</td>
+                    <td>10s</td>
+                    <td>3-4</td>
+                    <td><strong>70%</strong></td>
+                    <td>30%</td>
+                    <td>Avanzado</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="success-box">
+            <strong>💡 Nota:</strong> TM = Tensión Mecánica, EM = Estrés Metabólico.
+            A mayor carga y menos descanso, mayor énfasis en tensión mecánica.
+        </div>
+
+        <h3>🔧 Cómo Crear Rutinas Rest-Pause</h3>
+        <div class="highlight-box">
+            <strong>Guía para Diseñar tus Propias Rutinas:</strong>
+            <ol>
+                <li><strong>Split recomendado:</strong> Push/Pull/Legs o Upper/Lower (4-5 días)</li>
+                <li><strong>Ejercicios por grupo:</strong> 3-4 ejercicios (1-2 con Rest-Pause, resto normal)</li>
+                <li><strong>Protocolos RP por sesión:</strong> 2-3 máximo (son demandantes)</li>
+                <li><strong>Selección de protocolo:</strong>
+                    <ul>
+                        <li>RP-RC: Base de todo, versátil</li>
+                        <li>RP-MYO: Alto volumen rápido</li>
+                        <li>RP-DS: Finisher devastador</li>
+                        <li>RP-NEG: Daño muscular máximo</li>
+                    </ul>
+                </li>
+                <li><strong>Descanso post-RP:</strong> 2-3 minutos obligatorios</li>
+                <li><strong>Hidratación:</strong> Agua constante durante toda la sesión</li>
+            </ol>
+        </div>
+
+        <h3>¿Cómo Aplicar el Rest-Pause?</h3>
+        <ul>
+            <li><strong>Posición en Rutina:</strong> Rest-Pause funciona mejor en ejercicios de aislamiento o máquinas
+            </li>
+            <li><strong>Ejercicio:</strong> Preferir MÁQUINAS para no preocuparse por estabilización en fatiga</li>
+            <li><strong>Protocolos:</strong> Elegir UN protocolo principal por ejercicio (no combinar varios)</li>
+            <li><strong>Descanso Post-Protocolo:</strong> 2-3 minutos obligatorios antes del siguiente ejercicio</li>
+            <li><strong>Objetivo:</strong> Máximo trabajo muscular en mínimo tiempo</li>
+        </ul>
+
+        <h3>Matriz de Decisión: ¿Cuándo usar cada Protocolo?</h3>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th>RP-RC</th>
+                <th>RP-EXT</th>
+                <th>RP-MYO</th>
+                <th>RP-DS</th>
+                <th>RP-NEG</th>
+            </tr>
+            <tr>
+                <td><strong>Nivel</strong></td>
+                <td>Intermedio</td>
+                <td>Avanzado</td>
+                <td>Intermedio</td>
+                <td>Avanzado</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td><strong>Objetivo</strong></td>
+                <td>Balance TM/EM</td>
+                <td>Extremo volumen</td>
+                <td>Eficiencia tiempo</td>
+                <td>Bomba máxima</td>
+                <td>Daño muscular</td>
+            </tr>
+            <tr>
+                <td><strong>Carga</strong></td>
+                <td>70-80% 1RM</td>
+                <td>65-75% 1RM</td>
+                <td>70-80% 1RM</td>
+                <td>75%→55% 1RM</td>
+                <td>70-75% 1RM</td>
+            </tr>
+            <tr>
+                <td><strong>Secuencias</strong></td>
+                <td>2-3</td>
+                <td>3-4</td>
+                <td>4-5 mini</td>
+                <td>2 + drop</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td><strong>Recuperación</strong></td>
+                <td>48h</td>
+                <td>72h</td>
+                <td>48h</td>
+                <td>72h</td>
+                <td>72-96h</td>
+            </tr>
+            <tr>
+                <td><strong>Spotter</strong></td>
+                <td>No</td>
+                <td>No</td>
+                <td>No</td>
+                <td>No</td>
+                <td>Opcional</td>
+            </tr>
+        </table>
+
+        <div class="success-box">
+            <strong>📋 Reglas para Implementación:</strong>
+            <ol>
+                <li><strong>Máximo 2-3 protocolos Rest-Pause por sesión:</strong> Más genera sobreentrenamiento</li>
+                <li><strong>Rest-Pause primero en grupo grande:</strong> Hacerlo con energía fresca</li>
+                <li><strong>No necesitas spotter:</strong> Esta es una ventaja clave sobre Blood & Guts ⭐</li>
+                <li><strong>Cronometrar descansos:</strong> Los tiempos son exactos, usar timer</li>
+                <li><strong>Combina bien con HIT:</strong> Heavy Duty, Blood & Guts, DC Training</li>
+            </ol>
+        </div>
+
+        <h3>Algoritmo de Selección de Protocolo</h3>
+        <div class="code-block">LÓGICA DE SELECCIÓN REST-PAUSE:
+
+            SI objetivo == "HIPERTROFIA_BALANCE" O experiencia == "INTERMEDIO":
+            → Usar RP-RC (Clásico Carrasco)
+            → Descanso: 10-20 segundos
+            → Secuencias: 2-3
+
+            SI objetivo == "EFICIENCIA_TIEMPO" O tiempo_limitado == true:
+            → Usar RP-MYO (Myo-Reps)
+            → Set activación + 4-5 mini-sets
+            → Total: ~3 minutos por ejercicio
+
+            SI objetivo == "BOMBA_MÁXIMA" O fase == "VOLUMEN":
+            → Usar RP-DS (+ Drop Sets)
+            → Finisher de sesión únicamente
+            → Máximo 1 vez por grupo
+
+            SI objetivo == "DAÑO_MUSCULAR" O fase == "INTENSIFICACIÓN":
+            → Usar RP-NEG (Excéntrico)
+            → Tempo 4s excéntrico
+            → Esperar 72-96h recuperación
+
+            ORDEN RECOMENDADO EN SESIÓN:
+            1. Calentamiento (10 min)
+            2. Ejercicio compuesto con RP-RC
+            3. Ejercicio aislamiento con RP-MYO o RP-ISO
+            4. Finisher con RP-DS (opcional)</div>
+
+        <h3>📊 Especificaciones Técnicas para Aplicación</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Técnica</th>
+                <th>Nivel</th>
+                <th>Descanso</th>
+                <th>TUT/Serie</th>
+                <th>Carga</th>
+            </tr>
+            <tr>
+                <td><code>RP-RC</code></td>
+                <td>Rest-Pause Clásico Carrasco</td>
+                <td>Intermedio</td>
+                <td>10-20s</td>
+                <td>90-120s</td>
+                <td>70-80% 1RM</td>
+            </tr>
+            <tr>
+                <td><code>RP-EXT</code></td>
+                <td>Rest-Pause Extendido</td>
+                <td>Avanzado</td>
+                <td>15-20s</td>
+                <td>120-150s</td>
+                <td>65-75% 1RM</td>
+            </tr>
+            <tr>
+                <td><code>RP-MYO</code></td>
+                <td>Myo-Reps Style</td>
+                <td>Intermedio</td>
+                <td>3-5 respiraciones</td>
+                <td>60-90s</td>
+                <td>70-80% 1RM</td>
+            </tr>
+            <tr>
+                <td><code>RP-DS</code></td>
+                <td>Rest-Pause + Drop Sets</td>
+                <td>Avanzado</td>
+                <td>10s + 0s (drop)</td>
+                <td>120-180s</td>
+                <td>75%→55% 1RM</td>
+            </tr>
+            <tr>
+                <td><code>RP-NEG</code></td>
+                <td>Rest-Pause Excéntrico</td>
+                <td>Avanzado</td>
+                <td>15s</td>
+                <td>100-130s</td>
+                <td>70-75% 1RM</td>
+            </tr>
+            <tr>
+                <td><code>RP-ISO</code></td>
+                <td>Rest-Pause Isométrico</td>
+                <td>Intermedio+</td>
+                <td>10-15s</td>
+                <td>80-100s</td>
+                <td>65-70% 1RM</td>
+            </tr>
+        </table>
+
+        <h2>4.1 Rest-Pause Clásico Carrasco (RP-RC)</h2>
+        <div class="method-card">
+            <h4>El Corazón del Sistema</h4>
+            <p>
+                <strong style="background:#DC2626; color:white; padding:3px 8px; border-radius:4px;">10-12 REPS</strong>
+                <span style="background:#F97316; color:white; padding:3px 8px; border-radius:4px; margin-left:5px;">+
+                    10-20s DESCANSO</span>
+                <span style="background:#FBBF24; color:black; padding:3px 8px; border-radius:4px; margin-left:5px;">x
+                    2-3 SECUENCIAS</span>
+            </p>
+            <div class="code-block">ESTRUCTURA REST-PAUSE CARRASCO:
+
+                Warm-up 1: 15 reps @ 30% 1RM
+                Warm-up 2: 10 reps @ 50% 1RM
+
+                SERIE REST-PAUSE:
+                → Secuencia 1: 10-12 reps @ 70-80% 1RM → FALLO
+                → Descanso: 10-20 segundos (respirar profundo)
+                → Secuencia 2: 4-6 reps → FALLO
+                → Descanso: 10-20 segundos
+                → Secuencia 3: 2-4 reps → FALLO
+
+                Total: 16-22 reps con el mismo peso
+                Descanso post-serie: 2-3 minutos → Siguiente ejercicio</div>
+            <div class="use-when">
+                <div><strong>✅ USAR CUANDO:</strong><br>• Ejercicios de aislamiento<br>• Máquinas y poleas<br>• Músculos
+                    que responden bien al volumen</div>
+                <div style="background:#FEE2E2;"><strong>❌ EVITAR CUANDO:</strong><br>• Ejercicios compuestos
+                    pesados<br>• Fatiga extrema acumulada<br>• Sin dominio técnico del ejercicio</div>
+            </div>
+        </div>
+
+        <h2>4.2 Rest-Pause Extendido (RP-EXT)</h2>
+        <div class="method-card">
+            <h4>Para Atletas Avanzados</h4>
+            <div class="code-block">REST-PAUSE EXTENDIDO:
+
+                → Secuencia 1: 10-12 reps @ 65-75% → FALLO
+                → Descanso: 15-20 segundos
+                → Secuencia 2: 6-8 reps → FALLO
+                → Descanso: 15-20 segundos
+                → Secuencia 3: 4-6 reps → FALLO
+                → Descanso: 15-20 segundos
+                → Secuencia 4: 2-4 reps → FALLO
+
+                Total: 22-30 reps
+                Uso: Solo atletas muy avanzados, máximo 1x por grupo</div>
+        </div>
+
+        <h2>4.3 Myo-Reps Style (RP-MYO)</h2>
+        <div class="method-card">
+            <h4>Variante Escandinava</h4>
+            <div class="code-block">MYO-REPS:
+
+                1. Set de Activación: 12-15 reps @ 70% → cerca del fallo
+                2. Descanso: 3-5 respiraciones profundas
+                3. Mini-sets: 3-5 reps x 4-5 veces
+                4. Parar cuando: No completas 3 reps o pierdes la forma
+
+                Cada mini-set = al fallo o RIR 1
+                Ideal para: Alto volumen en poco tiempo</div>
+        </div>
+
+        <h2>4.4 Rest-Pause + Drop Sets (RP-DS)</h2>
+        <div class="method-card">
+            <h4>Combinación Devastadora</h4>
+            <div class="code-block">REST-PAUSE + DROP:
+
+                1. Rest-Pause clásico (2 secuencias)
+                → 10 reps + 10s + 4 reps → FALLO
+                2. Inmediatamente: Drop 30% del peso
+                3. AMRAP (todas las reps posibles)
+
+                Uso: Último ejercicio del grupo
+                Máximo: 1 vez por sesión</div>
+        </div>
+
+        <h2>4.5 Rest-Pause con Énfasis Excéntrico (RP-NEG)</h2>
+        <div class="method-card">
+            <h4>Máximo Daño Muscular</h4>
+            <div class="code-block">REST-PAUSE EXCÉNTRICO:
+
+                Tempo: 2-0-4 (concéntrico-pausa-excéntrico lento)
+                → Secuencia 1: 8-10 reps @ 70% con 4s excéntrico → FALLO
+                → Descanso: 15 segundos
+                → Secuencia 2: 4-6 reps con 4s excéntrico → FALLO
+
+                DOMS: Espera dolor muscular intenso 24-72h
+                Frecuencia: Máximo 1x por grupo por semana</div>
+        </div>
+
+        <h2>4.6 Rest-Pause Isométrico (RP-ISO)</h2>
+        <div class="method-card">
+            <h4>Con Pausas Isométricas</h4>
+            <div class="code-block">REST-PAUSE ISOMÉTRICO:
+
+                → Secuencia 1: 8 reps + hold isométrico 3-5s en contracción máxima
+                → Descanso: 10-15 segundos
+                → Secuencia 2: 4-6 reps + hold 3s
+                → Descanso: 10-15 segundos
+                → Secuencia 3: 2-4 reps + hold máximo
+
+                Ideal para: Ejercicios de aislamiento (curls, extensiones, laterales)</div>
+        </div>
+
+        <h2>4.7 RPE en Rest-Pause</h2>
+        <table>
+            <tr>
+                <th>Secuencia</th>
+                <th>RPE Objetivo</th>
+                <th>Descripción</th>
+            </tr>
+            <tr>
+                <td>Primera</td>
+                <td>9-10</td>
+                <td>Al fallo o 1 rep en reserva</td>
+            </tr>
+            <tr>
+                <td>Segunda</td>
+                <td>10</td>
+                <td>Fallo absoluto</td>
+            </tr>
+            <tr>
+                <td>Tercera</td>
+                <td>10+</td>
+                <td>Fallo técnico total</td>
+            </tr>
+        </table>
+
+        <h2>4.8 Compatibilidad con Otras Metodologías</h2>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Compatible</th>
+                <th>Recomendación</th>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Usar como intensificador final</td>
+            </tr>
+            <tr>
+                <td>Blood & Guts</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Similar filosofía HIT</td>
+            </tr>
+            <tr>
+                <td>DC Training</td>
+                <td style="background:#10B981; color:white;">✅ SÍ</td>
+                <td>Mismo concepto base</td>
+            </tr>
+            <tr>
+                <td>Y3T</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>Solo en Week 3 (alto volumen)</td>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td style="background:#F59E0B; color:white;">⚠️ PARCIAL</td>
+                <td>No combinar en misma sesión</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td style="background:#DC2626; color:white;">❌ NO</td>
+                <td>Demasiado volumen combinado</td>
+            </tr>
+        </table>
+
+        <h2 class="page-break">4.9 Ejemplo: Rutina Full Body con Todos los Protocolos</h2>
+
+        <div class="highlight-box">
+            <strong>Ejemplo Práctico:</strong> Esta rutina muestra cómo combinar diferentes protocolos Rest-Pause en una
+            sesión Full Body. Cada ejercicio usa un protocolo diferente para demostrar su aplicación.
+        </div>
+
+        <div class="code-block">RUTINA FULL BODY REST-PAUSE - TODOS LOS PROTOCOLOS
+            Duración: ~60 minutos | Nivel: Intermedio-Avanzado | Sin Spotter Requerido ⭐
+
+            A. PECHO - Press Máquina Inclinado <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Peso: 75% 1RM (mantener todo el protocolo)
+            Calentamiento: 15 reps @ 30% → 10 reps @ 50%
+            Protocolo: 10-12 reps → <span style="color:#DC2626;">15s</span> → 4-6 reps → <span
+                style="color:#DC2626;">15s</span> → 2-4 reps
+            Total: 16-22 reps | AL FALLO cada secuencia
+            Descanso después: 2-3 min
+
+            B. ESPALDA - Jalón Polea Alta <span style="color:#F97316;">[RP-MYO Myo-Reps]</span>
+            Peso: 70% 1RM
+            Set Activación: 12-15 reps cerca del fallo
+            Mini-sets: <span style="color:#F97316;">3-5 respiraciones</span> → 3-5 reps x 4-5 veces
+            Parar cuando: No completas 3 reps o pierdes forma
+            Descanso después: 2-3 min
+
+            C. PIERNAS - Prensa 45° <span style="color:#FBBF24;">[RP-ISO Isométrico]</span>
+            Peso: 65% 1RM
+            Cada rep: Concéntrica → <span style="color:#FBBF24;">Hold 3s</span> en contracción → Excéntrica
+            Reps: 8-10 con holds
+            + Isometría final: Hold máximo en posición contraída
+            Descanso después: 3 min
+
+            D. HOMBROS - Elevaciones Laterales Máquina <span style="color:#10B981;">[RP-DS Drop Set]</span>
+            Peso inicial: 75% 1RM
+            Rest-Pause: 10 reps → <span style="color:#10B981;">10s</span> → 4 reps → FALLO
+            Drop inmediato: -30% peso → AMRAP
+            Uso: Finisher del grupo
+            Descanso después: 2 min
+
+            E. BÍCEPS - Curl Máquina <span style="color:#8B5CF6;">[RP-NEG Excéntrico]</span>
+            Peso: 70% 1RM
+            Tempo: 2-0-4 (concéntrica normal, excéntrica 4s lenta)
+            Protocolo: 8 reps → <span style="color:#8B5CF6;">15s</span> → 4-6 reps
+            DOMS esperado: 24-72h post-entreno
+            Descanso después: 2 min
+
+            F. TRÍCEPS - Extensión Polea <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Peso: 75% 1RM
+            Protocolo: 10 reps → <span style="color:#DC2626;">10s</span> → 5 reps → <span
+                style="color:#DC2626;">10s</span> → 3 reps
+
+            RESUMEN SESIÓN:
+            ├─ Protocolos Rest-Pause: 6
+            ├─ Tiempo total: ~60 min
+            ├─ Spotter requerido: NO ⭐
+            ├─ Nivel fatiga: Alto
+            └─ Descanso post-sesión: 48-72h antes de repetir</div>
+
+        <div class="warning-box">
+            <strong>⚠️ Nota:</strong> Esta rutina es un EJEMPLO para demostrar todos los protocolos. En la práctica,
+            usa 2-3 protocolos Rest-Pause por sesión, no 6. Para rutinas reales, consulta la sección 9.
+        </div>
+
+        <h3>Ciencia del Rest-Pause: Recuperación de Fosfocreatina</h3>
+        <div class="highlight-box">
+            <strong>🔬 Base Fisiológica:</strong>
+            <p>Los micro-descansos de 10-20 segundos permiten recuperación parcial del sistema de fosfocreatina (PCr):
+            </p>
+        </div>
+        <table>
+            <tr>
+                <th>Tiempo Descanso</th>
+                <th>% PCr Recuperada</th>
+                <th>Reps Adicionales Esperadas</th>
+            </tr>
+            <tr>
+                <td>10 segundos</td>
+                <td>~50%</td>
+                <td>2-4 reps</td>
+            </tr>
+            <tr>
+                <td>15 segundos</td>
+                <td>~60%</td>
+                <td>3-5 reps</td>
+            </tr>
+            <tr>
+                <td>20 segundos</td>
+                <td>~70%</td>
+                <td>4-6 reps</td>
+            </tr>
+            <tr>
+                <td>30 segundos</td>
+                <td>~80%</td>
+                <td>5-7 reps (ya no es Rest-Pause)</td>
+            </tr>
+        </table>
+        <div class="success-box">
+            <strong>💡 Clave de Carrasco:</strong> "El sweet spot está en 10-20 segundos. Menos no recuperas suficiente,
+            más y pierdes el estrés metabólico acumulado."
+        </div>
+
+        <h1 class="page-break">5. Estructura de una Sesión Rest-Pause</h1>
+
+        <h2>5.1 Calentamiento y Series de Aproximación</h2>
+        <div class="code-block">CALENTAMIENTO Rest-Pause (10-15 min):
+
+            1. Cardio ligero: 5 min
+            2. Movilidad articular: 3-5 min
+            3. Series de aproximación:
+            - Serie 1: 15 reps @ 30% 1RM
+            - Serie 2: 10 reps @ 50% 1RM
+            - SERIE REST-PAUSE: Al fallo x 2-3 secuencias</div>
+
+        <h2>5.2 Ejercicios Principales</h2>
+        <ul>
+            <li>1-2 protocolos Rest-Pause por grupo muscular grande</li>
+            <li>Descanso entre ejercicios: 2-3 minutos</li>
+        </ul>
+
+        <h2>5.3 Ejercicios Accesorios</h2>
+        <ul>
+            <li>2-3 ejercicios complementarios con técnica normal</li>
+            <li>3 series de 10-15 reps, RIR 1-2</li>
+        </ul>
+
+        <h2>5.4 Enfriamiento</h2>
+        <ul>
+            <li>Estiramientos estáticos: 30-60s por músculo</li>
+            <li>Hidratación inmediata</li>
+        </ul>
+
+        <h1 class="page-break">6. Periodización con Rest-Pause</h1>
+
+        <h2>6.1 Microciclos y Mesociclos</h2>
+        <table>
+            <tr>
+                <th>Semana</th>
+                <th>Énfasis</th>
+                <th>Protocolo</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Introducción</td>
+                <td>RP-RC (2 sec)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Progresión</td>
+                <td>RP-RC (2-3 sec)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Intensificación</td>
+                <td>RP-EXT o RP-DS</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Deload</td>
+                <td>Sin Rest-Pause</td>
+            </tr>
+        </table>
+
+        <h2>6.4 Descargas (Deloads)</h2>
+        <div class="warning-box">
+            <strong>⚠️ Rest-Pause es demandante.</strong> Deload cada 3-4 semanas. Durante deload: 50-60% volumen.
+        </div>
+
+        <h2>6.5 Duración del Ciclo por Nivel</h2>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Duración</th>
+                <th>Justificación</th>
+            </tr>
+            <tr>
+                <td>Principiante (1-2 años)</td>
+                <td>6-8 semanas</td>
+                <td>Adaptación gradual</td>
+            </tr>
+            <tr>
+                <td>Intermedio (2-5 años)</td>
+                <td>4-6 semanas</td>
+                <td>Balance óptimo</td>
+            </tr>
+            <tr>
+                <td>Avanzado (5+ años)</td>
+                <td>4 semanas</td>
+                <td>Fatiga rápida</td>
+            </tr>
+        </table>
+
+        <h2>6.6 División de Entrenamientos</h2>
+        <table>
+            <tr>
+                <th>Estructura</th>
+                <th>Días/Semana</th>
+                <th>Nivel</th>
+            </tr>
+            <tr>
+                <td>Full Body</td>
+                <td>3</td>
+                <td>Principiante-Intermedio</td>
+            </tr>
+            <tr>
+                <td>Upper/Lower</td>
+                <td>4</td>
+                <td>Intermedio-Avanzado</td>
+            </tr>
+            <tr>
+                <td>Push/Pull/Legs</td>
+                <td>5-6</td>
+                <td>Avanzado</td>
+            </tr>
+            <tr>
+                <td>Bro Split</td>
+                <td>5-6</td>
+                <td>Avanzado</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">7. Progresión en Rest-Pause</h1>
+
+        <h2>7.1 Progresión de Carga y Reps</h2>
+        <ul>
+            <li><strong>Aumentar reps totales:</strong> Si completas más reps, mantén peso</li>
+            <li><strong>Aumentar peso:</strong> Cuando superas reps objetivo consistentemente</li>
+            <li><strong>Progresión típica:</strong> 2.5-5kg cada 1-2 semanas</li>
+        </ul>
+
+        <h2>7.2 Manipulación de Variables</h2>
+        <table>
+            <tr>
+                <th>Variable</th>
+                <th>Progresión</th>
+            </tr>
+            <tr>
+                <td>Tiempo descanso</td>
+                <td>Reducir de 20s a 10s gradualmente</td>
+            </tr>
+            <tr>
+                <td>Número secuencias</td>
+                <td>Aumentar de 2 a 3</td>
+            </tr>
+            <tr>
+                <td>Carga</td>
+                <td>+2.5-5% cuando superas reps objetivo</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">8. Nutrición y Suplementación</h1>
+
+        <h2>8.1 Macronutrientes</h2>
+        <table>
+            <tr>
+                <th>Macro</th>
+                <th>Recomendación</th>
+                <th>Razón</th>
+            </tr>
+            <tr>
+                <td>Proteína</td>
+                <td>2.0-2.4g/kg</td>
+                <td>Síntesis muscular</td>
+            </tr>
+            <tr>
+                <td>Carbohidratos</td>
+                <td>4-6g/kg</td>
+                <td>Reposición glucógeno</td>
+            </tr>
+            <tr>
+                <td>Grasas</td>
+                <td>0.8-1g/kg</td>
+                <td>Función hormonal</td>
+            </tr>
+        </table>
+
+        <h2>8.4 Suplementación Clave</h2>
+        <ul>
+            <li><strong>Creatina:</strong> 5g/día</li>
+            <li><strong>Citrulina Malato:</strong> 6-8g pre-entreno</li>
+            <li><strong>Beta-Alanina:</strong> 3-5g/día</li>
+        </ul>
+
+        <h1 class="page-break">9. Ejemplos de Rutinas Rest-Pause</h1>
+
+        <div class="highlight-box">
+            <strong>📋 Guía de Rutinas:</strong> Estas rutinas están diseñadas para diferentes grupos musculares
+            usando los protocolos Rest-Pause de Carrasco. Cada una incluye ejercicios específicos con sus parámetros.
+        </div>
+
+        <h2>9.1 Pecho</h2>
+        <div class="code-block">RUTINA REST-PAUSE PECHO - DETALLADA
+            Duración: ~40 min | Ejercicios: 4 | RP Protocolos: 2
+
+            A. PRESS MÁQUINA INCLINADO <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Calentamiento: 15 reps @ 30% → 10 reps @ 50%
+            Peso trabajo: 75% 1RM
+            Protocolo: 10-12 reps → <span style="color:#DC2626;">15s</span> → 4-6 reps → <span
+                style="color:#DC2626;">15s</span> → 2-4 reps
+            Descanso: 2-3 min
+
+            B. APERTURAS PEC DECK <span style="color:#10B981;">[RP-DS Drop]</span>
+            Peso: 70% 1RM
+            Protocolo: 10 reps → <span style="color:#10B981;">10s</span> → 4 reps → DROP 30% → AMRAP
+            Descanso: 2 min
+
+            C. PRESS MÁQUINA PLANO [Normal]
+            3 x 12 reps @ 70% 1RM | RIR 1-2
+            Descanso: 90s
+
+            D. CRUCES POLEA [Normal]
+            3 x 15 reps @ 60% 1RM | Bomba final
+            Descanso: 60s</div>
+
+        <h2>9.2 Espalda</h2>
+        <div class="code-block">RUTINA REST-PAUSE ESPALDA - DETALLADA
+            Duración: ~45 min | Ejercicios: 4 | RP Protocolos: 2
+
+            A. JALÓN POLEA ALTA <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Calentamiento: 15 reps @ 30% → 10 reps @ 50%
+            Peso trabajo: 75% 1RM
+            Protocolo: 10-12 reps → <span style="color:#DC2626;">15s</span> → 4-6 reps → <span
+                style="color:#DC2626;">15s</span> → 2-4 reps
+            Descanso: 2-3 min
+
+            B. REMO MÁQUINA <span style="color:#FBBF24;">[RP-ISO Isométrico]</span>
+            Peso: 65% 1RM
+            Protocolo: 8 reps con hold 3s en contracción máxima
+            + Isometría final: Hold 20s
+            Descanso: 2 min
+
+            C. PULLDOWN BRAZOS RECTOS [Normal]
+            3 x 15 reps @ 60% 1RM
+            Descanso: 90s
+
+            D. REMO CABLE BAJO [Normal]
+            3 x 12 reps @ 70% 1RM
+            Descanso: 90s</div>
+
+        <h2>9.3 Piernas</h2>
+        <div class="code-block">RUTINA REST-PAUSE PIERNAS - DETALLADA
+            Duración: ~50 min | Ejercicios: 5 | RP Protocolos: 3
+
+            ⚠️ NOTA: Rest-Pause en piernas es muy demandante. Usar cargas moderadas.
+
+            A. PRENSA 45° <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Peso: 70% 1RM (NO usar peso máximo por seguridad)
+            Protocolo: 12 reps → <span style="color:#DC2626;">20s</span> → 6 reps → <span
+                style="color:#DC2626;">20s</span> → 4 reps
+            Descanso: 3 min (mayor por demanda)
+
+            B. EXTENSIÓN CUÁDRICEPS <span style="color:#10B981;">[RP-DS Drop]</span>
+            Peso: 65% 1RM
+            Protocolo: 12 reps → <span style="color:#10B981;">10s</span> → 6 reps → DROP 30% → AMRAP
+            Descanso: 2 min
+
+            C. CURL FEMORAL <span style="color:#8B5CF6;">[RP-NEG Excéntrico]</span>
+            Peso: 65% 1RM
+            Tempo: 2-0-4 (excéntrica lenta 4s)
+            Protocolo: 8 reps → <span style="color:#8B5CF6;">15s</span> → 4-6 reps
+            Descanso: 2 min
+
+            D. GEMELOS SENTADO [Normal]
+            4 x 15-20 reps | Peso moderado
+            Descanso: 60s
+
+            E. PESO MUERTO RUMANO [Normal] - SIN Rest-Pause
+            3 x 10 reps @ 70% 1RM
+            Descanso: 2 min</div>
+
+        <h2>9.4 Hombros</h2>
+        <div class="code-block">RUTINA REST-PAUSE HOMBROS - DETALLADA
+            Duración: ~35 min | Ejercicios: 4 | RP Protocolos: 2
+
+            A. PRESS HOMBRO MÁQUINA <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Calentamiento: 12 reps @ 40% → 8 reps @ 60%
+            Peso trabajo: 75% 1RM
+            Protocolo: 10 reps → <span style="color:#DC2626;">15s</span> → 4-5 reps → <span
+                style="color:#DC2626;">15s</span> → 2-3 reps
+            Descanso: 2-3 min
+
+            B. ELEVACIONES LATERALES MÁQUINA <span style="color:#F97316;">[RP-MYO Myo-Reps]</span>
+            Peso: 65% 1RM
+            Set activación: 12-15 reps cerca del fallo
+            Mini-sets: <span style="color:#F97316;">3-5 respiraciones</span> → 3-5 reps x 4-5 veces
+            Descanso: 2 min
+
+            C. PÁJAROS MÁQUINA [Normal]
+            3 x 15 reps @ 60% 1RM
+            Descanso: 60s
+
+            D. ENCOGIMIENTOS MÁQUINA [Normal]
+            3 x 12 reps @ 70% 1RM
+            Descanso: 60s</div>
+
+        <h2>9.5 Brazos</h2>
+        <div class="code-block">RUTINA REST-PAUSE BRAZOS - DETALLADA
+            Duración: ~35 min | Ejercicios: 6 | RP Protocolos: 4
+
+            BÍCEPS:
+            A. CURL MÁQUINA <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Peso: 70% 1RM
+            Protocolo: 10 reps → <span style="color:#DC2626;">10s</span> → 5 reps → <span
+                style="color:#DC2626;">10s</span> → 3 reps
+            Descanso: 2 min
+
+            B. CURL PREDICADOR <span style="color:#FBBF24;">[RP-ISO Isométrico]</span>
+            Peso: 60% 1RM
+            Protocolo: 8 reps con hold 3s en pico de contracción
+            Descanso: 90s
+
+            C. CURL MARTILLO [Normal]
+            2 x 12 reps
+            Descanso: 60s
+
+            TRÍCEPS:
+            D. EXTENSIÓN POLEA <span style="color:#DC2626;">[RP-RC Clásico]</span>
+            Peso: 70% 1RM
+            Protocolo: 10 reps → <span style="color:#DC2626;">10s</span> → 5 reps → <span
+                style="color:#DC2626;">10s</span> → 3 reps
+            Descanso: 2 min
+
+            E. PRESS FRANCÉS MÁQUINA <span style="color:#10B981;">[RP-DS Drop]</span>
+            Peso: 65% 1RM
+            Protocolo: 10 reps → <span style="color:#10B981;">10s</span> → 4 reps → DROP 30% → AMRAP
+            Descanso: 90s
+
+            F. FONDOS ASISTIDOS [Normal]
+            2 x 12 reps
+            Descanso: 60s</div>
+
+        <h2>9.6 Estructuras de División Semanal</h2>
+
+        <h3>Upper/Lower (4 días/semana) - Recomendado</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Protocolos Rest-Pause</th>
+                <th>Duración</th>
+            </tr>
+            <tr>
+                <td>Lunes</td>
+                <td>Upper A (Empuje)</td>
+                <td>1x RP Pecho + 1x RP Hombros</td>
+                <td>~50 min</td>
+            </tr>
+            <tr>
+                <td>Martes</td>
+                <td>Lower A (Cuádriceps)</td>
+                <td>1x RP Prensa + 1x RP Extensión</td>
+                <td>~45 min</td>
+            </tr>
+            <tr>
+                <td>Jueves</td>
+                <td>Upper B (Tirón)</td>
+                <td>1x RP Espalda + 1x RP Bíceps</td>
+                <td>~50 min</td>
+            </tr>
+            <tr>
+                <td>Viernes</td>
+                <td>Lower B (Posterior)</td>
+                <td>1x RP Curl Femoral + RP Gemelos</td>
+                <td>~45 min</td>
+            </tr>
+        </table>
+
+        <h3>Push/Pull/Legs (5-6 días/semana) - Avanzado</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Enfoque</th>
+                <th>Protocolos Rest-Pause</th>
+            </tr>
+            <tr>
+                <td>Día 1</td>
+                <td>Push (Pecho/Hombro/Tríceps)</td>
+                <td>2x RP Pecho + 1x RP Hombros</td>
+            </tr>
+            <tr>
+                <td>Día 2</td>
+                <td>Pull (Espalda/Bíceps)</td>
+                <td>2x RP Espalda + 1x RP Bíceps</td>
+            </tr>
+            <tr>
+                <td>Día 3</td>
+                <td>Legs</td>
+                <td>1x RP Prensa + 1x RP Curl Femoral</td>
+            </tr>
+            <tr>
+                <td>Día 4</td>
+                <td>Push (Repetir)</td>
+                <td>Variar protocolos (MYO, DS)</td>
+            </tr>
+            <tr>
+                <td>Día 5</td>
+                <td>Pull (Repetir)</td>
+                <td>Variar protocolos (ISO, NEG)</td>
+            </tr>
+            <tr>
+                <td>Día 6</td>
+                <td>Legs (Repetir)</td>
+                <td>Cargas más ligeras</td>
+            </tr>
+        </table>
+
+        <h1 class="page-break">10. Consideraciones Importantes</h1>
+
+        <h2>10.1 Escuchar al Cuerpo</h2>
+        <ul>
+            <li><strong>Fatiga excesiva:</strong> Reducir secuencias de 3 a 2</li>
+            <li><strong>Dolor articular:</strong> Cambiar a máquinas</li>
+            <li><strong>Falta de bomba:</strong> Verificar hidratación y carbohidratos</li>
+            <li><strong>Rendimiento en declive:</strong> Considerar deload anticipado</li>
+        </ul>
+
+        <h2>10.2 Descanso y Recuperación</h2>
+        <ul>
+            <li><strong>Sueño:</strong> 7-9 horas (crítico para recuperación)</li>
+            <li><strong>Entre sesiones:</strong> Mínimo 48-72h por grupo muscular</li>
+            <li><strong>Cardio:</strong> LISS preferible, evitar HIIT días Rest-Pause</li>
+            <li><strong>Estrés:</strong> El estrés crónico reduce la recuperación</li>
+        </ul>
+
+        <h2>10.3 Prevención de Lesiones</h2>
+        <ul>
+            <li><strong>Usar máquinas:</strong> Más seguro con fatiga extrema</li>
+            <li><strong>Calentamiento:</strong> 10-15 min obligatorio</li>
+            <li><strong>Técnica primero:</strong> Si la forma se deteriora, terminar la serie</li>
+            <li><strong>Peso conservador:</strong> Mejor menos peso con más reps totales</li>
+        </ul>
+
+        <h2>10.4 Guía Práctica de Implementación Paso a Paso</h2>
+        <div class="code-block">TU PRIMERA SESIÓN REST-PAUSE:
+
+            FASE 1: PREPARACIÓN (Antes del gym)
+            ├─ Comida pre-entreno 1-2h antes (carbos + proteína)
+            ├─ Hidratación adecuada (500ml mínimo)
+            └─ Plan de sesión claro (cuántos RP, qué ejercicios)
+
+            FASE 2: CALENTAMIENTO (10-15 min)
+            ├─ 5 min cardio ligero (bicicleta, caminadora)
+            ├─ Movilidad articular del grupo a entrenar
+            └─ Series aproximación: 15 reps @ 30% → 10 reps @ 50%
+
+            FASE 3: PROTOCOLO REST-PAUSE (20-30 min)
+            ├─ Ejercicio 1: [RP-RC Clásico]
+            │ • Peso: 70-75% 1RM (primera vez, conservador)
+            │ • SOLO 2 secuencias (no 3)
+            │ • Secuencia 1: 10-12 reps → FALLO
+            │ • Descanso: 15-20 segundos (cronometrar)
+            │ • Secuencia 2: 4-6 reps → FALLO
+            │ • Descanso post: 2-3 min
+            │
+            └─ Ejercicio 2: [Normal o RP-MYO más ligero]
+            • 3×12 normal O
+            • Set activación + 3-4 mini-sets
+
+            FASE 4: ACCESORIOS (15-20 min)
+            ├─ 2-3 ejercicios complementarios
+            ├─ Series normales 3×10-15
+            └─ RIR 1-2 (no al fallo)
+
+            FASE 5: ENFRIAMIENTO (5 min)
+            ├─ Estiramientos estáticos 30-60s por músculo
+            └─ Hidratación inmediata post-entreno
+
+            VERIFICACIÓN POST-SESIÓN:
+            ✓ ¿Completaste el protocolo RP sin perder la forma?
+            ✓ ¿El descanso de 10-20s fue suficiente para más reps?
+            ✓ ¿La bomba muscular fue notable?
+
+            AJUSTES PARA SIGUIENTE SESIÓN:
+            • Si muy fácil: Aumentar peso O reducir descanso a 10s
+            • Si muy difícil: Reducir peso O aumentar descanso a 20s
+            • Si dolor articular: Cambiar a máquina diferente</div>
+
+        <h2>10.5 Especialización de Grupos Débiles</h2>
+        <div class="highlight-box">
+            <strong>🎯 Priorización de Grupos Rezagados:</strong>
+            <p>Rest-Pause es ideal para especialización por su alta intensidad en poco tiempo.</p>
+        </div>
+        <table>
+            <tr>
+                <th>Nivel Prioridad</th>
+                <th>Series Extra/Semana</th>
+                <th>Frecuencia</th>
+                <th>Técnica Recomendada</th>
+            </tr>
+            <tr>
+                <td>Moderado</td>
+                <td>+3-4 series</td>
+                <td>3x/semana</td>
+                <td>1 RP-RC extra por sesión</td>
+            </tr>
+            <tr>
+                <td>Alto</td>
+                <td>+6-8 series</td>
+                <td>4x/semana</td>
+                <td>RP-RC + RP-DS como finisher</td>
+            </tr>
+            <tr>
+                <td>Especialización</td>
+                <td>+9-12 series</td>
+                <td>5-6x/semana</td>
+                <td>RP al inicio de cada sesión</td>
+            </tr>
+        </table>
+
+        <h3>Ejemplo: Especialización de Pecho</h3>
+        <div class="code-block">ESPECIALIZACIÓN PECHO CON REST-PAUSE (4 semanas)
+
+            FRECUENCIA: 4x/semana (Lun/Mar/Jue/Sáb)
+
+            LUNES - Sesión Principal Pecho:
+            ├─ Press Inclinado: 1x RP-RC (10+5+3)
+            ├─ Press Plano Máquina: 1x RP-RC
+            ├─ Aperturas Pec Deck: 1x RP-DS + Drop
+            └─ Normal: Cruces 3×15
+
+            MARTES - Tirón + Mini Pecho:
+            ├─ Espalda normal
+            └─ + Press Máquina: 1x RP-MYO (activación + mini-sets)
+
+            JUEVES - Sesión Secundaria Pecho:
+            ├─ Press Declinado Máquina: 1x RP-RC
+            ├─ Aperturas Inclinado: 1x RP-ISO
+            └─ Normal: Press cerrado 3×12
+
+            SÁBADO - Upper General + Pecho:
+            └─ + Press cualquier ángulo: 1x RP-RC
+
+            VOLUMEN TOTAL PECHO/SEMANA: ~20 series efectivas
+            vs NORMAL: ~12 series</div>
+
+        <h1 class="page-break">11. Conclusión</h1>
+        <div class="highlight-box">
+            <p><strong>El Rest-Pause System de Raúl Carrasco es una herramienta poderosa para hipertrofia.</strong>
+                Los protocolos de micro-descansos y múltiples fallos ofrecen versatilidad única para romper mesetas.</p>
+            <p>La clave es <strong>dominar el protocolo clásico (RP-RC) antes de añadir variantes</strong>,
+                respetar los deloads, y escuchar al cuerpo.</p>
+        </div>
+
+        <div class="success-box">
+            <strong>✅ Resumen de Éxito Rest-Pause:</strong><br>
+            • Domina RP-RC primero (2-3 secuencias)<br>
+            • Usa máquinas para seguridad<br>
+            • Deload cada 3-4 semanas<br>
+            • No necesitas spotter ⭐<br>
+            • Ideal para sesiones eficientes
+        </div>
+
+        <h3>Comparativa Detallada: Rest-Pause vs DC Training</h3>
+        <div class="highlight-box">
+            <strong>🔍 Dos Sistemas Hermanos:</strong>
+            <p>Tanto el Rest-Pause de Raúl Carrasco como el DC Training de Dante Trudel comparten la base del
+                Rest-Pause,
+                pero tienen diferencias significativas en ejecución, volumen y filosofía.</p>
+        </div>
+
+        <table>
+            <tr>
+                <th>Aspecto</th>
+                <th>Rest-Pause (Carrasco)</th>
+                <th>DC Training (Trudel)</th>
+            </tr>
+            <tr>
+                <td><strong>Creador</strong></td>
+                <td>Raúl Carrasco (España, IFBB Pro)</td>
+                <td>Dante Trudel (USA, Coach)</td>
+            </tr>
+            <tr>
+                <td><strong>Filosofía Base</strong></td>
+                <td>Múltiples fallos con micro-descansos</td>
+                <td>1 set al fallo absoluto + estiramientos cargados</td>
+            </tr>
+            <tr>
+                <td><strong>Descanso Intra-serie</strong></td>
+                <td>10-20 segundos</td>
+                <td>10-15 respiraciones profundas (~15-20s)</td>
+            </tr>
+            <tr>
+                <td><strong>Secuencias por Serie</strong></td>
+                <td>2-3 (hasta 4 en RP-EXT)</td>
+                <td>3 fijas (11-15 + X + X)</td>
+            </tr>
+            <tr>
+                <td><strong>Reps Objetivo (1ra)</strong></td>
+                <td>10-12 reps</td>
+                <td>11-15 reps</td>
+            </tr>
+            <tr>
+                <td><strong>Carga Típica</strong></td>
+                <td>70-80% 1RM</td>
+                <td>Similar, peso para 11-15 RM</td>
+            </tr>
+            <tr style="background: #ECFDF5;">
+                <td><strong>Requiere Spotter</strong></td>
+                <td style="color: #10B981;">❌ NO ⭐</td>
+                <td style="color: #DC2626;">✅ Recomendado</td>
+            </tr>
+            <tr>
+                <td><strong>Estiramientos</strong></td>
+                <td>Estáticos normales post-sesión</td>
+                <td><strong>EXTREME STRETCHING:</strong> 60-90s cargado</td>
+            </tr>
+            <tr>
+                <td><strong>Rotación Ejercicios</strong></td>
+                <td>Opcional</td>
+                <td><strong>OBLIGATORIA:</strong> 3 ejercicios rotan A→B→C</td>
+            </tr>
+            <tr>
+                <td><strong>Periodización</strong></td>
+                <td>Lineal o ondulada</td>
+                <td><strong>BLAST + CRUISE:</strong> 4-8 sem ON + 2-4 sem OFF</td>
+            </tr>
+            <tr>
+                <td><strong>Volumen por Grupo</strong></td>
+                <td>2-3 ejercicios con RP</td>
+                <td>1 ejercicio con RP (rotando)</td>
+            </tr>
+            <tr>
+                <td><strong>Frecuencia</strong></td>
+                <td>Variable (3-6x/semana)</td>
+                <td>2-Way Split (cada grupo 2x/semana)</td>
+            </tr>
+            <tr>
+                <td><strong>Split Recomendado</strong></td>
+                <td>Upper/Lower o PPL</td>
+                <td>2-Way (único oficial)</td>
+            </tr>
+            <tr>
+                <td><strong>Nivel Mínimo</strong></td>
+                <td>Intermedio (1+ año)</td>
+                <td>Avanzado (2+ años)</td>
+            </tr>
+            <tr>
+                <td><strong>Duración Sesión</strong></td>
+                <td>45-60 min</td>
+                <td>45-60 min</td>
+            </tr>
+        </table>
+
+        <h3>⚡ Similitudes Clave</h3>
+        <div class="success-box">
+            <ul>
+                <li>Ambos usan <strong>micro-descansos de 10-20 segundos</strong></li>
+                <li>Ambos llevan cada set al <strong>fallo muscular absoluto</strong></li>
+                <li>Ambos priorizan <strong>intensidad sobre volumen</strong></li>
+                <li>Ambos requieren <strong>deloads regulares</strong></li>
+                <li>Ambos son <strong>compatibles entre sí</strong> (filosofía HIT similar)</li>
+            </ul>
+        </div>
+
+        <h3>⚠️ Diferencias Críticas</h3>
+        <div class="warning-box">
+            <table>
+                <tr>
+                    <th>Factor</th>
+                    <th>Rest-Pause (Carrasco)</th>
+                    <th>DC Training (Trudel)</th>
+                </tr>
+                <tr>
+                    <td>Estiramientos</td>
+                    <td>Opcionales, normales</td>
+                    <td><strong>OBLIGATORIOS:</strong> 60-90s cargados (dolorosos)</td>
+                </tr>
+                <tr>
+                    <td>Rotación</td>
+                    <td>Mismo ejercicio cada sesión</td>
+                    <td><strong>3 ejercicios rotan:</strong> Sesión 1=A, Sesión 2=B, Sesión 3=C</td>
+                </tr>
+                <tr>
+                    <td>Progresión</td>
+                    <td>Aumentar peso o reps</td>
+                    <td><strong>Log obsesivo:</strong> Debes ROMPER el PR anterior cada sesión</td>
+                </tr>
+                <tr>
+                    <td>Piernas</td>
+                    <td>Rest-Pause normal</td>
+                    <td><strong>Widowmaker:</strong> 20+ reps brutales (sin RP)</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>🎯 ¿Cuándo Elegir Cada Uno?</h3>
+        <table>
+            <tr>
+                <th>Situación</th>
+                <th>Mejor Opción</th>
+                <th>Razón</th>
+            </tr>
+            <tr>
+                <td>Entrenas solo (sin spotter)</td>
+                <td style="background:#10B981; color:white;">Rest-Pause ⭐</td>
+                <td>No requiere asistencia</td>
+            </tr>
+            <tr>
+                <td>Quieres máxima hipertrofia</td>
+                <td style="background:#7C3AED; color:white;">DC Training</td>
+                <td>Los estiramientos extremos expanden fascia</td>
+            </tr>
+            <tr>
+                <td>Tiempo muy limitado</td>
+                <td style="background:#7C3AED; color:white;">DC Training</td>
+                <td>Solo 1 ejercicio por grupo</td>
+            </tr>
+            <tr>
+                <td>Más variantes y flexibilidad</td>
+                <td style="background:#10B981; color:white;">Rest-Pause ⭐</td>
+                <td>6 protocolos vs 1 fijo</td>
+            </tr>
+            <tr>
+                <td>Principiante en HIT</td>
+                <td style="background:#10B981; color:white;">Rest-Pause ⭐</td>
+                <td>Menos demandante, más seguro</td>
+            </tr>
+            <tr>
+                <td>Atleta avanzado, tolerancia al dolor</td>
+                <td style="background:#7C3AED; color:white;">DC Training</td>
+                <td>Mayor intensidad total</td>
+            </tr>
+            <tr>
+                <td>Músculos que responden a volumen</td>
+                <td style="background:#10B981; color:white;">Rest-Pause ⭐</td>
+                <td>Más ejercicios por grupo</td>
+            </tr>
+        </table>
+
+        <div class="code-block">RECOMENDACIÓN FINAL:
+
+            SI entrenas SOLO y buscas eficiencia:
+            → REST-PAUSE de Raúl Carrasco
+            → No necesitas spotter, más variantes, menos dolor
+
+            SI tienes +2 años experiencia y toleras dolor extremo:
+            → DC TRAINING de Dante Trudel
+            → Estiramientos cargados, rotación obligatoria, PRs constantes
+
+            COMBINACIÓN IDEAL:
+            → USA AMBOS en diferentes fases del año
+            → Rest-Pause para fases de volumen
+            → DC Training para fases de intensificación extrema</div>
+
+        <h3>Tabla Comparativa Ampliada</h3>
+        <table>
+            <tr>
+                <th>Aspecto</th>
+                <th>Rest-Pause</th>
+                <th>DC Training</th>
+                <th>Blood & Guts</th>
+                <th>FST-7</th>
+            </tr>
+            <tr>
+                <td>Intensidad vía</td>
+                <td>Micro-descansos</td>
+                <td>RP + Stretch</td>
+                <td>Forced reps</td>
+                <td>7 series pump</td>
+            </tr>
+            <tr>
+                <td>Carga típica</td>
+                <td>70-85% 1RM</td>
+                <td>70-80% 1RM</td>
+                <td>80-85% 1RM</td>
+                <td>60-70% 1RM</td>
+            </tr>
+            <tr>
+                <td>Spotter</td>
+                <td style="background:#10B981; color:white;">No ⭐</td>
+                <td>Recomendado</td>
+                <td style="background:#DC2626; color:white;">Obligatorio</td>
+                <td style="background:#10B981; color:white;">No</td>
+            </tr>
+            <tr>
+                <td>Duración ciclo</td>
+                <td>4-6 sem</td>
+                <td>4-8 sem Blast</td>
+                <td>4-6 sem</td>
+                <td>Continuo</td>
+            </tr>
+            <tr>
+                <td>Volumen</td>
+                <td>Moderado</td>
+                <td>Muy Bajo</td>
+                <td>Bajo</td>
+                <td>Alto</td>
+            </tr>
+        </table>
+
+
+        <div
+            style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, var(--dark), #1E293B); color: white; border-radius: 12px;">
+            <h2 style="color: var(--secondary); margin-bottom: 15px;">Rest-Pause System - Raúl Carrasco</h2>
+            <p style="opacity: 0.9;">Metodología Maestra Unificada</p>
+            <p style="opacity: 0.7; font-size: 0.9rem;">The Ultimate Rest-Pause System</p>
+            <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Diciembre 2025</p>
+        </div>
+    </div>
+</body>
+
+</html>

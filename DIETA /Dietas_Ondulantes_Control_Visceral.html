@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nutrición Avanzada - Guía Completa de Objetivos y Dietas Ondulantes</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #10B981;
+            --secondary: #06B6D4;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --danger: #EF4444;
+            --success: #10B981;
+            --purple: #8B5CF6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 11pt;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark) 0%, #1E293B 50%, var(--primary) 100%);
+            color: white;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .cover h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 10px 0 30px;
+            opacity: 0.9;
+        }
+
+        .cover .author {
+            font-size: 1.1rem;
+            margin-top: 40px;
+            padding: 15px 30px;
+            border: 2px solid var(--secondary);
+            border-radius: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 30px 0 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .toc {
+            background: #F1F5F9;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            padding: 6px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .toc .sub {
+            padding-left: 20px;
+            font-size: 0.9rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #10B98115, #06B6D410);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #FEF3C7;
+            border-left: 4px solid var(--accent);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .danger-box {
+            background: #FEE2E2;
+            border-left: 4px solid var(--danger);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: #D1FAE5;
+            border-left: 4px solid var(--success);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .purple-box {
+            background: #EDE9FE;
+            border-left: 4px solid var(--purple);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #E2E8F0;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stats-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, var(--purple), #A78BFA);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, var(--accent), #FBBF24);
+        }
+
+        .stat-card.red {
+            background: linear-gradient(135deg, var(--danger), #F87171);
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        @media print {
+            .page {
+                padding: 10mm;
+            }
+
+            .cover {
+                min-height: auto;
+                padding: 60px 40px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="cover">
+        <h1>🍽️ NUTRICIÓN AVANZADA</h1>
+        <div class="subtitle">Guía Completa de Objetivos y Dietas Ondulantes</div>
+        <p style="font-size: 1.2rem; max-width: 600px; opacity: 0.85;">Volumen · Definición · Mantenimiento · Control
+            Visceral</p>
+        <div class="author"><strong>Complemento a:</strong> The Muscle & Strength Pyramid + Bigger Leaner Stronger</div>
+
+        <div
+            style="margin-top: 30px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; max-width: 700px;">
+            <p style="font-size: 0.85rem; margin-bottom: 10px; opacity: 0.9;"><strong>📚 BASADO EN EVIDENCIA
+                    CIENTÍFICA:</strong></p>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                Meta-análisis 2025 (27 estudios) · Muscle & Strength Pyramid · ISSN Position Stand ·
+                The Muscle PhD · Bigger Leaner Stronger · Menno Henselmans Research
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">NEXUS v3.1 - Documento Anexo</p>
+    </div>
+
+    <div class="page">
+        <div class="toc">
+            <h2>📚 ÍNDICE</h2>
+            <ul>
+                <li><strong>1.</strong> Dietas Ondulantes: Fundamentos</li>
+                <li class="sub">1.1 ¿Qué es el Carb Cycling?</li>
+                <li class="sub">1.2 Evidencia Científica (Meta-análisis 2025)</li>
+                <li class="sub">1.3 Mecanismos Fisiológicos</li>
+                <li><strong>2.</strong> OBJETIVO: GANAR MASA MUSCULAR</li>
+                <li class="sub">2.1 Protocolo de Volumen Limpio</li>
+                <li class="sub">2.2 Superávit Calórico Óptimo</li>
+                <li class="sub">2.3 Distribución de Macros para Hipertrofia</li>
+                <li class="sub">2.4 Errores Comunes en Volumen</li>
+                <li><strong>3.</strong> OBJETIVO: PÉRDIDA DE GRASA (CUTTING)</li>
+                <li class="sub">3.1 Protocolo de Definición</li>
+                <li class="sub">3.2 Déficit Calórico Seguro</li>
+                <li class="sub">3.3 Preservación Muscular en Déficit</li>
+                <li class="sub">3.4 Refeeds y Diet Breaks</li>
+                <li><strong>4.</strong> OBJETIVO: MANTENER MASA MUSCULAR</li>
+                <li class="sub">4.1 Cuándo es Apropiado el Mantenimiento</li>
+                <li class="sub">4.2 Protocolo Anti-Catabolismo</li>
+                <li class="sub">4.3 Señales de Alerta de Pérdida Muscular</li>
+                <li><strong>5.</strong> OBJETIVO: CONTROL DE GRASA VISCERAL</li>
+                <li class="sub">5.1 Por Qué la Visceral es Peligrosa</li>
+                <li class="sub">5.2 Protocolo Específico para Visceral Alta</li>
+                <li class="sub">5.3 Factores No-Nutricionales</li>
+                <li><strong>6.</strong> Aplicación por Metodología de Entrenamiento</li>
+                <li><strong>7.</strong> Guía Rápida de Macros por Objetivo</li>
+                <li><strong>8.</strong> Suplementación Basada en Evidencia</li>
+                <li class="sub">8.1 Suplementos Tier 1 - Respaldo Científico</li>
+                <li class="sub">8.2 Suplementos Tier 2 - Beneficio Moderado</li>
+                <li class="sub">8.3 Suplementos Tier 3 - Evidencia Limitada</li>
+                <li><strong>9.</strong> Timing Nutricional Óptimo</li>
+                <li class="sub">9.1 Distribución de Proteína</li>
+                <li class="sub">9.2 Timing Pre-Entrenamiento</li>
+                <li class="sub">9.3 Timing Post-Entrenamiento</li>
+                <li class="sub">9.4 Proteína Nocturna</li>
+                <li><strong>10.</strong> Micronutrientes Clave para Hipertrofia</li>
+                <li class="sub">10.1 Minerales Críticos</li>
+                <li class="sub">10.2 Vitaminas Esenciales</li>
+                <li class="sub">10.3 Antioxidantes y Recuperación</li>
+                <li><strong>11.</strong> Hidratación para Rendimiento</li>
+                <li class="sub">11.1 Requerimientos Diarios</li>
+                <li class="sub">11.2 Durante Entrenamiento</li>
+                <li class="sub">11.3 Señales de Deshidratación</li>
+                <li><strong>12.</strong> Ejemplos de Planes de Comidas</li>
+                <li class="sub">12.1 Plan para Ganar Músculo (3000kcal)</li>
+                <li class="sub">12.2 Plan para Pérdida de Grasa (2100kcal)</li>
+                <li class="sub">12.3 Lista de Alimentos Recomendados</li>
+                <li><strong>13.</strong> Fórmulas de Herramientas Avanzadas</li>
+                <li class="sub">13.1 Potencial Genético Máximo</li>
+                <li class="sub">13.2 Readiness Score (Fatiga)</li>
+                <li class="sub">13.3 Sincronización Circadiana</li>
+                <li class="sub">13.4 Tiempo hasta Objetivo</li>
+                <li class="sub">13.5 Matriz de Transición</li>
+                <li class="sub">13.6 Proporciones Corporales</li>
+            </ul>
+        </div>
+
+        <!-- SECCIÓN 1: FUNDAMENTOS -->
+        <h1>1. Dietas Ondulantes: Fundamentos</h1>
+
+        <h2>1.1 ¿Qué es el Carb Cycling?</h2>
+        <div class="highlight-box">
+            <strong>Carb Cycling (Ciclado de Carbohidratos)</strong> es una estrategia nutricional que alterna entre
+            días de alto, moderado y bajo consumo de carbohidratos, sincronizado con la intensidad del entrenamiento
+            y los objetivos específicos de composición corporal.
+        </div>
+        <p>La clave fundamental: <strong>Proteína CONSTANTE</strong> mientras carbohidratos y grasas varían
+            inversamente. Días de entrenamiento intenso = más carbos, menos grasas. Días de descanso = menos
+            carbos, más grasas.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">8.2%</div>
+                <div class="label">Mayor Pérdida de Peso</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">3:1</div>
+                <div class="label">Ratio Grasa:Músculo</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">+15%</div>
+                <div class="label">Sensibilidad Insulina</div>
+            </div>
+        </div>
+
+        <h2>1.2 Evidencia Científica (Meta-análisis 2025)</h2>
+        <div class="success-box">
+            <strong>✅ Hallazgos Principales (27 estudios, n=2,847 participantes):</strong>
+            <ul>
+                <li><strong>8.2% mayor pérdida de peso total</strong> vs dietas de calorías constantes a 6 meses</li>
+                <li><strong>Ratio 3:1 de pérdida grasa:músculo</strong> - Por cada kg de músculo perdido, se pierden 3kg
+                    de grasa</li>
+                <li><strong>Mejora 15% en sensibilidad a insulina</strong> - Crucial para partición de nutrientes</li>
+                <li><strong>37% mayor adherencia</strong> - Menos "fatiga de dieta" vs restricción constante</li>
+            </ul>
+        </div>
+
+        <h2>1.3 Mecanismos Fisiológicos</h2>
+        <table>
+            <tr>
+                <th>Mecanismo</th>
+                <th>Días High Carb (Entreno)</th>
+                <th>Días Low Carb (Descanso)</th>
+            </tr>
+            <tr>
+                <td><strong>Glucógeno Muscular</strong></td>
+                <td>Reposición completa → Rendimiento óptimo</td>
+                <td>Depleción parcial → Señal para usar grasa</td>
+            </tr>
+            <tr>
+                <td><strong>Insulina</strong></td>
+                <td>Elevada → Anabolismo, nutrientes al músculo</td>
+                <td>Baja → Lipólisis aumentada</td>
+            </tr>
+            <tr>
+                <td><strong>Leptina</strong></td>
+                <td>Mantenida → Previene adaptación metabólica</td>
+                <td>Puede bajar → Se "resetea" en días altos</td>
+            </tr>
+            <tr>
+                <td><strong>Oxidación de Grasa</strong></td>
+                <td>Reducida (prioriza glucosa)</td>
+                <td>Aumentada (flexibilidad metabólica)</td>
+            </tr>
+            <tr>
+                <td><strong>Síntesis Proteica (MPS)</strong></td>
+                <td>Maximizada (insulina + entrenamiento)</td>
+                <td>Mantenida (proteína constante)</td>
+            </tr>
+        </table>
+
+        <!-- SECCIÓN 2: GANAR MÚSCULO -->
+        <h1 class="page-break">2. OBJETIVO: GANAR MASA MUSCULAR</h1>
+
+        <div class="purple-box">
+            <strong>🎯 Meta Principal:</strong> Maximizar la síntesis proteica muscular (MPS) mientras se minimiza
+            la ganancia de grasa. El "volumen limpio" es el equilibrio entre superávit suficiente para crecer
+            y control para no acumular grasa innecesaria.
+        </div>
+
+        <h2>2.1 Protocolo de Volumen Limpio</h2>
+        <div class="stats-grid-4">
+            <div class="stat-card purple">
+                <div class="value">+10-15%</div>
+                <div class="label">Superávit Calórico</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="value">2.0-2.4g</div>
+                <div class="label">Proteína/kg</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="value">45-55%</div>
+                <div class="label">Carbos (%kcal)</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="value">5:2</div>
+                <div class="label">Ratio High:Low</div>
+            </div>
+        </div>
+
+        <h3>Distribución Semanal para Volumen</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Carbos</th>
+                <th>Calorías</th>
+                <th>Ejemplo (80kg)</th>
+            </tr>
+            <tr>
+                <td>Lunes (Piernas)</td>
+                <td>HIGH</td>
+                <td>+30%</td>
+                <td>+15%</td>
+                <td>400g carbos, 3200kcal</td>
+            </tr>
+            <tr>
+                <td>Martes (Pecho)</td>
+                <td>HIGH</td>
+                <td>+20%</td>
+                <td>+12%</td>
+                <td>360g carbos, 3100kcal</td>
+            </tr>
+            <tr>
+                <td>Miércoles (Espalda)</td>
+                <td>HIGH</td>
+                <td>+25%</td>
+                <td>+12%</td>
+                <td>375g carbos, 3100kcal</td>
+            </tr>
+            <tr>
+                <td>Jueves (Hombros)</td>
+                <td>HIGH</td>
+                <td>+15%</td>
+                <td>+10%</td>
+                <td>345g carbos, 3000kcal</td>
+            </tr>
+            <tr>
+                <td>Viernes (Brazos)</td>
+                <td>HIGH</td>
+                <td>+10%</td>
+                <td>+8%</td>
+                <td>330g carbos, 2950kcal</td>
+            </tr>
+            <tr>
+                <td>Sábado (Descanso)</td>
+                <td>LOW</td>
+                <td>-15%</td>
+                <td>+5%</td>
+                <td>255g carbos, 2850kcal</td>
+            </tr>
+            <tr>
+                <td>Domingo (Descanso)</td>
+                <td>LOW</td>
+                <td>-20%</td>
+                <td>Manten.</td>
+                <td>240g carbos, 2750kcal</td>
+            </tr>
+        </table>
+
+        <h2>2.2 Superávit Calórico Óptimo</h2>
+        <div class="highlight-box">
+            <strong>Regla de Oro del Superávit:</strong>
+            <p>El cuerpo solo puede sintetizar ~200-300g de músculo por semana en condiciones óptimas.
+                Un superávit mayor no acelera la ganancia muscular, solo aumenta la grasa.</p>
+        </div>
+
+        <table>
+            <tr>
+                <th>Nivel de Experiencia</th>
+                <th>Superávit Recomendado</th>
+                <th>Ganancia Esperada/Mes</th>
+                <th>Ratio Músculo:Grasa Ideal</th>
+            </tr>
+            <tr>
+                <td><strong>Principiante (0-1 años)</strong></td>
+                <td>+15-20% (300-400 kcal)</td>
+                <td>1-1.5kg</td>
+                <td>2:1 (2kg músculo por 1kg grasa)</td>
+            </tr>
+            <tr>
+                <td><strong>Intermedio (1-3 años)</strong></td>
+                <td>+10-15% (200-300 kcal)</td>
+                <td>0.5-1kg</td>
+                <td>1.5:1</td>
+            </tr>
+            <tr>
+                <td><strong>Avanzado (3+ años)</strong></td>
+                <td>+5-10% (150-250 kcal)</td>
+                <td>0.25-0.5kg</td>
+                <td>1:1</td>
+            </tr>
+        </table>
+
+        <h2>2.3 Distribución de Macros para Hipertrofia</h2>
+        <h3>Proteína - El Macro Más Importante</h3>
+        <div class="success-box">
+            <strong>✅ Recomendación Basada en Evidencia (ISSN 2017):</strong>
+            <ul>
+                <li><strong>Rango óptimo:</strong> 1.6-2.2g/kg de peso corporal</li>
+                <li><strong>Para seguridad:</strong> 2.0-2.4g/kg (cobertura para variabilidad individual)</li>
+                <li><strong>Distribución:</strong> 4-6 comidas con 20-40g cada una</li>
+                <li><strong>Pre-sueño:</strong> 40g caseína o proteína lenta (MPS nocturna)</li>
+            </ul>
+        </div>
+
+        <h3>Carbohidratos - El Combustible del Rendimiento</h3>
+        <table>
+            <tr>
+                <th>Momento</th>
+                <th>Cantidad</th>
+                <th>Tipo Recomendado</th>
+                <th>Función</th>
+            </tr>
+            <tr>
+                <td>Pre-entreno (2-3h antes)</td>
+                <td>40-60g</td>
+                <td>Complejos (arroz, avena)</td>
+                <td>Llenar glucógeno, energía sostenida</td>
+            </tr>
+            <tr>
+                <td>Intra-entreno (opcional)</td>
+                <td>20-40g</td>
+                <td>Rápidos (dextrosa, cíclicos)</td>
+                <td>Mantener rendimiento en sesiones largas</td>
+            </tr>
+            <tr>
+                <td>Post-entreno (0-2h)</td>
+                <td>60-100g</td>
+                <td>Mixtos (arroz blanco + fruta)</td>
+                <td>Reposición glucógeno, pico insulina</td>
+            </tr>
+            <tr>
+                <td>Resto del día</td>
+                <td>Según objetivo</td>
+                <td>Complejos + fibra</td>
+                <td>Energía sostenida, saciedad</td>
+            </tr>
+        </table>
+
+        <h2>2.4 Errores Comunes en Volumen</h2>
+        <div class="danger-box">
+            <strong>❌ Errores que DESTRUYEN tu Volumen:</strong>
+            <ol>
+                <li><strong>Dreamer Bulk (+30-40%):</strong> Superávit excesivo = ganancia de grasa que tardará meses en
+                    eliminar</li>
+                <li><strong>Proteína insuficiente:</strong> Menos de 1.6g/kg = MPS subóptima</li>
+                <li><strong>Carbos muy bajos:</strong> Sin glucógeno = rendimiento pobre = menos estímulo</li>
+                <li><strong>No pesar alimentos:</strong> Sin medición = superávit descontrolado</li>
+                <li><strong>Ignorar días de descanso:</strong> Comer igual que días entreno = grasa innecesaria</li>
+            </ol>
+        </div>
+
+        <!-- SECCIÓN 3: PÉRDIDA DE GRASA -->
+        <h1 class="page-break">3. OBJETIVO: PÉRDIDA DE GRASA (CUTTING)</h1>
+
+        <div class="warning-box">
+            <strong>⚠️ Meta Principal:</strong> Perder grasa corporal preservando la máxima cantidad de masa muscular
+            posible. El objetivo NO es perder peso rápidamente, sino optimizar el ratio grasa:músculo perdido.
+        </div>
+
+        <h2>3.1 Protocolo de Definición</h2>
+        <div class="stats-grid-4">
+            <div class="stat-card orange">
+                <div class="value">-15-20%</div>
+                <div class="label">Déficit Calórico</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="value">2.4-2.8g</div>
+                <div class="label">Proteína/kg</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="value">30-40%</div>
+                <div class="label">Carbos (%kcal)</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="value">3:4</div>
+                <div class="label">Ratio High:Low</div>
+            </div>
+        </div>
+
+        <h3>Distribución Semanal para Cutting</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Carbos</th>
+                <th>Calorías</th>
+                <th>Ejemplo (80kg)</th>
+            </tr>
+            <tr>
+                <td>Lunes (Piernas)</td>
+                <td>HIGH</td>
+                <td>+10%</td>
+                <td>-10%</td>
+                <td>280g carbos, 2250kcal</td>
+            </tr>
+            <tr>
+                <td>Martes (Push)</td>
+                <td>MODERATE</td>
+                <td>Base</td>
+                <td>-15%</td>
+                <td>250g carbos, 2100kcal</td>
+            </tr>
+            <tr>
+                <td>Miércoles (Pull)</td>
+                <td>HIGH</td>
+                <td>+10%</td>
+                <td>-10%</td>
+                <td>280g carbos, 2250kcal</td>
+            </tr>
+            <tr>
+                <td>Jueves (Descanso)</td>
+                <td>LOW</td>
+                <td>-25%</td>
+                <td>-20%</td>
+                <td>190g carbos, 2000kcal</td>
+            </tr>
+            <tr>
+                <td>Viernes (Piernas)</td>
+                <td>HIGH</td>
+                <td>+10%</td>
+                <td>-10%</td>
+                <td>280g carbos, 2250kcal</td>
+            </tr>
+            <tr>
+                <td>Sábado (Descanso)</td>
+                <td>LOW</td>
+                <td>-30%</td>
+                <td>-22%</td>
+                <td>175g carbos, 1950kcal</td>
+            </tr>
+            <tr>
+                <td>Domingo (Descanso)</td>
+                <td>LOW</td>
+                <td>-30%</td>
+                <td>-22%</td>
+                <td>175g carbos, 1950kcal</td>
+            </tr>
+        </table>
+
+        <h2>3.2 Déficit Calórico Seguro</h2>
+        <div class="highlight-box">
+            <strong>Regla del 0.5-1% Semanal:</strong>
+            <p>Pérdida de peso segura = 0.5-1% del peso corporal por semana. Más rápido = pérdida muscular inevitable.
+            </p>
+        </div>
+
+        <table>
+            <tr>
+                <th>% Grasa Corporal</th>
+                <th>Déficit Máximo</th>
+                <th>Pérdida/Semana</th>
+                <th>Duración Máxima</th>
+            </tr>
+            <tr>
+                <td>>25% (Alto)</td>
+                <td>-25% (500-750 kcal)</td>
+                <td>0.8-1.0%</td>
+                <td>12-16 semanas</td>
+            </tr>
+            <tr>
+                <td>15-25% (Medio)</td>
+                <td>-20% (400-500 kcal)</td>
+                <td>0.6-0.8%</td>
+                <td>8-12 semanas</td>
+            </tr>
+            <tr>
+                <td>10-15% (Bajo)</td>
+                <td>-15% (300-400 kcal)</td>
+                <td>0.4-0.6%</td>
+                <td>6-10 semanas</td>
+            </tr>
+            <tr>
+                <td>
+                    <10% (Muy bajo)</td>
+                <td>-10% (200-300 kcal)</td>
+                <td>0.3-0.4%</td>
+                <td>4-6 semanas</td>
+            </tr>
+        </table>
+
+        <h2>3.3 Preservación Muscular en Déficit</h2>
+        <div class="success-box">
+            <strong>✅ Las 5 Reglas de Oro para NO Perder Músculo:</strong>
+            <ol>
+                <li><strong>Proteína ALTA:</strong> 2.4-2.8g/kg (más alta que en volumen)</li>
+                <li><strong>Entrenamiento de fuerza MANTENER:</strong> Misma intensidad, puede reducir volumen 30%</li>
+                <li><strong>Déficit MODERADO:</strong> Máximo -25%, preferible -15-20%</li>
+                <li><strong>Sueño 7-9 horas:</strong> Cortisol bajo = preservación muscular</li>
+                <li><strong>Refeeds semanales:</strong> 1 día a mantenimiento cada 7-10 días</li>
+            </ol>
+        </div>
+
+        <h2>3.4 Refeeds y Diet Breaks</h2>
+        <h3>Refeed Day (1 día alto en carbos)</h3>
+        <table>
+            <tr>
+                <th>Cuando Usarlo</th>
+                <th>Cómo Hacerlo</th>
+                <th>Beneficios</th>
+            </tr>
+            <tr>
+                <td>Cada 7-10 días en cutting</td>
+                <td>Subir carbos a mantenimiento (+50-100g)</td>
+                <td>Restaura leptina, glucógeno, rendimiento</td>
+            </tr>
+            <tr>
+                <td>Cuando rendimiento cae >15%</td>
+                <td>Mantener proteína igual</td>
+                <td>Previene adaptación metabólica</td>
+            </tr>
+            <tr>
+                <td>Antes de día de piernas</td>
+                <td>Reducir grasas ese día (-20-30g)</td>
+                <td>Beneficio psicológico</td>
+            </tr>
+        </table>
+
+        <h3>Diet Break (1-2 semanas a mantenimiento)</h3>
+        <div class="warning-box">
+            <strong>⚠️ Cuándo Hacer Diet Break:</strong>
+            <ul>
+                <li>Después de 8-12 semanas de déficit continuo</li>
+                <li>Cuando la pérdida de peso se estanca por >2 semanas</li>
+                <li>Cuando el hambre se vuelve inmanejable</li>
+                <li>Cuando el rendimiento cae significativamente (>20%)</li>
+            </ul>
+        </div>
+
+        <!-- SECCIÓN 4: MANTENER MÚSCULO -->
+        <h1 class="page-break">4. OBJETIVO: MANTENER MASA MUSCULAR</h1>
+
+        <div class="highlight-box">
+            <strong>🎯 Meta Principal:</strong> Preservar la masa muscular ganada durante periodos de mantenimiento,
+            transición entre fases, o cuando las circunstancias de vida no permiten enfocarse en volumen/definición.
+        </div>
+
+        <h2>4.1 Cuándo es Apropiado el Mantenimiento</h2>
+        <div class="success-box">
+            <strong>✅ Situaciones Ideales para Fase de Mantenimiento:</strong>
+            <ul>
+                <li><strong>Post-cutting:</strong> 4-8 semanas a mantenimiento para estabilizar metabolismo (reverse
+                    diet)</li>
+                <li><strong>Post-volumen:</strong> 2-4 semanas antes de iniciar cutting para sensibilizar el cuerpo</li>
+                <li><strong>Estrés alto:</strong> Trabajo, exámenes, problemas personales - priorizar recuperación</li>
+                <li><strong>Viajes/Vacaciones:</strong> Mantener hábitos sin obsesión por superávit/déficit</li>
+                <li><strong>Mesetas:</strong> "Reset" metabólico cuando progreso se estanca</li>
+            </ul>
+        </div>
+
+        <h2>4.2 Protocolo Anti-Catabolismo</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">2.0-2.2g</div>
+                <div class="label">Proteína/kg Mínimo</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">±5%</div>
+                <div class="label">Rango Calórico</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4:3</div>
+                <div class="label">Ratio Óptimo</div>
+            </div>
+        </div>
+
+        <h3>Claves para Mantenimiento Exitoso</h3>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th>Mínimo Requerido</th>
+                <th>Óptimo</th>
+                <th>Consecuencia de Incumplir</th>
+            </tr>
+            <tr>
+                <td><strong>Proteína diaria</strong></td>
+                <td>1.6g/kg</td>
+                <td>2.0-2.2g/kg</td>
+                <td>Catabolismo progresivo</td>
+            </tr>
+            <tr>
+                <td><strong>Frecuencia entreno</strong></td>
+                <td>2x por grupo/semana</td>
+                <td>Mantener frecuencia actual</td>
+                <td>Pérdida de fuerza y masa</td>
+            </tr>
+            <tr>
+                <td><strong>Intensidad (% 1RM)</strong></td>
+                <td>>70% 1RM</td>
+                <td>75-85% 1RM</td>
+                <td>Atrofia por desuso</td>
+            </tr>
+            <tr>
+                <td><strong>Volumen entreno</strong></td>
+                <td>1/3 del normal</td>
+                <td>2/3 del normal</td>
+                <td>Desentrenamiento</td>
+            </tr>
+            <tr>
+                <td><strong>Sueño</strong></td>
+                <td>6 horas</td>
+                <td>7-9 horas</td>
+                <td>Cortisol elevado, catabolismo</td>
+            </tr>
+        </table>
+
+        <h3>Distribución de Macros para Mantenimiento</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Tipo</th>
+                <th>Proteína</th>
+                <th>Carbos</th>
+                <th>Grasas</th>
+                <th>Calorías</th>
+            </tr>
+            <tr>
+                <td>Entrenamiento intenso</td>
+                <td>HIGH</td>
+                <td>2.0-2.2g/kg</td>
+                <td>+15%</td>
+                <td>-10%</td>
+                <td>TDEE +5%</td>
+            </tr>
+            <tr>
+                <td>Entrenamiento moderate</td>
+                <td>MODERATE</td>
+                <td>2.0-2.2g/kg</td>
+                <td>Base</td>
+                <td>Base</td>
+                <td>TDEE exacto</td>
+            </tr>
+            <tr>
+                <td>Descanso</td>
+                <td>LOW</td>
+                <td>2.0-2.2g/kg</td>
+                <td>-15%</td>
+                <td>+10%</td>
+                <td>TDEE -5%</td>
+            </tr>
+        </table>
+
+        <h2>4.3 Señales de Alerta de Pérdida Muscular</h2>
+        <div class="danger-box">
+            <strong>🚨 SEÑALES DE ALARMA - Actúa Inmediatamente:</strong>
+            <ul>
+                <li><strong>Pérdida de fuerza >10%:</strong> Si tus levantamientos bajan más de 10%, estás perdiendo
+                    músculo</li>
+                <li><strong>Peso bajando sin déficit:</strong> Si no estás en cutting pero pierdes peso, revisa proteína
+                </li>
+                <li><strong>Fatiga extrema constante:</strong> Puede indicar catabolismo + déficit hormonal</li>
+                <li><strong>Recuperación lenta:</strong> DOMS que duran >4 días = recuperación comprometida</li>
+                <li><strong>Medidas cayendo:</strong> Brazos, pecho, piernas reduciendo circunferencia</li>
+            </ul>
+        </div>
+
+        <div class="success-box">
+            <strong>✅ SOLUCIONES RÁPIDAS:</strong>
+            <ol>
+                <li>Aumentar proteína inmediatamente a 2.4g/kg</li>
+                <li>Subir calorías a TDEE +5-10%</li>
+                <li>Reducir volumen de entreno 30-50%</li>
+                <li>Añadir 1 día extra de descanso</li>
+                <li>Dormir 8+ horas mínimo</li>
+            </ol>
+        </div>
+
+        <!-- SECCIÓN 5: CONTROL VISCERAL -->
+        <h1 class="page-break">5. OBJETIVO: CONTROL DE GRASA VISCERAL</h1>
+
+        <div class="danger-box">
+            <strong>🚨 ALERTA DE SALUD CRÍTICA:</strong> La grasa visceral (nivel >12 en bioimpedancia) está
+            directamente asociada con enfermedades metabólicas graves. A diferencia de la grasa subcutánea
+            (la que puedes pellizcar), la visceral rodea tus órganos internos.
+        </div>
+
+        <h2>5.1 Por Qué la Visceral es Peligrosa</h2>
+        <table>
+            <tr>
+                <th>Riesgo Asociado</th>
+                <th>Mecanismo</th>
+                <th>Nivel de Peligro</th>
+            </tr>
+            <tr>
+                <td><strong>Diabetes Tipo 2</strong></td>
+                <td>Visceral produce citoquinas que causan resistencia a insulina</td>
+                <td>⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td><strong>Enfermedad Cardiovascular</strong></td>
+                <td>Libera ácidos grasos directamente al hígado → colesterol alto</td>
+                <td>⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td><strong>Inflamación Sistémica</strong></td>
+                <td>Visceral es tejido metabólicamente activo que produce IL-6, TNF-α</td>
+                <td>⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td><strong>Testosterona Baja</strong></td>
+                <td>Aromatasa en grasa visceral convierte testosterona en estrógeno</td>
+                <td>⭐⭐⭐⭐</td>
+            </tr>
+            <tr>
+                <td><strong>Hígado Graso (NAFLD)</strong></td>
+                <td>Ácidos grasos de visceral drenan directamente al hígado</td>
+                <td>⭐⭐⭐⭐</td>
+            </tr>
+        </table>
+
+        <h2>5.2 Protocolo Específico para Visceral Alta (>12)</h2>
+        <div class="stats-grid-4">
+            <div class="stat-card red">
+                <div class="value">-20%</div>
+                <div class="label">Déficit Calórico</div>
+            </div>
+            <div class="stat-card red">
+                <div class="value">2.4-2.8g</div>
+                <div class="label">Proteína/kg</div>
+            </div>
+            <div class="stat-card red">
+                <div class="value">25-35%</div>
+                <div class="label">Carbos Reducidos</div>
+            </div>
+            <div class="stat-card red">
+                <div class="value">2:5</div>
+                <div class="label">Ratio High:Low</div>
+            </div>
+        </div>
+
+        <h3>Comparación: Protocolo Estándar vs Visceral Alta</h3>
+        <table>
+            <tr>
+                <th>Parámetro</th>
+                <th>Protocolo Estándar</th>
+                <th>Visceral Alta (>12)</th>
+                <th>Diferencia</th>
+            </tr>
+            <tr>
+                <td><strong>Carbos días descanso</strong></td>
+                <td>-25%</td>
+                <td>-35%</td>
+                <td>10% más agresivo</td>
+            </tr>
+            <tr>
+                <td><strong>Carbos días entreno</strong></td>
+                <td>+10-30%</td>
+                <td>+5-15%</td>
+                <td>Más conservador</td>
+            </tr>
+            <tr>
+                <td><strong>Ratio días Low:High</strong></td>
+                <td>2:5</td>
+                <td>5:2</td>
+                <td>Invertido - más low-carb</td>
+            </tr>
+            <tr>
+                <td><strong>Déficit días descanso</strong></td>
+                <td>-10%</td>
+                <td>-20%</td>
+                <td>Doble de agresivo</td>
+            </tr>
+            <tr>
+                <td><strong>Proteína</strong></td>
+                <td>2.0-2.4g/kg</td>
+                <td>2.4-2.8g/kg</td>
+                <td>Mayor para saciedad</td>
+            </tr>
+            <tr>
+                <td><strong>Cardio HIIT</strong></td>
+                <td>Opcional 1-2x</td>
+                <td>Obligatorio 3x</td>
+                <td>Máximo impacto en visceral</td>
+            </tr>
+        </table>
+
+        <h3>Protocolo 12 Semanas para Reducción de Visceral</h3>
+        <div class="success-box">
+            <strong>✅ Plan Paso a Paso:</strong>
+            <table>
+                <tr>
+                    <th>Semana</th>
+                    <th>Fase</th>
+                    <th>Déficit</th>
+                    <th>Cardio</th>
+                    <th>Objetivo</th>
+                </tr>
+                <tr>
+                    <td>1-2</td>
+                    <td>Adaptación</td>
+                    <td>-15%</td>
+                    <td>HIIT 2x</td>
+                    <td>Ajuste a nuevo protocolo</td>
+                </tr>
+                <tr>
+                    <td>3-6</td>
+                    <td>Intensificación</td>
+                    <td>-20%</td>
+                    <td>HIIT 3x</td>
+                    <td>Máxima pérdida visceral</td>
+                </tr>
+                <tr>
+                    <td>7-8</td>
+                    <td>Refeed</td>
+                    <td>-15%</td>
+                    <td>HIIT 2x</td>
+                    <td>Prevenir adaptación</td>
+                </tr>
+                <tr>
+                    <td>9-10</td>
+                    <td>Re-intensificación</td>
+                    <td>-20%</td>
+                    <td>HIIT 3x</td>
+                    <td>Push final</td>
+                </tr>
+                <tr>
+                    <td>11-12</td>
+                    <td>Transición</td>
+                    <td>-10%</td>
+                    <td>HIIT 2x</td>
+                    <td>Preparar mantenimiento</td>
+                </tr>
+            </table>
+        </div>
+
+        <h2>5.3 Factores No-Nutricionales</h2>
+        <div class="warning-box">
+            <strong>⚠️ CRÍTICO: La grasa visceral NO solo depende de la dieta:</strong>
+        </div>
+        <table>
+            <tr>
+                <th>Factor</th>
+                <th>Impacto en Visceral</th>
+                <th>Recomendación Específica</th>
+            </tr>
+            <tr>
+                <td><strong>Cardio HIIT</strong></td>
+                <td>⭐⭐⭐⭐⭐ MÁXIMO</td>
+                <td>3x/semana, 15-20 min post-pesas</td>
+            </tr>
+            <tr>
+                <td><strong>Sueño</strong></td>
+                <td>⭐⭐⭐⭐⭐ CRÍTICO</td>
+                <td>7-9 horas. <6h=+12% visceral (estudio)</td>
+            </tr>
+            <tr>
+                <td><strong>Estrés crónico</strong></td>
+                <td>⭐⭐⭐⭐ ALTO</td>
+                <td>Cortisol alto = depósito preferencial en visceral</td>
+            </tr>
+            <tr>
+                <td><strong>Alcohol</strong></td>
+                <td>⭐⭐⭐⭐⭐ DEVASTADOR</td>
+                <td>Eliminar o máximo 1-2 bebidas/semana</td>
+            </tr>
+            <tr>
+                <td><strong>Fibra dietética</strong></td>
+                <td>⭐⭐⭐⭐ PROTECTOR</td>
+                <td>30-40g/día. +10g = -3.7% visceral (estudio)</td>
+            </tr>
+            <tr>
+                <td><strong>Entrenamiento de fuerza</strong></td>
+                <td>⭐⭐⭐⭐ ALTO</td>
+                <td>Más músculo = mayor gasto calórico basal</td>
+            </tr>
+        </table>
+
+        <!-- SECCIÓN 6: POR METODOLOGÍA -->
+        <h1 class="page-break">6. Aplicación por Metodología de Entrenamiento</h1>
+
+        <div class="highlight-box">
+            <strong>Los macros deben ajustarse según la metodología de entrenamiento:</strong> Las metodologías de alto
+            volumen (SST, GVT, FST-7) requieren más carbohidratos, mientras que las de alta intensidad y bajo volumen
+            (Heavy Duty, 5/3/1) pueden funcionar con menos.
+        </div>
+
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Tipo</th>
+                <th>Carbos Entreno</th>
+                <th>Carbos Descanso</th>
+                <th>Superávit Óptimo</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td><strong>Heavy Duty</strong></td>
+                <td>TM Alta</td>
+                <td>+10%</td>
+                <td>-20%</td>
+                <td>+5-10%</td>
+                <td>Bajo volumen, SNC prioritario</td>
+            </tr>
+            <tr>
+                <td><strong>Blood & Guts</strong></td>
+                <td>TM Alta</td>
+                <td>+12%</td>
+                <td>-20%</td>
+                <td>+10-15%</td>
+                <td>HIT extremo, recuperación clave</td>
+            </tr>
+            <tr>
+                <td><strong>5/3/1</strong></td>
+                <td>TM Alta</td>
+                <td>+15%</td>
+                <td>-20%</td>
+                <td>+5-10%</td>
+                <td>Fuerza requiere carbos para PRs</td>
+            </tr>
+            <tr>
+                <td><strong>DC Training</strong></td>
+                <td>TM/EM</td>
+                <td>+20%</td>
+                <td>-15%</td>
+                <td>+15-20%</td>
+                <td>Rest-pause demanda mucha energía</td>
+            </tr>
+            <tr>
+                <td><strong>MTUT</strong></td>
+                <td>EM Alta</td>
+                <td>+5%</td>
+                <td>-25%</td>
+                <td>-5 a +5%</td>
+                <td>Ideal para definición</td>
+            </tr>
+            <tr>
+                <td><strong>Y3T</strong></td>
+                <td>Híbrido</td>
+                <td>+15-25%*</td>
+                <td>-20%</td>
+                <td>+10-15%</td>
+                <td>*Ciclado: S1+10%, S2+20%, S3+25%</td>
+            </tr>
+            <tr>
+                <td><strong>DUP</strong></td>
+                <td>Híbrido</td>
+                <td>+10-20%</td>
+                <td>-20%</td>
+                <td>±5%</td>
+                <td>Ondular: Fuerza+20%, Hiper+15%</td>
+            </tr>
+            <tr>
+                <td><strong>FST-7</strong></td>
+                <td>EM Alta</td>
+                <td>+25%</td>
+                <td>-15%</td>
+                <td>+15-20%</td>
+                <td>Pump requiere glucógeno lleno</td>
+            </tr>
+            <tr>
+                <td><strong>SST</strong></td>
+                <td>EM Máxima</td>
+                <td>+30%</td>
+                <td>-10%</td>
+                <td>+15-25%</td>
+                <td>Volumen extremo, máxima demanda</td>
+            </tr>
+            <tr>
+                <td><strong>GVT</strong></td>
+                <td>EM Máxima</td>
+                <td>+30%</td>
+                <td>-10%</td>
+                <td>+20-30%</td>
+                <td>100 reps = carbos obligatorios</td>
+            </tr>
+        </table>
+
+        <!-- SECCIÓN 7: GUÍA RÁPIDA -->
+        <h1 class="page-break">7. Guía Rápida de Macros por Objetivo</h1>
+
+        <div class="highlight-box">
+            <strong>📋 Referencia Rápida:</strong> Usa esta tabla para configurar tus macros según tu objetivo actual.
+        </div>
+
+        <table>
+            <tr>
+                <th>Objetivo</th>
+                <th>Calorías</th>
+                <th>Proteína</th>
+                <th>Carbos Entreno</th>
+                <th>Carbos Descanso</th>
+                <th>Ratio H:L</th>
+            </tr>
+            <tr style="background: #EDE9FE;">
+                <td><strong>💪 Ganar Músculo</strong></td>
+                <td>+10-15%</td>
+                <td>2.0-2.4g/kg</td>
+                <td>+20-30%</td>
+                <td>-15-20%</td>
+                <td>5:2</td>
+            </tr>
+            <tr style="background: #FEF3C7;">
+                <td><strong>🔥 Perder Grasa</strong></td>
+                <td>-15-20%</td>
+                <td>2.4-2.8g/kg</td>
+                <td>+5-10%</td>
+                <td>-25-30%</td>
+                <td>3:4</td>
+            </tr>
+            <tr style="background: #D1FAE5;">
+                <td><strong>⚖️ Mantenimiento</strong></td>
+                <td>±5%</td>
+                <td>2.0-2.2g/kg</td>
+                <td>+10-15%</td>
+                <td>-15-20%</td>
+                <td>4:3</td>
+            </tr>
+            <tr style="background: #FEE2E2;">
+                <td><strong>🎯 Control Visceral</strong></td>
+                <td>-15-20%</td>
+                <td>2.4-2.8g/kg</td>
+                <td>+5-10%</td>
+                <td>-30-35%</td>
+                <td>2:5</td>
+            </tr>
+            <tr style="background: #DBEAFE;">
+                <td><strong>🔄 Recomposición</strong></td>
+                <td>±5%</td>
+                <td>2.2-2.6g/kg</td>
+                <td>+15%</td>
+                <td>-20%</td>
+                <td>4:3</td>
+            </tr>
+        </table>
+
+        <div class="warning-box">
+            <strong>⚠️ RECORDATORIOS CRÍTICOS - Aplican a TODOS los objetivos:</strong>
+            <ul>
+                <li><strong>Proteína SIEMPRE constante:</strong> Nunca varía entre días - es tu seguro anti-catabolismo
+                </li>
+                <li><strong>Carbos y grasas inversamente:</strong> Cuando uno sube, el otro baja para mantener calorías
+                </li>
+                <li><strong>Grasas mínimo 0.8g/kg:</strong> Necesarias para función hormonal (testosterona)</li>
+                <li><strong>Medir progreso semanalmente:</strong> Peso + fotos + medidas + fuerza, no solo báscula</li>
+                <li><strong>Ajustar cada 2-4 semanas:</strong> Si no hay progreso, modifica macros/calorías</li>
+            </ul>
+        </div>
+
+        <div class="success-box" style="margin-top: 40px;">
+            <p style="text-align: center; font-size: 1.1rem;">
+                <strong>📚 Documento Complementario para:</strong><br>
+                The Muscle & Strength Pyramid - Nutrición (Eric Helms)<br>
+                Bigger Leaner Stronger - Michael Matthews<br><br>
+                <strong>Integrado con:</strong> NEXUS v3.1 - 10 Metodologías de Hipertrofia<br>
+                Heavy Duty · Blood & Guts · DC Training · 5/3/1 · MTUT · Y3T · DUP · FST-7 · SST · GVT
+            </p>
+        </div>
+
+        <!-- SECCIÓN 8: SUPLEMENTACIÓN -->
+        <h1 class="page-break">8. Suplementación Basada en Evidencia</h1>
+
+        <div class="highlight-box">
+            <strong>🔬 Principio Fundamental:</strong> Los suplementos son exactamente eso - suplementos a una dieta
+            sólida. Ningún suplemento compensa una dieta deficiente. Primero optimiza tu alimentación.
+        </div>
+
+        <h2>8.1 Suplementos Tier 1 - Respaldo Científico Sólido</h2>
+        <table>
+            <tr>
+                <th>Suplemento</th>
+                <th>Dosis Óptima</th>
+                <th>Cuándo Tomarlo</th>
+                <th>Beneficios Comprobados</th>
+            </tr>
+            <tr>
+                <td><strong>Creatina Monohidrato</strong></td>
+                <td>3-5g/día</td>
+                <td>Cualquier momento, consistencia importa</td>
+                <td>+5-10% fuerza, +1-2kg masa magra, mejora recuperación</td>
+            </tr>
+            <tr>
+                <td><strong>Proteína Whey</strong></td>
+                <td>20-40g/porción</td>
+                <td>Post-entreno o para completar proteína diaria</td>
+                <td>Leucina alta, absorción rápida, MPS elevada</td>
+            </tr>
+            <tr>
+                <td><strong>Cafeína</strong></td>
+                <td>3-6mg/kg (200-400mg)</td>
+                <td>30-60 min pre-entreno</td>
+                <td>+3-5% rendimiento, reduce fatiga percibida</td>
+            </tr>
+            <tr>
+                <td><strong>Vitamina D3</strong></td>
+                <td>2000-5000 UI/día</td>
+                <td>Con comida que tenga grasas</td>
+                <td>Función inmune, testosterona, salud ósea</td>
+            </tr>
+            <tr>
+                <td><strong>Omega-3 (EPA/DHA)</strong></td>
+                <td>2-3g EPA+DHA/día</td>
+                <td>Con comidas</td>
+                <td>Antiinflamatorio, salud cardiovascular, MPS</td>
+            </tr>
+        </table>
+
+        <h2>8.2 Suplementos Tier 2 - Beneficio Moderado</h2>
+        <table>
+            <tr>
+                <th>Suplemento</th>
+                <th>Dosis</th>
+                <th>Beneficio</th>
+                <th>¿Vale la pena?</th>
+            </tr>
+            <tr>
+                <td><strong>Beta-Alanina</strong></td>
+                <td>3-5g/día</td>
+                <td>Capacidad anaeróbica, series 60-240s</td>
+                <td>✅ Para metodologías EM (SST, FST-7, GVT)</td>
+            </tr>
+            <tr>
+                <td><strong>Citrulina Malato</strong></td>
+                <td>6-8g pre-entreno</td>
+                <td>Pump, reducción fatiga, óxido nítrico</td>
+                <td>✅ Para volumen/pump chasers</td>
+            </tr>
+            <tr>
+                <td><strong>Caseína Micelar</strong></td>
+                <td>30-40g</td>
+                <td>Proteína lenta, MPS nocturna</td>
+                <td>✅ Si no cenas suficiente proteína</td>
+            </tr>
+            <tr>
+                <td><strong>Magnesio</strong></td>
+                <td>300-400mg/día</td>
+                <td>Sueño, recuperación, calambres</td>
+                <td>✅ Si dieta baja en vegetales verdes</td>
+            </tr>
+            <tr>
+                <td><strong>Zinc</strong></td>
+                <td>15-30mg/día</td>
+                <td>Testosterona, sistema inmune</td>
+                <td>✅ Si sudas mucho o dieta baja en carne</td>
+            </tr>
+        </table>
+
+        <h2>8.3 Suplementos Tier 3 - Evidencia Limitada</h2>
+        <div class="warning-box">
+            <strong>⚠️ Estos suplementos tienen evidencia mixta o insuficiente:</strong>
+            <ul>
+                <li><strong>BCAAs:</strong> Innecesarios si proteína >1.6g/kg - ya contienen leucina</li>
+                <li><strong>Glutamina:</strong> El cuerpo produce suficiente, excepto en estrés extremo</li>
+                <li><strong>Pre-entrenos comerciales:</strong> Mayoría son cafeína cara + ingredientes subdosificados
+                </li>
+                <li><strong>Quemadores de grasa:</strong> Efecto mínimo, la dieta hace el 95%</li>
+                <li><strong>Tribulus/ZMA para testosterona:</strong> No funcionan si niveles son normales</li>
+            </ul>
+        </div>
+
+        <h3>Stack de Suplementación por Objetivo</h3>
+        <table>
+            <tr>
+                <th>Objetivo</th>
+                <th>Stack Recomendado</th>
+                <th>Presupuesto Mensual</th>
+            </tr>
+            <tr>
+                <td><strong>Ganar Músculo</strong></td>
+                <td>Creatina + Whey + Vit D3 + Omega-3</td>
+                <td>~$40-60 USD</td>
+            </tr>
+            <tr>
+                <td><strong>Perder Grasa</strong></td>
+                <td>Whey (saciedad) + Cafeína + Omega-3 + Vit D3</td>
+                <td>~$35-50 USD</td>
+            </tr>
+            <tr>
+                <td><strong>Mantenimiento</strong></td>
+                <td>Creatina + Vit D3 + Omega-3</td>
+                <td>~$25-35 USD</td>
+            </tr>
+            <tr>
+                <td><strong>Control Visceral</strong></td>
+                <td>Omega-3 (dosis alta) + Vit D3 + Fibra soluble</td>
+                <td>~$35-45 USD</td>
+            </tr>
+        </table>
+
+        <!-- SECCIÓN 9: TIMING NUTRICIONAL -->
+        <h1 class="page-break">9. Timing Nutricional Óptimo</h1>
+
+        <div class="highlight-box">
+            <strong>📊 La Pirámide de Prioridades (Eric Helms):</strong>
+            <ol>
+                <li><strong>Calorías totales</strong> - 50% del resultado</li>
+                <li><strong>Macronutrientes</strong> - 30% del resultado</li>
+                <li><strong>Micronutrientes</strong> - 10% del resultado</li>
+                <li><strong>Timing/Frecuencia</strong> - 5-10% del resultado</li>
+                <li><strong>Suplementos</strong> - <5% del resultado</li>
+            </ol>
+        </div>
+
+        <h2>9.1 Distribución de Proteína</h2>
+        <div class="success-box">
+            <strong>✅ Regla de los 20-40g por Comida:</strong>
+            <p>La síntesis proteica muscular (MPS) se maximiza con 20-40g de proteína de alta calidad por comida.
+                Más de 40g no aumenta MPS significativamente en la mayoría de personas.</p>
+        </div>
+
+        <table>
+            <tr>
+                <th>Peso Corporal</th>
+                <th>Proteína Total/Día</th>
+                <th>Comidas Óptimas</th>
+                <th>Proteína/Comida</th>
+            </tr>
+            <tr>
+                <td>60kg</td>
+                <td>120-144g</td>
+                <td>4-5</td>
+                <td>28-32g</td>
+            </tr>
+            <tr>
+                <td>80kg</td>
+                <td>160-192g</td>
+                <td>5-6</td>
+                <td>32-38g</td>
+            </tr>
+            <tr>
+                <td>100kg</td>
+                <td>200-240g</td>
+                <td>5-6</td>
+                <td>40-48g</td>
+            </tr>
+        </table>
+
+        <h2>9.2 Timing Pre-Entrenamiento</h2>
+        <table>
+            <tr>
+                <th>Tiempo Antes</th>
+                <th>Qué Comer</th>
+                <th>Cantidad</th>
+                <th>Ejemplo</th>
+            </tr>
+            <tr>
+                <td><strong>2-3 horas</strong></td>
+                <td>Comida completa</td>
+                <td>30-50g prot + 40-80g carbos</td>
+                <td>Pollo + arroz + vegetales</td>
+            </tr>
+            <tr>
+                <td><strong>1-2 horas</strong></td>
+                <td>Comida moderada</td>
+                <td>20-30g prot + 30-50g carbos</td>
+                <td>Avena con whey</td>
+            </tr>
+            <tr>
+                <td><strong>30-60 min</strong></td>
+                <td>Snack ligero</td>
+                <td>15-25g prot + 20-40g carbos</td>
+                <td>Plátano + whey en agua</td>
+            </tr>
+            <tr>
+                <td><strong>En ayunas</strong></td>
+                <td>No recomendado para hipertrofia</td>
+                <td>-</td>
+                <td>Solo para cardio LISS</td>
+            </tr>
+        </table>
+
+        <h2>9.3 Timing Post-Entrenamiento</h2>
+        <div class="warning-box">
+            <strong>⚠️ La "Ventana Anabólica" NO es de 30 minutos:</strong>
+            <p>El mito de la ventana anabólica de 30 minutos está desmentido. La ventana real es de 2-4 horas
+                post-entreno, y es más importante si entrenas en ayunas.</p>
+        </div>
+
+        <table>
+            <tr>
+                <th>Si comiste pre-entreno hace:</th>
+                <th>Urgencia de comer post</th>
+                <th>Recomendación</th>
+            </tr>
+            <tr>
+                <td>
+                    <3 horas</td>
+                <td>BAJA - Aminoácidos aún circulando</td>
+                <td>Comer en las siguientes 2-3 horas</td>
+            </tr>
+            <tr>
+                <td>3-4 horas</td>
+                <td>MODERADA</td>
+                <td>Comer en 1-2 horas post-entreno</td>
+            </tr>
+            <tr>
+                <td>>4 horas / ayunas</td>
+                <td>ALTA</td>
+                <td>Comer lo antes posible (30-60 min)</td>
+            </tr>
+        </table>
+
+        <h3>Comida Post-Entreno Óptima</h3>
+        <table>
+            <tr>
+                <th>Macronutriente</th>
+                <th>Cantidad</th>
+                <th>Tipo Ideal</th>
+                <th>Ejemplos</th>
+            </tr>
+            <tr>
+                <td><strong>Proteína</strong></td>
+                <td>30-50g</td>
+                <td>Alta en leucina, rápida absorción</td>
+                <td>Whey, claras, pollo</td>
+            </tr>
+            <tr>
+                <td><strong>Carbohidratos</strong></td>
+                <td>50-100g</td>
+                <td>Alto índice glucémico OK</td>
+                <td>Arroz blanco, papa, pan</td>
+            </tr>
+            <tr>
+                <td><strong>Grasas</strong></td>
+                <td>Mínimas (<15g)< /td>
+                <td>Ralentizan absorción</td>
+                <td>Evitar comidas grasas post</td>
+            </tr>
+        </table>
+
+        <h2>9.4 Proteína Nocturna</h2>
+        <div class="success-box">
+            <strong>✅ La Comida Más Subestimada:</strong>
+            <p>30-40g de proteína de absorción lenta (caseína, cottage, carne) antes de dormir aumenta
+                significativamente la síntesis proteica nocturna. El ayuno de 8 horas de sueño sin proteína
+                es catabolico.</p>
+        </div>
+
+        <!-- SECCIÓN 10: MICRONUTRIENTES -->
+        <h1 class="page-break">10. Micronutrientes Clave para Hipertrofia</h1>
+
+        <div class="highlight-box">
+            <strong>🥗 Principio:</strong> Una dieta variada con frutas, verduras, carnes y granos enteros
+            generalmente cubre las necesidades de micronutrientes. Sin embargo, ciertos minerales y vitaminas
+            son especialmente importantes para atletas de fuerza.
+        </div>
+
+        <h2>10.1 Minerales Críticos</h2>
+        <table>
+            <tr>
+                <th>Mineral</th>
+                <th>Función</th>
+                <th>Dosis Diaria</th>
+                <th>Fuentes Alimentarias</th>
+                <th>Señales de Deficiencia</th>
+            </tr>
+            <tr>
+                <td><strong>Zinc</strong></td>
+                <td>Testosterona, síntesis proteica, inmunidad</td>
+                <td>11mg (H) / 8mg (M)</td>
+                <td>Carne roja, ostras, pollo, legumbres</td>
+                <td>Fatiga, recuperación lenta, libido baja</td>
+            </tr>
+            <tr>
+                <td><strong>Magnesio</strong></td>
+                <td>Contracciones musculares, sueño, >300 enzimas</td>
+                <td>400-420mg (H) / 310-320mg (M)</td>
+                <td>Espinacas, almendras, aguacate, chocolate negro</td>
+                <td>Calambres, insomnio, debilidad</td>
+            </tr>
+            <tr>
+                <td><strong>Hierro</strong></td>
+                <td>Transporte de oxígeno, energía</td>
+                <td>8mg (H) / 18mg (M)</td>
+                <td>Carne roja, hígado, espinacas, legumbres</td>
+                <td>Fatiga extrema, debilidad, palidez</td>
+            </tr>
+            <tr>
+                <td><strong>Potasio</strong></td>
+                <td>Contracciones, balance de fluidos</td>
+                <td>2600-3400mg</td>
+                <td>Plátano, papa, aguacate, espinacas</td>
+                <td>Calambres, debilidad, arritmias</td>
+            </tr>
+            <tr>
+                <td><strong>Sodio</strong></td>
+                <td>Balance fluidos, contracciones, rendimiento</td>
+                <td>1500-2300mg (más si sudas mucho)</td>
+                <td>Sal, alimentos procesados</td>
+                <td>Mareos, calambres, rendimiento bajo</td>
+            </tr>
+        </table>
+
+        <h2>10.2 Vitaminas Esenciales</h2>
+        <table>
+            <tr>
+                <th>Vitamina</th>
+                <th>Función para Atletas</th>
+                <th>Dosis</th>
+                <th>Fuentes</th>
+            </tr>
+            <tr>
+                <td><strong>Vitamina D3</strong></td>
+                <td>Testosterona, fuerza muscular, inmunidad, huesos</td>
+                <td>2000-5000 UI/día</td>
+                <td>Sol, pescado graso, huevos, suplemento</td>
+            </tr>
+            <tr>
+                <td><strong>Vitamina B12</strong></td>
+                <td>Energía, formación glóbulos rojos, sistema nervioso</td>
+                <td>2.4mcg (más si vegano)</td>
+                <td>Carne, pescado, huevos, lácteos</td>
+            </tr>
+            <tr>
+                <td><strong>Vitamina C</strong></td>
+                <td>Antioxidante, síntesis colágeno, inmunidad</td>
+                <td>90mg (H) / 75mg (M)</td>
+                <td>Cítricos, pimientos, brócoli, fresas</td>
+            </tr>
+            <tr>
+                <td><strong>Vitamina E</strong></td>
+                <td>Antioxidante, recuperación, salud celular</td>
+                <td>15mg</td>
+                <td>Nueces, semillas, espinacas, aguacate</td>
+            </tr>
+            <tr>
+                <td><strong>Vitaminas B (complejo)</strong></td>
+                <td>Metabolismo energético, síntesis proteica</td>
+                <td>Según RDA individual</td>
+                <td>Carnes, granos enteros, huevos, legumbres</td>
+            </tr>
+        </table>
+
+        <h2>10.3 Antioxidantes y Recuperación</h2>
+        <div class="warning-box">
+            <strong>⚠️ Precaución con Antioxidantes Excesivos:</strong>
+            <p>Dosis muy altas de antioxidantes (especialmente suplementos de vitamina C y E) pueden
+                interferir con las adaptaciones al entrenamiento. El estrés oxidativo post-entreno es una
+                señal necesaria para la adaptación muscular.</p>
+        </div>
+
+        <!-- SECCIÓN 11: HIDRATACIÓN -->
+        <h1 class="page-break">11. Hidratación para Rendimiento</h1>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">35-40ml</div>
+                <div class="label">Por kg de peso/día</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">+500ml</div>
+                <div class="label">Por hora de entreno</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">-2% peso</div>
+                <div class="label">= -10% rendimiento</div>
+            </div>
+        </div>
+
+        <h2>11.1 Requerimientos Diarios</h2>
+        <table>
+            <tr>
+                <th>Peso Corporal</th>
+                <th>Agua Base/Día</th>
+                <th>+ Por Hora Entreno</th>
+                <th>Total Día Entreno</th>
+            </tr>
+            <tr>
+                <td>60kg</td>
+                <td>2.1-2.4L</td>
+                <td>+0.5-0.7L</td>
+                <td>2.6-3.1L</td>
+            </tr>
+            <tr>
+                <td>80kg</td>
+                <td>2.8-3.2L</td>
+                <td>+0.5-0.8L</td>
+                <td>3.3-4.0L</td>
+            </tr>
+            <tr>
+                <td>100kg</td>
+                <td>3.5-4.0L</td>
+                <td>+0.6-1.0L</td>
+                <td>4.1-5.0L</td>
+            </tr>
+        </table>
+
+        <h2>11.2 Hidratación Durante Entrenamiento</h2>
+        <div class="success-box">
+            <strong>✅ Protocolo de Hidratación Durante Entreno:</strong>
+            <ul>
+                <li><strong>Sesiones <60 min:</strong> Agua sola es suficiente, 150-250ml cada 15-20 min</li>
+                <li><strong>Sesiones 60-90 min:</strong> Agua + pizca de sal (0.5g por L)</li>
+                <li><strong>Sesiones >90 min:</strong> Bebida con electrolitos + carbos (30-60g/hora)</li>
+                <li><strong>Clima caliente:</strong> Aumentar 25-50% la ingesta + más sodio</li>
+            </ul>
+        </div>
+
+        <h2>11.3 Señales de Deshidratación</h2>
+        <table>
+            <tr>
+                <th>Nivel</th>
+                <th>Síntomas</th>
+                <th>Impacto en Rendimiento</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td><strong>Leve (1-2%)</strong></td>
+                <td>Sed, orina amarilla oscura</td>
+                <td>-5% fuerza y resistencia</td>
+                <td>Beber 500ml inmediatamente</td>
+            </tr>
+            <tr>
+                <td><strong>Moderada (3-4%)</strong></td>
+                <td>Dolor de cabeza, fatiga, calambres</td>
+                <td>-10-15% rendimiento</td>
+                <td>Detener entreno, rehidratar con electrolitos</td>
+            </tr>
+            <tr>
+                <td><strong>Severa (>5%)</strong></td>
+                <td>Mareos, confusión, desmayo</td>
+                <td>Peligroso, riesgo de golpe de calor</td>
+                <td>Atención médica urgente</td>
+            </tr>
+        </table>
+
+        <!-- SECCIÓN 12: EJEMPLOS DE PLANES -->
+        <h1 class="page-break">12. Ejemplos de Planes de Comidas</h1>
+
+        <h2>12.1 Plan para Ganar Músculo (80kg, ~3000kcal)</h2>
+        <div class="purple-box">
+            <strong>💪 Día de Entrenamiento - Piernas/Espalda (HIGH CARB)</strong>
+        </div>
+        <table>
+            <tr>
+                <th>Comida</th>
+                <th>Hora</th>
+                <th>Alimentos</th>
+                <th>Macros</th>
+            </tr>
+            <tr>
+                <td><strong>1. Desayuno</strong></td>
+                <td>7:00</td>
+                <td>4 huevos + 100g avena + 1 plátano + 30g whey</td>
+                <td>P:50g C:80g G:20g | 700kcal</td>
+            </tr>
+            <tr>
+                <td><strong>2. Snack AM</strong></td>
+                <td>10:00</td>
+                <td>200g yogur griego + 50g granola + 1 manzana</td>
+                <td>P:25g C:55g G:10g | 410kcal</td>
+            </tr>
+            <tr>
+                <td><strong>3. Almuerzo</strong></td>
+                <td>13:00</td>
+                <td>200g pollo + 150g arroz + verduras + aguacate</td>
+                <td>P:50g C:60g G:20g | 620kcal</td>
+            </tr>
+            <tr>
+                <td><strong>4. Pre-Entreno</strong></td>
+                <td>16:00</td>
+                <td>2 tostadas + 30g mantequilla maní + plátano</td>
+                <td>P:15g C:60g G:15g | 435kcal</td>
+            </tr>
+            <tr>
+                <td><strong>5. Post-Entreno</strong></td>
+                <td>18:30</td>
+                <td>40g whey + 80g dextrosa/arroz inflado</td>
+                <td>P:35g C:80g G:2g | 480kcal</td>
+            </tr>
+            <tr>
+                <td><strong>6. Cena</strong></td>
+                <td>20:30</td>
+                <td>200g salmón + 100g pasta + ensalada</td>
+                <td>P:45g C:50g G:15g | 515kcal</td>
+            </tr>
+            <tr style="background: #D1FAE5;">
+                <td><strong>TOTAL</strong></td>
+                <td>-</td>
+                <td>-</td>
+                <td><strong>P:220g C:385g G:82g | 3160kcal</strong></td>
+            </tr>
+        </table>
+
+        <h2>12.2 Plan para Pérdida de Grasa (80kg, ~2100kcal)</h2>
+        <div class="warning-box">
+            <strong>🔥 Día de Descanso - LOW CARB</strong>
+        </div>
+        <table>
+            <tr>
+                <th>Comida</th>
+                <th>Hora</th>
+                <th>Alimentos</th>
+                <th>Macros</th>
+            </tr>
+            <tr>
+                <td><strong>1. Desayuno</strong></td>
+                <td>8:00</td>
+                <td>3 huevos + 2 claras + 100g espinacas + 30g queso</td>
+                <td>P:35g C:5g G:20g | 340kcal</td>
+            </tr>
+            <tr>
+                <td><strong>2. Snack AM</strong></td>
+                <td>11:00</td>
+                <td>30g whey + 20g almendras</td>
+                <td>P:28g C:5g G:12g | 240kcal</td>
+            </tr>
+            <tr>
+                <td><strong>3. Almuerzo</strong></td>
+                <td>14:00</td>
+                <td>200g pechuga + ensalada grande + aguacate + aceite oliva</td>
+                <td>P:50g C:10g G:25g | 465kcal</td>
+            </tr>
+            <tr>
+                <td><strong>4. Snack PM</strong></td>
+                <td>17:00</td>
+                <td>150g cottage cheese + 10g semillas chía</td>
+                <td>P:22g C:8g G:6g | 175kcal</td>
+            </tr>
+            <tr>
+                <td><strong>5. Cena</strong></td>
+                <td>20:00</td>
+                <td>200g pescado blanco + 200g brócoli + 1 cda aceite</td>
+                <td>P:45g C:12g G:15g | 365kcal</td>
+            </tr>
+            <tr>
+                <td><strong>6. Pre-sueño</strong></td>
+                <td>22:00</td>
+                <td>30g caseína + 10g mantequilla maní</td>
+                <td>P:28g C:5g G:10g | 220kcal</td>
+            </tr>
+            <tr style="background: #FEE2E2;">
+                <td><strong>TOTAL</strong></td>
+                <td>-</td>
+                <td>-</td>
+                <td><strong>P:208g C:45g G:88g | 1805kcal</strong></td>
+            </tr>
+        </table>
+
+        <h2>12.3 Lista de Alimentos Recomendados</h2>
+        <table>
+            <tr>
+                <th>Categoría</th>
+                <th>Alimentos TOP</th>
+                <th>Evitar/Limitar</th>
+            </tr>
+            <tr>
+                <td><strong>Proteínas</strong></td>
+                <td>Pollo, pavo, pescado, huevos, carne magra, cottage, whey</td>
+                <td>Embutidos, carnes procesadas, proteínas fritas</td>
+            </tr>
+            <tr>
+                <td><strong>Carbos Complejos</strong></td>
+                <td>Arroz, avena, papa, batata, quinoa, pasta integral</td>
+                <td>Azúcar, dulces, refrescos, harinas refinadas</td>
+            </tr>
+            <tr>
+                <td><strong>Grasas Saludables</strong></td>
+                <td>Aguacate, aceite oliva, nueces, pescado graso, huevos</td>
+                <td>Grasas trans, fritos, aceites vegetales refinados</td>
+            </tr>
+            <tr>
+                <td><strong>Verduras</strong></td>
+                <td>Espinacas, brócoli, espárragos, pimientos, tomate</td>
+                <td>Verduras empanizadas/fritas</td>
+            </tr>
+            <tr>
+                <td><strong>Frutas</strong></td>
+                <td>Plátano, manzana, frutos rojos, naranja, piña</td>
+                <td>Jugos con azúcar añadida, frutas en almíbar</td>
+            </tr>
+        </table>
+
+        <div class="highlight-box" style="margin-top: 40px;">
+            <p style="text-align: center; font-size: 1.1rem;">
+                <strong>📚 GUÍA COMPLETA DE NUTRICIÓN</strong><br>
+                Basada en: The Muscle & Strength Pyramid (Eric Helms) · Bigger Leaner Stronger (Michael Matthews)<br>
+                Meta-análisis 2025 · ISSN Position Stand · The Muscle PhD<br><br>
+                <strong>Integrado con:</strong> NEXUS v3.1 - 10 Metodologías de Hipertrofia<br>
+                Heavy Duty · Blood & Guts · DC Training · 5/3/1 · MTUT · Y3T · DUP · FST-7 · SST · GVT
+            </p>
+        </div>
+
+        <!-- SECCIÓN 13: FÓRMULAS DE HERRAMIENTAS AVANZADAS -->
+        <h1 class="page-break">13. Fórmulas de Herramientas Avanzadas</h1>
+
+        <div class="highlight-box">
+            <strong>🛠️ Propósito:</strong> Esta sección contiene las fórmulas matemáticas de las 6 Herramientas
+            Avanzadas de NEXUS para que puedas realizar los cálculos manualmente y entender de dónde salen los
+            resultados.
+        </div>
+
+        <h2>13.1 Potencial Genético Máximo</h2>
+        <div class="success-box">
+            <strong>¿Para qué sirve?</strong><br>
+            Determinar el límite máximo de masa muscular que puedes alcanzar de forma natural.
+            Esto te ayuda a establecer metas realistas y saber si estás cerca de tu potencial.
+        </div>
+
+        <h3>Fórmula de Martin Berkhan (FFMI)</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            Masa Magra Máxima (kg) = Altura² × 25
+
+            Donde:
+            • Altura en metros (ej: 1.75 para 175 cm)
+            • 25 = FFMI máximo natural (Fat-Free Mass Index)
+
+            Ejemplo (175 cm):
+            Masa Magra = 1.75² × 25 = 3.0625 × 25 = 76.6 kg
+        </div>
+
+        <h3>Fórmula de Casey Butt (más precisa)</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            Peso Competición (lbs) = H³ × (√W/22.667 + √A/17.012) × (1 + W/H/0.1133)
+
+            Donde:
+            • H = Altura en pulgadas (cm × 0.3937)
+            • W = Circunferencia muñeca en pulgadas
+            • A = Circunferencia tobillo en pulgadas
+
+            Conversión final:
+            • Peso (kg) = Resultado × 0.4536
+            • Peso al 10% grasa = Peso competición × 1.06
+            • Peso al 15% grasa = Peso competición × 1.12
+        </div>
+
+        <h2>13.2 Readiness Score (Fatiga Acumulada)</h2>
+        <div class="success-box">
+            <strong>¿Para qué sirve?</strong><br>
+            Evaluar tu nivel de fatiga y determinar si debes entrenar a máxima intensidad,
+            reducir volumen, o tomar un deload. Previene el sobreentrenamiento.
+        </div>
+
+        <h3>Fórmula del Readiness Score</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            Score = 100 - PenalizaciónSemana - PenalizaciónSueño - PenalizaciónEstrés - PenalizaciónDeload
+
+            Donde:
+            • PenalizaciónSemana = Semana × FactorSNC (según metodología)
+            • PenalizaciónSueño = (7 - HorasSueño) × 8 (si duermes &lt;7h)
+            + 10 extra si duermes &lt;6h
+            • PenalizaciónEstrés = NivelEstrés × 3 (estrés 1-10)
+            • PenalizaciónDeload = (DíasDesdeDeload - 21) × 2 (si &gt;21 días)
+
+            Interpretación:
+            • 80-100: ÓPTIMO → Entrena a tope
+            • 60-79: BUENO → Entrena normal
+            • 40-59: MODERADO → Reduce volumen 20-30%
+            • 20-39: BAJO → Considera deload
+            • 0-19: CRÍTICO → Deload obligatorio
+        </div>
+
+        <h3>Factores SNC por Metodología</h3>
+        <table>
+            <tr>
+                <th>Metodología</th>
+                <th>Factor SNC</th>
+                <th>Fatiga Muscular</th>
+            </tr>
+            <tr>
+                <td>Heavy Duty</td>
+                <td>9</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>Blood & Guts</td>
+                <td>9</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>DC Training</td>
+                <td>8</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td>5/3/1</td>
+                <td>7</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>MTUT</td>
+                <td>5</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>Y3T</td>
+                <td>6</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>DUP</td>
+                <td>6</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>FST-7</td>
+                <td>4</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>SST</td>
+                <td>5</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td>GVT</td>
+                <td>6</td>
+                <td>10</td>
+            </tr>
+        </table>
+
+        <h2>13.3 Sincronización Circadiana (Cronotipo)</h2>
+        <div class="success-box">
+            <strong>¿Para qué sirve?</strong><br>
+            Identificar tu cronotipo natural (alondra/búho) y determinar las mejores horas
+            para entrenar fuerza, consumir carbohidratos y maximizar rendimiento.
+        </div>
+
+        <h3>Fórmula del Cronotipo</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            PuntoMedio = (HoraDespertar + HoraDormir) / 2
+
+            Interpretación:
+            • PuntoMedio &lt; 2 → Alondra extrema
+            • PuntoMedio 2-3 → Alondra moderada
+            • PuntoMedio 3-4 → Neutral
+            • PuntoMedio 4-5 → Búho moderado
+            • PuntoMedio &gt; 5 → Búho nocturno
+
+            Ejemplo (despiertas 7am, duermes 11pm):
+            PuntoMedio = (7 + 23) / 2 = 15 (pero normalizado 0-12: 15-12=3)
+            *Nota: La hora de dormir se cuenta como hora del día siguiente
+        </div>
+
+        <h2>13.4 Tiempo hasta Objetivo</h2>
+        <div class="success-box">
+            <strong>¿Para qué sirve?</strong><br>
+            Estimar semanas/meses realistas para alcanzar metas de pérdida de grasa o
+            ganancia muscular, basándose en tasas fisiológicamente posibles.
+        </div>
+
+        <h3>Fórmula para Pérdida de Grasa</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            1. Calcular Masa Magra Actual:
+            MasaMagra = PesoActual × (1 - %GrasaActual/100)
+
+            2. Calcular Peso Objetivo:
+            PesoObjetivo = MasaMagra / (1 - %GrasaObjetivo/100)
+
+            3. Calcular Peso a Perder:
+            PesoAPerder = PesoActual - PesoObjetivo
+
+            4. Calcular Semanas:
+            TasaSemanal = PesoActual × (TasaPérdida/100)
+            Semanas = PesoAPerder / TasaSemanal
+
+            Tasas de pérdida (%peso/semana):
+            • Principiante: 0.8%
+            • Intermedio: 0.6%
+            • Avanzado: 0.4%
+
+            Ejemplo (80kg, 20%→12% grasa, intermedio):
+            MasaMagra = 80 × 0.80 = 64 kg
+            PesoObjetivo = 64 / 0.88 = 72.7 kg
+            PesoAPerder = 80 - 72.7 = 7.3 kg
+            TasaSemanal = 80 × 0.006 = 0.48 kg/semana
+            Semanas = 7.3 / 0.48 = 15 semanas
+        </div>
+
+        <h3>Fórmula para Ganancia Muscular</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            MúsculoAGanar = MasaObjetivo - MasaActual
+            Meses = MúsculoAGanar / TasaMensual
+
+            Tasas de ganancia (kg/mes):
+            • Principiante: 0.4 kg/mes (hasta 1kg posible)
+            • Intermedio: 0.25 kg/mes
+            • Avanzado: 0.1 kg/mes
+
+            Ejemplo (65kg→75kg masa magra, intermedio):
+            MúsculoAGanar = 75 - 65 = 10 kg
+            Meses = 10 / 0.25 = 40 meses (~3.3 años)
+        </div>
+
+        <h2>13.5 Matriz de Transición entre Metodologías</h2>
+        <div class="success-box">
+            <strong>¿Para qué sirve?</strong><br>
+            Determinar cuánto tiempo de transición necesitas al cambiar de una metodología
+            a otra, para no perder adaptaciones ni sobrecargarte.
+        </div>
+
+        <h3>Tabla de Compatibilidad (1-10)</h3>
+        <table>
+            <tr>
+                <th>Origen ↓ / Destino →</th>
+                <th>HD</th>
+                <th>B&G</th>
+                <th>DC</th>
+                <th>531</th>
+                <th>MTUT</th>
+                <th>Y3T</th>
+                <th>DUP</th>
+                <th>FST7</th>
+                <th>SST</th>
+                <th>GVT</th>
+            </tr>
+            <tr>
+                <td><strong>Heavy Duty</strong></td>
+                <td>-</td>
+                <td>9</td>
+                <td>7</td>
+                <td>8</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>4</td>
+                <td>3</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td><strong>Blood & Guts</strong></td>
+                <td>9</td>
+                <td>-</td>
+                <td>8</td>
+                <td>7</td>
+                <td>5</td>
+                <td>6</td>
+                <td>6</td>
+                <td>4</td>
+                <td>3</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td><strong>DC Training</strong></td>
+                <td>7</td>
+                <td>8</td>
+                <td>-</td>
+                <td>7</td>
+                <td>6</td>
+                <td>7</td>
+                <td>7</td>
+                <td>6</td>
+                <td>5</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td><strong>5/3/1</strong></td>
+                <td>8</td>
+                <td>7</td>
+                <td>7</td>
+                <td>-</td>
+                <td>6</td>
+                <td>7</td>
+                <td>9</td>
+                <td>5</td>
+                <td>4</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td><strong>MTUT</strong></td>
+                <td>5</td>
+                <td>5</td>
+                <td>6</td>
+                <td>6</td>
+                <td>-</td>
+                <td>7</td>
+                <td>6</td>
+                <td>8</td>
+                <td>8</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td><strong>Y3T</strong></td>
+                <td>6</td>
+                <td>6</td>
+                <td>7</td>
+                <td>7</td>
+                <td>7</td>
+                <td>-</td>
+                <td>8</td>
+                <td>7</td>
+                <td>7</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td><strong>DUP</strong></td>
+                <td>7</td>
+                <td>6</td>
+                <td>7</td>
+                <td>9</td>
+                <td>6</td>
+                <td>8</td>
+                <td>-</td>
+                <td>6</td>
+                <td>5</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td><strong>FST-7</strong></td>
+                <td>4</td>
+                <td>4</td>
+                <td>6</td>
+                <td>5</td>
+                <td>8</td>
+                <td>7</td>
+                <td>6</td>
+                <td>-</td>
+                <td>9</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td><strong>SST</strong></td>
+                <td>3</td>
+                <td>3</td>
+                <td>5</td>
+                <td>4</td>
+                <td>8</td>
+                <td>7</td>
+                <td>5</td>
+                <td>9</td>
+                <td>-</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td><strong>GVT</strong></td>
+                <td>3</td>
+                <td>3</td>
+                <td>5</td>
+                <td>5</td>
+                <td>7</td>
+                <td>7</td>
+                <td>6</td>
+                <td>8</td>
+                <td>9</td>
+                <td>-</td>
+            </tr>
+        </table>
+
+        <h3>Semanas de Transición</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            Compatibilidad 8-10 → 1 semana (transición directa)
+            Compatibilidad 6-7 → 2 semanas
+            Compatibilidad 4-5 → 3 semanas
+            Compatibilidad 1-3 → 4 semanas + deload intermedio
+        </div>
+
+        <h2>13.6 Proporciones Corporales (Grupos Rezagados)</h2>
+        <div class="success-box">
+            <strong>¿Para qué sirve?</strong><br>
+            Identificar qué grupos musculares están por debajo de las proporciones ideales
+            de culturismo y necesitan más volumen de entrenamiento.
+        </div>
+
+        <h3>Proporciones Ideales</h3>
+        <table>
+            <tr>
+                <th>Proporción</th>
+                <th>Ratio Ideal</th>
+                <th>Fórmula</th>
+            </tr>
+            <tr>
+                <td>Hombros:Cintura</td>
+                <td>1.618</td>
+                <td>Hombros / Cintura = 1.618 (proporción áurea)</td>
+            </tr>
+            <tr>
+                <td>Pecho:Cintura</td>
+                <td>1.4</td>
+                <td>Pecho / Cintura = 1.4</td>
+            </tr>
+            <tr>
+                <td>Bíceps:Antebrazo</td>
+                <td>1.2</td>
+                <td>Bíceps / Antebrazo = 1.2</td>
+            </tr>
+            <tr>
+                <td>Muslo:Pantorrilla</td>
+                <td>1.3</td>
+                <td>Muslo / Pantorrilla = 1.3</td>
+            </tr>
+        </table>
+
+        <h3>Fórmula del Score de Proporción</h3>
+        <div class="code-block"
+            style="background: #1E293B; color: #E2E8F0; padding: 15px; border-radius: 10px; font-family: monospace;">
+            Score (%) = (TuRatio / RatioIdeal) × 100
+
+            Interpretación:
+            • Score ≥ 85%: Proporción correcta ✅
+            • Score 70-84%: Necesita atención moderada (+25% volumen)
+            • Score &lt; 70%: Prioridad alta (+50% volumen)
+
+            Ejemplo (Hombros 110cm, Cintura 80cm):
+            TuRatio = 110 / 80 = 1.375
+            Score = (1.375 / 1.618) × 100 = 85%
+            → Proporción correcta
+        </div>
+
+        <div class="warning-box" style="margin-top: 30px;">
+            <strong>💡 Nota:</strong> Todas estas fórmulas están implementadas automáticamente en la
+            sección <strong>🛠️ Herramientas</strong> de la aplicación NEXUS. Solo necesitas
+            ingresar tus datos y los cálculos se realizan instantáneamente.
+        </div>
+
+    </div>
+
+</body>
+
+</html>
