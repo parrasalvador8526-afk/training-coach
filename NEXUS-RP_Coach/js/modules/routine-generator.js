@@ -178,6 +178,7 @@ const RoutineGenerator = (() => {
             parameters: {
                 sets: protData.sets,
                 reps: protData.reps,
+                extraReps: protData.extraReps || null,
                 rest: protData.rest,
                 rir: protData.rir !== undefined ? protData.rir : 2,
                 rpe: protData.rpe,
@@ -219,19 +220,34 @@ const RoutineGenerator = (() => {
                 .slice(0, numExercises);
 
             sortedExercises.forEach((ex, exIdx) => {
-                // Calcular sets según tipo de ejercicio y metodología
+                // Primer ejercicio es principal, resto son secundarios
+                const isPrimary = exIdx === 0;
+
+                // Calcular sets base desde el string del protocolo
                 let baseSets = parseSets(protData.sets);
+                const mType = (methData.name || '').toLowerCase();
 
-                // Aplicar multiplicador por nivel
-                baseSets = Math.round(baseSets * volumeConfig.setsMultiplier);
+                // 🧠 LÓGICA ASIMÉTRICA PARA METHODOLOGÍAS EXTREMAS
+                if (mType.includes('gvt') || mType.includes('german volume')) {
+                    // GVT: Sólo el primer ejercicio lleva los 10 sets (10x10)
+                    if (!isPrimary) baseSets = 3;
+                }
+                else if (mType.includes('fst') || mType.includes('fst-7')) {
+                    // FST-7: Sólo el ÚLTIMO ejercicio lleva el protocolo de 7 sets
+                    const isLast = exIdx === sortedExercises.length - 1;
+                    if (!isLast) baseSets = 3;
+                    else baseSets = parseSets(protData.sets) || 7;
+                }
 
-                // Reducir sets para aislamientos en metodologías HIT
+                // Aplicar multiplicador por nivel sólo si no es una carga estática extrema (ej 10 sets de GVT o 7 de FST)
+                if (baseSets < 7) {
+                    baseSets = Math.round(baseSets * volumeConfig.setsMultiplier);
+                }
+
+                // Reducir sets para aislamientos en metodologías HIT (Heavy Duty)
                 if (ex.type === 'isolation' && methData.type === 'HIT') {
                     baseSets = Math.min(baseSets, 1);
                 }
-
-                // Primer ejercicio es principal, resto son secundarios
-                const isPrimary = exIdx === 0;
 
                 exercises.push({
                     id: `ex_${Date.now()}_${muscleIdx}_${exIdx}`,
@@ -243,6 +259,7 @@ const RoutineGenerator = (() => {
                     isPrimary: isPrimary,
 
                     // Parámetros del protocolo
+                    baseSets: baseSets, // Ancla inmutable del volumen real calculado
                     sets: baseSets,
                     targetReps: protData.reps,
                     targetRIR: protData.rir !== undefined ? protData.rir : 2,
@@ -290,11 +307,23 @@ const RoutineGenerator = (() => {
     }
 
     /**
-     * Parsea el número de sets de un string
+     * Parsea el número de sets de un string.
+     * Si es un rango (ej. "3-4"), devuelve un valor matemáticamente representativo.
      */
     function parseSets(setsStr) {
         if (typeof setsStr === 'number') return setsStr;
         if (!setsStr) return 3;
+
+        // Si la cadena contiene un rango ej. "2-3", "1 a 2"
+        if (setsStr.includes('-')) {
+            const parts = setsStr.split('-');
+            const val1 = parseInt(parts[0]);
+            const val2 = parseInt(parts[1]);
+            if (!isNaN(val1) && !isNaN(val2)) {
+                // Devolvemos el límite superior para permitir que el setsMultiplier luego atenúe o amplifique el volumen adecuadamente
+                return Math.max(val1, val2);
+            }
+        }
 
         const match = setsStr.match(/(\d+)/);
         return match ? parseInt(match[1]) : 3;

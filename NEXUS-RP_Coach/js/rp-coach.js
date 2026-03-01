@@ -7,10 +7,28 @@
 const RPCoachApp = (() => {
     // Estado de la aplicación
     let state = {
-        currentModule: 'dashboard',
+        currentModule: 'profile',
         selectedMethodology: 'Y3T',
         currentWeek: 1,
         experienceLevel: 'intermediate'
+    };
+
+    /**
+     * Diccionario de Tips Específicos por Metodología (Radar de Adaptación)
+     */
+    const METHODOLOGY_RADAR_TIPS = {
+        'Y3T': 'Fase Y3T activa. Recuerda: Semana 1 (Fuerza, Tipo IIb), Semana 2 (Hipertrofia, Tipo IIa), Semana 3 (Aniquilación, Tipo I). Ajusta tu hidratación en la semana 3.',
+        'Heavy Duty': 'Heavy Duty: Solo 1 o 2 series de trabajo reales al fallo absoluto. Si puedes hacer otra serie, la primera no fue lo suficientemente dura. Prioriza la recuperación neuronal.',
+        'FST7': 'FST-7: En las 7 series finales, el objetivo principal es el estiramiento de la fascia y el máximo bombeo (Pump). Bebe agua intra-entreno y estira entre series.',
+        'PHAT': 'PHAT: Combina días de Potencia pura con días de Hipertrofia de alto volumen. No intentes mezclar las intenciones: sé explosivo en potencia, controla el tempo en hipertrofia.',
+        'PHUL': 'PHUL: Separa claramente tus días Upper/Lower enfocados en fuerza y tus días enfocados en hipertrofia. Registra tus marcas de fuerza para asegurar progresión.',
+        'PushPullLegs': 'PPL: Volumen sostenido. Si te sientes muy cansado al repetir el 4to día, añade un día de descanso (PPL-Descanso-PPL).',
+        'UpperLower': 'Upper/Lower: Excelente para alta frecuencia. Asegúrate de que el MRV (Volumen Máximo Recuperable) no se sobrepase en los días Upper.',
+        'BroSplit': 'Bro Split: Como entrenas el músculo 1 vez por semana, necesitas alcanzar el MRV en esa única sesión. El nivel de disrupción (SFR) debe ser máximo.',
+        'DC': 'Doggcrapp: Calentamiento, un working set con rest-pauses hasta 11-15 reps, y estiramiento extremo. Si no vences tu libreta hoy, el ejercicio se rota.',
+        'GVT': 'GVT (10x10): El peso no cambia, el descanso es estricto (60-90s). El objetivo es la hipertrofia sarcoplasmática extrema. Si completas 10x10, sube 5% el peso.',
+        'DUP': 'DUP: Hoy la intensidad y reps cambian respecto a tu sesión anterior. Revisa bien tu objetivo del día (Fuerza, Hipertrofia o Potencia) antes de calentar.',
+        '531': '5/3/1: Progresión lenta y segura a largo plazo. No quemes el sistema nervioso en tus series AMRAP. Deja siempre 1-2 repeticiones en el tanque a menos que estés probando PRs.'
     };
 
     /**
@@ -59,6 +77,11 @@ const RPCoachApp = (() => {
         if (window.MethodologiesSyncModule) {
             await MethodologiesSyncModule.loadMethodologies();
             await populateMethodologySelector();
+        }
+
+        // Inicializar Calculadora de RM
+        if (window.RMCalculatorModule) {
+            RMCalculatorModule.initAll();
         }
     }
 
@@ -110,14 +133,44 @@ const RPCoachApp = (() => {
             });
         }
 
-        // Botones de autorregulación
-        setupAutoregulationListeners();
-
         // Formulario de session logger
         setupSessionLoggerListeners();
 
         // Formulario de sobrecarga progresiva
         setupProgressiveOverloadListeners();
+
+        // Botón Evaluar Readiness
+        const btnEvalReadiness = document.getElementById('btn-eval-readiness');
+        if (btnEvalReadiness) {
+            btnEvalReadiness.addEventListener('click', evaluateReadiness);
+        }
+    }
+
+    /**
+     * Evalúa el estado actual de Readiness (Pre-entrenamiento)
+     */
+    function evaluateReadiness() {
+        const sleep = parseInt(document.getElementById('readiness-sleep').value) || 3;
+        const stress = parseInt(document.getElementById('readiness-stress').value) || 3;
+        const doms = parseInt(document.getElementById('readiness-doms').value) || 3;
+        const badge = document.getElementById('readiness-score-badge');
+        const feedback = document.getElementById('readiness-feedback');
+
+        const totalScore = sleep + stress + doms;
+
+        if (totalScore >= 13) {
+            badge.textContent = '🚀 Óptimo';
+            badge.style.background = '#10B981'; // Green
+            feedback.innerHTML = '<span style="color:#10B981">Condiciones perfectas. Empuja la progresión planificada o intenta un PR.</span>';
+        } else if (totalScore >= 9) {
+            badge.textContent = '🟡 Normal';
+            badge.style.background = '#F59E0B'; // Yellow
+            feedback.innerHTML = '<span style="color:#F59E0B">Estado estándar. Sigue el RIR prescrito por tu mesociclo.</span>';
+        } else {
+            badge.textContent = '⚠️ Fatiga Alta';
+            badge.style.background = '#EF4444'; // Red
+            feedback.innerHTML = '<span style="color:#EF4444">Advertencia: Considera reducir 1 RIR o quitar 1 serie por ejercicio hoy para evitar lesiones o sobreentrenamiento.</span>';
+        }
     }
 
     /**
@@ -145,17 +198,26 @@ const RPCoachApp = (() => {
      */
     function renderCurrentModule() {
         switch (state.currentModule) {
-            case 'dashboard':
-                renderDashboard();
+            case 'profile':
+                renderProfile();
                 break;
-            case 'autoregulation':
-                renderAutoregulation();
+            case 'biodata':
+                renderBiodata();
+                break;
+            case 'nutrition':
+                renderNutrition();
+                break;
+            case 'workout':
+                // El wizard ya está visible en el HTML
+                break;
+            case 'routine-display':
+                renderRoutineDisplay();
+                break;
+            case 'progress':
+                renderProgress();
                 break;
             case 'rir':
                 renderRIR();
-                break;
-            case 'volume':
-                renderVolume();
                 break;
             case 'logger':
                 renderSessionLogger();
@@ -167,220 +229,458 @@ const RPCoachApp = (() => {
     }
 
     /**
-     * Renderiza el dashboard principal
+     * Renderiza el módulo de DATOS (Bioimpedancia)
      */
-    function renderDashboard() {
-        const container = document.getElementById('dashboard-stats');
-        if (!container) return;
-
-        const stats = SessionLoggerModule.getStats();
-        const trend = AutoregulationModule.getRecoveryTrend(7);
-
-        container.innerHTML = `
-            <div class="stat-box">
-                <div class="stat-box__value">${stats.totalSessions}</div>
-                <div class="stat-box__label">Sesiones Totales</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-box__value">${stats.last30Days}</div>
-                <div class="stat-box__label">Últimos 30 días</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-box__value">${stats.totalSets}</div>
-                <div class="stat-box__label">Series Totales</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-box__value">${formatVolume(stats.totalVolume)}</div>
-                <div class="stat-box__label">Volumen Total (kg)</div>
-            </div>
-        `;
-
-        // Mostrar tendencia de recuperación
-        const trendContainer = document.getElementById('recovery-trend');
-        if (trendContainer) {
-            const trendClass = trend.trend === 'EXCELLENT' ? 'success' :
-                trend.trend === 'STABLE' ? 'optimal' :
-                    trend.trend === 'DECLINING' ? 'warning' : '';
-
-            trendContainer.innerHTML = `
-                <div class="status-indicator status-indicator--${trendClass}">
-                    ${getTrendIcon(trend.trend)} ${trend.message}
-                </div>
-            `;
-        }
-
-        // Actualizar widgets de autorregulación desde AutoregulationEngine
-        updateAutoregulationStatus();
-
-        // Renderizar gráficas de progreso
-        if (typeof ProgressChartsModule !== 'undefined') {
-            ProgressChartsModule.renderDashboardCharts('dashboard-charts');
-        }
-
-        // Renderizar cronómetro de descanso
-        if (typeof RestTimerModule !== 'undefined') {
-            RestTimerModule.renderTimerUI('timer-section', state.selectedMethodology);
+    function renderBiodata() {
+        if (typeof BioimpedanciaRP !== 'undefined') {
+            BioimpedanciaRP.init();
         }
     }
 
     /**
-     * Actualiza los widgets de autorregulación en el Dashboard
-     * Conecta con AutoregulationEngine para mostrar fatiga, fase, volumen, etc.
+     * Renderiza el módulo de NUTRICIÓN
      */
-    function updateAutoregulationStatus() {
-        if (typeof AutoregulationEngine === 'undefined') {
-            console.log('AutoregulationEngine no disponible');
+    function renderNutrition() {
+        if (typeof NutricionRP !== 'undefined') {
+            NutricionRP.init();
+        }
+    }
+
+    // renderDashboard() y updateAutoregulationStatus() eliminados — lógica integrada en renderProgress()
+
+    /**
+     * Renderiza el módulo de PERFIL
+     */
+    function renderProfile() {
+        // Cargar datos guardados
+        const savedProfile = localStorage.getItem('rpCoach_profile');
+        if (savedProfile) {
+            const profile = JSON.parse(savedProfile);
+
+            // Llenar formulario con datos guardados
+            if (profile.name) document.getElementById('profile-name').value = profile.name;
+            if (profile.weight) document.getElementById('profile-weight').value = profile.weight;
+            if (profile.height) document.getElementById('profile-height').value = profile.height;
+            if (profile.age) document.getElementById('profile-age').value = profile.age;
+            if (profile.level) document.getElementById('profile-level').value = profile.level;
+            if (profile.days) document.getElementById('profile-days').value = profile.days;
+
+            // Mostrar resumen
+            showProfileSummary(profile);
+        }
+
+        // Configurar evento de guardar
+        const saveBtn = document.getElementById('btn-save-profile');
+        if (saveBtn && !saveBtn.hasListener) {
+            saveBtn.hasListener = true;
+            saveBtn.addEventListener('click', saveProfile);
+        }
+    }
+
+    /**
+     * Guarda el perfil del usuario
+     */
+    function saveProfile() {
+        const profile = {
+            name: document.getElementById('profile-name')?.value || '',
+            weight: parseFloat(document.getElementById('profile-weight')?.value) || 0,
+            height: parseInt(document.getElementById('profile-height')?.value) || 0,
+            age: parseInt(document.getElementById('profile-age')?.value) || 0,
+            level: document.getElementById('profile-level')?.value || 'intermediate',
+            goal: 'hypertrophy', // Objetivo por defecto ahora que se ocultó la selección
+            days: parseInt(document.getElementById('profile-days')?.value) || 4
+        };
+
+        localStorage.setItem('rpCoach_profile', JSON.stringify(profile));
+
+        // Actualizar nivel en el estado
+        state.experienceLevel = profile.level;
+        saveState();
+
+        // Sincronizar nivel con el wizard de rutina
+        const routineLevel = document.getElementById('routine-level');
+        if (routineLevel) {
+            routineLevel.value = profile.level;
+        }
+
+        showProfileSummary(profile);
+        showNotification('✅ Perfil guardado correctamente');
+    }
+
+    /**
+     * Muestra el resumen del perfil guardado
+     */
+    function showProfileSummary(profile) {
+        const summary = document.getElementById('profile-summary');
+        const content = document.getElementById('profile-summary-content');
+
+        if (summary && content && profile.name) {
+            summary.classList.remove('hidden');
+
+            const levelLabels = {
+                beginner: '🌱 Principiante',
+                intermediate: '💪 Intermedio',
+                advanced: '🔥 Avanzado'
+            };
+
+            const goalLabels = {
+                hypertrophy: '💪 Hipertrofia',
+                strength: '🏋️ Fuerza',
+                recomposition: '⚖️ Recomposición',
+                cutting: '🔥 Definición'
+            };
+
+            content.innerHTML = `
+                <div class="module-grid mt-2" style="gap: 10px;">
+                    <div class="stat-box" style="padding: 10px;">
+                        <div class="stat-box__value" style="font-size: 1.2rem;">${profile.name}</div>
+                        <div class="stat-box__label">Nombre</div>
+                    </div>
+                    <div class="stat-box" style="padding: 10px;">
+                        <div class="stat-box__value" style="font-size: 1.2rem;">${profile.weight}kg</div>
+                        <div class="stat-box__label">Peso</div>
+                    </div>
+                    <div class="stat-box" style="padding: 10px;">
+                        <div class="stat-box__value" style="font-size: 1.2rem;">${levelLabels[profile.level] || profile.level}</div>
+                        <div class="stat-box__label">Nivel</div>
+                    </div>
+                    <div class="stat-box" style="padding: 10px;">
+                        <div class="stat-box__value" style="font-size: 1.2rem;">${profile.days} días</div>
+                        <div class="stat-box__label">Frecuencia</div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    /**
+     * Renderiza el módulo de RUTINA (parámetros de la rutina generada)
+     */
+    function renderRoutineDisplay() {
+        const savedRoutine = localStorage.getItem('rpCoach_currentRoutine');
+        const noRoutineMsg = document.getElementById('no-routine-message');
+        const routineContent = document.getElementById('routine-display-content');
+
+        if (!savedRoutine) {
+            if (noRoutineMsg) noRoutineMsg.classList.remove('hidden');
+            if (routineContent) routineContent.classList.add('hidden');
             return;
         }
 
-        // Obtener status desde AutoregulationEngine
-        const status = AutoregulationEngine.getStatus();
-        const deloadRec = AutoregulationEngine.shouldDeload();
-        const currentMethod = window.MethodologyEngine?.methodology;
-        const methData = window.MethodologyEngine?.getMethodology(currentMethod);
+        const routine = JSON.parse(savedRoutine);
 
-        // Actualizar fatiga
-        const fatigueValue = document.getElementById('fatigue-value');
-        const fatigueBar = document.getElementById('fatigue-bar');
-        if (fatigueValue && fatigueBar) {
-            const fatiguePercent = Math.round(status.fatigue);
-            fatigueValue.textContent = `${fatiguePercent}%`;
-            fatigueBar.style.width = `${fatiguePercent}%`;
+        if (noRoutineMsg) noRoutineMsg.classList.add('hidden');
+        if (routineContent) routineContent.classList.remove('hidden');
 
-            // Color según nivel de fatiga
-            if (fatiguePercent >= 70) {
-                fatigueBar.style.background = '#EF4444'; // Rojo
-            } else if (fatiguePercent >= 40) {
-                fatigueBar.style.background = 'linear-gradient(90deg, #10B981, #F59E0B)';
-            } else {
-                fatigueBar.style.background = '#10B981'; // Verde
-            }
+        // Actualizar badge con metodología
+        const badge = document.getElementById('routine-methodology-badge');
+        if (badge) badge.textContent = routine.methodology || 'Sin rutina';
+
+        // Actualizar parámetros principales
+        document.getElementById('param-sets').textContent = routine.sets || '3-4';
+        document.getElementById('param-reps').textContent = routine.reps || '6-10';
+        document.getElementById('param-rir').textContent = routine.rir || '2';
+        document.getElementById('param-rest').textContent = routine.rest || '150s';
+
+        // Actualizar detalles del ciclo
+        document.getElementById('detail-methodology').textContent = routine.methodology || '-';
+        document.getElementById('detail-protocol').textContent = routine.protocol || '-';
+        document.getElementById('detail-split').textContent = routine.split || '-';
+        document.getElementById('detail-level').textContent = routine.level || '-';
+        document.getElementById('detail-intensifiers').textContent = routine.intensifiers || '-';
+        document.getElementById('detail-tempo').textContent = routine.tempo || '-';
+
+        // === Renderizar Radar de Metodología ===
+        const radarName = document.getElementById('radar-methodology-name');
+        const radarTip = document.getElementById('radar-methodology-tip');
+        if (radarName && radarTip) {
+            const rawMethodology = routine.methodology || '';
+            const keyMethodology = Object.keys(METHODOLOGY_RADAR_TIPS).find(k => rawMethodology.includes(k)) || 'Y3T';
+            radarName.textContent = `🎯 Focus ${rawMethodology}`;
+            radarTip.textContent = METHODOLOGY_RADAR_TIPS[keyMethodology] || 'Sigue las orientaciones de tu protocolo seleccionado.';
         }
 
-        // Actualizar fase del mesociclo
-        const phaseBadge = document.getElementById('mesocycle-phase-badge');
-        if (phaseBadge) {
-            const phaseNames = {
-                accumulation: 'Acumulación',
-                intensification: 'Intensificación',
-                deload: 'Deload'
-            };
-            phaseBadge.textContent = phaseNames[status.phase] || status.phase;
-        }
+        // === Renderizar estadísticas del dashboard (ahora en Feedback) ===
+        renderDashboardStats();
 
-        // Actualizar semana actual
-        const currentWeekEl = document.getElementById('current-week');
-        if (currentWeekEl) {
-            currentWeekEl.textContent = status.week || state.currentWeek || 1;
-        }
+        // === Cargar última sesión (desde historial nuevo o SessionLoggerModule) ===
+        const lastSessionContainer = document.getElementById('last-session-summary');
+        if (lastSessionContainer) {
+            // Intentar primero el historial nuevo de ENTRENAR
+            const savedSession = JSON.parse(localStorage.getItem('rpCoach_last_session') || 'null');
+            if (savedSession) {
+                const date = new Date(savedSession.date);
+                const dateStr = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 
-        // Actualizar volumen semanal
-        const weeklyVolumeEl = document.getElementById('weekly-volume');
-        if (weeklyVolumeEl) {
-            weeklyVolumeEl.textContent = status.weeklyVolume || 0;
-        }
-
-        // Actualizar recuperación
-        const recoveryEl = document.getElementById('recovery-score');
-        if (recoveryEl) {
-            const recovery = Math.round(100 - status.fatigue);
-            recoveryEl.textContent = `${recovery}%`;
-        }
-
-        // Mostrar/ocultar recomendación de deload
-        const deloadContainer = document.getElementById('deload-recommendation');
-        const deloadMessage = document.getElementById('deload-message');
-        if (deloadContainer && deloadRec) {
-            if (deloadRec.recommended) {
-                deloadContainer.classList.remove('hidden');
-                if (deloadMessage) {
-                    deloadMessage.textContent = deloadRec.reason || 'Tu fatiga acumulada indica que deberías considerar una semana de descarga.';
+                // Mostrar SFR en lugar de rating 1-10
+                let sfrStr = '';
+                if (savedSession.sfr) {
+                    sfrStr = `<span style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 2px 6px; border-radius: 4px;">P:${savedSession.sfr.pump} D:${savedSession.sfr.disruption} F:${savedSession.sfr.fatigue}</span>`;
                 }
-            } else {
-                deloadContainer.classList.add('hidden');
-            }
-        }
 
-        // Actualizar info de metodología activa
-        const methName = document.getElementById('dashboard-methodology-name');
-        const methType = document.getElementById('dashboard-methodology-type');
-        if (methName && methData) {
-            methName.textContent = methData.name || currentMethod;
-        }
-        if (methType && methData) {
-            const typeLabel = methData.type || 'VOLUME';
-            const deloadFreq = methData.deload?.frequency || 'Cada 4-6 semanas';
-            methType.textContent = `Tipo: ${typeLabel} | Deload: ${deloadFreq}`;
-        }
-    }
-
-    /**
-     * Renderiza el módulo de autorregulación
-     */
-    function renderAutoregulation() {
-        // Los sliders ya están en el HTML, solo actualizamos valores
-        updateSliderDisplays();
-    }
-
-    /**
-     * Configura listeners para autorregulación
-     */
-    function setupAutoregulationListeners() {
-        const sliders = ['pump', 'soreness', 'fatigue'];
-
-        sliders.forEach(name => {
-            const slider = document.getElementById(`slider-${name}`);
-            const display = document.getElementById(`value-${name}`);
-
-            if (slider && display) {
-                slider.addEventListener('input', (e) => {
-                    const value = parseInt(e.target.value);
-                    display.textContent = value;
-                    updateSliderLabel(name, value);
-                });
-            }
-        });
-
-        const evalBtn = document.getElementById('btn-evaluate');
-        if (evalBtn) {
-            evalBtn.addEventListener('click', evaluateAutoregulation);
-        }
-    }
-
-    /**
-     * Evalúa la autorregulación y muestra resultado
-     */
-    function evaluateAutoregulation() {
-        const pump = parseInt(document.getElementById('slider-pump')?.value) || 3;
-        const soreness = parseInt(document.getElementById('slider-soreness')?.value) || 3;
-        const fatigue = parseInt(document.getElementById('slider-fatigue')?.value) || 3;
-
-        const result = AutoregulationModule.evaluateSession(pump, soreness, fatigue);
-        AutoregulationModule.saveEvaluation(result);
-
-        const resultContainer = document.getElementById('autoregulation-result');
-        if (resultContainer) {
-            resultContainer.innerHTML = `
-                <div class="card card--highlight animate-fadeIn">
-                    <div class="card__header">
-                        <h3 class="card__title">${result.label}</h3>
-                        <div class="status-indicator status-indicator--${result.color}">
-                            ${result.action}
-                        </div>
+                lastSessionContainer.innerHTML = `
+                    <div class="flex-between">
+                        <span style="display:flex; align-items:center; gap:8px;"><strong>${savedSession.dayName}</strong> ${sfrStr}</span>
+                        <span class="text-muted">${dateStr}</span>
                     </div>
-                    <p>${result.description}</p>
-                    ${result.seriesChange !== 0 ? `
-                        <p class="mt-2">
-                            <strong>Series:</strong> ${result.seriesChange > 0 ? '+' : ''}${result.seriesChange} por grupo
+                    <p class="mt-1" style="font-size: 0.85rem;">
+                        ${savedSession.stats?.exerciseCount || 0} ejercicios · ${savedSession.stats?.totalSets || 0} sets ·
+                        ${(savedSession.stats?.totalVolume || 0).toLocaleString()} kg vol.
+                    </p>
+                    <p class="mt-1" style="font-size: 0.8rem; color: var(--text-muted);">
+                        RPE prom: ${savedSession.stats?.avgRPE || '-'} · RIR prom: ${savedSession.stats?.avgRIR || '-'} ·
+                        Semana: ${savedSession.mesocycleName || '-'}
+                    </p>
+                `;
+            } else {
+                // Fallback al SessionLoggerModule
+                const lastSession = SessionLoggerModule?.getLogsFromLastDays?.(7)?.[0];
+                if (lastSession) {
+
+                    let sfrStrFallback = '';
+                    if (lastSession.sfr) {
+                        sfrStrFallback = `<br><span style="color: #10B981; font-weight: 500;">SFR:</span> P:${lastSession.sfr.pump} | D:${lastSession.sfr.disruption} | F:${lastSession.sfr.fatigue}`;
+                    }
+
+                    lastSessionContainer.innerHTML = `
+                        <div class="flex-between">
+                            <span><strong>${lastSession.exercise}</strong></span>
+                            <span class="text-muted">${lastSession.dateFormatted}</span>
+                        </div>
+                        <p class="mt-1" style="font-size: 0.8rem;">
+                            ${lastSession.sets?.length || 0} sets ·
+                            Mejor: ${lastSession.sets?.[0]?.weight || 0}kg x ${lastSession.sets?.[0]?.reps || 0}
+                            ${sfrStrFallback}
                         </p>
-                    ` : ''}
-                    ${result.weightChange !== 0 ? `
-                        <p>
-                            <strong>Peso:</strong> ${result.weightChange > 0 ? '+' : ''}${result.weightChange}%
-                        </p>
-                    ` : ''}
+                    `;
+                }
+            }
+
+            // === Renderizar Evolución Cíclica (Compliance Real en Feedback) ===
+            if (typeof ProgressChartsModule !== 'undefined' && typeof ProgressChartsModule.drawComplianceProgressionChart === 'function') {
+                const level = document.getElementById('progress-experience-selector')?.value || 'intermediate';
+                ProgressChartsModule.drawComplianceProgressionChart('compliance-progression-chart', routine.methodology, level);
+            }
+        }
+    }
+
+    /**
+         * Renderiza el módulo de PROGRESO (próxima sesión)
+         */
+    function renderProgress() {
+
+
+        // === 2. Sincronizar Volumen MEV→MRV dentro de Progreso ===
+        updateProgressVolume();
+
+        // === 3. Sincronizar RIR Dinámico dentro de Progreso ===
+        populateProgressMethodologySelector();
+        updateProgressRIR();
+    }
+
+    /**
+     * Renderiza las estadísticas del dashboard dentro de Progreso
+     */
+    function renderDashboardStats() {
+        const container = document.getElementById('dashboard-stats');
+        if (!container) return;
+
+        try {
+            const stats = SessionLoggerModule?.getStats?.() || { totalSessions: 0, last30Days: 0, totalSets: 0, totalVolume: 0 };
+            const trend = AutoregulationModule?.getRecoveryTrend?.(7);
+
+            container.innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-box__value">${stats.totalSessions || 0}</div>
+                    <div class="stat-box__label">Sesiones Totales</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box__value">${stats.last30Days || 0}</div>
+                    <div class="stat-box__label">Últimos 30 días</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box__value">${stats.totalSets || 0}</div>
+                    <div class="stat-box__label">Series Totales</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box__value">${formatVolume(stats.totalVolume || 0)}</div>
+                    <div class="stat-box__label">Volumen Total (kg)</div>
                 </div>
             `;
+
+            // Tendencia de recuperación
+            const trendContainer = document.getElementById('recovery-trend');
+            if (trendContainer && trend) {
+                const trendClass = trend.trend === 'EXCELLENT' ? 'success' :
+                    trend.trend === 'STABLE' ? 'optimal' :
+                        trend.trend === 'DECLINING' ? 'warning' : '';
+
+                trendContainer.innerHTML = `
+                    <div class="status-indicator status-indicator--${trendClass}">
+                        ${getTrendIcon(trend.trend)} ${trend.message}
+                    </div>
+                `;
+            }
+
+            // Gráficas de progreso
+            if (typeof ProgressChartsModule !== 'undefined') {
+                ProgressChartsModule.renderDashboardCharts('dashboard-charts');
+
+                // Extraer el nombre de la metodología actual para pasarlo a la gráfica
+                let methodName = state.selectedMethodology;
+                const methodSelector = document.getElementById('methodology-selector');
+                if (methodSelector && methodSelector.options[methodSelector.selectedIndex]) {
+                    methodName = methodSelector.options[methodSelector.selectedIndex].text;
+                }
+
+                ProgressChartsModule.drawMesocycleProgressionChart(
+                    'mesocycle-progression-chart',
+                    methodName,
+                    state.experienceLevel || 'intermediate'
+                );
+            }
+
+            // Cronómetro de descanso
+            if (typeof RestTimerModule !== 'undefined') {
+                RestTimerModule.renderTimerUI('timer-section', state.selectedMethodology);
+            }
+        } catch (e) {
+            console.log('Dashboard stats: módulos aún no disponibles', e);
+        }
+    }
+
+
+
+    /**
+     * Sincroniza la sección Volumen MEV→MRV dentro del módulo Progreso
+     */
+    function updateProgressVolume() {
+        const muscleSelector = document.getElementById('progress-muscle-selector');
+        const expSelector = document.getElementById('progress-experience-selector');
+        if (!muscleSelector || typeof VolumeMEVMRVModule === 'undefined') return;
+
+        const selectedMuscle = muscleSelector.value || 'chest';
+        const expLevel = expSelector?.value || state.experienceLevel || 'intermediate';
+
+        const landmarks = VolumeMEVMRVModule.getVolumeLandmarks(
+            selectedMuscle,
+            expLevel,
+            state.selectedMethodology
+        );
+
+        if (!landmarks) return;
+
+        // Actualizar barra de volumen en Progreso
+        const bar = document.getElementById('progress-volume-bar');
+        if (bar) {
+            const total = landmarks.MRV;
+            const mevWidth = (landmarks.MEV / total * 100);
+            const mavWidth = ((landmarks.MAV.high - landmarks.MEV) / total * 100);
+            const mrvWidth = ((landmarks.MRV - landmarks.MAV.high) / total * 100);
+
+            bar.innerHTML = `
+                <div class="volume-bar__zone volume-bar__mev" style="width: ${mevWidth}%; left: 0;">
+                    MEV: ${landmarks.MEV}
+                </div>
+                <div class="volume-bar__zone volume-bar__mav" style="width: ${mavWidth}%; left: ${mevWidth}%;">
+                    MAV: ${landmarks.MAV.low}-${landmarks.MAV.high}
+                </div>
+                <div class="volume-bar__zone volume-bar__mrv" style="width: ${mrvWidth}%; left: ${mevWidth + mavWidth}%;">
+                    MRV: ${landmarks.MRV}
+                </div>
+            `;
+        }
+
+        // Actualizar tabla de volumen en Progreso
+        const table = document.getElementById('progress-volume-table');
+        if (table) {
+            table.innerHTML = `
+                <tr>
+                    <th>Zona</th>
+                    <th>Series/Semana</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td class="text-warning">MEV</td>
+                    <td>${landmarks.MEV}</td>
+                    <td>Mínimo para mantener</td>
+                </tr>
+                <tr>
+                    <td class="text-success">MAV</td>
+                    <td>${landmarks.MAV.low} - ${landmarks.MAV.high}</td>
+                    <td>Rango óptimo</td>
+                </tr>
+                <tr>
+                    <td class="text-danger">MRV</td>
+                    <td>${landmarks.MRV}</td>
+                    <td>Máximo recuperable</td>
+                </tr>
+            `;
+        }
+    }
+
+    /**
+     * Llena el selector de metodologías en la sección Progreso
+     */
+    async function populateProgressMethodologySelector() {
+        const selector = document.getElementById('progress-methodology-selector');
+        if (!selector || selector.dataset.populated) return;
+
+        if (window.MethodologiesSyncModule) {
+            const methodologies = await MethodologiesSyncModule.getMethodologyList();
+            selector.innerHTML = methodologies.map(m =>
+                `<option value="${m.id}" ${m.id === state.selectedMethodology ? 'selected' : ''}>
+                    ${m.name}
+                </option>`
+            ).join('');
+        }
+        selector.dataset.populated = 'true';
+    }
+
+    /**
+     * Actualiza el RIR Dinámico dentro de Progreso
+     */
+    function updateProgressRIR() {
+        const methodSelector = document.getElementById('progress-methodology-selector');
+        const weekSelector = document.getElementById('progress-week-selector');
+        if (!methodSelector || !weekSelector) return;
+
+        const methodology = methodSelector.value || state.selectedMethodology;
+        const week = parseInt(weekSelector.value) || 1;
+
+        if (typeof RIRDynamicModule === 'undefined') return;
+
+        const config = RIRDynamicModule.getRIRForWeek(methodology, week);
+
+        const rirValue = document.getElementById('progress-rir-value');
+        const rirDesc = document.getElementById('progress-rir-description');
+        const methodNote = document.getElementById('progress-methodology-note');
+
+        if (rirValue) {
+            rirValue.textContent = config.rir;
+            rirValue.className = `stat-box__value text-${RIRDynamicModule.getRIRColor(config.rir)}`;
+        }
+        if (rirDesc) rirDesc.textContent = config.description;
+        if (methodNote) methodNote.textContent = config.note;
+
+        // Actualizar indicadores de semana
+        const progression = RIRDynamicModule.getFullProgression(methodology);
+        const container = document.getElementById('progress-week-indicators');
+        if (container && progression) {
+            container.innerHTML = progression.weeks.map(w => `
+                <div class="rir-dot ${w.week === week ? 'active' : ''}">
+                    ${w.rir}
+                </div>
+            `).join('');
+        }
+
+        // 🔄 [NUEVO] Actualizar gráfica de mesociclo si el usuario cambia el selector de metodología en esta misma sección
+        if (typeof ProgressChartsModule !== 'undefined' && typeof ProgressChartsModule.drawMesocycleProgressionChart === 'function') {
+            let methodName = methodology;
+            if (methodSelector && methodSelector.options[methodSelector.selectedIndex]) {
+                methodName = methodSelector.options[methodSelector.selectedIndex].text;
+            }
+            ProgressChartsModule.drawMesocycleProgressionChart('mesocycle-progression-chart', methodName, state.experienceLevel || 'intermediate');
         }
     }
 
@@ -434,56 +734,10 @@ const RPCoachApp = (() => {
         }
     }
 
-    /**
-     * Renderiza el módulo de volumen
-     */
-    function renderVolume() {
-        const muscleSelector = document.getElementById('muscle-selector');
-        if (!muscleSelector) return;
-
-        const selectedMuscle = muscleSelector.value || 'chest';
-        const landmarks = VolumeMEVMRVModule.getVolumeLandmarks(
-            selectedMuscle,
-            state.experienceLevel,
-            state.selectedMethodology
-        );
-
-        if (!landmarks) return;
-
-        // Actualizar barra de volumen
-        updateVolumeBar(landmarks);
-
-        // Actualizar tabla de valores
-        updateVolumeTable(landmarks);
-    }
+    // renderVolume(), updateVolumeBar() eliminados — lógica integrada en updateProgressVolume()
 
     /**
-     * Actualiza la barra visual de volumen
-     */
-    function updateVolumeBar(landmarks) {
-        const bar = document.getElementById('volume-bar');
-        if (!bar) return;
-
-        const total = landmarks.MRV;
-        const mevWidth = (landmarks.MEV / total * 100);
-        const mavWidth = ((landmarks.MAV.high - landmarks.MEV) / total * 100);
-        const mrvWidth = ((landmarks.MRV - landmarks.MAV.high) / total * 100);
-
-        bar.innerHTML = `
-            <div class="volume-bar__zone volume-bar__mev" style="width: ${mevWidth}%; left: 0;">
-                MEV: ${landmarks.MEV}
-            </div>
-            <div class="volume-bar__zone volume-bar__mav" style="width: ${mavWidth}%; left: ${mevWidth}%;">
-                MAV: ${landmarks.MAV.low}-${landmarks.MAV.high}
-            </div>
-            <div class="volume-bar__zone volume-bar__mrv" style="width: ${mrvWidth}%; left: ${mevWidth + mavWidth}%;">
-                MRV: ${landmarks.MRV}
-            </div>
-        `;
-    }
-
-    /**
-     * Actualiza la tabla de volumen
+     * Actualiza la tabla de volumen (legacy - mantener por si algún módulo externo la usa)
      */
     function updateVolumeTable(landmarks) {
         const table = document.getElementById('volume-table');
@@ -528,12 +782,9 @@ const RPCoachApp = (() => {
                     <div class="log-entry">
                         <span class="log-entry__date">${log.dateFormatted}</span>
                         <span class="log-entry__exercise">${log.exercise}</span>
-                        <span class="log-entry__data">
-                            ${log.sets.length} series · 
-                            ${formatVolume(log.totalVolume)} kg
-                        </span>
-                        <span class="log-entry__rating">
-                            ${generateStars(log.overallRating)}
+                        <span class="log-entry__data" style="font-size: 0.8rem;">
+                            ${log.sets.length} series · ${formatVolume(log.totalVolume)} kg<br>
+                            <span style="color: #10B981; font-weight: 500;">SFR:</span> Pump ${log.sfr?.pump || '-'}/5 | Disrup. ${log.sfr?.disruption || '-'}/5 | Fatiga ${log.sfr?.fatigue || '-'}/5
                         </span>
                     </div>
                 `).join('');
@@ -562,7 +813,10 @@ const RPCoachApp = (() => {
         const weight = parseFloat(document.getElementById('log-weight')?.value);
         const reps = parseInt(document.getElementById('log-reps')?.value);
         const rpe = parseFloat(document.getElementById('log-rpe')?.value);
-        const rating = parseInt(document.getElementById('log-rating')?.value);
+
+        const pump = parseInt(document.getElementById('log-sfr-pump')?.value) || 3;
+        const disruption = parseInt(document.getElementById('log-sfr-disruption')?.value) || 3;
+        const fatigue = parseInt(document.getElementById('log-sfr-fatigue')?.value) || 3;
 
         if (!exercise || !weight || !reps) {
             alert('Por favor completa los campos requeridos');
@@ -572,7 +826,7 @@ const RPCoachApp = (() => {
         const log = SessionLoggerModule.saveLog({
             exercise,
             sets: [SessionLoggerModule.createSet(weight, reps, rpe)],
-            overallRating: rating,
+            sfr: { pump, disruption, fatigue },
             methodology: state.selectedMethodology,
             weekNumber: state.currentWeek
         });
@@ -697,23 +951,7 @@ const RPCoachApp = (() => {
         return icons[trend] || '⚪';
     }
 
-    function updateSliderDisplays() {
-        const descriptors = AutoregulationModule.getValueDescriptors();
-        ['pump', 'soreness', 'fatigue'].forEach(name => {
-            const slider = document.getElementById(`slider-${name}`);
-            if (slider) {
-                updateSliderLabel(name, parseInt(slider.value));
-            }
-        });
-    }
-
-    function updateSliderLabel(name, value) {
-        const descriptors = AutoregulationModule.getValueDescriptors();
-        const label = document.getElementById(`label-${name}`);
-        if (label && descriptors[name]) {
-            label.textContent = descriptors[name][value] || '';
-        }
-    }
+    // updateSliderDisplays() y updateSliderLabel() eliminados — autorregulación removida
 
     function showNotification(message) {
         const notification = document.createElement('div');
@@ -732,8 +970,9 @@ const RPCoachApp = (() => {
         init,
         state,
         switchModule,
-        evaluateAutoregulation,
-        calculateOverload
+        calculateOverload,
+        updateProgressVolume,
+        updateProgressRIR
     };
 })();
 

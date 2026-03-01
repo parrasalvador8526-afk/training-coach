@@ -1,8 +1,97 @@
 {
   "version": "1.1",
   "generatedAt": "2025-12-30",
-  "totalProtocols": 41,
+  "totalProtocols": 52,
   "methodologies": {
+    "531": {
+      "id": "531",
+      "name": "5/3/1",
+      "creator": "Jim Wendler",
+      "level": [
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "Fuerza y progresiones a largo plazo lentas y constantes",
+      "sessionDuration": "45-60 min",
+      "frequency": "3-4 días/semana",
+      "volume": "Mínimo/Moderado",
+      "intensity": "Alta a submáxima",
+      "requiresSpotter": true,
+      "protocols": [
+        {
+          "id": "531-W1",
+          "name": "Semana 5's",
+          "description": "Target de 5 reps + repeticiones extra al AMRAP",
+          "reps": "5, 5, 5+",
+          "sets": "3",
+          "rest": "120-180s",
+          "rpe": "8-9",
+          "tut": "-",
+          "load": "80-85% 1RM",
+          "tempo": "2-0-2-0"
+        },
+        {
+          "id": "531-W2",
+          "name": "Semana 3's",
+          "description": "Target de 3 reps + AMRAP",
+          "reps": "3, 3, 3+",
+          "sets": "3",
+          "rest": "120-180s",
+          "rpe": "9",
+          "tut": "-",
+          "load": "80-85% 1RM",
+          "tempo": "2-0-2-0"
+        },
+        {
+          "id": "531-W3",
+          "name": "Semana 5/3/1",
+          "description": "Target de 1 rep pesada + AMRAP",
+          "reps": "5, 3, 1+",
+          "sets": "3",
+          "rest": "180s+",
+          "rpe": "10",
+          "tut": "-",
+          "load": "80-85% 1RM",
+          "tempo": "2-0-2-0"
+        },
+        {
+          "id": "531-BBB",
+          "name": "Boring But Big (Accesorio)",
+          "description": "5 series de 10 reps del compuesto vital",
+          "reps": "10",
+          "sets": "5",
+          "rest": "90s",
+          "rpe": "7-8",
+          "tut": "-",
+          "load": "65-75% 1RM",
+          "tempo": "2-0-2-0"
+        }
+      ],
+      "compatibleWith": [
+        "DUP"
+      ],
+      "incompatibleWith": [
+        "FST7",
+        "GVT"
+      ],
+      "warmup": {
+        "set1": "40% x 5",
+        "set2": "50% x 5",
+        "set3": "60% x 3"
+      },
+      "deload": {
+        "frequency": "Semana 4",
+        "training": "40x5, 50x5, 60x5"
+      },
+      "timerConfig": {
+        "mainLift": {
+          "rest": 180
+        },
+        "accessory": {
+          "rest": 90
+        }
+      }
+    },
     "Y3T": {
       "id": "Y3T",
       "name": "Y3T (Yoda 3 Training)",
@@ -27,7 +116,9 @@
           "sets": "3-4",
           "rest": "120-180s",
           "rpe": "8-9",
-          "tut": "40-60s"
+          "tut": "40-60s",
+          "tempo": "2-0-2-0",
+          "load": "65-75% 1RM"
         },
         {
           "id": "Y3T-W2",
@@ -37,7 +128,9 @@
           "sets": "3-4",
           "rest": "60-90s",
           "rpe": "7-8",
-          "tut": "50-70s"
+          "tut": "50-70s",
+          "tempo": "2-0-2-0",
+          "load": "65-75% 1RM"
         },
         {
           "id": "Y3T-W3",
@@ -47,7 +140,9 @@
           "sets": "3-5",
           "rest": "30-60s",
           "rpe": "9-10",
-          "tut": "60-90s"
+          "tut": "60-90s",
+          "tempo": "2-0-2-0",
+          "load": "30-40% 1RM"
         },
         {
           "id": "Y3T-DL",
@@ -57,7 +152,9 @@
           "sets": "2-3",
           "rest": "90s",
           "rpe": "5-6",
-          "tut": "30-40s"
+          "tut": "30-40s",
+          "tempo": "2-0-2-0",
+          "load": "50-60% 1RM"
         },
         {
           "id": "Y3T-MOD",
@@ -67,7 +164,9 @@
           "sets": "2-3",
           "rest": "90-120s",
           "rpe": "6-7",
-          "tut": "40-50s"
+          "tut": "40-50s",
+          "tempo": "2-0-2-0",
+          "load": "65-75% 1RM"
         },
         {
           "id": "Y3T-INT",
@@ -77,7 +176,9 @@
           "sets": "4-5",
           "rest": "45-90s",
           "rpe": "10",
-          "tut": "70-100s"
+          "tut": "70-100s",
+          "tempo": "2-0-2-0",
+          "load": "65-75% 1RM"
         }
       ],
       "compatibleWith": [
@@ -137,7 +238,9 @@
           "sets": "1",
           "rest": "120-180s",
           "rpe": "10",
-          "tut": "40-60s"
+          "tut": "40-60s",
+          "tempo": "4-1-4-1",
+          "load": "65-75% 1RM"
         },
         {
           "id": "HD-FR",
@@ -147,7 +250,9 @@
           "sets": "1",
           "rest": "180-240s",
           "rpe": "10+",
-          "tut": "+10-15s"
+          "tut": "+10-15s",
+          "tempo": "4-1-4-1",
+          "load": "80-85% 1RM"
         },
         {
           "id": "HD-NEG",
@@ -158,7 +263,8 @@
           "rest": "240s",
           "rpe": "10+",
           "tut": "4-6s por rep",
-          "load": "100-120% 1RM"
+          "load": "100-120% 1RM",
+          "tempo": "4-1-4-1"
         },
         {
           "id": "HD-RP",
@@ -168,7 +274,9 @@
           "sets": "1",
           "rest": "10-15s micro",
           "rpe": "10",
-          "tut": "Varies"
+          "tut": "Varies",
+          "tempo": "4-1-4-1",
+          "load": "65-75% 1RM"
         },
         {
           "id": "HD-PE",
@@ -178,7 +286,9 @@
           "sets": "1+1",
           "rest": "0s entre",
           "rpe": "10",
-          "tut": "60-80s"
+          "tut": "60-80s",
+          "tempo": "4-1-4-1",
+          "load": "65-75% 1RM"
         },
         {
           "id": "HD-SS",
@@ -188,7 +298,9 @@
           "sets": "1",
           "rest": "0s entre",
           "rpe": "10",
-          "tut": "50-70s"
+          "tut": "50-70s",
+          "tempo": "4-1-4-1",
+          "load": "65-75% 1RM"
         }
       ],
       "compatibleWith": [
@@ -247,7 +359,9 @@
           "sets": "1",
           "rest": "120s",
           "rpe": "10",
-          "tut": "40-60s"
+          "tut": "40-60s",
+          "tempo": "2-1-2-1",
+          "load": "65-75% 1RM"
         },
         {
           "id": "BG-FR",
@@ -257,7 +371,9 @@
           "sets": "1",
           "rest": "180s",
           "rpe": "10+",
-          "tut": "+10s"
+          "tut": "+10s",
+          "tempo": "2-1-2-1",
+          "load": "80-85% 1RM"
         },
         {
           "id": "BG-NEG",
@@ -267,7 +383,9 @@
           "sets": "1",
           "rest": "240s",
           "rpe": "10+",
-          "tut": "4-6s por rep"
+          "tut": "4-6s por rep",
+          "tempo": "2-1-2-1",
+          "load": "100-110% 1RM"
         },
         {
           "id": "BG-RP",
@@ -277,7 +395,9 @@
           "sets": "1",
           "rest": "10-15s micro",
           "rpe": "10",
-          "tut": "Varies"
+          "tut": "Varies",
+          "tempo": "2-1-2-1",
+          "load": "65-75% 1RM"
         },
         {
           "id": "BG-PAR",
@@ -287,7 +407,9 @@
           "sets": "1",
           "rest": "0s",
           "rpe": "10+",
-          "tut": "+15-20s"
+          "tut": "+15-20s",
+          "tempo": "2-1-2-1",
+          "load": "80-85% 1RM"
         },
         {
           "id": "BG-DS",
@@ -298,7 +420,9 @@
           "rest": "0s",
           "rpe": "10+",
           "tut": "60-90s",
-          "loadReduction": "20-30% por drop"
+          "loadReduction": "20-30% por drop",
+          "tempo": "2-1-2-1",
+          "load": "65-75% 1RM"
         }
       ],
       "compatibleWith": [
@@ -357,7 +481,7 @@
           "rpe": "8-9",
           "tut": "40-60s",
           "tempo": "4-1-2",
-          "load": "40-50% 1RM"
+          "load": "65-75% 1RM"
         },
         {
           "id": "MTUT-TEE",
@@ -369,7 +493,7 @@
           "rpe": "8-9",
           "tut": "50-70s",
           "tempo": "2-1-4",
-          "load": "45-55% 1RM"
+          "load": "65-75% 1RM"
         },
         {
           "id": "MTUT-VE",
@@ -381,7 +505,7 @@
           "rpe": "8-9",
           "tut": "45-65s",
           "tempo": "3-2-3",
-          "load": "40-50% 1RM"
+          "load": "80-85% 1RM"
         },
         {
           "id": "MTUT-ISO",
@@ -392,7 +516,8 @@
           "rest": "75s",
           "rpe": "9",
           "tut": "50-70s",
-          "tempo": "2-3-2"
+          "tempo": "2-3-2",
+          "load": "80-85% 1RM"
         },
         {
           "id": "MTUT-SH",
@@ -403,7 +528,8 @@
           "rest": "120s post",
           "rpe": "10",
           "tut": "90-120s",
-          "load": "30-40% 1RM"
+          "load": "55-65% 1RM",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "MTUT-SS",
@@ -413,7 +539,9 @@
           "sets": "2-3",
           "rest": "90s post",
           "rpe": "9",
-          "tut": "80-100s"
+          "tut": "80-100s",
+          "tempo": "2-0-2-0",
+          "load": "65-75% 1RM"
         }
       ],
       "compatibleWith": [
@@ -473,7 +601,8 @@
           "rpe": "10 por fallo",
           "tut": "3-5 min total",
           "failures": "6-9",
-          "load": "60-70% 1RM"
+          "load": "65-75% 1RM",
+          "tempo": "3-1-3-0"
         },
         {
           "id": "SST-CT",
@@ -485,7 +614,8 @@
           "rpe": "10",
           "tut": "2-3 min",
           "failures": "3-4",
-          "load": "65-75% 1RM"
+          "load": "65-75% 1RM",
+          "tempo": "3-1-3-0"
         },
         {
           "id": "SST-RT",
@@ -497,7 +627,8 @@
           "rpe": "10",
           "tut": "2 min",
           "failures": "3-4",
-          "load": "75-80% 1RM"
+          "load": "80-85% 1RM",
+          "tempo": "3-1-3-0"
         },
         {
           "id": "SST-TM",
@@ -507,7 +638,9 @@
           "sets": "1",
           "rest": "90s post",
           "rpe": "9-10",
-          "tut": "60-90s"
+          "tut": "60-90s",
+          "tempo": "3-1-3-0",
+          "load": "50-60% 1RM"
         },
         {
           "id": "SST-ISOM",
@@ -517,7 +650,9 @@
           "sets": "1",
           "rest": "120s post",
           "rpe": "10",
-          "tut": "45-60s"
+          "tut": "45-60s",
+          "tempo": "3-1-3-0",
+          "load": "80-85% 1RM"
         },
         {
           "id": "SST-NEG",
@@ -527,7 +662,9 @@
           "sets": "1",
           "rest": "120s post",
           "rpe": "10+",
-          "tut": "50-70s"
+          "tut": "50-70s",
+          "tempo": "3-1-3-0",
+          "load": "65-75% 1RM"
         }
       ],
       "compatibleWith": [
@@ -596,7 +733,8 @@
           "rest": "30-45s",
           "rpe": "8-9",
           "tut": "Varies",
-          "load": "50-60% 1RM"
+          "load": "60-70% 1RM",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "FST7-BN",
@@ -607,7 +745,8 @@
           "rest": "30-45s",
           "rpe": "10",
           "tut": "Varies",
-          "load": "40-50% 1RM"
+          "load": "50-60% 1RM",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "FST7-ST",
@@ -618,7 +757,8 @@
           "rest": "30-45s",
           "rpe": "8-9",
           "tut": "Varies",
-          "load": "50-60% 1RM"
+          "load": "60-70% 1RM",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "FST7-DL",
@@ -628,7 +768,9 @@
           "sets": "7+7",
           "rest": "30-45s",
           "rpe": "9",
-          "tut": "Varies"
+          "tut": "Varies",
+          "tempo": "2-0-2-0",
+          "load": "60-70% 1RM"
         },
         {
           "id": "FST7-HY",
@@ -638,7 +780,9 @@
           "sets": "5-7",
           "rest": "35-45s",
           "rpe": "8-9",
-          "tut": "Varies"
+          "tut": "Varies",
+          "tempo": "2-0-2-0",
+          "load": "60-70% 1RM"
         }
       ],
       "compatibleWith": [
@@ -698,8 +842,9 @@
           "rest": "10-20s micro",
           "rpe": "10",
           "tut": "90-120s",
-          "load": "70-80% 1RM",
-          "sequences": "2-3"
+          "load": "55-65% 1RM",
+          "sequences": "2-3",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "RP-EXT",
@@ -711,7 +856,8 @@
           "rpe": "10+",
           "tut": "120-150s",
           "load": "65-75% 1RM",
-          "sequences": "4"
+          "sequences": "4",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "RP-MYO",
@@ -722,7 +868,8 @@
           "rest": "3-5 respiraciones",
           "rpe": "9-10",
           "tut": "60-90s",
-          "load": "70-80% 1RM"
+          "load": "50-60% 1RM",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "RP-DS",
@@ -733,8 +880,9 @@
           "rest": "10s + 0s (drop)",
           "rpe": "10+",
           "tut": "120-180s",
-          "load": "75%→55% 1RM",
-          "dropPercent": "30%"
+          "load": "65-75% 1RM",
+          "dropPercent": "30%",
+          "tempo": "2-0-2-0"
         },
         {
           "id": "RP-NEG",
@@ -745,7 +893,7 @@
           "rest": "15s micro",
           "rpe": "10",
           "tut": "100-130s",
-          "load": "70-75% 1RM",
+          "load": "65-75% 1RM",
           "tempo": "2-0-4"
         },
         {
@@ -757,8 +905,9 @@
           "rest": "10-15s micro",
           "rpe": "10",
           "tut": "80-100s",
-          "load": "65-70% 1RM",
-          "holdDuration": "3-5s"
+          "load": "65-75% 1RM",
+          "holdDuration": "3-5s",
+          "tempo": "2-0-2-0"
         }
       ],
       "compatibleWith": [
@@ -792,6 +941,206 @@
         "sequences": {
           "count": 3,
           "alertOnComplete": true
+        }
+      }
+    },
+    "DCTraining": {
+      "id": "DC",
+      "name": "DC Training (Doggcrapp)",
+      "creator": "Dante Trudel",
+      "level": [
+        "Avanzado"
+      ],
+      "philosophy": "Bajo volumen, altísima intensidad, Rest-Pause",
+      "sessionDuration": "40-60 min",
+      "frequency": "3 días/semana",
+      "volume": "Muy Bajo",
+      "intensity": "Extrema",
+      "requiresSpotter": true,
+      "protocols": [
+        {
+          "id": "DC-RP",
+          "name": "DC Rest-Pause Set",
+          "description": "Un solo working set extendido con rest-pauses (11-15 total reps)",
+          "reps": "Varies",
+          "sets": "1",
+          "rest": "15s (micro)",
+          "rpe": "10",
+          "tut": "Varies",
+          "load": "65-75% 1RM",
+          "tempo": "2-0-2-0"
+        },
+        {
+          "id": "DC-STR",
+          "name": "Extreme Stretching",
+          "description": "Estiramiento bajo carga pesada (60-90s) post ejercicio",
+          "reps": "1 (Hold)",
+          "sets": "1",
+          "rest": "0",
+          "rpe": "10",
+          "tut": "60-90s",
+          "load": "80-85% 1RM",
+          "tempo": "2-0-2-0"
+        },
+        {
+          "id": "DC-WM",
+          "name": "Widowmaker",
+          "description": "Serie única de 20 repeticiones para piernas al fallo",
+          "reps": "20",
+          "sets": "1",
+          "rest": "180s",
+          "rpe": "10",
+          "tut": "90-120s",
+          "tempo": "2-0-2-0",
+          "load": "55-65% 1RM"
+        }
+      ],
+      "compatibleWith": [
+        "RestPause"
+      ],
+      "incompatibleWith": [
+        "Y3T",
+        "GVT",
+        "FST7"
+      ],
+      "warmup": {
+        "set1": "30% x 10 reps",
+        "set2": "50% x 6 reps",
+        "set3": "70% x 3 reps"
+      },
+      "deload": {
+        "frequency": "Cada 4-6 semanas",
+        "duration": "1 semana (cruising)",
+        "intensity": "50%"
+      },
+      "timerConfig": {
+        "restPause": {
+          "rest": 15
+        },
+        "extremeStretch": {
+          "time": 90
+        }
+      }
+    },
+    "GVT": {
+      "id": "GVT",
+      "name": "GVT (German Volume Training)",
+      "creator": "Charles Poliquin",
+      "level": [
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "10 series de 10 reps, hipertrofia sarcoplasmática brutal",
+      "sessionDuration": "60-70 min",
+      "frequency": "3 días/semana",
+      "volume": "Muy Alto",
+      "intensity": "Moderada",
+      "requiresSpotter": false,
+      "protocols": [
+        {
+          "id": "GVT-10x10",
+          "name": "10x10 Clásico",
+          "description": "10 series de 10 repeticiones con el 60% del 1RM",
+          "reps": "10",
+          "sets": "10",
+          "rest": "60-90s",
+          "rpe": "8-9",
+          "tut": "v",
+          "load": "60-65% 1RM",
+          "tempo": "4-0-2"
+        }
+      ],
+      "compatibleWith": [],
+      "incompatibleWith": [
+        "Heavy Duty",
+        "DCTraining"
+      ],
+      "warmup": {
+        "general": "Movilidad ligera",
+        "set1": "10 reps con la barra sola"
+      },
+      "deload": {
+        "frequency": "No aplicable",
+        "duration": "La rutina total dura 4-6 semanas"
+      },
+      "timerConfig": {
+        "betweenSets": {
+          "rest": 90
+        }
+      }
+    },
+    "DUP": {
+      "id": "DUP",
+      "name": "Periodización Ondulatoria Diaria",
+      "creator": "Dr. Zourdos",
+      "level": [
+        "Intermedio",
+        "Avanzado"
+      ],
+      "philosophy": "Cambio diario del volumen e intensidad en los mismos lifts",
+      "sessionDuration": "60-90 min",
+      "frequency": "3-5 días/semana",
+      "volume": "Moderado-Alto",
+      "intensity": "Variable",
+      "requiresSpotter": true,
+      "protocols": [
+        {
+          "id": "DUP-HYP",
+          "name": "Día Hipertrofia",
+          "description": "Día de volumen alto, intensidad moderada",
+          "reps": "8-12",
+          "sets": "3-4",
+          "rest": "90s",
+          "rpe": "8",
+          "tut": "v",
+          "load": "65-75% 1RM",
+          "tempo": "2-0-2-0"
+        },
+        {
+          "id": "DUP-STR",
+          "name": "Día Fuerza",
+          "description": "Día de volumen bajo, intensidad alta",
+          "reps": "3-5",
+          "sets": "4-5",
+          "rest": "180s",
+          "rpe": "9",
+          "tut": "v",
+          "load": "80-85% 1RM",
+          "tempo": "2-0-2-0"
+        },
+        {
+          "id": "DUP-POW",
+          "name": "Día Potencia",
+          "description": "Mover pesos submáximos lo más rápido posible",
+          "reps": "1-3",
+          "sets": "4-6",
+          "rest": "120s",
+          "rpe": "7",
+          "tut": "v",
+          "load": "80-85% 1RM",
+          "tempo": "Explosivo"
+        }
+      ],
+      "compatibleWith": [
+        "531"
+      ],
+      "incompatibleWith": [
+        "GVT",
+        "Heavy Duty"
+      ],
+      "warmup": {
+        "general": "Series progresivas estándar para el compuesto del día"
+      },
+      "deload": {
+        "frequency": "Cada 4 semanas",
+        "intensity": "Reducida en fuerza"
+      },
+      "timerConfig": {
+        "hypertrophy": {
+          "rest": 90
+        },
+        "strength": {
+          "rest": 180
         }
       }
     }

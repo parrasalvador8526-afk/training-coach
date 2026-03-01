@@ -1117,3 +1117,279 @@ h4 {
     font-size: 0.75rem;
     color: var(--text-secondary);
 }
+
+/* ========== Routine Table (NEXUS Constructor Style) ========== */
+.routine-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.routine-table th,
+.routine-table td {
+    padding: 10px 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.routine-table th {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--rp-primary);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.routine-table td {
+    color: var(--text-primary);
+}
+
+.routine-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+}
+
+.routine-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.routine-table .exercise-primary {
+    color: var(--rp-accent);
+}
+
+.routine-table .tempo-cell {
+    color: var(--rp-warning);
+    font-weight: 500;
+}
+
+.routine-table .rest-cell {
+    color: var(--rp-secondary);
+}
+
+/* Day tabs for routine view */
+.day-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.day-tab {
+    padding: 8px 16px;
+    background: var(--bg-input);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    white-space: nowrap;
+}
+
+.day-tab:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+}
+
+.day-tab.active {
+    background: var(--rp-primary);
+    color: white;
+}
+
+/* Session notes */
+.session-notes-container {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.session-notes-container textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* ========== RP Progressive Parameters Section ========== */
+.rp-progressive-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(124, 77, 255, 0.08);
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(124, 77, 255, 0.2);
+}
+
+.rp-progressive-section h4 {
+    margin-bottom: 15px;
+    color: var(--rp-secondary);
+}
+
+.rp-feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.feedback-slider {
+    background: var(--bg-card-hover);
+    padding: 12px;
+    border-radius: var(--border-radius-sm);
+}
+
+.feedback-slider label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.feedback-slider .feedback-value {
+    display: block;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+}
+
+.rp-recommendation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(0, 191, 165, 0.15);
+    border: 1px solid rgba(0, 191, 165, 0.3);
+    border-radius: var(--border-radius-sm);
+    color: var(--rp-accent);
+}
+
+.rp-recommendation.recommendation--add {
+    background: rgba(0, 230, 118, 0.15);
+    border-color: rgba(0, 230, 118, 0.3);
+    color: var(--rp-success);
+}
+
+.rp-recommendation.recommendation--reduce {
+    background: rgba(255, 179, 0, 0.15);
+    border-color: rgba(255, 179, 0, 0.3);
+    color: var(--rp-warning);
+}
+
+.rp-recommendation.recommendation--deload {
+    background: rgba(255, 82, 82, 0.15);
+    border-color: rgba(255, 82, 82, 0.3);
+    color: var(--rp-danger);
+}
+
+/* ========== Volume Control Section ========== */
+.volume-control-section {
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--bg-card-hover);
+    border-radius: var(--border-radius-md);
+}
+
+.volume-control-section h4 {
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.volume-muscle-row {
+    margin-bottom: 12px;
+}
+
+.volume-muscle-row label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+}
+
+.volume-muscle-row .muscle-name {
+    color: var(--text-primary);
+}
+
+.volume-muscle-row .volume-stats {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.volume-progress {
+    position: relative;
+    height: 18px;
+    background: var(--bg-input);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.volume-zone {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.volume-zone--mev {
+    left: 0;
+    background: rgba(255, 179, 0, 0.3);
+}
+
+.volume-zone--mav {
+    background: rgba(0, 230, 118, 0.4);
+}
+
+.volume-zone--mrv {
+    background: rgba(255, 82, 82, 0.3);
+}
+
+.volume-current-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+    z-index: 5;
+}
+
+/* Routine header info */
+.routine-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.routine-day-info {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .routine-table {
+        font-size: 0.8rem;
+    }
+
+    .routine-table th,
+    .routine-table td {
+        padding: 8px 6px;
+    }
+
+    .day-tabs {
+        flex-wrap: nowrap;
+    }
+}
