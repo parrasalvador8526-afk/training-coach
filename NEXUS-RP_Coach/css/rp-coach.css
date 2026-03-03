@@ -1393,3 +1393,111 @@ h4 {
         flex-wrap: nowrap;
     }
 }
+
+/* ========== Calendario de Asistencia ========== */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-grid__header {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 4px 0;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.calendar-cell {
+    aspect-ratio: 1;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    position: relative;
+    transition: var(--transition-fast);
+    cursor: default;
+    min-height: 40px;
+}
+
+.calendar-cell__day-number {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.calendar-cell__day-name {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+.calendar-cell--completed {
+    background: rgba(0, 230, 118, 0.2);
+    border: 1px solid rgba(0, 230, 118, 0.5);
+    color: #00E676;
+}
+
+.calendar-cell--missed {
+    background: rgba(255, 82, 82, 0.2);
+    border: 1px solid rgba(255, 82, 82, 0.5);
+    color: #FF5252;
+}
+
+.calendar-cell--pending {
+    background: rgba(255, 179, 0, 0.15);
+    border: 1px solid rgba(255, 179, 0, 0.3);
+    color: #FFB300;
+}
+
+.calendar-cell--rest {
+    background: rgba(107, 107, 128, 0.1);
+    border: 1px solid rgba(107, 107, 128, 0.2);
+    color: var(--text-muted);
+}
+
+.calendar-cell--today {
+    box-shadow: 0 0 0 2px var(--rp-primary), var(--shadow-glow);
+}
+
+.calendar-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.calendar-dot--completed { background: #00E676; }
+.calendar-dot--missed    { background: #FF5252; }
+.calendar-dot--pending   { background: #FFB300; }
+.calendar-dot--rest      { background: #6B6B80; }
+
+.calendar-week-progress {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.calendar-week-progress__fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+@media (max-width: 600px) {
+    .calendar-grid {
+        gap: 2px;
+    }
+    .calendar-cell {
+        min-height: 32px;
+        font-size: 0.65rem;
+    }
+}

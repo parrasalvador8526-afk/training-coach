@@ -461,6 +461,11 @@ const RPCoachApp = (() => {
                 const level = document.getElementById('progress-experience-selector')?.value || 'intermediate';
                 ProgressChartsModule.drawComplianceProgressionChart('compliance-progression-chart', routine.methodology, level);
             }
+
+            // === Calendario de Asistencia del Mesociclo ===
+            if (typeof CalendarioTracker !== 'undefined') {
+                CalendarioTracker.initCalendar();
+            }
         }
     }
 

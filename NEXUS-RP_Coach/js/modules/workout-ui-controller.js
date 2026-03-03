@@ -615,6 +615,11 @@ const WorkoutUIController = (() => {
         // Re-save active routine with mesocycle data
         localStorage.setItem('rpCoach_active_routine', JSON.stringify(routine));
 
+        // Crear calendario del mesociclo
+        if (typeof CalendarioTracker !== 'undefined') {
+            CalendarioTracker.createCalendarFromRoutine(routine);
+        }
+
         // Guardar también para la sección RUTINA
         const routineForDisplay = {
             methodology: routine.methodologyName || methodology,
@@ -2287,6 +2292,12 @@ const WorkoutUIController = (() => {
 
         // Also save as last session for Progreso
         localStorage.setItem('rpCoach_last_session', JSON.stringify(sessionRecord));
+
+        // Marcar asistencia en calendario del mesociclo
+        if (typeof CalendarioTracker !== 'undefined') {
+            const sessionDate = new Date().toISOString().split('T')[0];
+            CalendarioTracker.markAttendance(sessionDate, sessionRecord.id, sessionRecord.stats);
+        }
 
         // Update summary UI
         const summaryContainer = document.getElementById('session-summary-container');

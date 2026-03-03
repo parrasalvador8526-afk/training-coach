@@ -405,6 +405,7 @@
                         <td class="text-success">GVT, 5/3/1</td>
                     </tr>
                 </table>
+
             </div>
         </section>
 
@@ -533,19 +534,94 @@
                 </div>
 
                 <div id="routine-display-content" class="hidden">
-                    <!-- ===== 🌟 Radar de Adaptación por Metodología ===== -->
-                    <div id="methodology-radar-widget" class="alert mt-2"
-                        style="background: rgba(139, 92, 246, 0.15); border: 1px solid #8B5CF6; display: flex; align-items: flex-start; gap: 12px;">
-                        <span style="font-size: 1.5rem;">🎯</span>
-                        <div>
-                            <strong style="color: #8B5CF6;" id="radar-methodology-name">Tip de Metodología</strong>
-                            <p id="radar-methodology-tip"
-                                style="margin-top: 4px; font-size: 0.85rem; color: var(--text-color);">Cargando consejo
-                                específico de la metodología...</p>
+
+                    <!-- ===== 1. RESUMEN DE CUMPLIMIENTO DEL MESOCICLO ===== -->
+                    <div id="mesocycle-summary-section" class="card mt-2" style="display: none;">
+                        <h4 style="color: #10B981; margin-bottom: 12px;">
+                            📊 Resumen del Mesociclo
+                        </h4>
+                        <div id="mesocycle-summary-stats" class="dashboard-grid" style="margin-bottom: 12px;">
+                            <!-- Stat-boxes generados dinámicamente -->
+                        </div>
+                        <div id="mesocycle-summary-details">
+                            <!-- Tabla detallada semana por semana -->
+                        </div>
+                        <canvas id="mesocycle-attendance-chart"
+                                style="width: 100%; height: 180px; display: block; margin-top: 12px;"></canvas>
+                    </div>
+
+                    <!-- ===== 2. CALENDARIO DE ASISTENCIA DEL MESOCICLO ===== -->
+                    <div id="attendance-calendar-section" class="card mt-3"
+                         style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <h4 style="color: #8B5CF6; margin: 0;">
+                                📅 Calendario del Mesociclo
+                            </h4>
+                            <span id="calendar-compliance-badge" class="rp-badge" style="background: #3B82F6;">
+                                0% Cumplimiento
+                            </span>
+                        </div>
+                        <div id="calendar-week-tabs" class="day-tabs" style="margin-bottom: 12px;">
+                            <!-- Generado dinámicamente: S1-S5 -->
+                        </div>
+                        <div id="calendar-grid" class="calendar-grid">
+                            <!-- Generado dinámicamente -->
+                        </div>
+                        <div class="calendar-legend" style="display: flex; gap: 16px; margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap;">
+                            <span><span class="calendar-dot calendar-dot--completed"></span> Completado</span>
+                            <span><span class="calendar-dot calendar-dot--missed"></span> No asistió</span>
+                            <span><span class="calendar-dot calendar-dot--pending"></span> Pendiente</span>
+                            <span><span class="calendar-dot calendar-dot--rest"></span> Descanso</span>
                         </div>
                     </div>
 
-                    <!-- ===== 🚦 Semáforo de Readiness ===== -->
+                    <!-- ===== 3. Cumplimiento Real del Mesociclo (Gráfica) ===== -->
+                    <div class="card mt-3">
+                        <h4>📈 Cumplimiento Real del Mesociclo</h4>
+                        <p class="text-muted mt-1 mb-2" style="font-size: 0.85rem; line-height: 1.4;">
+                            <strong>Progreso Actual vs Planificado:</strong> Observa cómo se desarrolla tu volumen y
+                            esfuerzo real sobre las 5 semanas. Avanzará conforme registres cada sesión hasta alcanzar el
+                            objetivo de tu metodología.
+                        </p>
+                        <div
+                            style="position: relative; height: 220px; width: 100%; background: var(--surface-color, #1A1A2E); border-radius: 8px; padding: 10px;">
+                            <canvas id="compliance-progression-chart"
+                                style="width: 100%; height: 100%; display: block;"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ===== 4. Detalles del Ciclo ===== -->
+                    <div class="card mt-3">
+                        <h4>📋 Detalles del Ciclo</h4>
+                        <table class="data-table mt-2">
+                            <tr>
+                                <td><strong>Metodología:</strong></td>
+                                <td id="detail-methodology">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Protocolo:</strong></td>
+                                <td id="detail-protocol">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Split:</strong></td>
+                                <td id="detail-split">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nivel:</strong></td>
+                                <td id="detail-level">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Intensificadores:</strong></td>
+                                <td id="detail-intensifiers">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tempo:</strong></td>
+                                <td id="detail-tempo">-</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- ===== 5. Readiness Pre-Entreno ===== -->
                     <div class="card mt-3"
                         style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1);">
                         <h4
@@ -591,185 +667,23 @@
                         <div id="readiness-feedback" class="mt-2 text-center"
                             style="font-size: 0.85rem; font-weight: 500; min-height: 20px;"></div>
                     </div>
-                    <!-- Parámetros Principales -->
-                    <div class="module-grid mt-2" style="gap: 12px;">
-                        <div class="stat-box" style="padding: 12px;">
-                            <div id="param-sets" class="stat-box__value" style="font-size: 1.5rem;">3-4</div>
-                            <div class="stat-box__label">Sets</div>
+
+                    <!-- ===== Elementos ocultos (requeridos por JS) ===== -->
+                    <div style="display: none;">
+                        <div id="methodology-radar-widget">
+                            <strong id="radar-methodology-name"></strong>
+                            <p id="radar-methodology-tip"></p>
                         </div>
-                        <div class="stat-box" style="padding: 12px;">
-                            <div id="param-reps" class="stat-box__value" style="font-size: 1.5rem;">6-10</div>
-                            <div class="stat-box__label">Reps</div>
-                        </div>
-                        <div class="stat-box" style="padding: 12px;">
-                            <div id="param-rir" class="stat-box__value" style="font-size: 1.5rem;">2</div>
-                            <div class="stat-box__label">RIR</div>
-                        </div>
-                        <div class="stat-box" style="padding: 12px;">
-                            <div id="param-rest" class="stat-box__value" style="font-size: 1.5rem;">150s</div>
-                            <div class="stat-box__label">Descanso</div>
-                        </div>
+                        <div id="param-sets"></div>
+                        <div id="param-reps"></div>
+                        <div id="param-rir"></div>
+                        <div id="param-rest"></div>
+                        <div id="weekly-structure"></div>
+                        <div id="last-session-summary"></div>
+                        <div id="progression-history"></div>
+                        <div id="dashboard-stats"></div>
                     </div>
 
-                    <!-- ===== Separador: Estado del Mesociclo ===== -->
-                    <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 24px 0 16px;">
-                    <h4 style="color: #8B5CF6; margin-bottom: 12px;">📊 Estado del Mesociclo</h4>
-
-                    <!-- Estadísticas Generales -->
-                    <div class="dashboard-grid" id="dashboard-stats" style="margin-bottom: 12px;">
-                        <div class="stat-box">
-                            <div class="stat-box__value">0</div>
-                            <div class="stat-box__label">Sesiones Totales</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box__value">0</div>
-                            <div class="stat-box__label">Últimos 30 días</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box__value">0</div>
-                            <div class="stat-box__label">Series Totales</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box__value">0</div>
-                            <div class="stat-box__label">Volumen Total</div>
-                        </div>
-                    </div>
-
-                    <!-- Radar de Volumen Semanal (MEV vs MAV vs MRV) -->
-                    <div class="card mt-3">
-                        <h4>📊 Radar de Volumen Semanal (MEV/MAV/MRV)</h4>
-                        <div class="module-grid mt-2" style="grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div class="form-group">
-                                <label class="form-label" style="font-size: 0.8rem;">Grupo Muscular</label>
-                                <select id="progress-muscle-selector" class="form-select" style="padding: 6px;"
-                                    onchange="RPCoachApp.updateProgressVolume && RPCoachApp.updateProgressVolume()">
-                                    <option value="chest">💪 Pecho</option>
-                                    <option value="back">🔙 Espalda</option>
-                                    <option value="shoulders">🎯 Hombros</option>
-                                    <option value="quadriceps">🦵 Cuádriceps</option>
-                                    <option value="hamstrings">🦿 Isquiotibiales</option>
-                                    <option value="biceps">💪 Bíceps</option>
-                                    <option value="triceps">💪 Tríceps</option>
-                                    <option value="calves">🦶 Pantorrillas</option>
-                                    <option value="abs">🎯 Abdominales</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" style="font-size: 0.8rem;">Nivel de Experiencia</label>
-                                <select id="progress-experience-selector" class="form-select" style="padding: 6px;"
-                                    onchange="RPCoachApp.updateProgressVolume && RPCoachApp.updateProgressVolume()">
-                                    <option value="beginner">Principiante</option>
-                                    <option value="intermediate" selected>Intermedio</option>
-                                    <option value="advanced">Avanzado</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div id="progress-volume-bar" class="volume-bar mt-3" style="margin-bottom: 5px;">
-                            <div class="volume-bar__zone volume-bar__mev" style="width: 40%; left: 0;">MEV: 8</div>
-                            <div class="volume-bar__zone volume-bar__mav" style="width: 40%; left: 40%;">MAV: 12-16
-                            </div>
-                            <div class="volume-bar__zone volume-bar__mrv" style="width: 20%; left: 80%;">MRV: 20</div>
-                        </div>
-                        <table id="progress-volume-table" class="data-table mt-2">
-                            <tr>
-                                <th>Zona</th>
-                                <th>Series/Semana</th>
-                                <th>Descripción</th>
-                            </tr>
-                            <tr>
-                                <td class="text-warning">MEV</td>
-                                <td>8</td>
-                                <td>Mínimo Efectivo</td>
-                            </tr>
-                            <tr>
-                                <td class="text-success">MAV</td>
-                                <td>12-16</td>
-                                <td>Máximo Adaptativo</td>
-                            </tr>
-                            <tr>
-                                <td class="text-danger">MRV</td>
-                                <td>20</td>
-                                <td>Máximo Recuperable</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- ===== Evolución Gráfica del Mesociclo ===== -->
-                    <div class="card mt-3">
-                        <h4>📈 Cumplimiento Real del Mesociclo</h4>
-                        <p class="text-muted mt-1 mb-2" style="font-size: 0.85rem; line-height: 1.4;">
-                            <strong>Progreso Actual vs Planificado:</strong> Observa cómo se desarrolla tu volumen y
-                            esfuerzo real sobre las 5 semanas. Avanzará conforme registres cada sesión hasta alcanzar el
-                            objetivo de tu metodología.
-                        </p>
-                        <div
-                            style="position: relative; height: 220px; width: 100%; background: var(--surface-color, #1A1A2E); border-radius: 8px; padding: 10px;">
-                            <canvas id="compliance-progression-chart"
-                                style="width: 100%; height: 100%; display: block;"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Detalles del Ciclo -->
-                    <div class="card mt-3">
-                        <h4>📋 Detalles del Ciclo</h4>
-                        <table class="data-table mt-2">
-                            <tr>
-                                <td><strong>Metodología:</strong></td>
-                                <td id="detail-methodology">-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Protocolo:</strong></td>
-                                <td id="detail-protocol">-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Split:</strong></td>
-                                <td id="detail-split">-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Nivel:</strong></td>
-                                <td id="detail-level">-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Intensificadores:</strong></td>
-                                <td id="detail-intensifiers">-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Tempo:</strong></td>
-                                <td id="detail-tempo">-</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- Vista de Ejercicios por Día -->
-                    <div class="card mt-3">
-                        <h4>📅 Estructura Semanal</h4>
-                        <div id="weekly-structure" class="mt-2">
-                            <!-- Se genera dinámicamente -->
-                        </div>
-                    </div>
-
-                    <!-- ===== Separador: Seguimiento de Sesiones ===== -->
-                    <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 24px 0 16px;">
-                    <h4 style="color: #10B981; margin-bottom: 12px;">🧮 Seguimiento de Sesiones</h4>
-
-                    <!-- Resumen de Última Sesión -->
-                    <div class="card"
-                        style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);">
-                        <h4>📋 Última Sesión Registrada</h4>
-                        <div id="last-session-summary" class="mt-2">
-                            <p class="text-muted">No hay sesiones registradas. Completa tu primer entrenamiento.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Tabla de Historial -->
-                    <div class="card mt-3">
-                        <h4>📜 Historial de Progresión</h4>
-                        <div id="progression-history" class="mt-2">
-                            <p class="text-muted">Registra sesiones para ver tu historial de progresión.</p>
-                        </div>
-                    </div>
                 </div>
         </section>
 
@@ -1380,6 +1294,9 @@
     <script src="js/modules/nexus-bridge.js"></script>
     <script src="js/modules/smart-alerts.js"></script>
     <script src="js/modules/workout-ui-controller.js"></script>
+
+    <!-- Calendario de Asistencia -->
+    <script src="js/modules/calendario-tracker.js"></script>
 
     <!-- Calculadora de RM -->
     <script src="js/modules/rm-calculator.js"></script>
