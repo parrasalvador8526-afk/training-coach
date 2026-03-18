@@ -1723,7 +1723,90 @@ const WorkoutUIController = (() => {
         // Configurar calculadora de progresión
         setupProgressionCalculator();
 
+        // #1 - Resaltado de fila siguiente + #6 - Temporizador de descanso automático
+        setupRowHighlightAndRestTimer(routine);
+
         console.log('✅ Estado de rutina con parámetros RP mostrado');
+    }
+
+    /**
+     * #1 - Resalta la siguiente fila al completar weight+reps
+     * #6 - Inicia un temporizador de descanso automático al llenar reps
+     */
+    function setupRowHighlightAndRestTimer(routine) {
+        const table = document.getElementById('workout-log-table');
+        if (!table) return;
+
+        // Estado del temporizador global (solo uno activo a la vez)
+        let restTimerInterval = null;
+        let restTimerEl = null;
+
+        function startRestTimer(seconds) {
+            // Eliminar cualquier timer anterior
+            if (restTimerInterval) { clearInterval(restTimerInterval); }
+            if (restTimerEl) restTimerEl.remove();
+
+            // Crear el widget del timer
+            restTimerEl = document.createElement('div');
+            restTimerEl.id = 'rest-timer-widget';
+            restTimerEl.style.cssText = 'position:fixed; bottom:80px; right:16px; z-index:9999; background:linear-gradient(135deg,#1E1E2E,#2A2A3E); border:1px solid rgba(16,185,129,0.6); border-radius:12px; padding:10px 16px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.5); min-width:110px; transition:all 0.3s;';
+            restTimerEl.innerHTML = `
+                <div style="font-size:0.65rem; color:#10B981; font-weight:700; letter-spacing:1px; margin-bottom:2px;">⏱ DESCANSO</div>
+                <div id="rest-timer-countdown" style="font-size:1.6rem; font-weight:900; color:#fff; font-variant-numeric:tabular-nums;">--:--</div>
+                <button onclick="this.closest('#rest-timer-widget').remove(); clearInterval(window._rpRestInterval);" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:0.65rem; cursor:pointer; margin-top:4px;">✕ omitir</button>`;
+            document.body.appendChild(restTimerEl);
+
+            let remaining = seconds;
+            window._rpRestInterval = restTimerInterval = setInterval(() => {
+                remaining--;
+                const mins = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                const el = document.getElementById('rest-timer-countdown');
+                if (el) el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                if (remaining <= 10 && remaining > 0 && el) el.style.color = '#EF4444';
+                if (remaining <= 0) {
+                    clearInterval(restTimerInterval);
+                    if (typeof showNotification === 'function') showNotification('✅ ¡Descanso terminado! Listo para el siguiente ejercicio', 'success');
+                    setTimeout(() => { if (restTimerEl) restTimerEl.remove(); }, 2000);
+                }
+            }, 1000);
+        }
+
+        const rows = table.querySelectorAll('tbody tr[data-exercise-idx]');
+        rows.forEach((row, idx) => {
+            const repsInput = row.querySelector('.log-reps');
+            const weightInput = row.querySelector('.log-weight');
+
+            function onInputFilled() {
+                const w = parseFloat(weightInput?.value) || 0;
+                const r = parseInt(repsInput?.value) || 0;
+                if (w <= 0 || r <= 0) return;
+
+                // #1 - Resaltar la fila actual como completada (verde sutil)
+                row.style.transition = 'background 0.4s ease';
+                row.style.background = 'rgba(16,185,129,0.08)';
+                row.style.borderLeft = '3px solid #10B981';
+
+                // #1 - Quitar highlight de todas y resaltar la siguiente fila
+                const nextRow = rows[idx + 1];
+                if (nextRow) {
+                    rows.forEach(r2 => { if (r2 !== row) r2.style.outline = ''; });
+                    nextRow.style.outline = '2px solid rgba(224,64,251,0.6)';
+                    nextRow.style.borderRadius = '4px';
+                    nextRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+                // #6 - Lanzar temporizador de descanso basado en la rutina
+                const dayIdx = routine.currentDayIndex || 0;
+                const exercise = routine.days?.[dayIdx]?.exercises?.[idx];
+                const restSecs = exercise?.restSeconds || routine.parameters?.rest || 90;
+                if (restSecs > 0) startRestTimer(restSecs);
+            }
+
+            repsInput?.addEventListener('change', onInputFilled);
+            repsInput?.addEventListener('blur', onInputFilled);
+        });
     }
 
     /**

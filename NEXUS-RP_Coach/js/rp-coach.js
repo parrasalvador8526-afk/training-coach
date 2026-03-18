@@ -1788,3 +1788,88 @@ const RPCoachApp = (() => {
 document.addEventListener('DOMContentLoaded', () => {
     RPCoachApp.init();
 });
+
+// ─── #7: Exportar Resumen del Mesociclo a PDF ───────────────────────────────
+window.exportMesocyclePDF = function () {
+    try {
+        const profile = JSON.parse(localStorage.getItem('rpCoach_profile') || '{}');
+        const sessions = JSON.parse(localStorage.getItem('rpCoach_session_history') || '[]');
+        const routine = JSON.parse(localStorage.getItem('rpCoach_active_routine') || '{}');
+        const prs = JSON.parse(localStorage.getItem('rpCoach_strength_prs') || '[]');
+        const bodyComp = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '[]');
+
+        const name = profile.name || 'Atleta';
+        const methodology = routine.methodology || '—';
+        const totalSessions = sessions.length;
+        const today = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Calcular progresión por ejercicio
+        const exerciseMap = {};
+        sessions.forEach(s => {
+            (s.exercises || []).forEach(ex => {
+                if (!exerciseMap[ex.name]) exerciseMap[ex.name] = [];
+                exerciseMap[ex.name].push({ weight: ex.weight, reps: ex.reps, date: s.date });
+            });
+        });
+
+        let exerciseTableRows = '';
+        Object.keys(exerciseMap).sort().forEach(exName => {
+            const records = exerciseMap[exName];
+            const first = records[0];
+            const last = records[records.length - 1];
+            const gain = last.weight && first.weight ? ((last.weight - first.weight) / first.weight * 100).toFixed(1) : '—';
+            const trendColor = parseFloat(gain) >= 0 ? '#10B981' : '#EF4444';
+            exerciseTableRows += `<tr>
+                <td>${exName}</td>
+                <td>${first?.weight || '—'}kg × ${first?.reps || '—'}</td>
+                <td>${last?.weight || '—'}kg × ${last?.reps || '—'}</td>
+                <td style="color:${trendColor};font-weight:700;">${parseFloat(gain) >= 0 ? '+' : ''}${gain}%</td>
+            </tr>`;
+        });
+
+        let prRows = prs.slice(-10).map(p => `<tr><td>${p.exercise}</td><td>${p.weight}kg × ${p.reps}</td><td>${p.date}</td></tr>`).join('');
+        let compRows = bodyComp.slice(-3).map(b => `<tr><td>${b.date || '—'}</td><td>${b.bodyFat ? b.bodyFat.toFixed(1) + '%' : '—'}</td><td>${b.muscleMass ? b.muscleMass + 'kg' : '—'}</td></tr>`).join('');
+
+        const html = `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Resumen de Mesociclo — ${name}</title>
+<style>
+  body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:24px;color:#111;}
+  h1{color:#6B21A8;border-bottom:2px solid #6B21A8;padding-bottom:8px;}
+  h2{color:#1D4ED8;margin-top:24px;font-size:1rem;}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:0.85rem;}
+  th{background:#6B21A8;color:#fff;padding:6px 10px;text-align:left;}
+  td{padding:5px 10px;border-bottom:1px solid #ddd;}
+  tr:nth-child(even){background:#f5f5ff;}
+  .badge{display:inline-block;background:#E9D5FF;color:#6B21A8;padding:2px 8px;border-radius:4px;font-weight:700;font-size:0.8rem;}
+  .footer{margin-top:32px;font-size:0.75rem;color:#666;text-align:center;}
+</style>
+</head>
+<body>
+<h1>🏋️ Resumen del Mesociclo — ${name}</h1>
+<p><strong>Metodología:</strong> <span class="badge">${methodology}</span> &nbsp; <strong>Sesiones completadas:</strong> ${totalSessions} &nbsp; <strong>Generado:</strong> ${today}</p>
+
+<h2>📈 Progresión por Ejercicio</h2>
+<table><thead><tr><th>Ejercicio</th><th>Inicio</th><th>Final</th><th>Cambio</th></tr></thead>
+<tbody>${exerciseTableRows || '<tr><td colspan="4">Sin datos de sesiones registrados.</td></tr>'}</tbody></table>
+
+<h2>🏆 Últimos PRs Registrados</h2>
+<table><thead><tr><th>Ejercicio</th><th>Marca</th><th>Fecha</th></tr></thead>
+<tbody>${prRows || '<tr><td colspan="3">Sin PRs registrados.</td></tr>'}</tbody></table>
+
+<h2>📐 Composición Corporal</h2>
+<table><thead><tr><th>Fecha</th><th>% Grasa</th><th>Masa Muscular</th></tr></thead>
+<tbody>${compRows || '<tr><td colspan="3">Sin mediciones registradas.</td></tr>'}</tbody></table>
+
+<div class="footer">Generado por NEXUS-RP Coach v1.0 — Entrenamiento Inteligente Autorregulado</div>
+</body></html>`;
+
+        const win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+        setTimeout(() => win.print(), 500);
+
+    } catch (e) {
+        alert('Error al generar el PDF: ' + e.message);
+    }
+};

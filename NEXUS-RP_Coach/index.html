@@ -833,9 +833,16 @@
         <!-- ========== MÓDULO: RUTINA (PARÁMETROS) ========== -->
         <section id="module-routine-display" class="module-section hidden">
             <div class="card card--highlight">
-                <div class="card__header">
-                    <h3 class="card__title">📊 Feedback de Rutina</h3>
-                    <span class="rp-badge" id="routine-methodology-badge">Sin rutina</span>
+                <div class="card__header"
+                    style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <h3 class="card__title" style="margin:0;">📊 Feedback de Rutina</h3>
+                        <span class="rp-badge" id="routine-methodology-badge">Sin rutina</span>
+                    </div>
+                    <button id="btn-export-pdf" onclick="window.exportMesocyclePDF()" class="btn btn--secondary"
+                        style="background:rgba(245,158,11,0.15); border:1px solid #F59E0B; color:#F59E0B; font-size:0.78rem; padding:0.4rem 0.9rem; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                        📄 Exportar PDF
+                    </button>
                 </div>
 
                 <div id="no-routine-message" class="alert alert--warning">
@@ -1107,6 +1114,35 @@
 
             <!-- Siluetas: imágenes PNG recortadas de referencias 3D en /img/ -->
             <!-- sil-m-front.png, sil-m-side.png, sil-m-back.png, sil-f-front.png, sil-f-side.png, sil-f-back.png -->
+
+            <!-- ═══ CTA: Subir Foto de Progreso ═══ -->
+            <div class="card mt-2"
+                style="border:1px solid rgba(16,185,129,0.3); background:linear-gradient(135deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02)); text-align:center; padding:20px 16px;">
+                <div style="font-size:2.5rem; margin-bottom:8px;">📸</div>
+                <h4 style="color:#10B981; margin:0 0 6px; font-size:1rem;">¡Captura tu Progreso!</h4>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin:0 0 14px;">Las fotos son la evidencia más
+                    honesta de tu transformación. Sube tus fotos de Inicio, Medio y Final del mesociclo.</p>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                    <label for="photo-slot-start-front" style="cursor:pointer;">
+                        <div onclick="document.querySelector('#photo-slot-start-front .photo-input').click()"
+                            class="btn btn--primary"
+                            style="background:linear-gradient(135deg,#10B981,#059669); border:none; font-size:0.85rem; padding:10px 20px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
+                            📷 Subir Foto de Inicio
+                        </div>
+                    </label>
+                    <div onclick="document.querySelector('#photo-slot-mid-front .photo-input').click()"
+                        class="btn btn--secondary"
+                        style="font-size:0.85rem; padding:10px 20px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; border-color:#10B981; color:#10B981;">
+                        📷 Subir Foto de Medio
+                    </div>
+                    <div onclick="document.querySelector('#photo-slot-end-front .photo-input').click()"
+                        class="btn btn--secondary"
+                        style="font-size:0.85rem; padding:10px 20px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; border-color:#10B981; color:#10B981;">
+                        📷 Subir Foto Final
+                    </div>
+                </div>
+            </div>
+
             <!-- ═══ Fotos del Mesociclo: 3 fases × 3 poses ═══ -->
             <!-- FASE 1: INICIO (S1) -->
             <div class="card mt-2"
