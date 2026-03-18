@@ -227,6 +227,9 @@ const WorkoutUIController = (() => {
             methodologySelect: document.getElementById('routine-methodology'),
             protocolSelect: document.getElementById('routine-protocol'),
             splitSelect: document.getElementById('routine-split'),
+            prioritySelect: document.getElementById('routine-priority'),
+            splitPreview: document.getElementById('routine-split-preview'),
+            splitPreviewContent: document.getElementById('split-preview-content'),
             mesocycleWeekSelect: document.getElementById('routine-mesocycle-week'),
             levelSelect: document.getElementById('routine-level'),
             protocolDescription: document.getElementById('protocol-description'),
@@ -292,6 +295,14 @@ const WorkoutUIController = (() => {
         // Selector de Protocolo en modal
         if (elements.protocolSelect) {
             elements.protocolSelect.addEventListener('change', handleModalProtocolChange);
+        }
+
+        // Selectores de Split y Prioridad
+        if (elements.splitSelect) {
+            elements.splitSelect.addEventListener('change', updateSplitPreview);
+        }
+        if (elements.prioritySelect) {
+            elements.prioritySelect.addEventListener('change', updateSplitPreview);
         }
 
         // Selector de Semana del Mesociclo
@@ -367,6 +378,9 @@ const WorkoutUIController = (() => {
 
             // Actualizar protocolos según metodología seleccionada
             handleModalMethodologyChange();
+
+            // Actualizar preview del split
+            updateSplitPreview();
         }
     }
 
@@ -538,6 +552,427 @@ const WorkoutUIController = (() => {
             elements.summaryText.textContent =
                 `Sets: ${protocol.sets} | Reps: ${protocol.reps} | RIR: ${mesocycleRIR} (${mesocycleName}) | Descanso: ${restValue}s`;
         }
+
+        // Actualizar estimaciones de tiempo visuales si la pestaña de split preview está abierta
+        updateSplitPreview(false);
+    }
+
+    /**
+     * Verifica si un músculo es prioritario (copiado de routine-generator para la UI)
+     */
+    function isMusclePriorityPreview(muscle, priority) {
+        if (priority === 'upper' && ['Pecho', 'Espalda', 'Hombros'].includes(muscle)) return true;
+        if (priority === 'lower' && ['Cuádriceps', 'Isquiotibiales', 'Glúteos', 'Pantorrillas'].includes(muscle)) return true;
+        if (priority === 'arms' && ['Bíceps', 'Tríceps'].includes(muscle)) return true;
+        if (priority === 'chest_back' && ['Pecho', 'Espalda'].includes(muscle)) return true;
+        if (priority === 'shoulders' && ['Hombros'].includes(muscle)) return true;
+        if (priority === muscle) return true; // Para cuando se selecciona un músculo individual
+        return false;
+    }
+
+    /**
+     * Calcula el tiempo estimado (en minutos) para un día de entrenamiento
+     */
+    function calculateEstimatedWorkoutTime(muscles, priority, level, methodologyId) {
+        if (!muscles || muscles.length === 0) return 0;
+
+        let totalTime = 10; // 10 mins warmup + cooldown base
+
+        const volumeConfig = window.RoutineGenerator?.VOLUME_BY_LEVEL?.[level] || { exercisesPerMuscle: 2, setsMultiplier: 1.0 };
+        const methData = window.MethodologyEngine?.getMethodology(methodologyId);
+        let protoRest = 90;
+        let protoSets = 3;
+
+        if (methData && methData.protocols && methData.protocols.length > 0) {
+            const p = methData.protocols[0];
+            protoRest = Array.isArray(p.rest) ? p.rest[0] : (p.rest || 90);
+            protoSets = parseInt(String(p.sets).replace(/[^0-9]/g, '')) || 3;
+            if (methData.type === 'HIT') protoSets = 1;
+        }
+
+        muscles.forEach(muscle => {
+            const isPriority = isMusclePriorityPreview(muscle, priority);
+            const numExercises = volumeConfig.exercisesPerMuscle + (isPriority ? 1 : 0);
+
+            for (let i = 0; i < numExercises; i++) {
+                let sets = protoSets;
+                if (sets < 7) {
+                    sets = Math.round(sets * volumeConfig.setsMultiplier);
+                    if (isPriority) sets += 1;
+                }
+
+                const timePerSet = 45; // 45 sec per set execution
+                const setDuration = (timePerSet + protoRest) / 60; // in minutes
+                totalTime += (sets * setDuration);
+                totalTime += 2; // 2 extra mins setup per exercise
+            }
+        });
+
+        return Math.round(totalTime);
+    }
+
+    /**
+     * Actualiza la vista previa del split seleccionado en el wizard
+     * Permite arrastrar, soltar y duplicar (doble clic)
+     */
+    function updateSplitPreview(resetCustomSplit = false) {
+        if (!elements.splitPreview || !elements.splitPreviewContent || !window.RoutineGenerator || !window.RoutineGenerator.SPLITS) return;
+
+        const splitId = elements.splitSelect?.value || 'push_pull_legs';
+        const priority = elements.prioritySelect?.value || 'none';
+        const level = elements.levelSelect?.value || 'intermediate';
+        const methodology = elements.methodologySelect?.value || 'Y3T';
+
+        // Inicializar o resetear el split interactivo local
+        if (resetCustomSplit || !window.wizardCurrentSplit || window.wizardCurrentSplit.splitId !== splitId) {
+            const baseSplit = window.RoutineGenerator.SPLITS[splitId];
+            if (!baseSplit) {
+                elements.splitPreview.classList.add('hidden');
+                return;
+            }
+            // Deep copy of the split to allow modification
+            window.wizardCurrentSplit = {
+                splitId: splitId,
+                days: JSON.parse(JSON.stringify(baseSplit))
+            };
+        }
+
+        elements.splitPreview.classList.remove('hidden');
+
+        let html = '';
+
+        let weeklyMuscleSets = {};
+
+        // Calcular frecuencias de cada músculo en la semana para dosificación
+        const muscleFrequencies = {};
+        window.wizardCurrentSplit.days.forEach(day => {
+            const uniqueMuscles = [...new Set(day.muscles)];
+            uniqueMuscles.forEach(m => {
+                muscleFrequencies[m] = (muscleFrequencies[m] || 0) + 1;
+            });
+        });
+
+        // Configuración para el volumen
+        const volumeConfig = window.RoutineGenerator?.VOLUME_BY_LEVEL?.[level] || { exercisesPerMuscle: 2, setsMultiplier: 1.0 };
+        const methData = window.MethodologyEngine?.getMethodology(methodology);
+        let protoSets = 3;
+        if (methData && methData.protocols && methData.protocols.length > 0) {
+            const p = methData.protocols[0];
+            protoSets = parseInt(String(p.sets).replace(/[^0-9]/g, '')) || 3;
+            if (methData.type === 'HIT') protoSets = 1;
+        }
+
+        window.wizardCurrentSplit.days.forEach((day, idx) => {
+            const dayId = `day-${idx}`;
+
+            // Reordenar músculos para priorizados primero
+            const sortedMuscles = [...day.muscles].sort((a, b) => {
+                const isAPriority = isMusclePriorityPreview(a, priority);
+                const isBPriority = isMusclePriorityPreview(b, priority);
+                if (isAPriority && !isBPriority) return -1;
+                if (!isAPriority && isBPriority) return 1;
+                return 0;
+            });
+
+            // Calculamos sets visualmente para advertencias
+            const uniqueMusclesEnDia = [...new Set(day.muscles)];
+            uniqueMusclesEnDia.forEach(muscle => {
+                const isPriority = isMusclePriorityPreview(muscle, priority);
+                const freq = muscleFrequencies[muscle] || 1;
+
+                let baseEx = volumeConfig.exercisesPerMuscle;
+                if (freq === 1) baseEx += 1;
+                else if (freq >= 3) baseEx = Math.max(1, baseEx - 1);
+
+                const numExercises = baseEx + (isPriority ? 1 : 0);
+
+                let sessionSets = 0;
+                for (let i = 0; i < numExercises; i++) {
+                    let sets = protoSets;
+                    if (sets < 7) {
+                        sets = Math.round(sets * volumeConfig.setsMultiplier);
+                        if (isPriority) sets += 1;
+                    }
+                    sessionSets += sets;
+                }
+
+                // Si el usuario duplicó el músculo en el mismo día, cuenta el volumen multiplicado
+                const muscleCountInDay = day.muscles.filter(m => m === muscle).length;
+                weeklyMuscleSets[muscle] = (weeklyMuscleSets[muscle] || 0) + (sessionSets * muscleCountInDay);
+            });
+
+            const estimatedTime = calculateEstimatedWorkoutTime(day.muscles, priority, level, methodology);
+
+            const musclesHtml = sortedMuscles.map((m, muscleIndex) => {
+                const isPriority = isMusclePriorityPreview(m, priority);
+                const badgeStyle = isPriority
+                    ? 'background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.5); font-weight: bold; cursor: grab;'
+                    : 'background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid rgba(255, 255, 255, 0.1); cursor: grab;';
+
+                return `<span
+                            class="draggable-muscle"
+                            draggable="true"
+                            data-day="${idx}"
+                            data-muscle="${m}"
+                            data-index="${muscleIndex}"
+                            title="Haz clic para duplicar"
+                            style="display: inline-flex; align-items: center; padding: 2px 4px 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-right: 4px; margin-bottom: 4px; user-select: none; ${badgeStyle}"
+                        >
+                            <span class="muscle-name-click" style="cursor: pointer; padding-right: 4px;">${m}${isPriority ? ' 🌟' : ''}</span>
+                            <span class="delete-muscle-btn" style="cursor: pointer; color: #EF4444; padding: 0 4px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px; hover:background:rgba(239, 68, 68, 0.2);" title="Eliminar">&times;</span>
+                        </span>`;
+            }).join('');
+
+            html += `
+                <div class="split-day-dropzone draggable-day-row" draggable="true" data-day="${idx}" style="background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 6px; border-left: 3px solid var(--accent-color); min-height: 45px; transition: background 0.2s; position: relative;">
+                    <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="display: flex; align-items: center; gap: 6px;">
+                            <span class="day-drag-handle" style="cursor: grab; color: var(--text-muted); opacity: 0.5; padding: 0 4px;" title="Arrastra para reordenar el día">☰</span>
+                            Día ${idx + 1}: ${day.name}
+                        </span>
+                        <span style="font-size: 0.65rem; color: #10B981; font-weight: normal;">⏱️ ~${Math.max(0, estimatedTime - 5)}-${estimatedTime + 5} min</span>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; min-height: 20px;">
+                        ${musclesHtml.length > 0 ? musclesHtml : '<span style="font-size: 0.7rem; color: var(--text-muted); font-style: italic;">Descanso / Vacío (Arrastra aquí)</span>'}
+                    </div>
+                </div>
+            `;
+        });
+
+        // Comprobación de sobrecarga
+        const overloadedMuscles = [];
+        for (const [muscle, sets] of Object.entries(weeklyMuscleSets)) {
+            // Umbral de 22-24 series como límite alto de recuperación
+            if (sets >= 24) {
+                overloadedMuscles.push(`${muscle} (${sets} series)`);
+            }
+        }
+
+        if (overloadedMuscles.length > 0) {
+            html += `
+                <div style="margin-top: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; padding: 10px; font-size: 0.8rem; color: #fca5a5;">
+                    <strong><span style="font-size: 1rem;">⚠️</span> Límite de Sobrecarga Detectado (MRV Excedido)</strong><br>
+                    <p style="margin: 4px 0 0 0; color: #f87171;">
+                        Has programado un volumen semanal extremadamente alto para: <strong>${overloadedMuscles.join(', ')}</strong>.
+                    </p>
+                    <p style="margin: 4px 0 0 0; font-size: 0.75rem;">
+                        A menos que esto sea un bloque estratégico (Overreaching), excederás tu capacidad de recuperación natural. Te recomendamos <strong>reducir la frecuencia (eliminar el músculo de algún día)</strong> o quitar la prioridad antes de generar la rutina.
+                    </p>
+                </div>
+             `;
+        }
+
+        elements.splitPreviewContent.innerHTML = html;
+
+        attachDragAndDropListeners();
+    }
+
+    function attachDragAndDropListeners() {
+        const previewEl = elements.splitPreviewContent;
+        if (!previewEl) return;
+
+        let draggedMuscle = null;
+        let sourceDayIndex = null;
+        let sourceMuscleIndex = null;
+
+        const draggables = previewEl.querySelectorAll('.draggable-muscle');
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.stopPropagation(); // Avoid triggering day drag
+                draggedMuscle = e.target.dataset.muscle;
+                sourceDayIndex = parseInt(e.target.dataset.day);
+                // NOTA: No usamos sourceMuscleIndex porque la UI está ordenada pero el array original no.
+                e.target.style.opacity = '0.5';
+            });
+
+            draggable.addEventListener('dragend', (e) => {
+                e.stopPropagation();
+                e.target.style.opacity = '1';
+                draggedMuscle = null;
+                sourceDayIndex = null;
+            });
+
+            draggable.addEventListener('dblclick', (e) => {
+                e.stopPropagation(); // Evitar que burbujee al contenedor del día
+            });
+
+            // Clics específicos dentro del badge (duplicar vs eliminar)
+            draggable.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const dIdx = parseInt(draggable.dataset.day);
+                const muscle = draggable.dataset.muscle;
+
+                // Si hizo clic en el botón de eliminar (la "X")
+                if (e.target.closest('.delete-muscle-btn')) {
+                    if (window.wizardCurrentSplit && window.wizardCurrentSplit.days[dIdx]) {
+                        // Buscar el índice real en el array original (que no está ordenado como la UI)
+                        const realIndex = window.wizardCurrentSplit.days[dIdx].muscles.indexOf(muscle);
+                        if (realIndex > -1) {
+                            window.wizardCurrentSplit.days[dIdx].muscles.splice(realIndex, 1);
+                            updateSplitPreview(false);
+                            if (navigator.vibrate) navigator.vibrate(50);
+                        }
+                    }
+                }
+                // Si hizo clic en el nombre del músculo (duplicar)
+                else if (e.target.closest('.muscle-name-click')) {
+                    if (window.wizardCurrentSplit && window.wizardCurrentSplit.days[dIdx]) {
+                        window.wizardCurrentSplit.days[dIdx].muscles.push(muscle);
+                        updateSplitPreview(false);
+                    }
+                }
+            });
+
+            // Eliminar músculo con clic derecho (opción secundaria)
+            draggable.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                const dIdx = parseInt(draggable.dataset.day);
+                const muscle = draggable.dataset.muscle;
+
+                if (window.wizardCurrentSplit && window.wizardCurrentSplit.days[dIdx]) {
+                    const realIndex = window.wizardCurrentSplit.days[dIdx].muscles.indexOf(muscle);
+                    if (realIndex > -1) {
+                        window.wizardCurrentSplit.days[dIdx].muscles.splice(realIndex, 1);
+                        updateSplitPreview(false);
+                    }
+                }
+            });
+
+            // Touch events for mobile
+            draggable.addEventListener('touchstart', (e) => {
+                draggedMuscle = draggable.dataset.muscle;
+                sourceDayIndex = parseInt(draggable.dataset.day);
+            }, { passive: true });
+        });
+
+        const dayRows = previewEl.querySelectorAll('.draggable-day-row');
+        dayRows.forEach(row => {
+            const handle = row.querySelector('.day-drag-handle');
+            if (handle) {
+                handle.addEventListener('mousedown', () => row.setAttribute('draggable', 'true'));
+                handle.addEventListener('mouseup', () => row.setAttribute('draggable', 'false'));
+                handle.addEventListener('mouseleave', () => row.setAttribute('draggable', 'false'));
+
+                // Touch support for handle
+                handle.addEventListener('touchstart', () => row.setAttribute('draggable', 'true'), { passive: true });
+                handle.addEventListener('touchend', () => row.setAttribute('draggable', 'false'), { passive: true });
+            }
+
+            row.addEventListener('dragstart', (e) => {
+                // If we are dragging a muscle, don't drag the day
+                if (draggedMuscle) {
+                    e.preventDefault();
+                    return;
+                }
+                draggedDayIndex = parseInt(row.dataset.day);
+                e.dataTransfer.effectAllowed = 'move';
+                row.style.opacity = '0.5';
+            });
+
+            row.addEventListener('dragend', (e) => {
+                row.style.opacity = '1';
+                draggedDayIndex = null;
+                row.setAttribute('draggable', 'false'); // Reset draggable state
+            });
+        });
+
+        const dropzones = previewEl.querySelectorAll('.split-day-dropzone');
+        dropzones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                // Si estamos arrastrando un músculo
+                if (draggedMuscle) {
+                    zone.style.background = 'rgba(16, 185, 129, 0.15)';
+                }
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.style.background = 'rgba(0, 0, 0, 0.2)';
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.style.background = 'rgba(0, 0, 0, 0.2)';
+
+                const targetDayIndex = parseInt(zone.dataset.day);
+
+                // Si estamos arrastrando un músculo
+                if (draggedMuscle && sourceDayIndex !== null && typeof targetDayIndex === 'number') {
+                    // Buscar el índice real en curso
+                    const realIndex = window.wizardCurrentSplit.days[sourceDayIndex].muscles.indexOf(draggedMuscle);
+
+                    if (realIndex > -1) {
+                        // Remover de origen
+                        window.wizardCurrentSplit.days[sourceDayIndex].muscles.splice(realIndex, 1);
+                        // Añadir a destino
+                        window.wizardCurrentSplit.days[targetDayIndex].muscles.push(draggedMuscle);
+
+                        updateSplitPreview(false);
+                    }
+                }
+                // Si estamos arrastrando un día entero
+                else if (draggedDayIndex !== null && typeof targetDayIndex === 'number' && draggedDayIndex !== targetDayIndex) {
+                    const days = window.wizardCurrentSplit.days;
+                    // Mover el día draggedDayIndex a targetDayIndex
+                    const draggedDay = days.splice(draggedDayIndex, 1)[0];
+                    days.splice(targetDayIndex, 0, draggedDay);
+
+                    updateSplitPreview(false);
+                }
+            });
+
+            // Doble clic para agregar músculo
+            zone.addEventListener('dblclick', (e) => {
+                // If a selector already exists in this zone, don't create another
+                if (zone.querySelector('.muscle-selector')) return;
+
+                const dayIndex = parseInt(zone.dataset.day);
+
+                // Extraer todos los músculos disponibles de EXERCISE_DATABASE
+                const allMuscles = window.RoutineGenerator && window.RoutineGenerator.EXERCISE_DATABASE
+                    ? Object.keys(window.RoutineGenerator.EXERCISE_DATABASE)
+                    : ['Pecho', 'Espalda', 'Hombros', 'Bíceps', 'Tríceps', 'Cuádriceps', 'Isquiotibiales', 'Glúteos', 'Pantorrillas', 'Abdomen', 'Antebrazos'];
+
+                if (!allMuscles.length) return;
+
+                const selectHtml = `
+                    <select class="muscle-selector form-select" style="display: inline-block; width: auto; font-size: 0.75rem; padding: 2px 20px 2px 8px; margin-right: 4px; margin-bottom: 4px; background-color: var(--surface-light); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 12px; min-width: 120px;">
+                        <option value="">+ Seleccionar...</option>
+                        ${allMuscles.sort().map(m => `<option value="${m}">${m}</option>`).join('')}
+                    </select>
+                `;
+
+                const tempDiv = document.createElement('div');
+                tempDiv.style.display = 'inline-block';
+                tempDiv.innerHTML = selectHtml;
+
+                const select = tempDiv.querySelector('select');
+
+                select.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    if (val && window.wizardCurrentSplit && window.wizardCurrentSplit.days[dayIndex]) {
+                        window.wizardCurrentSplit.days[dayIndex].muscles.push(val);
+                        updateSplitPreview(false);
+                    } else {
+                        updateSplitPreview(false); // Redraws and removes the selector
+                    }
+                });
+
+                select.addEventListener('blur', () => {
+                    if (!select.value) updateSplitPreview(false);
+                });
+
+                const flexContainer = zone.querySelector('div[style*="flex-wrap: wrap"]');
+                if (flexContainer) {
+                    // Remove the placeholder text if it's there
+                    const placeholder = flexContainer.querySelector('span[style*="italic"]');
+                    if (placeholder) placeholder.remove();
+
+                    flexContainer.appendChild(tempDiv);
+                    select.focus();
+                }
+            });
+        });
     }
 
     /**
@@ -547,21 +982,24 @@ const WorkoutUIController = (() => {
         const methodology = elements.methodologySelect?.value || 'Y3T';
         const split = elements.splitSelect?.value || 'push_pull_legs';
         const level = elements.levelSelect?.value || 'intermediate';
+        const priority = elements.prioritySelect?.value || 'none';
         const mesocycleWeek = parseInt(elements.mesocycleWeekSelect?.value) || 1;
 
         // Obtener el protocolo de ESTA semana según la distribución del mesociclo
         const weekProtocolId = getProtocolForWeek(methodology, level, mesocycleWeek);
         const protocol = weekProtocolId || elements.protocolSelect?.value;
 
-        console.log('🔨 Generando rutina:', { methodology, protocol, split, level, mesocycleWeek });
+        console.log('🔨 Generando rutina:', { methodology, protocol, split, level, priority, mesocycleWeek });
 
         // Generar rutina con el protocolo de esta semana
         let routine;
+        const customSplitDays = (window.wizardCurrentSplit && window.wizardCurrentSplit.splitId === split) ? window.wizardCurrentSplit.days : null;
+
         if (window.RoutineGenerator && typeof RoutineGenerator.createRoutine === 'function') {
-            routine = RoutineGenerator.createRoutine({ methodology, protocol, split, level });
+            routine = RoutineGenerator.createRoutine({ methodology, protocol, split, level, priority, customSplitDays });
         }
         if (!routine) {
-            routine = createBasicRoutine(methodology, protocol, split, level);
+            routine = createBasicRoutine(methodology, protocol, split, level, priority, customSplitDays);
         }
 
         console.log('✅ Rutina generada:', routine);
@@ -653,6 +1091,14 @@ const WorkoutUIController = (() => {
         showReadyToTrainState(routine);
 
         // Ya no cambiamos a feedback automáticamente, nos quedamos en Entrenamiento
+
+        // Refrescar ambas vistas (Rutina y Feedback) de forma síncrona con los nuevos datos
+        if (typeof window.RPCoachApp !== 'undefined' && typeof window.RPCoachApp.renderRoutineDisplay === 'function') {
+            window.RPCoachApp.renderRoutineDisplay();
+        }
+        if (typeof window.ProgressAnalytics !== 'undefined' && typeof window.ProgressAnalytics.renderAll === 'function') {
+            window.ProgressAnalytics.renderAll();
+        }
 
         // Notificar éxito
         showNotification('¡Rutina generada con éxito!', 'success');
@@ -1105,146 +1551,14 @@ const WorkoutUIController = (() => {
                 ${renderRoutineTable(routine, currentDayIndex)}
             </div>
 
-            <!-- Reglas de Control Progresivo RP -->
-            <div class="rp-rules-card mt-2" style="background: linear-gradient(135deg, rgba(224, 64, 251, 0.1), rgba(156, 39, 176, 0.05)); border: 1px solid rgba(224, 64, 251, 0.3); border-radius: 12px; padding: 16px;">
-                <h5 style="margin: 0 0 12px 0; color: #E040FB; font-size: 0.95rem;">📐 Reglas de Control Progresivo RP</h5>
-                <div style="display: grid; gap: 8px; font-size: 0.8rem;">
-                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
-                        <span style="color: #10B981; font-weight: bold; font-size: 1.1rem; min-width: 24px;">↑</span>
-                        <div>
-                            <span style="color: var(--text-primary); font-weight: 500;">RIR ≤ 1 + reps ≥ 8</span>
-                            <span style="color: #10B981; margin-left: 8px;">→ +2.5kg peso</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
-                        <span style="color: #10B981; font-weight: bold; font-size: 1.1rem; min-width: 24px;">↑↑</span>
-                        <div>
-                            <span style="color: var(--text-primary); font-weight: 500;">RIR ≥ 3 (muy fácil)</span>
-                            <span style="color: #10B981; margin-left: 8px;">→ +5kg peso</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(245, 158, 11, 0.1); border-radius: 6px;">
-                        <span style="color: #F59E0B; font-weight: bold; font-size: 1.1rem; min-width: 24px;">→</span>
-                        <div>
-                            <span style="color: var(--text-primary); font-weight: 500;">RIR = 2 (óptimo)</span>
-                            <span style="color: #F59E0B; margin-left: 8px;">→ Mantener peso, +1-2 reps</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(239, 68, 68, 0.1); border-radius: 6px;">
-                        <span style="color: #EF4444; font-weight: bold; font-size: 1.1rem; min-width: 24px;">↓</span>
-                        <div>
-                            <span style="color: var(--text-primary); font-weight: 500;">Reps < 6</span>
-                            <span style="color: #EF4444; margin-left: 8px;">→ -10% peso</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Volume Control Section MEV → MRV (renderizado en sección Progresión) -->
+            <div id="volume-control-data" style="display: none;" data-muscles="${(routine.days?.[currentDayIndex]?.muscles || []).join(',')}" data-level="${routine.level || 'intermediate'}" data-methodology="${routine.methodology}"></div>
 
-            <!-- RP Progressive Parameters Section -->
-            <div class="rp-progressive-section">
-                <h4>📊 Parámetros Progresivos RP</h4>
-                
-                <div class="rp-feedback-grid">
-                    <div class="feedback-slider">
-                        <label>💪 Pump (Bombeo)</label>
-                        <input type="range" class="range-slider" id="daily-pump" min="1" max="5" value="3">
-                        <span class="feedback-value" id="pump-value">3 - Normal</span>
-                    </div>
-                    <div class="feedback-slider">
-                        <label>🦵 Soreness (Agujetas)</label>
-                        <input type="range" class="range-slider" id="daily-soreness" min="1" max="5" value="3">
-                        <span class="feedback-value" id="soreness-value">3 - Normal</span>
-                    </div>
-                    <div class="feedback-slider">
-                        <label>😓 Fatigue (Fatiga)</label>
-                        <input type="range" class="range-slider" id="daily-fatigue" min="1" max="5" value="3">
-                        <span class="feedback-value" id="fatigue-value">3 - Normal</span>
-                    </div>
-                </div>
-                
-                <div id="rp-recommendation" class="rp-recommendation">
-                    <span>🎯</span>
-                    <span id="recommendation-text">Parámetros óptimos - Continúa con el volumen actual</span>
-                </div>
-            </div>
-
-            <!-- Volume Control Section MEV → MRV -->
-            <div class="volume-control-section">
-                <h4>📈 Control de Volumen (MEV → MRV)</h4>
-                <div id="volume-bars-container">
-                    ${renderVolumeControl(routine.days?.[currentDayIndex]?.muscles || [], routine.level || 'intermediate', routine.methodology)}
-                </div>
-            </div>
-
-            <!-- Registro de Rendimiento - Workout Log Table -->
-            <div class="card mt-3" style="border: 1px solid rgba(224, 64, 251, 0.3);">
-                <div class="card__header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
-                    <h4 style="margin: 0;">📝 Registro de Rendimiento</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Anota tu rendimiento real para calcular la progresión</p>
-                </div>
-                
-                <div class="workout-log-table-container" style="overflow-x: auto;">
-                    <table class="routine-table workout-log-table" id="workout-log-table">
-                        <thead>
-                            <tr>
-                                <th>Ejercicio</th>
-                                <th style="width: 80px;">Peso (kg)</th>
-                                <th style="width: 70px;">Reps</th>
-                                <th style="width: 70px;">RPE</th>
-                                <th style="width: 60px;">RIR</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${routine.days?.[currentDayIndex]?.exercises?.map((ex, idx) => `
-                                <tr data-exercise-idx="${idx}">
-                                    <td>
-                                        ${ex.isPrimary ? '⭐ ' : ''}${ex.name}
-                                        <small style="display: block; color: var(--text-muted); font-size: 0.7rem;">
-                                            Objetivo: ${ex.targetReps || routine.parameters?.reps || '8-12'} reps
-                                        </small>
-                                    </td>
-                                    <td><input type="number" class="log-input log-weight" placeholder="-" step="0.5" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                                    <td><input type="number" class="log-input log-reps" placeholder="-" min="1" max="50" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                                    <td><input type="number" class="log-input log-rpe" placeholder="-" min="5" max="10" step="0.5" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                                    <td><input type="number" class="log-input log-rir" placeholder="-" min="-2" max="5" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                                </tr>
-                            `).join('') || '<tr><td colspan="5">No hay ejercicios</td></tr>'}
-                        </tbody>
-                    </table>
-                </div>
-
-                <button id="btn-calculate-progression" class="btn btn--primary btn--block mt-2" 
-                    style="background: linear-gradient(135deg, #10B981, #059669);">
-                    📊 CALCULAR PRÓXIMA SESIÓN
-                </button>
-
-                <!-- Parámetros Progresivos RP -->
-                <div class="rp-params-reference mt-2" style="background: rgba(224, 64, 251, 0.08); border-radius: 8px; padding: 12px; border: 1px solid rgba(224, 64, 251, 0.2);">
-                    <h5 style="margin: 0 0 8px 0; font-size: 0.85rem; color: #E040FB;">📐 Parámetros Progresivos RP</h5>
-                    <div style="display: grid; gap: 6px; font-size: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #10B981; font-weight: bold; min-width: 20px;">↑</span>
-                            <span style="color: var(--text-muted);">RIR ≤ 1 y reps ≥ 8 →</span>
-                            <span style="color: #10B981;">+2.5kg peso</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #10B981; font-weight: bold; min-width: 20px;">↑↑</span>
-                            <span style="color: var(--text-muted);">RIR ≥ 3 (muy fácil) →</span>
-                            <span style="color: #10B981;">+5kg peso</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #F59E0B; font-weight: bold; min-width: 20px;">→</span>
-                            <span style="color: var(--text-muted);">RIR 2 (óptimo) →</span>
-                            <span style="color: #F59E0B;">Mantener, +1-2 reps</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #EF4444; font-weight: bold; min-width: 20px;">↓</span>
-                            <span style="color: var(--text-muted);">Reps < 6 →</span>
-                            <span style="color: #EF4444;">-10% peso</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Botón de cálculo de progresión y guardar -->
+            <button id="btn-finish-session" class="btn btn--primary btn--block mt-3"
+                style="font-size: 1.1rem; padding: 1rem; background: linear-gradient(135deg, #10B981, #059669);">
+                📊 CALCULAR Y GUARDAR SESIÓN
+            </button>
 
             <!-- Tabla de Próxima Sesión (aparece después del cálculo) -->
             <div id="next-session-container" class="card mt-3 hidden" style="border: 1px solid rgba(16, 185, 129, 0.5); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));">
@@ -1321,19 +1635,43 @@ const WorkoutUIController = (() => {
                 </p>
             </div>
 
-            <button id="btn-generate-progressive" class="btn btn--primary btn--block mt-3"
-                style="font-size: 1.1rem; padding: 1rem; background: linear-gradient(135deg, #E040FB, #9C27B0);">
-                📈 ACTUALIZAR Y GENERAR RUTINA PROGRESIVA
-            </button>
-            <button id="btn-save-session" class="btn btn--primary btn--block mt-1"
-                style="font-size: 1rem; padding: 0.8rem; background: linear-gradient(135deg, #8B5CF6, #6D28D9);">
-                💾 GUARDAR SESIÓN EN HISTORIAL
+            <!-- Botón de transición a Feedback (MOVIDO AL FINAL) -->
+            <button id="btn-go-feedback" class="btn btn--block mt-3"
+                style="background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: white; padding: 0.8rem; font-size: 0.95rem; border: none; border-radius: 8px; cursor: pointer;">
+                📋 Ver Feedback y Análisis del Mesociclo
             </button>
         `;
 
         // Añadir listeners a los nuevos botones
-        document.getElementById('btn-generate-progressive')?.addEventListener('click', generateProgressiveRoutine);
-        document.getElementById('btn-save-session')?.addEventListener('click', () => saveSessionToHistory(routine));
+        document.getElementById('btn-finish-session')?.addEventListener('click', () => {
+            // Check if there's any data first to avoid double warnings
+            const logTable = document.getElementById('workout-log-table');
+            if (logTable) {
+                const rows = logTable.querySelectorAll('tbody tr[data-exercise-idx]');
+                let hasData = false;
+                rows.forEach(row => {
+                    const weight = parseFloat(row.querySelector('.log-weight')?.value) || 0;
+                    if (weight > 0) hasData = true;
+                });
+
+                if (!hasData) {
+                    if (typeof showNotification === 'function') showNotification('Registra al menos un ejercicio antes de calcular y guardar', 'warning');
+                    return;
+                }
+
+                generateProgressiveRoutine();
+                saveSessionToHistory(routine);
+
+                // Disable button so they don't click it twice accidentally
+                const btn = document.getElementById('btn-finish-session');
+                if (btn) {
+                    btn.innerHTML = '✅ SESIÓN GUARDADA CON ÉXITO';
+                    btn.style.background = 'linear-gradient(135deg, #059669, #047857)';
+                    btn.style.pointerEvents = 'none';
+                }
+            }
+        });
+
         document.getElementById('btn-new-routine')?.addEventListener('click', () => {
             localStorage.removeItem('rpCoach_active_routine');
             localStorage.removeItem('rpCoach_currentRoutine');
@@ -1352,6 +1690,12 @@ const WorkoutUIController = (() => {
             if (typeof showNotification === 'function') {
                 showNotification('Configuración reiniciada. Puedes escoger otra metodología.', 'info');
             }
+        });
+
+        // Botón: ir a Feedback
+        document.getElementById('btn-go-feedback')?.addEventListener('click', () => {
+            const feedbackTab = document.querySelector('[data-module="routine-display"]');
+            if (feedbackTab) feedbackTab.click();
         });
 
         // Añadir listeners a los tabs de días
@@ -1392,9 +1736,22 @@ const WorkoutUIController = (() => {
         }
 
         const params = routine.parameters || {};
+        const inputStyle = 'width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;';
+
+        // Check if any exercise has warmup data
+        const hasWarmupData = day.exercises.some(ex => {
+            const d = getLastWeight(ex.name);
+            return d && d.weight > 0;
+        });
 
         return `
-            <table class="routine-table">
+            ${hasWarmupData ? `<div style="display:flex; justify-content:flex-end; margin-bottom:6px;">
+                <button id="btn-toggle-warmup" onclick="document.querySelectorAll('.warmup-row').forEach(r=>r.classList.toggle('hidden')); this.dataset.visible = this.dataset.visible === '1' ? '0' : '1'; this.innerHTML = this.dataset.visible === '1' ? '🔥 Ocultar calentamiento' : '🔥 Ver calentamiento';" data-visible="1" style="font-size:0.75rem; padding:4px 10px; border-radius:8px; border:1px solid rgba(16,185,129,0.3); background:rgba(16,185,129,0.1); color:#10B981; cursor:pointer;">
+                    🔥 Ocultar calentamiento
+                </button>
+            </div>` : ''}
+            <div style="overflow-x: auto;">
+            <table class="routine-table" id="workout-log-table">
                 <thead>
                     <tr>
                         <th>Ejercicio</th>
@@ -1404,29 +1761,47 @@ const WorkoutUIController = (() => {
                         <th>Tempo</th>
                         <th>RIR</th>
                         <th>Rest</th>
-                        <th>Último Peso</th>
+                        <th>Últ. Peso</th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 70px;">Peso (kg)</th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 60px;">Reps</th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 60px;">RPE</th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 55px;">RIR</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${day.exercises.map(ex => {
+                    ${buildWarmupBlock(day.exercises, params)}
+                    ${day.exercises.map((ex, idx) => {
             const exIntensifiers = ex.intensifiers || params.intensifiers || [];
             const intensifierRows = exIntensifiers.map(intName => {
                 const info = INTENSIFIER_INSTRUCTIONS[intName];
                 if (!info) return '';
+
+                // Calcular pesos automáticos para intensificadores con porcentajes
+                let weightCalcHtml = '';
+                const lastData = getLastWeight(ex.name);
+                const lastWt = lastData ? lastData.weight : null;
+                // También intentar desde localStorage directo
+                const fallbackWt = lastWt || parseFloat(localStorage.getItem('rpCoach_lastWeight_' + ex.name)) || 0;
+
+                if (fallbackWt > 0) {
+                    weightCalcHtml = buildIntensifierWeightCalc(intName, fallbackWt);
+                }
+
                 return `<tr class="intensifier-row">
-                                <td colspan="8" style="padding: 2px 12px 6px 28px; border-top: none; background: rgba(139, 92, 246, 0.08);">
+                                <td colspan="12" style="padding: 2px 12px 6px 28px; border-top: none; background: rgba(139, 92, 246, 0.08);">
                                     <span style="font-size: 0.75rem; color: #A78BFA; font-weight: 600;">${info.icon} ${intName}</span>
                                     <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 6px;">${info.instruction}</span>
+                                    ${weightCalcHtml}
                                 </td>
                             </tr>`;
             }).join('');
             const extraRepsRow = ex.extraReps ? `<tr class="intensifier-row">
-                            <td colspan="8" style="padding: 2px 12px 6px 28px; border-top: none; background: rgba(245, 158, 11, 0.08);">
+                            <td colspan="12" style="padding: 2px 12px 6px 28px; border-top: none; background: rgba(245, 158, 11, 0.08);">
                                 <span style="font-size: 0.75rem; color: #F59E0B; font-weight: 600;">⚡ ${ex.extraReps}</span>
                             </td>
                         </tr>` : '';
             return `
-                        <tr>
+                        <tr data-exercise-idx="${idx}">
                             <td class="${ex.isPrimary ? 'exercise-primary' : ''}">
                                 ${ex.isPrimary ? '⭐ ' : ''}${ex.name}
                                 <small style="display: block; color: var(--text-muted); font-size: 0.75rem;">
@@ -1440,12 +1815,17 @@ const WorkoutUIController = (() => {
                             <td>${ex.targetRIR !== undefined ? ex.targetRIR : (params.rir !== undefined ? params.rir : 2)}</td>
                             <td class="rest-cell">${formatRestComplete(ex.restSeconds || params.rest, params.microRest)}</td>
                             <td class="weight-cell">${formatLastWeight(ex.name)}</td>
+                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-weight" placeholder="-" step="0.5" style="${inputStyle}"></td>
+                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-reps" placeholder="-" min="1" max="50" style="${inputStyle}"></td>
+                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-rpe" placeholder="-" min="5" max="10" step="0.5" style="${inputStyle}"></td>
+                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-rir" placeholder="-" min="-2" max="5" style="${inputStyle}"></td>
                         </tr>
                         ${intensifierRows}
                         ${extraRepsRow}`;
         }).join('')}
                 </tbody>
             </table>
+            </div>
         `;
     }
 
@@ -1476,29 +1856,10 @@ const WorkoutUIController = (() => {
             `;
         }
 
-        // Actualizar tabla de rutina
+        // Actualizar tabla unificada (rutina + registro)
         const tableContainer = document.getElementById('routine-table-container');
         if (tableContainer) {
             tableContainer.innerHTML = renderRoutineTable(routine, dayIndex);
-        }
-
-        // Actualizar tabla de registro de rendimiento (workout log)
-        const workoutLogTbody = document.querySelector('#workout-log-table tbody');
-        if (workoutLogTbody && day.exercises) {
-            workoutLogTbody.innerHTML = day.exercises.map((ex, idx) => `
-                <tr data-exercise-idx="${idx}">
-                    <td>
-                        ${ex.isPrimary ? '⭐ ' : ''}${ex.name}
-                        <small style="display: block; color: var(--text-muted); font-size: 0.7rem;">
-                            Objetivo: ${ex.targetReps || routine.parameters?.reps || '8-12'} reps
-                        </small>
-                    </td>
-                    <td><input type="number" class="log-input log-weight" placeholder="-" step="0.5" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                    <td><input type="number" class="log-input log-reps" placeholder="-" min="1" max="50" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                    <td><input type="number" class="log-input log-rpe" placeholder="-" min="5" max="10" step="0.5" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                    <td><input type="number" class="log-input log-rir" placeholder="-" min="-2" max="5" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 6px; color: white; text-align: center;"></td>
-                </tr>
-            `).join('');
         }
 
         // Actualizar control de volumen
@@ -1746,18 +2107,195 @@ const WorkoutUIController = (() => {
      * @param {string} exerciseName - Nombre del ejercicio
      * @param {number} weight - Peso en kg
      */
-    function saveExerciseWeight(exerciseName, weight) {
+    function saveExerciseWeight(exerciseName, weight, reps) {
         try {
             const weights = JSON.parse(localStorage.getItem('rpCoach_exercise_weights') || '{}');
             weights[exerciseName] = {
                 weight: weight,
+                reps: reps || null,
                 date: Date.now()
             };
             localStorage.setItem('rpCoach_exercise_weights', JSON.stringify(weights));
-            console.log(`💾 Peso guardado: ${exerciseName} = ${weight}kg`);
+            console.log(`💾 Peso guardado: ${exerciseName} = ${weight}kg × ${reps || '?'} reps`);
         } catch (e) {
             console.error('Error guardando peso:', e);
         }
+    }
+
+    /**
+     * Calcula pesos automáticos para intensificadores con porcentajes
+     * Ej: Drop Sets → muestra peso al -20% y -30%
+     *     Negativas → muestra peso al +5%, +10%, +20%
+     */
+    function buildIntensifierWeightCalc(intName, baseWeight) {
+        const round = (v) => Math.round(v / 2.5) * 2.5; // Redondear a 2.5kg
+        const pill = (label, kg, color) =>
+            `<span style="display:inline-block; margin:2px 3px; padding:1px 7px; border-radius:10px; font-size:0.68rem; font-weight:700; background:rgba(${color},0.15); color:rgb(${color}); white-space:nowrap;">${label} ${kg}kg</span>`;
+
+        const green = '16,185,129';
+        const yellow = '245,158,11';
+        const red = '239,68,68';
+        const purple = '139,92,246';
+
+        switch (intName) {
+            case 'Drop Sets':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Base: ${baseWeight}kg →</span>
+                    ${pill('Drop 1 (−20%)', round(baseWeight * 0.80), yellow)}
+                    ${pill('Drop 2 (−30%)', round(baseWeight * 0.70), red)}
+                    ${pill('Drop 3 (−40%)', round(baseWeight * 0.60), red)}
+                </div>`;
+
+            case 'Negativas':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Base: ${baseWeight}kg →</span>
+                    ${pill('+5%', round(baseWeight * 1.05), yellow)}
+                    ${pill('+10%', round(baseWeight * 1.10), yellow)}
+                    ${pill('+20%', round(baseWeight * 1.20), red)}
+                </div>`;
+
+            case 'Negativas Lentas':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Mismo peso: ${baseWeight}kg (tempo 4-6s excéntrico)</span>
+                </div>`;
+
+            case 'Parciales':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Base: ${baseWeight}kg →</span>
+                    ${pill('Parciales (+10%)', round(baseWeight * 1.10), yellow)}
+                </div>`;
+
+            case 'Pre-Agotamiento':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Aislamiento: </span>
+                    ${pill('60-70%', round(baseWeight * 0.65), purple)}
+                    <span style="font-size:0.65rem; color:var(--text-muted);"> → Compuesto: </span>
+                    ${pill('80%', round(baseWeight * 0.80), green)}
+                </div>`;
+
+            case 'Myo-Reps':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Activación: </span>
+                    ${pill('Base', baseWeight, green)}
+                    <span style="font-size:0.65rem; color:var(--text-muted);"> → Mini-series al mismo peso</span>
+                </div>`;
+
+            case 'Pump Extremo':
+            case 'Alto Volumen':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Peso reducido: </span>
+                    ${pill('60-70%', round(baseWeight * 0.65), yellow)}
+                </div>`;
+
+            case 'Fuerza':
+                return `<div style="margin-top:3px;">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">Carga pesada: </span>
+                    ${pill('85-90%', round(baseWeight * 0.875), red)}
+                    ${pill('90-95%', round(baseWeight * 0.925), red)}
+                </div>`;
+
+            default:
+                return ''; // Sin cálculo para otros intensificadores
+        }
+    }
+
+    /**
+     * Calcula e1RM usando Epley: peso × (1 + reps/30)
+     */
+    function calcE1RM(weight, reps) {
+        if (!weight || weight <= 0) return 0;
+        if (!reps || reps <= 1) return weight;
+        return weight * (1 + reps / 30);
+    }
+
+    /**
+     * Genera filas de calentamiento al INICIO de la tabla.
+     * Busca el ejercicio principal (isPrimary) o el primero con peso registrado.
+     * Los porcentajes se adaptan según el %RM de las series de trabajo:
+     *   - Si trabajo = 65-80% → calentamiento: barra vacía, 30%, 50%
+     *   - Si trabajo = 80-90% → calentamiento: 30%, 40%, 55%
+     *   - Default (hipertrofia): 20%, 35%, 50% — siempre debajo de la zona de trabajo
+     */
+    function buildWarmupBlock(exercises, params) {
+        // Buscar ejercicio base: primero isPrimary con peso, luego cualquiera con peso
+        let baseEx = null;
+        let baseData = null;
+        for (const ex of exercises) {
+            const d = getLastWeight(ex.name);
+            if (d && d.weight > 0) {
+                if (!baseEx || ex.isPrimary) {
+                    baseEx = ex;
+                    baseData = d;
+                }
+                if (ex.isPrimary) break;
+            }
+        }
+        if (!baseEx || !baseData) return '';
+
+        const weight = baseData.weight;
+        const reps = baseData.reps || 10;
+        const e1rm = calcE1RM(weight, reps);
+        const round25 = (v) => Math.round(v / 2.5) * 2.5;
+
+        // Determinar zona de trabajo desde %RM del protocolo
+        const loadStr = (baseEx.load || (params && params.load) || '').toString().toLowerCase();
+        let workMinPct = 0.65; // default hipertrofia
+        const matchPct = loadStr.match(/(\d+)\s*[-–]\s*(\d+)%/);
+        if (matchPct) {
+            workMinPct = parseInt(matchPct[1]) / 100;
+        } else if (loadStr.includes('85') || loadStr.includes('90')) {
+            workMinPct = 0.80;
+        }
+
+        // Calentamiento siempre DEBAJO de la zona de trabajo
+        // S1 ≈ 30% del mínimo de trabajo, S2 ≈ 50%, S3 ≈ 75% del mínimo
+        const warmupSets = [
+            { pct: Math.round(workMinPct * 0.30 * 100) / 100, reps: 15, label: 'Activación articular', rest: '45s' },
+            { pct: Math.round(workMinPct * 0.55 * 100) / 100, reps: 10, label: 'Flujo sanguíneo', rest: '60s' },
+            { pct: Math.round(workMinPct * 0.80 * 100) / 100, reps: 5, label: 'Activación neural', rest: '75s' }
+        ];
+
+        // Heredar tempo de los parámetros de la rutina
+        const tempoValue = baseEx.tempo || (params && params.tempo) || '-';
+
+        const bgBase = 'rgba(16,185,129,0.06)';
+        const workPctLabel = matchPct ? `${matchPct[1]}-${matchPct[2]}%` : `${Math.round(workMinPct * 100)}%+`;
+        const headerRow = `<tr class="warmup-row">
+            <td colspan="12" style="padding:8px 12px; background:rgba(16,185,129,0.1); border-left:3px solid #10B981;">
+                <span style="font-size:0.8rem; color:#10B981; font-weight:700;">🔥 CALENTAMIENTO</span>
+                <span style="font-size:0.7rem; color:var(--text-muted); margin-left:8px;">Ref: ${baseEx.name} · e1RM ≈ ${Math.round(e1rm)}kg · Trabajo: ${workPctLabel} 1RM</span>
+            </td>
+        </tr>`;
+
+        const colors = ['#10B981', '#F59E0B', '#F97316'];
+        const setRows = warmupSets.map((s, i) => {
+            const kg = round25(e1rm * s.pct);
+            if (kg <= 0) return '';
+            const pctLabel = Math.round(s.pct * 100) + '%';
+            const color = colors[i];
+            return `<tr class="warmup-row" style="background:${bgBase};">
+                <td style="padding-left:20px; border-left:3px solid #10B981;">
+                    <span style="color:${color}; font-weight:600;">W${i + 1}</span>
+                    <small style="color:var(--text-muted); margin-left:4px;">${s.label}</small>
+                </td>
+                <td>1</td>
+                <td>${s.reps}</td>
+                <td><span style="color:${color}; font-weight:600;">${pctLabel}</span></td>
+                <td class="tempo-cell" style="color:#00E5FF;">${tempoValue}</td>
+                <td style="color:#10B981; font-weight:600;">4+</td>
+                <td>${s.rest}</td>
+                <td><span style="color:${color}; font-weight:700;">${kg} kg</span></td>
+                <td colspan="4" style="text-align:center; color:var(--text-muted); font-size:0.75rem;">Calentamiento</td>
+            </tr>`;
+        }).filter(Boolean).join('');
+
+        const separatorRow = `<tr class="warmup-row">
+            <td colspan="12" style="padding:4px 12px; background:rgba(16,185,129,0.08); border-left:3px solid #10B981; border-bottom:2px solid rgba(16,185,129,0.3);">
+                <span style="font-size:0.7rem; color:#10B981; font-weight:600;">SERIES DE TRABAJO ↓</span>
+            </td>
+        </tr>`;
+
+        return headerRow + setRows + separatorRow;
     }
 
     /**
@@ -1787,7 +2325,7 @@ const WorkoutUIController = (() => {
             return;
         }
 
-        const rows = logTable.querySelectorAll('tbody tr');
+        const rows = logTable.querySelectorAll('tbody tr[data-exercise-idx]');
         let hasData = false;
         const progressiveExercises = [];
 
@@ -2054,7 +2592,7 @@ const WorkoutUIController = (() => {
 
             if (!logTable || !nextSessionTbody) return;
 
-            const rows = logTable.querySelectorAll('tbody tr');
+            const rows = logTable.querySelectorAll('tbody tr[data-exercise-idx]');
             const results = [];
             let hasData = false;
 
@@ -2204,7 +2742,7 @@ const WorkoutUIController = (() => {
             return;
         }
 
-        const rows = logTable.querySelectorAll('tbody tr');
+        const rows = logTable.querySelectorAll('tbody tr[data-exercise-idx]');
         const currentDay = routine.days?.[routine.currentDayIndex || 0];
         const mesocycleWeek = routine.mesocycleWeek || 1;
         const mesocycleInfo = MESOCYCLE_RIR_MAP[mesocycleWeek];
@@ -2235,8 +2773,8 @@ const WorkoutUIController = (() => {
                 const actualRIR = !isNaN(rir) ? rir : (10 - rpe);
                 totalRIR += actualRIR;
 
-                // Save weight for next session reference
-                saveExerciseWeight(exerciseName, weight);
+                // Save weight + reps for next session reference & warmup calc
+                saveExerciseWeight(exerciseName, weight, reps);
 
                 // Track volume per muscle
                 const muscleGroup = currentDay?.exercises?.[idx]?.muscleGroup || 'General';
@@ -2907,18 +3445,20 @@ const WorkoutUIController = (() => {
     }
 
     /**
-     * Inicia timer de descanso
+     * Inicia timer de descanso (Soporta Timer Clásico y Flotante Premium)
      */
     function startRestTimer() {
-        if (!elements.workoutTimer) return;
+        if (!elements.workoutTimer && !document.getElementById('floating-rest-timer')) return;
 
-        // Obtener tiempo de descanso dinámico desde MethodologyEngine
+        // Limpiar timers anteriores
+        if (window._rpRestTimer) clearInterval(window._rpRestTimer);
+
+        // Obtener tiempo de descanso
         const currentMethod = window.MethodologyEngine?.methodology;
         const params = window.MethodologyEngine?.getCurrentParameters();
         const exercise = window.ActiveWorkout?.getCurrentExercise();
         const setNumber = exercise?.setNumber || 1;
 
-        // Usar RestTimerModule si está disponible para rest dinámico
         let restConfig;
         if (window.RestTimerModule?.getRestConfig) {
             restConfig = window.RestTimerModule.getRestConfig(currentMethod, setNumber);
@@ -2927,50 +3467,71 @@ const WorkoutUIController = (() => {
         let restSeconds = restConfig?.default || params?.rest || 90;
         let restTypeText = 'Descanso estándar';
 
-        // Manejar rest arrays (SST-RIV variado por set)
         if (restConfig?.isVariableRest && restConfig.restArray) {
             const restIndex = Math.min(setNumber - 1, restConfig.restArray.length - 1);
             restSeconds = restConfig.restArray[restIndex];
-            restTypeText = `Descanso progresivo: Set ${setNumber} = ${restSeconds}s`;
+            restTypeText = `Set ${setNumber}: ${restSeconds}s`;
         } else if (restConfig?.note) {
             restTypeText = restConfig.note;
         }
 
-        elements.workoutTimer.classList.remove('hidden');
-
-        // Actualizar info del tipo de descanso
-        const restTypeEl = document.getElementById('timer-rest-type');
-        if (restTypeEl) {
-            restTypeEl.textContent = restTypeText;
+        // Timer Clásico (si existe)
+        if (elements.workoutTimer) {
+            elements.workoutTimer.classList.remove('hidden');
+            const restTypeEl = document.getElementById('timer-rest-type');
+            if (restTypeEl) restTypeEl.textContent = restTypeText;
         }
 
-        const updateTimer = () => {
+        // Timer Flotante Premium
+        const floatingTimer = document.getElementById('floating-rest-timer');
+        const floatingDisplay = document.getElementById('rest-timer-display');
+        const btnCancelFloat = document.getElementById('btn-cancel-timer');
+
+        if (floatingTimer) {
+            floatingTimer.classList.remove('hidden');
+            floatingTimer.style.display = 'flex';
+            if (btnCancelFloat && !btnCancelFloat.hasListener) {
+                btnCancelFloat.hasListener = true;
+                btnCancelFloat.addEventListener('click', skipTimer);
+            }
+        }
+
+        window._rpRestTimer = setInterval(() => {
             const mins = Math.floor(restSeconds / 60);
             const secs = restSeconds % 60;
-            if (elements.timerCountdown) {
-                elements.timerCountdown.textContent =
-                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            }
+            const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+            if (elements.timerCountdown) elements.timerCountdown.textContent = timeStr;
+            if (floatingDisplay) floatingDisplay.textContent = timeStr;
 
             if (restSeconds <= 0) {
-                elements.workoutTimer.classList.add('hidden');
-                // Notificar que terminó el descanso
-                showNotification('¡Tiempo de descanso terminado!', 'info');
+                clearInterval(window._rpRestTimer);
+                skipTimer();
+                // Simple audio ping si es posible
+                try {
+                    const audio = new Audio('data:audio/mp3;base64,//OcxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq'); // Minimal silent beep o usar notification visual
+                    audio.play().catch(e => e);
+                } catch (e) { }
+                showNotification('⏱️ ¡Tiempo de descanso terminado! Prepárate.', 'info');
             } else {
                 restSeconds--;
-                setTimeout(updateTimer, 1000);
             }
-        };
-
-        updateTimer();
+        }, 1000);
     }
 
     /**
-     * Salta el timer de descanso
+     * Salta o cancela el timer de descanso
      */
     function skipTimer() {
+        if (window._rpRestTimer) clearInterval(window._rpRestTimer);
+
         if (elements.workoutTimer) {
             elements.workoutTimer.classList.add('hidden');
+        }
+        const floatingTimer = document.getElementById('floating-rest-timer');
+        if (floatingTimer) {
+            floatingTimer.classList.add('hidden');
+            floatingTimer.style.display = 'none';
         }
     }
 
@@ -3222,7 +3783,8 @@ const WorkoutUIController = (() => {
         generateRoutine,
         startWorkout,
         updateUIState,
-        getMesocycleRenderData
+        getMesocycleRenderData,
+        renderVolumeControl
     };
 })();
 
