@@ -292,12 +292,16 @@ const RMCalculatorModule = (() => {
     // 6. RENDER UI — Calculadora de RM
     // =============================================
 
+    // =============================================
+    // 6. RENDER UI — Calculadora Unificada de RM
+    // =============================================
+
     function renderCalculadoraRM() {
         const container = document.getElementById('rm-calculator-container');
         if (!container) return;
 
         container.innerHTML = `
-            <div class="rm-calc-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
                 <div class="form-group">
                     <label class="form-label">Peso levantado (kg)</label>
                     <input type="number" id="rm-peso" class="form-input" placeholder="Ej: 80" min="1" max="500" step="0.5">
@@ -305,6 +309,10 @@ const RMCalculatorModule = (() => {
                 <div class="form-group">
                     <label class="form-label">Repeticiones realizadas</label>
                     <input type="number" id="rm-reps" class="form-input" placeholder="Ej: 8" min="1" max="30">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">RPE (6-10) <span style="font-size:0.65rem; color:var(--text-muted);">opcional</span></label>
+                    <input type="number" id="rm-rpe" class="form-input" placeholder="—" min="6" max="10" step="0.5">
                 </div>
             </div>
             <button class="btn btn--primary mt-2" onclick="RMCalculatorModule.ejecutarCalculo()" style="width:100%;">
@@ -317,6 +325,7 @@ const RMCalculatorModule = (() => {
     function ejecutarCalculo() {
         const peso = parseFloat(document.getElementById('rm-peso')?.value);
         const reps = parseInt(document.getElementById('rm-reps')?.value);
+        const rpe = parseFloat(document.getElementById('rm-rpe')?.value) || 0;
         const contenedor = document.getElementById('rm-resultado');
         if (!contenedor) return;
 
@@ -325,11 +334,54 @@ const RMCalculatorModule = (() => {
             return;
         }
 
+        if (reps > 30) {
+            const pesoSugerido = Math.round((peso * 1.15) * 2) / 2; // +15% redondeado a 0.5kg
+            contenedor.innerHTML = `
+                <div class="card" style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); padding:16px;">
+                    <p style="color:#EF4444; font-weight:600; margin-bottom:8px;">⚠️ Más de 30 repeticiones — fuera del rango hipertrófico</p>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:10px;">
+                        El rango eficiente para hipertrofia es de <strong>6 a 30 repeticiones</strong> (Schoenfeld et al.).
+                        Más allá de 30 reps la carga es insuficiente para reclutar fibras tipo II y el estímulo hipertrófico se reduce significativamente.
+                    </p>
+                    <p style="font-size:0.85rem; color:#F59E0B; font-weight:600;">
+                        💡 Sugerencia: aumenta el peso a ~<strong>${pesoSugerido}kg</strong> (+15%) para volver al rango de 6-30 reps y maximizar el estímulo muscular.
+                    </p>
+                </div>`;
+            return;
+        }
+
         const resultados = calcularTodas(peso, reps);
         if (!resultados) return;
 
-        // Top 3 fórmulas más confiables
         const top3 = calcularPreciso(peso, reps);
+
+        // %1RM que representa el peso actual
+        const pctOfRM = Math.round((peso / top3) * 1000) / 10;
+        const zonaColor = pctOfRM >= 90 ? '#EF4444' : pctOfRM >= 80 ? '#8B5CF6' : pctOfRM >= 65 ? '#10B981' : '#F59E0B';
+        const zonaLabel = pctOfRM >= 90 ? 'Fuerza Máxima' : pctOfRM >= 80 ? 'Fuerza-Hipertrofia' : pctOfRM >= 65 ? 'Hipertrofia' : 'Resistencia Muscular';
+
+        // RPE refinement
+        let rpeHtml = '';
+        let rpeE1rm = 0;
+        const hasRPE = rpe >= 6 && rpe <= 10 && reps >= 1 && reps <= 10;
+        if (hasRPE) {
+            rpeE1rm = calcularPorRPE(peso, reps, rpe);
+            const rpePct = getPorcentajeRPE(reps, rpe);
+            if (rpeE1rm && rpePct) {
+                const diff = rpeE1rm - top3;
+                const diffStr = diff >= 0 ? `+${diff.toFixed(1)}` : diff.toFixed(1);
+                rpeHtml = `
+                    <div style="margin-top:12px; padding:10px; background:rgba(124,77,255,0.1); border:1px solid rgba(124,77,255,0.25); border-radius:8px;">
+                        <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Refinado por RPE ${rpe} (Tuchscherer)</div>
+                        <div style="font-size:1.8rem; font-weight:800; color:var(--rp-secondary);">${rpeE1rm} kg</div>
+                        <div style="font-size:0.8rem; color:var(--text-secondary);">
+                            ${peso}kg × ${reps} reps @ RPE ${rpe} = <strong>${rpePct}%</strong> del 1RM
+                            <span style="color:var(--text-muted); font-size:0.75rem;"> (${diffStr} vs fórmulas)</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
 
         let html = `
             <div class="card" style="background: linear-gradient(135deg, rgba(224,64,251,0.15), rgba(124,77,255,0.15)); border:1px solid rgba(224,64,251,0.3);">
@@ -337,6 +389,12 @@ const RMCalculatorModule = (() => {
                     <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">1RM Estimado (Promedio Top 3)</div>
                     <div style="font-size:2.5rem; font-weight:800; background:var(--gradient-primary); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">${top3} kg</div>
                     <div style="font-size:0.8rem; color:var(--text-secondary);">Rango: ${resultados.min} — ${resultados.max} kg | Promedio general: ${resultados.promedio} kg</div>
+                    <div style="margin-top:8px;">
+                        <span style="display:inline-block; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; background:${zonaColor}20; color:${zonaColor}; border:1px solid ${zonaColor}40;">
+                            ${peso}kg = ${pctOfRM}% del 1RM → ${zonaLabel}
+                        </span>
+                    </div>
+                    ${rpeHtml}
                 </div>
             </div>
 
@@ -361,7 +419,8 @@ const RMCalculatorModule = (() => {
         html += '</table></details>';
 
         // Tabla de porcentajes
-        const tabla = generarTablaPorcentajes(top3);
+        const rm1Final = hasRPE && rpeE1rm ? rpeE1rm : top3;
+        const tabla = generarTablaPorcentajes(rm1Final);
         html += `
             <details class="mt-2" style="cursor:pointer;">
                 <summary style="font-weight:600; color:var(--rp-accent); padding:8px 0;">Tabla de cargas por porcentaje de 1RM</summary>
@@ -381,92 +440,28 @@ const RMCalculatorModule = (() => {
         });
         html += '</table></details>';
 
-        contenedor.innerHTML = html;
-    }
-
-    // =============================================
-    // 7. RENDER UI — Calculadora por RPE
-    // =============================================
-
-    function renderCalculadoraRPE() {
-        const container = document.getElementById('rpe-calculator-container');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="rm-calc-grid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
-                <div class="form-group">
-                    <label class="form-label">Peso (kg)</label>
-                    <input type="number" id="rpe-peso" class="form-input" placeholder="80" min="1" max="500" step="0.5">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Reps (1-10)</label>
-                    <input type="number" id="rpe-reps" class="form-input" placeholder="5" min="1" max="10">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">RPE (6-10)</label>
-                    <input type="number" id="rpe-valor" class="form-input" placeholder="8" min="6" max="10" step="0.5">
-                </div>
-            </div>
-            <button class="btn btn--primary mt-2" onclick="RMCalculatorModule.ejecutarCalculoRPE()" style="width:100%;">
-                Estimar e1RM por RPE
-            </button>
-            <div id="rpe-resultado" class="mt-3"></div>
-
-            <details class="mt-3" style="cursor:pointer;">
-                <summary style="font-weight:600; color:var(--rp-secondary); padding:8px 0;">Ver tabla completa RPE → %1RM (Tuchscherer)</summary>
+        // Tabla RPE (siempre visible como referencia)
+        html += `
+            <details class="mt-2" style="cursor:pointer;">
+                <summary style="font-weight:600; color:var(--rp-secondary); padding:8px 0;">Ver tabla RPE → %1RM (Tuchscherer)</summary>
                 <div style="overflow-x:auto;">
                     <table class="data-table mt-1" style="font-size:0.7rem;">
                         <tr><th>Reps</th><th>RPE 10</th><th>RPE 9.5</th><th>RPE 9</th><th>RPE 8.5</th><th>RPE 8</th><th>RPE 7.5</th><th>RPE 7</th><th>RPE 6.5</th><th>RPE 6</th></tr>
                         ${[1,2,3,4,5,6,7,8,9,10].map(r => `<tr>
                             <td><strong>${r}</strong></td>
-                            ${[10,9.5,9,8.5,8,7.5,7,6.5,6].map(rpe => `<td>${RPE_TABLE[r][rpe]}%</td>`).join('')}
+                            ${[10,9.5,9,8.5,8,7.5,7,6.5,6].map(rpe2 => `<td>${RPE_TABLE[r][rpe2]}%</td>`).join('')}
                         </tr>`).join('')}
                     </table>
                 </div>
             </details>
         `;
+
+        contenedor.innerHTML = html;
     }
 
-    function ejecutarCalculoRPE() {
-        const peso = parseFloat(document.getElementById('rpe-peso')?.value);
-        const reps = parseInt(document.getElementById('rpe-reps')?.value);
-        const rpe = parseFloat(document.getElementById('rpe-valor')?.value);
-        const contenedor = document.getElementById('rpe-resultado');
-        if (!contenedor) return;
-
-        if (!peso || !reps || !rpe) {
-            contenedor.innerHTML = '<p class="text-danger">Completa todos los campos.</p>';
-            return;
-        }
-
-        const e1rm = calcularPorRPE(peso, reps, rpe);
-        const porcentaje = getPorcentajeRPE(reps, rpe);
-
-        if (!e1rm || !porcentaje) {
-            contenedor.innerHTML = '<p class="text-danger">Valores fuera de rango. Reps: 1-10, RPE: 6-10.</p>';
-            return;
-        }
-
-        // Comparar con fórmulas clásicas
-        const clasico = calcularPreciso(peso, reps);
-        const diff = e1rm - clasico;
-        const diffStr = diff >= 0 ? `+${diff.toFixed(1)}` : diff.toFixed(1);
-
-        contenedor.innerHTML = `
-            <div class="card" style="background: linear-gradient(135deg, rgba(124,77,255,0.15), rgba(0,191,165,0.15)); border:1px solid rgba(124,77,255,0.3);">
-                <div style="text-align:center;">
-                    <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">e1RM estimado por RPE</div>
-                    <div style="font-size:2.5rem; font-weight:800; color:var(--rp-secondary);">${e1rm} kg</div>
-                    <div style="font-size:0.85rem; color:var(--text-secondary);">
-                        ${peso} kg × ${reps} reps @ RPE ${rpe} = <strong>${porcentaje}%</strong> del 1RM
-                    </div>
-                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
-                        vs. Fórmulas clásicas: ${clasico} kg (${diffStr} kg)
-                    </div>
-                </div>
-            </div>
-        `;
-    }
+    // Mantener funciones legacy por si otros módulos las llaman
+    function renderCalculadoraRPE() { /* fusionada en renderCalculadoraRM */ }
+    function ejecutarCalculoRPE() { ejecutarCalculo(); }
 
     // =============================================
     // 8. RENDER UI — Protocolo Test Directo

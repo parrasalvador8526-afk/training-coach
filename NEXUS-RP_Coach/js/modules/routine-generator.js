@@ -128,10 +128,12 @@ const RoutineGenerator = (() => {
             methodology = 'Y3T',
             protocol = null,
             split = 'push_pull_legs',
-            level = 'intermediate'
+            level = 'intermediate',
+            priority = 'none',
+            customSplitDays = null
         } = options;
 
-        console.log('🔨 Generando rutina:', { methodology, protocol, split, level });
+        console.log('🔨 Generando rutina:', { methodology, protocol, split, level, priority, customSplitDays });
 
         // Obtener datos de metodología
         const methData = window.MethodologyEngine?.getMethodology(methodology);
@@ -151,14 +153,23 @@ const RoutineGenerator = (() => {
         }
 
         const volumeConfig = VOLUME_BY_LEVEL[level] || VOLUME_BY_LEVEL.intermediate;
-        const splitDays = SPLITS[split] || SPLITS.push_pull_legs;
+        const splitDays = customSplitDays || SPLITS[split] || SPLITS.push_pull_legs;
+
+        // Calcular frecuencias de cada músculo en la semana
+        const muscleFrequencies = {};
+        splitDays.forEach(day => {
+            const uniqueMuscles = [...new Set(day.muscles)];
+            uniqueMuscles.forEach(m => {
+                muscleFrequencies[m] = (muscleFrequencies[m] || 0) + 1;
+            });
+        });
 
         // Generar días
         const days = splitDays.map((day, idx) => ({
             dayNumber: idx + 1,
             name: day.name,
             muscles: day.muscles,
-            exercises: generateExercisesForDay(day.muscles, protData, methData, volumeConfig),
+            exercises: generateExercisesForDay(day.muscles, protData, methData, volumeConfig, priority, muscleFrequencies),
             completed: false
         }));
 
@@ -171,6 +182,7 @@ const RoutineGenerator = (() => {
             protocolDescription: protData.description,
             split: split,
             level: level,
+            priority: priority,
             type: methData.type,
             createdAt: new Date().toISOString(),
             currentDayIndex: 0,
@@ -202,15 +214,52 @@ const RoutineGenerator = (() => {
     }
 
     /**
+     * Verifica si un músculo es prioritario según la selección.
+     */
+    function isMusclePriority(muscle, priority) {
+        if (priority === 'upper' && ['Pecho', 'Espalda', 'Hombros'].includes(muscle)) return true;
+        if (priority === 'lower' && ['Cuádriceps', 'Isquiotibiales', 'Glúteos', 'Pantorrillas'].includes(muscle)) return true;
+        if (priority === 'arms' && ['Bíceps', 'Tríceps'].includes(muscle)) return true;
+        if (priority === 'chest_back' && ['Pecho', 'Espalda'].includes(muscle)) return true;
+        if (priority === 'shoulders' && ['Hombros'].includes(muscle)) return true;
+        if (priority === muscle) return true; // Para cuando se selecciona un músculo individual
+        return false;
+    }
+
+    /**
      * Genera ejercicios para un día
      */
-    function generateExercisesForDay(muscles, protData, methData, volumeConfig) {
+    function generateExercisesForDay(muscles, protData, methData, volumeConfig, priority = 'none', muscleFrequencies = {}) {
         const exercises = [];
 
-        muscles.forEach((muscle, muscleIdx) => {
+        // Ordenar músculos para que los prioritarios vayan primero
+        const sortedMuscles = [...muscles].sort((a, b) => {
+            const isAPriority = isMusclePriority(a, priority);
+            const isBPriority = isMusclePriority(b, priority);
+            if (isAPriority && !isBPriority) return -1;
+            if (!isAPriority && isBPriority) return 1;
+            return 0;
+        });
+
+        sortedMuscles.forEach((muscle, muscleIdx) => {
+            const isPriority = isMusclePriority(muscle, priority);
             const muscleExercises = EXERCISE_DATABASE[muscle] || [];
-            const numExercises = Math.min(
-                volumeConfig.exercisesPerMuscle,
+
+            // Dosificar volumen por sesión según la frecuencia semanal
+            const freq = muscleFrequencies[muscle] || 1;
+            let baseEx = volumeConfig.exercisesPerMuscle;
+
+            if (freq === 1) {
+                // Frecuencia 1: Mucho volumen en 1 sesión
+                baseEx += 1;
+            } else if (freq >= 3) {
+                // Frecuencia 3+: Poco volumen por sesión para recuperar
+                baseEx = Math.max(1, baseEx - 1);
+            }
+
+            // Si es un músculo prioritario, podemos agregarle +1 ejercicio al límite o mantenerlo.
+            let numExercises = Math.min(
+                baseEx + (isPriority ? 1 : 0),
                 muscleExercises.length
             );
 
@@ -242,6 +291,9 @@ const RoutineGenerator = (() => {
                 // Aplicar multiplicador por nivel sólo si no es una carga estática extrema (ej 10 sets de GVT o 7 de FST)
                 if (baseSets < 7) {
                     baseSets = Math.round(baseSets * volumeConfig.setsMultiplier);
+                    if (isPriority) {
+                        baseSets += 1; // Añadir un set extra para ejercicios del músculo prioritario
+                    }
                 }
 
                 // Reducir sets para aislamientos en metodologías HIT (Heavy Duty)

@@ -201,25 +201,29 @@ h4 {
 /* ========== Navigation ========== */
 .nav-tabs {
     display: flex;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 6px;
     background: var(--bg-card);
-    padding: 10px;
+    padding: 8px;
     border-radius: var(--border-radius-lg);
     margin-bottom: 30px;
-    overflow-x: auto;
     box-shadow: var(--shadow-sm);
 }
 
 .nav-tab {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 14px 24px;
+    justify-content: center;
+    flex: 1;
+    /* Permite que las pestañas compartan el ancho por igual */
+    gap: 6px;
+    padding: 10px 12px;
     background: transparent;
     border: none;
     border-radius: var(--border-radius-md);
     color: var(--text-secondary);
-    font-size: 0.95rem;
+    font-size: 0.82rem;
+    /* Tamaño de fuente reducido para encajar */
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition-normal);
@@ -1473,10 +1477,21 @@ h4 {
     vertical-align: middle;
 }
 
-.calendar-dot--completed { background: #00E676; }
-.calendar-dot--missed    { background: #FF5252; }
-.calendar-dot--pending   { background: #FFB300; }
-.calendar-dot--rest      { background: #6B6B80; }
+.calendar-dot--completed {
+    background: #00E676;
+}
+
+.calendar-dot--missed {
+    background: #FF5252;
+}
+
+.calendar-dot--pending {
+    background: #FFB300;
+}
+
+.calendar-dot--rest {
+    background: #6B6B80;
+}
 
 .calendar-week-progress {
     height: 4px;
@@ -1496,6 +1511,7 @@ h4 {
     .calendar-grid {
         gap: 2px;
     }
+
     .calendar-cell {
         min-height: 32px;
         font-size: 0.65rem;

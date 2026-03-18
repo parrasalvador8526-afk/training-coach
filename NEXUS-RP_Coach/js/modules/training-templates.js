@@ -157,10 +157,10 @@ const TrainingTemplatesModule = (() => {
             weeklyProgression: [
                 { week: 1, phase: 'W1_Heavy', reps: '6-10', rest: '120-180s', rir: 2 },
                 { week: 2, phase: 'W2_Moderate', reps: '10-14', rest: '60-90s', rir: 2 },
-                { week: 3, phase: 'W3_Annihilation', reps: '15-30+', rest: '30-60s', rir: 0 },
+                { week: 3, phase: 'W3_Annihilation', reps: '15-30', rest: '30-60s', rir: 0 },
                 { week: 4, phase: 'W1_Heavy', reps: '6-10', rest: '120-180s', rir: 2 },
                 { week: 5, phase: 'W2_Moderate', reps: '10-14', rest: '60-90s', rir: 2 },
-                { week: 6, phase: 'W3_Annihilation', reps: '15-30+', rest: '30-60s', rir: 0 },
+                { week: 6, phase: 'W3_Annihilation', reps: '15-30', rest: '30-60s', rir: 0 },
                 { week: 7, phase: 'W1_Heavy', reps: '6-10', rest: '120-180s', rir: 1 },
                 { week: 8, phase: 'W2_Moderate', reps: '10-14', rest: '60-90s', rir: 1 },
                 { week: 9, phase: 'Deload', reps: '12-15', rest: '90s', rir: 4, isDeload: true }

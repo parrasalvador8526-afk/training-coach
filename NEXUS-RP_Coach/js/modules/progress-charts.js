@@ -5,118 +5,91 @@
  */
 
 const ProgressChartsModule = (() => {
+    // Instancias activas de Chart.js para evitar overlaps
+    window._rpChartInstances = window._rpChartInstances || {};
+
     /**
-     * Dibuja una gráfica de línea simple
+     * Dibuja una gráfica de línea usando Chart.js
      */
     function drawLineChart(canvasId, data, options = {}) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width = canvas.offsetWidth * 2;
-        const height = canvas.height = canvas.offsetHeight * 2;
-        ctx.scale(2, 2);
-
-        const actualWidth = canvas.offsetWidth;
-        const actualHeight = canvas.offsetHeight;
-
-        const padding = { top: 20, right: 20, bottom: 30, left: 50 };
-        const chartWidth = actualWidth - padding.left - padding.right;
-        const chartHeight = actualHeight - padding.top - padding.bottom;
-
-        // Limpiar canvas
-        ctx.fillStyle = options.background || '#1A1A2E';
-        ctx.fillRect(0, 0, actualWidth, actualHeight);
+        if (window._rpChartInstances[canvasId]) {
+            window._rpChartInstances[canvasId].destroy();
+        }
 
         if (data.length < 2) {
+            const ctx = canvas.getContext('2d');
+            const cw = canvas.width = canvas.offsetWidth;
+            const ch = canvas.height = canvas.offsetHeight;
+            ctx.fillStyle = options.background || '#1A1A2E';
+            ctx.fillRect(0, 0, cw, ch);
             ctx.fillStyle = '#B0B0C0';
             ctx.font = '14px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Necesitas más datos para ver la gráfica', actualWidth / 2, actualHeight / 2);
+            ctx.fillText('Necesitas más datos para ver la gráfica', cw / 2, ch / 2);
             return;
         }
 
-        // Calcular rangos
+        const ctx = canvas.getContext('2d');
+        const labels = data.map(d => d.label || '');
         const values = data.map(d => d.value);
-        const minValue = Math.min(...values) * 0.9;
-        const maxValue = Math.max(...values) * 1.1;
-        const valueRange = maxValue - minValue;
 
-        // Dibujar grid
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-        ctx.lineWidth = 1;
-        for (let i = 0; i <= 4; i++) {
-            const y = padding.top + (chartHeight / 4) * i;
-            ctx.beginPath();
-            ctx.moveTo(padding.left, y);
-            ctx.lineTo(actualWidth - padding.right, y);
-            ctx.stroke();
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.offsetHeight || 300);
+        gradient.addColorStop(0, (options.lineColor || '#E040FB') + '80'); // 50% opacity
+        gradient.addColorStop(1, (options.lineColor || '#E040FB') + '00'); // 0% opacity
 
-            // Labels del eje Y
-            ctx.fillStyle = '#B0B0C0';
-            ctx.font = '10px Inter, sans-serif';
-            ctx.textAlign = 'right';
-            const value = maxValue - (valueRange / 4) * i;
-            ctx.fillText(value.toFixed(0), padding.left - 5, y + 4);
-        }
-
-        // Dibujar línea principal
-        ctx.strokeStyle = options.lineColor || '#E040FB';
-        ctx.lineWidth = 2;
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-
-        const points = data.map((d, i) => ({
-            x: padding.left + (chartWidth / (data.length - 1)) * i,
-            y: padding.top + chartHeight - ((d.value - minValue) / valueRange) * chartHeight
-        }));
-
-        ctx.moveTo(points[0].x, points[0].y);
-        points.forEach((p, i) => {
-            if (i > 0) ctx.lineTo(p.x, p.y);
+        window._rpChartInstances[canvasId] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: options.title || '',
+                    data: values,
+                    borderColor: options.lineColor || '#E040FB',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#0D0D1A',
+                    pointBorderColor: options.lineColor || '#E040FB',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                color: '#B0B0C0',
+                plugins: {
+                    legend: {
+                        display: !!options.title,
+                        labels: { color: '#FFF', font: { family: 'Inter', size: 12, weight: 'bold' } }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(13, 13, 26, 0.9)',
+                        titleColor: '#E040FB',
+                        bodyColor: '#FFF',
+                        borderColor: 'rgba(224, 64, 251, 0.4)',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#888', font: { family: 'Inter', size: 10 } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#888', font: { family: 'Inter', size: 10 } }
+                    }
+                }
+            }
         });
-        ctx.stroke();
-
-        // Área bajo la curva (gradiente)
-        const gradient = ctx.createLinearGradient(0, padding.top, 0, actualHeight - padding.bottom);
-        gradient.addColorStop(0, 'rgba(224, 64, 251, 0.3)');
-        gradient.addColorStop(1, 'rgba(224, 64, 251, 0)');
-
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, actualHeight - padding.bottom);
-        ctx.lineTo(points[0].x, points[0].y);
-        points.forEach((p, i) => {
-            if (i > 0) ctx.lineTo(p.x, p.y);
-        });
-        ctx.lineTo(points[points.length - 1].x, actualHeight - padding.bottom);
-        ctx.closePath();
-        ctx.fill();
-
-        // Puntos
-        points.forEach((p, i) => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = '#E040FB';
-            ctx.fill();
-            ctx.strokeStyle = '#0D0D1A';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Labels del eje X
-            ctx.fillStyle = '#B0B0C0';
-            ctx.font = '10px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(data[i].label || '', p.x, actualHeight - 10);
-        });
-
-        // Título
-        if (options.title) {
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 12px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText(options.title, padding.left, 14);
-        }
     }
 
     /**
@@ -537,27 +510,34 @@ const ProgressChartsModule = (() => {
             }
         } catch (e) { }
 
-        // 2. Extraer logs y agrupar por mesocycleWeek
+        // 2. Extraer sesiones y agrupar por mesocycleWeek
         let complianceRatios = [0, 0, 0, 0, 0]; // S1 a S5
-        if (typeof SessionLoggerModule !== 'undefined') {
-            const allLogs = SessionLoggerModule.getAllLogs();
-            // Contar cuántos entrenos hay por cada semana del mesociclo
-            const sessionsPerWeekCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-            allLogs.forEach(log => {
-                const w = parseInt(log.weekNumber);
-                if (w >= 1 && w <= 5) {
-                    sessionsPerWeekCount[w]++;
-                }
-            });
 
-            // Opcional: Dividir entre `targetSessionsPerWeek` para tener un log "por día", asumiendo que el usuario registra 1 vez = 1 ejercicio.
-            // Para simplificar: asumiremos que cada 'saveLog' en SessionLoggerModule es una sesión completa o un ejercicio completado.
-            // Es mejor agrupar por fecha única para saber cuántos DÍAS entrenó realmente.
+        // Fuente principal: rpCoach_session_history (usado por CalendarioTracker y ProgressAnalytics)
+        let sessionData = [];
+        try {
+            sessionData = JSON.parse(localStorage.getItem('rpCoach_session_history') || '[]');
+        } catch (e) { }
+
+        // Fallback: SessionLoggerModule si no hay datos en session_history
+        if (sessionData.length === 0 && typeof SessionLoggerModule !== 'undefined') {
+            const allLogs = SessionLoggerModule.getAllLogs();
+            if (allLogs.length > 0) {
+                sessionData = allLogs.map(log => ({
+                    date: log.date || log.dateFormatted,
+                    mesocycleWeek: parseInt(log.weekNumber) || 1
+                }));
+            }
+        }
+
+        if (sessionData.length > 0) {
+            // Contar días únicos de entrenamiento por semana del mesociclo
             const uniqueDaysPerWeek = { 1: new Set(), 2: new Set(), 3: new Set(), 4: new Set(), 5: new Set() };
-            allLogs.forEach(log => {
-                const w = parseInt(log.weekNumber);
+            sessionData.forEach(session => {
+                const w = parseInt(session.mesocycleWeek);
                 if (w >= 1 && w <= 5) {
-                    uniqueDaysPerWeek[w].add(log.dateFormatted);
+                    const dateKey = session.date ? new Date(session.date).toISOString().split('T')[0] : session.dateFormatted;
+                    if (dateKey) uniqueDaysPerWeek[w].add(dateKey);
                 }
             });
 
@@ -736,6 +716,344 @@ const ProgressChartsModule = (() => {
         });
     }
 
+    function _unused_drawStrengthProgressionChart(canvasId) { // eslint-disable-line
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const container = canvas.parentElement;
+        const W = container.offsetWidth || 700;
+        const H = container.offsetHeight || 260;
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        ctx.scale(dpr, dpr);
+
+        // Fondo
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+        bgGrad.addColorStop(0, '#1A1A2E');
+        bgGrad.addColorStop(1, '#151525');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Obtener datos de sesiones
+        let sessions = [];
+        try { sessions = JSON.parse(localStorage.getItem('rpCoach_session_history') || '[]'); } catch { }
+        if (!sessions.length) {
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.font = '500 13px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Sin datos de sesiones para graficar', W / 2, H / 2);
+            return;
+        }
+
+        // Calcular e1RM por ejercicio por semana
+        const e1rmByExercise = {}; // {exercise: {1: e1rm, 2: e1rm, ...}}
+        sessions.forEach(s => {
+            const week = parseInt(s.mesocycleWeek);
+            if (!week || week < 1 || week > 5) return;
+            (s.exercises || []).forEach(ex => {
+                if (!ex.weight || !ex.reps) return;
+                const e1rm = ex.reps === 1 ? ex.weight : Math.round(ex.weight * (1 + ex.reps / 30) * 10) / 10;
+                if (!e1rmByExercise[ex.name]) e1rmByExercise[ex.name] = {};
+                // Guardar el máximo e1RM de la semana
+                if (!e1rmByExercise[ex.name][week] || e1rm > e1rmByExercise[ex.name][week]) {
+                    e1rmByExercise[ex.name][week] = e1rm;
+                }
+            });
+        });
+
+        // Seleccionar top 6 ejercicios por e1RM máximo (compuestos pesados)
+        const exerciseMax = {};
+        Object.entries(e1rmByExercise).forEach(([name, weekData]) => {
+            exerciseMax[name] = Math.max(...Object.values(weekData));
+        });
+        const topExercises = Object.entries(exerciseMax)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 6)
+            .map(e => e[0]);
+
+        if (!topExercises.length) return;
+
+        // Semanas con datos
+        const allWeeks = new Set();
+        topExercises.forEach(ex => {
+            Object.keys(e1rmByExercise[ex]).forEach(w => allWeeks.add(parseInt(w)));
+        });
+        const weekNumbers = [...allWeeks].sort((a, b) => a - b);
+        if (weekNumbers.length < 1) return;
+
+        // Colores para cada ejercicio
+        const palette = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
+
+        // Calcular rango Y
+        let globalMin = Infinity, globalMax = 0;
+        topExercises.forEach(ex => {
+            weekNumbers.forEach(w => {
+                const val = e1rmByExercise[ex][w];
+                if (val) {
+                    globalMin = Math.min(globalMin, val);
+                    globalMax = Math.max(globalMax, val);
+                }
+            });
+        });
+        // Padding del rango
+        const range = globalMax - globalMin || 10;
+        const yMin = Math.max(0, globalMin - range * 0.15);
+        const yMax = globalMax + range * 0.15;
+
+        const pad = { top: 45, right: 20, bottom: 40, left: 50 };
+        const cW = W - pad.left - pad.right;
+        const cH = H - pad.top - pad.bottom;
+
+        const xStep = weekNumbers.length > 1 ? cW / (weekNumbers.length - 1) : cW / 2;
+        const getX = (i) => pad.left + xStep * i;
+        const getY = (val) => pad.top + cH - ((val - yMin) / (yMax - yMin)) * cH;
+
+        // Grid horizontal
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+        const gridLines = 5;
+        for (let i = 0; i <= gridLines; i++) {
+            const y = pad.top + (cH / gridLines) * i;
+            ctx.beginPath();
+            ctx.moveTo(pad.left, y);
+            ctx.lineTo(W - pad.right, y);
+            ctx.stroke();
+
+            // Etiqueta Y
+            const val = yMax - ((yMax - yMin) / gridLines) * i;
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.font = '400 10px Inter, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(Math.round(val) + 'kg', pad.left - 6, y + 4);
+        }
+
+        // Ejes
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, pad.top);
+        ctx.lineTo(pad.left, H - pad.bottom);
+        ctx.lineTo(W - pad.right, H - pad.bottom);
+        ctx.stroke();
+
+        // Etiquetas X
+        ctx.fillStyle = '#C0C0D0';
+        ctx.font = '500 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        const weekLabels = { 1: 'S1', 2: 'S2', 3: 'S3', 4: 'S4', 5: 'S5' };
+        weekNumbers.forEach((w, i) => {
+            ctx.fillText(weekLabels[w] || 'S' + w, getX(i), H - pad.bottom + 18);
+        });
+
+        // Leyenda superior
+        ctx.font = '600 10px Inter, sans-serif';
+        const legendItemW = cW / Math.min(topExercises.length, 6);
+        topExercises.forEach((ex, i) => {
+            const shortName = ex.length > 18 ? ex.substring(0, 16) + '…' : ex;
+            const lx = pad.left + legendItemW * i;
+            const ly = 14;
+
+            ctx.fillStyle = palette[i];
+            ctx.beginPath();
+            ctx.roundRect(lx, ly - 6, 10, 10, 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.textAlign = 'left';
+            ctx.fillText(shortName, lx + 14, ly + 3);
+        });
+
+        // Dibujar líneas y puntos por ejercicio
+        topExercises.forEach((ex, exIdx) => {
+            const color = palette[exIdx];
+            const weekData = e1rmByExercise[ex];
+            const points = [];
+
+            weekNumbers.forEach((w, i) => {
+                if (weekData[w]) {
+                    points.push({ x: getX(i), y: getY(weekData[w]), val: weekData[w], week: w });
+                }
+            });
+
+            if (points.length < 1) return;
+
+            // Línea con glow
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Puntos
+            points.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#0F0F1A';
+                ctx.fill();
+            });
+
+            // Etiqueta en el último punto (e1RM actual)
+            if (points.length >= 1) {
+                const last = points[points.length - 1];
+                const first = points[0];
+                const diff = last.val - first.val;
+                const diffPct = first.val > 0 ? ((diff / first.val) * 100).toFixed(1) : '0';
+                const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
+                const diffColor = diff > 0 ? '#10B981' : diff < 0 ? '#EF4444' : '#F59E0B';
+
+                const text = `${last.val}kg`;
+                const diffText = points.length > 1 ? ` ${arrow}${diff > 0 ? '+' : ''}${diffPct}%` : '';
+
+                ctx.font = '700 9px Inter, sans-serif';
+                const tw = ctx.measureText(text + diffText).width;
+
+                // Posicionar etiqueta: alternar arriba/abajo según índice para evitar overlap
+                const offsetY = exIdx % 2 === 0 ? -18 : 16;
+                const labelY = last.y + offsetY;
+
+                ctx.fillStyle = 'rgba(15,15,26,0.88)';
+                ctx.beginPath();
+                ctx.roundRect(last.x - tw / 2 - 5, labelY - 8, tw + 10, 16, 3);
+                ctx.fill();
+
+                ctx.textAlign = 'center';
+                ctx.fillStyle = color;
+                ctx.fillText(text, last.x - (diffText ? ctx.measureText(diffText).width / 2 : 0), labelY + 3);
+
+                if (diffText) {
+                    ctx.fillStyle = diffColor;
+                    ctx.fillText(diffText, last.x + ctx.measureText(text).width / 2 + 2, labelY + 3);
+                }
+            }
+        });
+    }
+
+    /**
+     * Gráfica de Composición Corporal — 2 líneas: % Grasa y Masa Muscular (Chart.js)
+     */
+    function drawBodyCompositionChart(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        if (window._rpChartInstances[canvasId]) {
+            window._rpChartInstances[canvasId].destroy();
+        }
+
+        const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || 'null');
+        if (!data || !data.measurements || data.measurements.length < 2) {
+            const ctx = canvas.getContext('2d');
+            const cw = canvas.width = canvas.offsetWidth;
+            const ch = canvas.height = canvas.offsetHeight;
+            ctx.fillStyle = '#1A1A2E';
+            ctx.fillRect(0, 0, cw, ch);
+            ctx.fillStyle = '#888';
+            ctx.font = '12px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Se necesitan al menos 2 mediciones', cw / 2, ch / 2);
+            return;
+        }
+
+        const measurements = data.measurements;
+        const ctx = canvas.getContext('2d');
+
+        const labels = measurements.map(m => {
+            const d = new Date(m.date);
+            return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+        });
+        const fatVals = measurements.map(m => Number(m.bodyFat).toFixed(1));
+        const muscleVals = measurements.map(m => Number(m.muscleMass).toFixed(1));
+
+        window._rpChartInstances[canvasId] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '% Grasa',
+                        data: fatVals,
+                        borderColor: '#F97316',
+                        backgroundColor: '#F9731633',
+                        yAxisID: 'y',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#1A1A2E',
+                        pointBorderColor: '#F97316',
+                        pointRadius: 4,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Masa Muscular (kg)',
+                        data: muscleVals,
+                        borderColor: '#10B981',
+                        backgroundColor: '#10B98133',
+                        yAxisID: 'y1',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#1A1A2E',
+                        pointBorderColor: '#10B981',
+                        pointRadius: 4,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                color: '#B0B0C0',
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#FFF', font: { family: 'Inter', size: 11, weight: 'bold' } }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(13, 13, 26, 0.9)',
+                        titleColor: '#FFF',
+                        bodyColor: '#FFF',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 10
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#888', font: { family: 'Inter', size: 10 } }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#F97316', font: { family: 'Inter', size: 10 }, callback: function (value) { return Number(value).toFixed(1) + '%'; } }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#10B981', font: { family: 'Inter', size: 10 }, callback: function (value) { return Number(value).toFixed(1) + 'kg'; } }
+                    }
+                }
+            }
+        });
+    }
+
     // API Pública
     return {
         drawLineChart,
@@ -745,7 +1063,8 @@ const ProgressChartsModule = (() => {
         getAutoregulationTrend,
         renderDashboardCharts,
         drawMesocycleProgressionChart,
-        drawComplianceProgressionChart
+        drawComplianceProgressionChart,
+        drawBodyCompositionChart
     };
 })();
 

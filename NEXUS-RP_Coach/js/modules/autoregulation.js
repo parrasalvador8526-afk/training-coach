@@ -143,12 +143,19 @@ const AutoregulationModule = (() => {
             timestamp: new Date().toISOString(),
             date: new Date().toLocaleDateString('es-ES')
         });
-        
+
+        // Feature 4: Nutrición Inteligente Ligada a Fatiga
+        if (evaluation.scores && evaluation.scores.fatigue >= 4) {
+            localStorage.setItem('rpCoach_fatigue_carb_boost', 'true');
+        } else {
+            localStorage.removeItem('rpCoach_fatigue_carb_boost');
+        }
+
         // Mantener solo últimas 50 evaluaciones
         if (history.length > 50) {
             history.shift();
         }
-        
+
         localStorage.setItem('rpCoach_autoregulation_history', JSON.stringify(history));
     }
 
@@ -161,8 +168,8 @@ const AutoregulationModule = (() => {
         const history = getHistory();
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - days);
-        
-        const recentEvaluations = history.filter(e => 
+
+        const recentEvaluations = history.filter(e =>
             new Date(e.timestamp) >= cutoffDate
         );
 
@@ -174,25 +181,25 @@ const AutoregulationModule = (() => {
         const avgSoreness = recentEvaluations.reduce((sum, e) => sum + e.scores.soreness, 0) / recentEvaluations.length;
 
         if (avgFatigue >= 4 || avgSoreness >= 4) {
-            return { 
-                trend: 'DECLINING', 
+            return {
+                trend: 'DECLINING',
                 message: 'Tendencia de fatiga creciente - considera deload',
                 avgFatigue: avgFatigue.toFixed(1),
                 avgSoreness: avgSoreness.toFixed(1)
             };
         }
-        
+
         if (avgFatigue <= 2.5 && avgSoreness <= 2.5) {
-            return { 
-                trend: 'EXCELLENT', 
+            return {
+                trend: 'EXCELLENT',
                 message: 'Excelente recuperación - puedes aumentar estímulo',
                 avgFatigue: avgFatigue.toFixed(1),
                 avgSoreness: avgSoreness.toFixed(1)
             };
         }
 
-        return { 
-            trend: 'STABLE', 
+        return {
+            trend: 'STABLE',
             message: 'Recuperación estable - mantén el rumbo',
             avgFatigue: avgFatigue.toFixed(1),
             avgSoreness: avgSoreness.toFixed(1)
