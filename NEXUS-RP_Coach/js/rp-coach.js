@@ -163,6 +163,16 @@ const RPCoachApp = (() => {
             });
         });
 
+        // Botón de Perfil en header
+        const btnHeaderProfile = document.getElementById('btn-header-profile');
+        if (btnHeaderProfile) {
+            btnHeaderProfile.addEventListener('click', () => {
+                switchModule('profile');
+                // Resaltar botón activo
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            });
+        }
+
         // Selector de metodología
         const methodSelector = document.getElementById('methodology-selector');
         if (methodSelector) {
@@ -380,25 +390,26 @@ const RPCoachApp = (() => {
         const lastEntries = history.slice(-7);
 
         let html =
-            '<div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">' +
-            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
-            '<span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">HISTORIAL DE READINESS</span>' +
-            (trendText ? '<span style="font-size: 0.75rem; color: ' + trendColor + '; font-weight: 600;">' + trendText + ' (prom. ' + recentAvg.toFixed(1) + ')</span>' : '') +
+            '<div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; display: flex; flex-direction: column;">' +
+            '<div style="text-align: center; margin-bottom: 15px;">' +
+            '<span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">HISTORIAL DE READINESS</span>' +
             '</div>' +
-            '<div style="display: flex; gap: 4px; align-items: flex-end; height: 40px;">';
+            '<div style="display: flex; gap: 8px; align-items: flex-end; height: 65px; width: 100%; justify-content: space-between;">';
 
         lastEntries.forEach(entry => {
-            const barHeight = Math.max(6, (entry.score / 5) * 36);
+            const barHeight = Math.max(8, (entry.score / 5) * 40);
             const barColor = entry.score >= 4 ? '#10B981' : entry.score >= 3 ? '#F59E0B' : '#EF4444';
             const dayLabel = new Date(entry.date + 'T12:00:00').toLocaleDateString('es', { weekday: 'short' }).substring(0, 2);
             html +=
-                '<div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">' +
-                '<div style="width: 100%; max-width: 30px; height: ' + barHeight + 'px; background: ' + barColor + '; border-radius: 3px; opacity: 0.85;" title="' + entry.date + ': ' + entry.score + '/5"></div>' +
-                '<span style="font-size: 0.55rem; color: var(--text-muted);">' + dayLabel + '</span>' +
+                '<div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">' +
+                '<div style="width: 18px; height: ' + barHeight + 'px; background: ' + barColor + '; border-radius: 4px; opacity: 0.85;" title="' + entry.date + ': ' + entry.score + '/5"></div>' +
+                '<span style="font-size: 0.55rem; color: var(--text-muted); line-height: 1;">' + dayLabel + '</span>' +
                 '</div>';
         });
 
-        html += '</div></div>';
+        html += '</div>' +
+            (trendText ? '<div style="text-align: center; margin-top: 8px;"><span style="font-size: 0.65rem; color: ' + trendColor + '; font-weight: 600;">' + trendText + ' (prom. ' + recentAvg.toFixed(1) + ')</span></div>' : '') +
+            '</div>';
         container.innerHTML = html;
     }
 
@@ -413,6 +424,18 @@ const RPCoachApp = (() => {
         document.querySelectorAll('.nav-tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.module === moduleName);
         });
+
+        // Actualizar botón de perfil en header
+        const btnProfile = document.getElementById('btn-header-profile');
+        if (btnProfile) {
+            if (moduleName === 'profile') {
+                btnProfile.style.background = 'linear-gradient(135deg, #E040FB, #7C3AED)';
+                btnProfile.style.boxShadow = '0 0 12px rgba(139,92,246,0.4)';
+            } else {
+                btnProfile.style.background = 'linear-gradient(135deg, #6366F1, #8B5CF6)';
+                btnProfile.style.boxShadow = 'none';
+            }
+        }
 
         // Mostrar/ocultar secciones
         document.querySelectorAll('.module-section').forEach(section => {
@@ -488,7 +511,221 @@ const RPCoachApp = (() => {
                 console.error("Error parsing profile for home dashboard", e);
             }
         }
-        // Stats can be expanded further as more context is available
+        // Widget de recordatorio de composición corporal en Inicio
+        renderHomeCompReminder();
+        // Widgets Premium
+        renderPremiumInsights();
+    }
+
+    function renderPremiumInsights() {
+        // 1. PR Tracker
+        const prs = JSON.parse(localStorage.getItem('rpCoach_strength_prs') || '[]');
+        if (prs.length > 0) {
+            const lastPR = prs[prs.length - 1];
+            const prExEl = document.getElementById('home-pr-exercise');
+            const prDetEl = document.getElementById('home-pr-details');
+            if(prExEl) prExEl.textContent = lastPR.exercise;
+            if(prDetEl) prDetEl.innerHTML = `${lastPR.weight}kg × ${lastPR.reps} <br><span style="font-size:0.75rem; color:#10B981;">e1RM: ${parseFloat(lastPR.e1rm || 0).toFixed(1)}kg</span>`;
+        }
+
+        // 2. Weight Trend
+        const bodyCompRaw = localStorage.getItem('rpCoach_body_composition');
+        if (bodyCompRaw && bodyCompRaw !== '{}') {
+            try {
+                const bodyComp = JSON.parse(bodyCompRaw);
+                const measures = Array.isArray(bodyComp) ? bodyComp : (bodyComp.measurements || []);
+                if (measures.length > 0) {
+                    const current = measures[measures.length - 1];
+                    const wCur = document.getElementById('home-weight-current');
+                    if(wCur) wCur.textContent = parseFloat(current.weight).toFixed(1) + ' kg';
+                    
+                    if (measures.length > 1) {
+                        const prev = measures[measures.length - 2];
+                        const diff = (current.weight - prev.weight).toFixed(1);
+                        const trendEl = document.getElementById('home-weight-trend');
+                        if(trendEl) {
+                            if (diff > 0) {
+                                trendEl.textContent = `+${diff}kg`;
+                                trendEl.style.color = '#F59E0B'; // Ambar
+                            } else if (diff < 0) {
+                                trendEl.textContent = `${diff}kg`;
+                                trendEl.style.color = '#10B981'; // Verde
+                            } else {
+                                trendEl.textContent = `=`;
+                                trendEl.style.color = '#6b7280';
+                            }
+                        }
+                    }
+                }
+            } catch(e) { console.warn("Error parsing body comp in home dashboard", e); }
+        }
+
+        // 3. Coach Tip
+        const tipEl = document.getElementById('home-coach-tip');
+        if(tipEl) {
+            const tips = [
+                "Concéntrate en la técnica hoy. La tensión mecánica es la clave del crecimiento.",
+                "Deja 1-2 repeticiones en recámara si estás empezando el ciclo.",
+                "Si el dolor articular sube, no dudes en reducir el volumen hoy.",
+                "El descanso es donde ocurre la magia. Duerme tus 8 horas.",
+                "Registra tus pesos reales. La sobrecarga no perdona la mala memoria."
+            ];
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            const dailyTip = tips[dayOfYear % tips.length];
+            
+            const routineRaw = localStorage.getItem('rpCoach_active_routine');
+            if (routineRaw) {
+                const routine = JSON.parse(routineRaw);
+                if (routine.completedDays !== undefined && routine.days && routine.days.length > 0) {
+                    const week = Math.floor(routine.completedDays / routine.days.length) + 1;
+                    if (week === 1) tipEl.textContent = "Semana 1 (Introducción): Toca la rutina con calma. Deja unas 3 repeticiones en recámara (RIR 3) para no destrozarte el primer día.";
+                    else if (week >= 4) tipEl.textContent = `Semana ${week} (Overreaching): Es el pico de fatiga. Empuja al límite (RIR 0-1) y gana tu descarga para la próxima semana.`;
+                    else tipEl.textContent = `Semana ${week} (Acumulación): Intenta sacar 1 rep extra o sumar 2.5kg a la barra sin sacrificar técnica. RIR objetivo: 2-1.`;
+                } else {
+                    tipEl.textContent = dailyTip;
+                }
+            } else {
+                tipEl.textContent = dailyTip;
+            }
+        }
+
+        // 4. Routine Preview
+        const previewList = document.getElementById('home-routine-preview-list');
+        const previewMuscles = document.getElementById('home-preview-muscles');
+        if(previewList && previewMuscles) {
+            const routineRaw = localStorage.getItem('rpCoach_active_routine');
+            if (routineRaw) {
+                const routine = JSON.parse(routineRaw);
+                if (routine.days && routine.days.length > 0) {
+                    const currentDayIndex = (routine.completedDays || 0) % routine.days.length;
+                    const todayWorkout = routine.days[currentDayIndex];
+                    
+                    previewMuscles.textContent = todayWorkout.focus || todayWorkout.name || 'Entrenamiento';
+                    
+                    if (todayWorkout.exercises && todayWorkout.exercises.length > 0) {
+                        let html = todayWorkout.exercises.slice(0, 4).map(ex => {
+                            return `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; margin-bottom:4px;">
+                                <span style="color:#E0E0E0; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:70%; font-weight: 500;">
+                                    <span style="color:#E040FB; margin-right:4px;">→</span>${ex.name}
+                                </span>
+                                <span style="color:var(--text-muted); font-size:0.8rem; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px;">
+                                    ${ex.sets}x${ex.reps}
+                                </span>
+                            </div>`;
+                        }).join('');
+                        
+                        if (todayWorkout.exercises.length > 4) {
+                            html += `<div style="text-align:center; font-size:0.75rem; color:#A78BFA; margin-top:8px; font-weight:600;">
+                                + ${todayWorkout.exercises.length - 4} ejercicios más
+                            </div>`;
+                        }
+                        previewList.innerHTML = html;
+                    } else {
+                        previewList.innerHTML = '<div class="text-muted" style="font-size: 0.85rem; padding:10px 0;">Día de descanso activo.</div>';
+                    }
+                } else {
+                    previewList.innerHTML = '<div class="text-muted" style="font-size: 0.85rem; padding:10px 0;">Rutina vacía.</div>';
+                    previewMuscles.textContent = '';
+                }
+            } else {
+                previewList.innerHTML = '<div class="text-muted" style="font-size: 0.85rem; padding:10px 0;">No tienes una rutina generada. Ve a Entrenamiento para crear una de élite.</div>';
+                previewMuscles.textContent = '';
+            }
+        }
+    }
+
+    // Renderiza el widget de composición corporal en la sección de Inicio
+    function renderHomeCompReminder() {
+        const widget = document.getElementById('home-comp-reminder');
+        if (!widget) return;
+
+        const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '{"enabled":false,"measurements":[]}');
+        const compFreq = localStorage.getItem('rpCoach_compFreq') || '';
+
+        if (!data.enabled || !compFreq) {
+            widget.classList.add('hidden');
+            return;
+        }
+        widget.classList.remove('hidden');
+
+        const freqDays = { weekly: 7, biweekly: 14, monthly: 30 };
+        const toleranceDays = { weekly: 2, biweekly: 3, monthly: 5 };
+        const freqSlots = { weekly: 20, biweekly: 10, monthly: 5 };
+        const days = freqDays[compFreq] || 30;
+        const tolerance = toleranceDays[compFreq] || 5;
+        const requiredDays = days - tolerance;
+
+        const measurements = (data.measurements || []).filter(m => !m.phase);
+        const totalSlots = freqSlots[compFreq] || 5;
+        const completed = Math.min(measurements.length, totalSlots);
+
+        // Calcular próxima medición
+        let lastDate = null;
+        if (measurements.length > 0) {
+            lastDate = new Date(measurements[measurements.length - 1].date);
+        }
+        const nextDate = lastDate ? new Date(lastDate.getTime() + days * 86400000) : new Date();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        nextDate.setHours(0, 0, 0, 0);
+        const daysLeft = Math.ceil((nextDate - today) / 86400000);
+        const daysSinceLast = lastDate ? Math.floor((today - new Date(lastDate.getTime())) / 86400000) : 999;
+        const isUnlocked = daysSinceLast >= requiredDays;
+
+        // Fecha próxima
+        const dateEl = document.getElementById('home-next-date');
+        const daysEl = document.getElementById('home-days-left');
+        const daysLabel = document.getElementById('home-days-label');
+
+        const dateStr = nextDate.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+        if (dateEl) dateEl.textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+
+        if (daysLeft <= 0 || isUnlocked) {
+            if (daysEl) { daysEl.textContent = '¡HOY!'; daysEl.style.color = '#10B981'; daysEl.style.fontSize = '1rem'; }
+            if (daysLabel) daysLabel.textContent = 'disponible';
+        } else if (daysLeft <= tolerance) {
+            if (daysEl) { daysEl.textContent = daysLeft; daysEl.style.color = '#FBBF24'; }
+            if (daysLabel) daysLabel.textContent = daysLeft === 1 ? 'día' : 'días';
+        } else {
+            if (daysEl) { daysEl.textContent = daysLeft; daysEl.style.color = '#A78BFA'; }
+            if (daysLabel) daysLabel.textContent = daysLeft === 1 ? 'día' : 'días';
+        }
+
+        // Mini calendario compacto: últimas 3 + próxima
+        const calDiv = document.getElementById('home-comp-calendar');
+        if (calDiv) {
+            const recentCount = Math.min(measurements.length, 3);
+            let calHtml = '<div style="display:flex; gap:4px;">';
+            for (let i = Math.max(0, measurements.length - recentCount); i < measurements.length; i++) {
+                const m = measurements[i];
+                const mDate = new Date(m.date);
+                const dayNum = mDate.getDate();
+                const monthName = mDate.toLocaleDateString('es-MX', { month: 'short' });
+                calHtml += `<div style="flex:1; text-align:center; padding:4px 2px; border-radius:6px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3);">
+                    <div style="font-size:0.9rem; font-weight:800; color:#10B981; line-height:1;">${dayNum}</div>
+                    <div style="font-size:0.5rem; color:var(--text-muted);">${monthName}</div>
+                    <div style="font-size:0.5rem; color:#10B981;">✓</div>
+                </div>`;
+            }
+            const nNum = nextDate.getDate();
+            const nMonth = nextDate.toLocaleDateString('es-MX', { month: 'short' });
+            const uColor = isUnlocked || daysLeft <= 0 ? '#10B981' : '#A78BFA';
+            const uBg = isUnlocked || daysLeft <= 0 ? 'rgba(16,185,129,0.12)' : 'rgba(139,92,246,0.1)';
+            const uBorder = isUnlocked || daysLeft <= 0 ? 'rgba(16,185,129,0.5)' : 'rgba(139,92,246,0.3)';
+            calHtml += `<div style="flex:1; text-align:center; padding:4px 2px; border-radius:6px; background:${uBg}; border:2px dashed ${uBorder};">
+                <div style="font-size:0.9rem; font-weight:800; color:${uColor}; line-height:1;">${nNum}</div>
+                <div style="font-size:0.5rem; color:var(--text-muted);">${nMonth}</div>
+                <div style="font-size:0.5rem; color:${uColor};">${isUnlocked || daysLeft <= 0 ? '→' : '🔒'}</div>
+            </div>`;
+            calHtml += '</div>';
+            calDiv.innerHTML = calHtml;
+        }
+
+        // Barra de progreso
+        const progressText = document.getElementById('home-comp-progress-text');
+        const progressFill = document.getElementById('home-comp-progress-fill');
+        if (progressText) progressText.textContent = `${completed} / ${totalSlots} mediciones`;
+        if (progressFill) progressFill.style.width = `${(completed / totalSlots) * 100}%`;
     }
 
     /**
@@ -684,16 +921,17 @@ const RPCoachApp = (() => {
         const saveBtn = document.getElementById('btn-save-body-comp');
         if (!toggle || !fields) return;
 
-        // Cargar estado guardado
         const saved = JSON.parse(localStorage.getItem('rpCoach_body_composition') || 'null');
+        const compFreq = localStorage.getItem('rpCoach_compFreq') || '';
+
         if (saved && saved.enabled) {
             toggle.checked = true;
             fields.classList.remove('hidden');
-            // Llenar con última medición
             if (saved.measurements && saved.measurements.length > 0) {
                 const last = saved.measurements[saved.measurements.length - 1];
                 if (last.bodyFat) document.getElementById('bc-body-fat').value = last.bodyFat;
                 if (last.muscleMass) document.getElementById('bc-muscle-mass').value = last.muscleMass;
+                if (last.shoulder) document.getElementById('bc-shoulder').value = last.shoulder;
                 if (last.chest) document.getElementById('bc-chest').value = last.chest;
                 if (last.arm) document.getElementById('bc-arm').value = last.arm;
                 if (last.waist) document.getElementById('bc-waist').value = last.waist;
@@ -701,19 +939,18 @@ const RPCoachApp = (() => {
                 if (last.hip) document.getElementById('bc-hip').value = last.hip;
                 if (last.calf) document.getElementById('bc-calf').value = last.calf;
             }
-            if (saved.frequency) {
-                const freqSel = document.getElementById('bc-frequency');
-                if (freqSel) freqSel.value = saved.frequency;
-            }
 
-            // Ocultar el botón anterior (Siguiente base) si la composición está activa al inicio
             const profileControls = document.getElementById('profile-wizard-controls');
-            if (profileControls) {
-                profileControls.style.display = 'none';
-            }
+            if (profileControls) profileControls.style.display = 'none';
         }
 
-        // Toggle listener
+        // Inicializar botones de frecuencia en Perfil
+        initProfileFreqButtons(compFreq);
+
+        // Mostrar calendario de próxima medición si ya hay frecuencia configurada
+        updateNextMeasurementCalendar();
+
+        // Toggle listener — sincroniza con Métricas
         if (!toggle.hasListener) {
             toggle.hasListener = true;
             toggle.addEventListener('change', function () {
@@ -722,29 +959,144 @@ const RPCoachApp = (() => {
                 data.enabled = this.checked;
                 localStorage.setItem('rpCoach_body_composition', JSON.stringify(data));
 
-                // Mostrar/Ocultar el botón "Siguiente" principal según el estado
                 const profileControls = document.getElementById('profile-wizard-controls');
-                if (profileControls) {
-                    profileControls.style.display = this.checked ? 'none' : 'flex';
-                }
+                if (profileControls) profileControls.style.display = this.checked ? 'none' : 'flex';
+
+                // Sincronizar: ocultar/mostrar composición en Métricas
+                syncMetricasVisibility(this.checked);
+
+                // Actualizar calendario
+                updateNextMeasurementCalendar();
             });
         }
 
-        // Save body comp and redirect (ahora funciona como un botón "Siguiente" integral)
+        // Save body comp and redirect
         if (saveBtn && !saveBtn.hasListener) {
             saveBtn.hasListener = true;
             saveBtn.addEventListener('click', () => {
                 const success = saveBodyComposition();
                 if (success) {
                     saveProfile();
+                    // Actualizar calendario después de guardar
+                    updateNextMeasurementCalendar();
+                    // Sincronizar Métricas
+                    syncMetricasVisibility(true);
                     try {
-                        if (typeof switchModule === 'function') {
-                            switchModule('workout');
-                        }
+                        if (typeof switchModule === 'function') switchModule('workout');
                     } catch (e) { }
                 }
             });
         }
+    }
+
+    // Inicializar botones de frecuencia en sección Perfil
+    function initProfileFreqButtons(currentFreq) {
+        document.querySelectorAll('.bc-profile-freq-btn').forEach(btn => {
+            const f = btn.dataset.freq;
+            // Resaltar el botón activo
+            if (f === currentFreq) {
+                btn.style.background = 'rgba(139,92,246,0.3)';
+                btn.style.borderColor = '#8B5CF6';
+                btn.style.color = '#fff';
+            } else {
+                btn.style.background = 'rgba(139,92,246,0.08)';
+                btn.style.borderColor = 'rgba(139,92,246,0.3)';
+                btn.style.color = '#A78BFA';
+            }
+            if (!btn.hasListener) {
+                btn.hasListener = true;
+                btn.addEventListener('click', () => {
+                    localStorage.setItem('rpCoach_compFreq', f);
+                    // Actualizar estilos de todos los botones
+                    document.querySelectorAll('.bc-profile-freq-btn').forEach(b => {
+                        if (b.dataset.freq === f) {
+                            b.style.background = 'rgba(139,92,246,0.3)';
+                            b.style.borderColor = '#8B5CF6';
+                            b.style.color = '#fff';
+                        } else {
+                            b.style.background = 'rgba(139,92,246,0.08)';
+                            b.style.borderColor = 'rgba(139,92,246,0.3)';
+                            b.style.color = '#A78BFA';
+                        }
+                    });
+                    // Actualizar calendario
+                    updateNextMeasurementCalendar();
+                    // Sincronizar Métricas (actualizar timeline allá)
+                    if (typeof renderBodyCompositionFeedback === 'function') renderBodyCompositionFeedback();
+                });
+            }
+        });
+    }
+
+    // Calendario de próxima medición en Perfil
+    function updateNextMeasurementCalendar() {
+        const container = document.getElementById('bc-next-measurement');
+        if (!container) return;
+
+        const compFreq = localStorage.getItem('rpCoach_compFreq') || '';
+        const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '{"enabled":false,"measurements":[]}');
+
+        if (!compFreq || !data.enabled) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        const freqDays = { weekly: 7, biweekly: 14, monthly: 30 };
+        const freqNames = { weekly: 'Semanal', biweekly: 'Quincenal', monthly: 'Mensual' };
+        const days = freqDays[compFreq] || 30;
+
+        // Buscar última medición (general o de fase)
+        const measurements = data.measurements || [];
+        let lastDate = null;
+        if (measurements.length > 0) {
+            lastDate = new Date(measurements[measurements.length - 1].date);
+        }
+
+        const nextDate = lastDate ? new Date(lastDate.getTime() + days * 86400000) : new Date();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        nextDate.setHours(0, 0, 0, 0);
+        const daysLeft = Math.ceil((nextDate - today) / 86400000);
+
+        const dateStr = nextDate.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
+        document.getElementById('bc-next-date').textContent = dateStr;
+
+        const daysEl = document.getElementById('bc-days-left');
+        if (daysLeft <= 0) {
+            daysEl.textContent = '¡HOY!';
+            daysEl.style.color = '#10B981';
+            container.style.borderColor = 'rgba(16,185,129,0.5)';
+            container.style.background = 'rgba(16,185,129,0.1)';
+        } else if (daysLeft <= 2) {
+            daysEl.textContent = daysLeft;
+            daysEl.style.color = '#FBBF24';
+            container.style.borderColor = 'rgba(251,191,36,0.3)';
+            container.style.background = 'rgba(251,191,36,0.06)';
+        } else {
+            daysEl.textContent = daysLeft;
+            daysEl.style.color = '#A78BFA';
+            container.style.borderColor = 'rgba(16,185,129,0.2)';
+            container.style.background = 'rgba(16,185,129,0.06)';
+        }
+
+        document.getElementById('bc-freq-label').textContent = `Frecuencia: ${freqNames[compFreq]} · ${lastDate ? 'Última: ' + lastDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) : 'Sin mediciones aún'}`;
+
+        container.classList.remove('hidden');
+    }
+
+    // Sincronizar visibilidad de composición corporal en Métricas
+    function syncMetricasVisibility(enabled) {
+        const trackerCard = document.getElementById('comp-tracker-card');
+        const globalSection = document.getElementById('body-composition-global');
+        const phases = ['s1', 's3', 's5'];
+
+        if (trackerCard) trackerCard.style.display = enabled ? 'block' : 'none';
+        if (globalSection && !enabled) globalSection.style.display = 'none';
+
+        phases.forEach(p => {
+            const sec = document.getElementById(`body-composition-${p}`);
+            if (sec) sec.style.display = enabled ? 'block' : 'none';
+        });
     }
 
     function saveBodyComposition() {
@@ -752,6 +1104,7 @@ const RPCoachApp = (() => {
             date: new Date().toISOString().split('T')[0],
             bodyFat: parseFloat(document.getElementById('bc-body-fat')?.value) || 0,
             muscleMass: parseFloat(document.getElementById('bc-muscle-mass')?.value) || 0,
+            shoulder: parseFloat(document.getElementById('bc-shoulder')?.value) || 0,
             chest: parseFloat(document.getElementById('bc-chest')?.value) || 0,
             arm: parseFloat(document.getElementById('bc-arm')?.value) || 0,
             waist: parseFloat(document.getElementById('bc-waist')?.value) || 0,
@@ -767,7 +1120,7 @@ const RPCoachApp = (() => {
 
         const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '{"enabled":true,"frequency":"monthly","measurements":[]}');
         data.enabled = true;
-        data.frequency = document.getElementById('bc-frequency')?.value || 'monthly';
+        data.frequency = localStorage.getItem('rpCoach_compFreq') || 'monthly';
         data.measurements.push(measurement);
         localStorage.setItem('rpCoach_body_composition', JSON.stringify(data));
         showNotification('✅ Mediciones de composición corporal guardadas');
@@ -781,6 +1134,7 @@ const RPCoachApp = (() => {
             phase: phase,
             bodyFat: parseFloat(document.getElementById(`bc-fat-${phase}`)?.value) || 0,
             muscleMass: parseFloat(document.getElementById(`bc-muscle-${phase}`)?.value) || 0,
+            shoulder: parseFloat(document.getElementById(`bc-shoulder-${phase}`)?.value) || 0,
             chest: parseFloat(document.getElementById(`bc-chest-${phase}`)?.value) || 0,
             arm: parseFloat(document.getElementById(`bc-arm-${phase}`)?.value) || 0,
             waist: parseFloat(document.getElementById(`bc-waist-${phase}`)?.value) || 0,
@@ -803,23 +1157,29 @@ const RPCoachApp = (() => {
         if (form) form.classList.add('hidden');
 
         renderBodyCompositionFeedback();
+        renderMeasurementOverlays();
         if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderAll === 'function') {
             ProgressAnalytics.renderAll();
         }
     }
 
     function renderBodyCompositionFeedback() {
-        const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || 'null');
+        const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '{"enabled":false,"measurements":[]}');
+        const isEnabled = data.enabled !== false;
 
         const globalSection = document.getElementById('body-composition-global');
 
-        if (!data || !data.enabled) {
-            if (globalSection) globalSection.style.display = 'none';
-            ['s1', 's3', 's5'].forEach(p => {
-                const sec = document.getElementById(`body-composition-${p}`);
-                if (sec) sec.style.display = 'none';
-            });
-            return;
+        // Sincronizar visibilidad según toggle de Perfil
+        syncMetricasVisibility(isEnabled);
+        if (!isEnabled) return;
+
+        // Ocultar config de frecuencia en Métricas si ya está configurada en Perfil
+        const compFreqConfig = document.getElementById('comp-freq-config');
+        const savedFreq = localStorage.getItem('rpCoach_compFreq') || '';
+        if (compFreqConfig && savedFreq) {
+            compFreqConfig.style.display = 'none';
+        } else if (compFreqConfig) {
+            compFreqConfig.style.display = 'block';
         }
 
         const measurements = data.measurements || [];
@@ -889,6 +1249,7 @@ const RPCoachApp = (() => {
                             if (latestPhase) {
                                 document.getElementById(`bc-fat-${phase}`).value = latestPhase.bodyFat || '';
                                 document.getElementById(`bc-muscle-${phase}`).value = latestPhase.muscleMass || '';
+                                document.getElementById(`bc-shoulder-${phase}`).value = latestPhase.shoulder || '';
                                 document.getElementById(`bc-chest-${phase}`).value = latestPhase.chest || '';
                                 document.getElementById(`bc-arm-${phase}`).value = latestPhase.arm || '';
                                 document.getElementById(`bc-waist-${phase}`).value = latestPhase.waist || '';
@@ -912,6 +1273,193 @@ const RPCoachApp = (() => {
             }
         });
 
+        // ═══ Sistema de tracking de composición corporal con timeline ═══
+        const genForm = document.getElementById('general-comp-form');
+        const compFreq = localStorage.getItem('rpCoach_compFreq') || '';
+        const freqConfig = { weekly: 20, biweekly: 10, monthly: 5 };
+        const freqLabels = { weekly: 'Semana', biweekly: 'Quincena', monthly: 'Mes' };
+
+        // Resaltar botón de frecuencia activo
+        document.querySelectorAll('.comp-freq-btn').forEach(btn => {
+            const f = btn.dataset.freq;
+            if (f === compFreq) {
+                btn.style.background = 'rgba(139,92,246,0.3)';
+                btn.style.borderColor = '#8B5CF6';
+                btn.style.color = '#fff';
+            }
+            if (!btn.hasListener) {
+                btn.hasListener = true;
+                btn.addEventListener('click', () => {
+                    localStorage.setItem('rpCoach_compFreq', f);
+                    renderBodyCompositionFeedback();
+                });
+            }
+        });
+
+        // Renderizar timeline si hay frecuencia configurada
+        const timelineDiv = document.getElementById('comp-timeline');
+        const progressBar = document.getElementById('comp-progress-bar');
+        if (compFreq && timelineDiv) {
+            const totalSlots = freqConfig[compFreq];
+            const label = freqLabels[compFreq];
+            const generalMeasurements = measurements.filter(m => !m.phase);
+            const completedCount = Math.min(generalMeasurements.length, totalSlots);
+
+            // Barra de progreso
+            if (progressBar) {
+                progressBar.style.display = 'block';
+                document.getElementById('comp-progress-text').textContent = `${completedCount} / ${totalSlots}`;
+                document.getElementById('comp-progress-fill').style.width = `${(completedCount / totalSlots) * 100}%`;
+            }
+
+            // Calcular si el próximo slot está desbloqueado por tiempo
+            const freqDays = { weekly: 7, biweekly: 14, monthly: 30 };
+            const toleranceDays = { weekly: 2, biweekly: 3, monthly: 5 };
+            const requiredDays = freqDays[compFreq] - toleranceDays[compFreq];
+            let nextSlotUnlocked = true;
+            let daysUntilUnlock = 0;
+
+            if (generalMeasurements.length > 0) {
+                const lastMDate = new Date(generalMeasurements[generalMeasurements.length - 1].date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                lastMDate.setHours(0, 0, 0, 0);
+                const daysSinceLast = Math.floor((today - lastMDate) / 86400000);
+                nextSlotUnlocked = daysSinceLast >= requiredDays;
+                daysUntilUnlock = Math.max(0, requiredDays - daysSinceLast);
+            }
+
+            // Timeline visual: grid de slots
+            let html = '';
+            // Mensaje de bloqueo si aplica
+            if (!nextSlotUnlocked && generalMeasurements.length < totalSlots) {
+                html += `<div style="text-align:center; padding:8px; margin-bottom:8px; background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.25); border-radius:8px;">
+                    <span style="font-size:0.75rem; color:#FBBF24;">🔒 Próxima medición disponible en <strong>${daysUntilUnlock} día${daysUntilUnlock !== 1 ? 's' : ''}</strong></span>
+                </div>`;
+            }
+            html += '<div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:4px;">';
+            for (let i = 0; i < totalSlots; i++) {
+                const hasMeasurement = i < generalMeasurements.length;
+                const m = hasMeasurement ? generalMeasurements[i] : null;
+                const isNext = i === generalMeasurements.length;
+                const isLocked = isNext && !nextSlotUnlocked;
+
+                const bg = hasMeasurement
+                    ? 'rgba(16,185,129,0.2)'
+                    : isNext
+                        ? (isLocked ? 'rgba(251,191,36,0.08)' : 'rgba(139,92,246,0.15)')
+                        : 'rgba(255,255,255,0.03)';
+                const border = hasMeasurement
+                    ? 'rgba(16,185,129,0.4)'
+                    : isNext
+                        ? (isLocked ? 'rgba(251,191,36,0.3)' : 'rgba(139,92,246,0.4)')
+                        : 'rgba(255,255,255,0.08)';
+                const color = hasMeasurement ? '#10B981' : isNext ? (isLocked ? '#FBBF24' : '#A78BFA') : 'rgba(255,255,255,0.25)';
+                const cursor = hasMeasurement ? 'pointer' : (isNext && !isLocked) ? 'pointer' : 'default';
+                const icon = hasMeasurement ? '✓' : isNext ? (isLocked ? '🔒' : '+') : '';
+
+                html += `<div class="comp-slot" data-slot="${i}" data-locked="${isLocked}"
+                    style="padding:6px 4px; text-align:center; border-radius:6px; background:${bg}; border:1px solid ${border}; cursor:${cursor}; transition:all 0.2s;${isNext && !isLocked ? 'animation:pulse 2s infinite;' : ''}${isLocked ? 'opacity:0.7;' : ''}">
+                    <div style="font-size:0.6rem; font-weight:700; color:${color};">${label} ${i + 1}</div>
+                    <div style="font-size:0.75rem; font-weight:700; color:${color}; margin-top:2px;">${icon}</div>
+                    ${m ? `<div style="font-size:0.5rem; color:var(--text-muted); margin-top:1px;">${m.date.slice(5)}</div>` : ''}
+                </div>`;
+            }
+            html += '</div>';
+            timelineDiv.innerHTML = html;
+
+            // Click en slots
+            timelineDiv.querySelectorAll('.comp-slot').forEach(slot => {
+                slot.addEventListener('click', () => {
+                    const idx = parseInt(slot.dataset.slot);
+                    const isCompleted = idx < generalMeasurements.length;
+                    const isNextSlot = idx === generalMeasurements.length;
+                    const slotLocked = slot.dataset.locked === 'true';
+
+                    if (slotLocked) {
+                        showNotification(`🔒 Faltan ${daysUntilUnlock} día${daysUntilUnlock !== 1 ? 's' : ''} para tu próxima medición`);
+                        return;
+                    }
+                    if (!isCompleted && !isNextSlot) return;
+
+                    genForm.classList.remove('hidden');
+                    const formTitle = document.getElementById('comp-form-title');
+                    if (formTitle) formTitle.textContent = isCompleted
+                        ? `${label} ${idx + 1} — Editar`
+                        : `${label} ${idx + 1} — Nueva Medición`;
+
+                    // Repoblar si existe
+                    const m = isCompleted ? generalMeasurements[idx] : (generalMeasurements.length > 0 ? generalMeasurements[generalMeasurements.length - 1] : null);
+                    if (m) {
+                        ['shoulder','chest','arm','waist','hip','thigh','calf'].forEach(f => {
+                            const el = document.getElementById(`bc-${f}-gen`);
+                            if (el) el.value = m[f] || '';
+                        });
+                        document.getElementById('bc-fat-gen').value = m.bodyFat || '';
+                        document.getElementById('bc-muscle-gen').value = m.muscleMass || '';
+                    }
+                    genForm.dataset.editIndex = isCompleted ? idx : '-1';
+                });
+            });
+        } else if (timelineDiv) {
+            timelineDiv.innerHTML = '';
+            if (progressBar) progressBar.style.display = 'none';
+        }
+
+        // Botón cerrar formulario
+        const closeBtn = document.getElementById('btn-close-comp-form');
+        if (closeBtn && !closeBtn.hasListener) {
+            closeBtn.hasListener = true;
+            closeBtn.addEventListener('click', () => genForm.classList.add('hidden'));
+        }
+
+        // Guardar medición
+        const saveGenBtn = document.getElementById('btn-save-general-comp');
+        if (saveGenBtn && !saveGenBtn.hasListener) {
+            saveGenBtn.hasListener = true;
+            saveGenBtn.addEventListener('click', () => {
+                const measurement = {
+                    date: new Date().toISOString().split('T')[0],
+                    bodyFat: parseFloat(document.getElementById('bc-fat-gen')?.value) || 0,
+                    muscleMass: parseFloat(document.getElementById('bc-muscle-gen')?.value) || 0,
+                    shoulder: parseFloat(document.getElementById('bc-shoulder-gen')?.value) || 0,
+                    chest: parseFloat(document.getElementById('bc-chest-gen')?.value) || 0,
+                    arm: parseFloat(document.getElementById('bc-arm-gen')?.value) || 0,
+                    waist: parseFloat(document.getElementById('bc-waist-gen')?.value) || 0,
+                    hip: parseFloat(document.getElementById('bc-hip-gen')?.value) || 0,
+                    thigh: parseFloat(document.getElementById('bc-thigh-gen')?.value) || 0,
+                    calf: parseFloat(document.getElementById('bc-calf-gen')?.value) || 0
+                };
+                if (measurement.bodyFat === 0 && measurement.muscleMass === 0 &&
+                    measurement.chest === 0 && measurement.arm === 0) {
+                    showNotification('⚠️ Ingresa al menos un dato de medición');
+                    return;
+                }
+                const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '{"enabled":true,"measurements":[]}');
+                data.enabled = true;
+                const editIdx = parseInt(genForm.dataset.editIndex || '-1');
+                const genMeasurements = data.measurements.filter(m => !m.phase);
+                if (editIdx >= 0 && editIdx < genMeasurements.length) {
+                    // Encontrar el índice real en el array completo
+                    let realIdx = -1, genCount = -1;
+                    for (let i = 0; i < data.measurements.length; i++) {
+                        if (!data.measurements[i].phase) {
+                            genCount++;
+                            if (genCount === editIdx) { realIdx = i; break; }
+                        }
+                    }
+                    if (realIdx >= 0) data.measurements[realIdx] = measurement;
+                } else {
+                    data.measurements.push(measurement);
+                }
+                localStorage.setItem('rpCoach_body_composition', JSON.stringify(data));
+                showNotification('✅ Medición guardada correctamente');
+                genForm.classList.add('hidden');
+                renderBodyCompositionFeedback();
+                renderMeasurementOverlays();
+            });
+        }
+
         if (!globalSection || measurements.length === 0) {
             if (globalSection) globalSection.style.display = 'none';
             return;
@@ -925,6 +1473,7 @@ const RPCoachApp = (() => {
                     <td style="padding:4px 6px;">${m.date} <span style="font-size:0.55rem; background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px; margin-left:4px;">${(m.phase || '').toUpperCase()}</span></td>
                     <td style="padding:4px 6px;">${Number(m.bodyFat).toFixed(1)}%</td>
                     <td style="padding:4px 6px;">${Number(m.muscleMass).toFixed(1)}kg</td>
+                    <td style="padding:4px 6px;">${m.shoulder || '-'}</td>
                     <td style="padding:4px 6px;">${m.chest || '-'}</td>
                     <td style="padding:4px 6px;">${m.arm || '-'}</td>
                     <td style="padding:4px 6px;">${m.waist || '-'}</td>
@@ -941,7 +1490,8 @@ const RPCoachApp = (() => {
                     <thead><tr>
                         <th style="padding:4px 6px;">Fecha</th>
                         <th style="padding:4px 6px;">% Grasa</th>
-                        <th style="padding:4px 6px;">Músc</td>
+                        <th style="padding:4px 6px;">Músc</th>
+                        <th style="padding:4px 6px;">Hombro</th>
                         <th style="padding:4px 6px;">Pecho</th>
                         <th style="padding:4px 6px;">Brazo</th>
                         <th style="padding:4px 6px;">Cint</th>
@@ -1023,6 +1573,144 @@ const RPCoachApp = (() => {
                     showNotification('🗑️ Foto eliminada');
                 });
             }
+        });
+
+        // Renderizar indicadores de medición sobre las siluetas
+        renderMeasurementOverlays();
+    }
+
+    // ═══════ Indicadores de Medición sobre Siluetas ═══════
+
+    // Estado global de unidad (cm o in)
+    let measureUnit = localStorage.getItem('rpCoach_measureUnit') || 'cm';
+
+    function renderMeasurementOverlays() {
+        const data = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '{"measurements":[]}');
+        const measurements = data.measurements || [];
+        const phaseMap = { 'start': 's1', 'mid': 's3', 'end': 's5' };
+
+        // ═══ Solo textos al lado del cuerpo ═══
+        // top: altura anatómica (%), x: posición horizontal (%), side: 'r' o 'l'
+        // Frontal: labels a la derecha | Posterior: labels a la izquierda
+        // Lateral: labels a la derecha
+        const frontLayout = [
+            { key: 'shoulder', top: 19, label: 'Hombro',      x: 80, side: 'r' },
+            { key: 'chest',    top: 26, label: 'Pecho',       x: 80, side: 'r' },
+            { key: 'arm',      top: 32, label: 'Brazo',       x: 82, side: 'r' },
+            { key: 'waist',    top: 39, label: 'Cintura',     x: 80, side: 'r' },
+            { key: 'hip',      top: 47, label: 'Cadera',      x: 80, side: 'r' },
+            { key: 'thigh',    top: 61, label: 'Muslo',       x: 80, side: 'r' },
+            { key: 'calf',     top: 79, label: 'Pantorrilla', x: 80, side: 'r' }
+        ];
+        const sideLayout = [
+            { key: 'shoulder', top: 19, label: 'Hombro',      x: 75, side: 'r' },
+            { key: 'chest',    top: 26, label: 'Pecho',       x: 75, side: 'r' },
+            { key: 'waist',    top: 39, label: 'Cintura',     x: 75, side: 'r' },
+            { key: 'hip',      top: 47, label: 'Cadera',      x: 75, side: 'r' },
+            { key: 'thigh',    top: 61, label: 'Muslo',       x: 75, side: 'r' },
+            { key: 'calf',     top: 79, label: 'Pantorrilla', x: 75, side: 'r' }
+        ];
+        const backLayout = [
+            { key: 'shoulder', top: 19, label: 'Hombro',      x: 20, side: 'l' },
+            { key: 'chest',    top: 26, label: 'Espalda',     x: 20, side: 'l' },
+            { key: 'arm',      top: 32, label: 'Brazo',       x: 18, side: 'l' },
+            { key: 'waist',    top: 39, label: 'Cintura',     x: 20, side: 'l' },
+            { key: 'hip',      top: 47, label: 'Cadera',      x: 20, side: 'l' },
+            { key: 'thigh',    top: 58, label: 'Muslo',       x: 20, side: 'l' },
+            { key: 'calf',     top: 76, label: 'Pantorrilla', x: 20, side: 'l' }
+        ];
+        const layouts = { front: frontLayout, side: sideLayout, back: backLayout };
+
+        // Fallback: última medición general (sin fase)
+        const generalMeasurements = measurements.filter(m => !m.phase);
+        const latestGeneral = generalMeasurements.length > 0 ? generalMeasurements[generalMeasurements.length - 1] : null;
+
+        ['start', 'mid', 'end'].forEach(phasePre => {
+            const bcPhase = phaseMap[phasePre];
+            const phaseMeasurements = measurements.filter(m => m.phase === bcPhase);
+            const latest = phaseMeasurements.length > 0
+                ? phaseMeasurements[phaseMeasurements.length - 1]
+                : latestGeneral;
+
+            ['front', 'side', 'back'].forEach(pose => {
+                const slot = document.getElementById(`photo-slot-${phasePre}-${pose}`);
+                if (!slot) return;
+
+                // Limpiar overlays previos
+                slot.querySelectorAll('.measure-overlay, .measure-comp-badge').forEach(el => el.remove());
+
+                if (!latest) return;
+
+                const layout = layouts[pose];
+                if (!layout) return;
+
+                const hasData = layout.some(item => latest[item.key] > 0);
+                const hasComp = (latest.bodyFat > 0 || latest.muscleMass > 0);
+                if (!hasData && !hasComp) return;
+
+                // Badge de composición corporal (grasa/músculo) en esquina superior izquierda
+                if (hasComp && pose === 'front') {
+                    const badge = document.createElement('div');
+                    badge.className = 'measure-comp-badge';
+                    if (latest.bodyFat > 0) {
+                        const fat = document.createElement('span');
+                        fat.className = 'fat-badge';
+                        fat.textContent = `% Grasa: ${latest.bodyFat}%`;
+                        badge.appendChild(fat);
+                    }
+                    if (latest.muscleMass > 0) {
+                        const muscle = document.createElement('span');
+                        muscle.className = 'muscle-badge';
+                        muscle.textContent = `Musc: ${latest.muscleMass} kg`;
+                        badge.appendChild(muscle);
+                    }
+                    slot.appendChild(badge);
+                }
+
+                if (!hasData) return;
+
+                const overlay = document.createElement('div');
+                overlay.className = 'measure-overlay';
+
+                // Toggle CM/IN (solo en la pose frontal para no repetir)
+                if (pose === 'front') {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.className = 'measure-unit-toggle';
+                    toggleBtn.textContent = measureUnit === 'cm' ? 'CM' : 'IN';
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        measureUnit = measureUnit === 'cm' ? 'in' : 'cm';
+                        localStorage.setItem('rpCoach_measureUnit', measureUnit);
+                        renderMeasurementOverlays();
+                    });
+                    overlay.appendChild(toggleBtn);
+                }
+
+                // Crear textos de medición al lado del cuerpo
+                layout.forEach(item => {
+                    const value = latest[item.key];
+                    if (!value || value <= 0) return;
+
+                    const displayValue = measureUnit === 'in'
+                        ? (value / 2.54).toFixed(1) + '"'
+                        : value + ' cm';
+
+                    const label = document.createElement('span');
+                    label.className = 'measure-label';
+                    label.textContent = `${item.label}: ${displayValue}`;
+                    label.style.top = item.top + '%';
+                    if (item.side === 'r') {
+                        label.style.left = item.x + '%';
+                    } else {
+                        label.style.right = (100 - item.x) + '%';
+                    }
+
+                    overlay.appendChild(label);
+                });
+
+                slot.appendChild(overlay);
+            });
         });
     }
 
@@ -1789,87 +2477,454 @@ document.addEventListener('DOMContentLoaded', () => {
     RPCoachApp.init();
 });
 
-// ─── #7: Exportar Resumen del Mesociclo a PDF ───────────────────────────────
-window.exportMesocyclePDF = function () {
+// ─── #7: Exportar Resumen del Mesociclo a PDF (PREMIUM) ───────────────────────────────
+window.showExportOptions = function() {
+    const modal = document.getElementById('export-options-modal');
+    if(modal) {
+        modal.style.display = 'flex';
+        void modal.offsetWidth;
+        modal.style.opacity = '1';
+    }
+};
+
+window.closeExportOptions = function() {
+    const modal = document.getElementById('export-options-modal');
+    if(modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
+};
+
+window.exportMesocyclePDF = function (period = 'all') {
+    window.closeExportOptions();
     try {
+        // Datos del LocalStorage
         const profile = JSON.parse(localStorage.getItem('rpCoach_profile') || '{}');
-        const sessions = JSON.parse(localStorage.getItem('rpCoach_session_history') || '[]');
-        const routine = JSON.parse(localStorage.getItem('rpCoach_active_routine') || '{}');
-        const prs = JSON.parse(localStorage.getItem('rpCoach_strength_prs') || '[]');
-        const bodyComp = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '[]');
+        let sessions = JSON.parse(localStorage.getItem('rpCoach_session_history') || '[]');
+        let routine = JSON.parse(localStorage.getItem('rpCoach_active_routine') || '{}');
+        let prs = JSON.parse(localStorage.getItem('rpCoach_strength_prs') || '[]');
+        let bodyComp = JSON.parse(localStorage.getItem('rpCoach_body_composition') || '[]');
+        let readinessData = JSON.parse(localStorage.getItem('rpCoach_readiness_history') || '[]');
 
-        const name = profile.name || 'Atleta';
-        const methodology = routine.methodology || '—';
+        if (!Array.isArray(sessions)) sessions = [];
+        if (!Array.isArray(prs)) prs = [];
+        if (!Array.isArray(bodyComp)) bodyComp = [];
+        if (!Array.isArray(readinessData)) readinessData = [];
+
+        // Filtrado por periodo
+        let periodLabel = 'MESOCICLO COMPLETO';
+        if (period === 'week' || period === 'month') {
+            const cutoffDate = new Date();
+            if (period === 'week') {
+                cutoffDate.setDate(cutoffDate.getDate() - 7);
+                periodLabel = 'ÚLTIMOS 7 DÍAS';
+            } else if (period === 'month') {
+                cutoffDate.setDate(cutoffDate.getDate() - 30);
+                periodLabel = 'ÚLTIMOS 30 DÍAS';
+            }
+            
+            cutoffDate.setHours(0,0,0,0);
+            
+            sessions = sessions.filter(s => new Date(s.date || s.dateFormatted || s.timestamp) >= cutoffDate);
+            prs = prs.filter(p => new Date(p.date) >= cutoffDate);
+            bodyComp = bodyComp.filter(b => b.date && new Date(b.date) >= cutoffDate);
+            readinessData = readinessData.filter(r => r.date && new Date(r.date) >= cutoffDate);
+        }
+
+        // 1. INFO DEL ATLETA Y GENERALIDADES
+        const name = profile.name || 'Atleta VIP';
+        const weight = profile.weight ? profile.weight + ' kg' : '—';
+        const methodology = routine.methodology || 'Sin asignar';
+        const split = routine.split ? routine.split.replace(/_/g, ' ').toUpperCase() : 'General';
+        const level = profile.level ? profile.level.toUpperCase() : 'INTERMEDIO';
+        const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        // 2. MÉTRICAS DE ENTRENAMIENTO
         const totalSessions = sessions.length;
-        const today = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
-
-        // Calcular progresión por ejercicio
+        let totalVolume = 0;
+        let avgPump = 0, avgDisruption = 0, avgFatigue = 0, sfrSessions = 0;
+        
         const exerciseMap = {};
+        
         sessions.forEach(s => {
-            (s.exercises || []).forEach(ex => {
-                if (!exerciseMap[ex.name]) exerciseMap[ex.name] = [];
-                exerciseMap[ex.name].push({ weight: ex.weight, reps: ex.reps, date: s.date });
+            totalVolume += (s.totalVolume || 0);
+            
+            // SFR Promedio
+            if (s.sfr) {
+                avgPump += (s.sfr.pump || 3);
+                avgDisruption += (s.sfr.disruption || 3);
+                avgFatigue += (s.sfr.fatigue || 3);
+                sfrSessions++;
+            }
+
+            // Mapeo de ejercicios para progresión
+            (s.exercises || s.sets ? [s] : []).forEach(ex => {
+                const exName = ex.exercise || ex.name || 'Ejercicio';
+                if (!exerciseMap[exName]) exerciseMap[exName] = [];
+                // Determinar el peso y reps de la serie más pesada o la primera
+                let maxWeight = 0;
+                let repsForMax = 0;
+                if (ex.sets && Array.isArray(ex.sets)) {
+                    ex.sets.forEach(set => {
+                        if (set.weight > maxWeight) {
+                            maxWeight = set.weight;
+                            repsForMax = set.reps;
+                        }
+                    });
+                } else if (ex.weight) {
+                    maxWeight = ex.weight;
+                    repsForMax = ex.reps;
+                }
+                
+                if (maxWeight > 0) {
+                    exerciseMap[exName].push({ weight: maxWeight, reps: repsForMax, date: s.date || s.dateFormatted });
+                }
             });
         });
 
+        if (sfrSessions > 0) {
+            avgPump = (avgPump / sfrSessions).toFixed(1);
+            avgDisruption = (avgDisruption / sfrSessions).toFixed(1);
+            avgFatigue = (avgFatigue / sfrSessions).toFixed(1);
+        } else {
+            avgPump = '—'; avgDisruption = '—'; avgFatigue = '—';
+        }
+
+        // 3. RECUPERACIÓN (READINESS)
+        let avgReadiness = '—';
+        let latestReadiness = '—';
+        if (readinessData.length > 0) {
+            latestReadiness = readinessData[readinessData.length - 1].score + '/10';
+            const sumR = readinessData.reduce((acc, curr) => acc + curr.score, 0);
+            avgReadiness = (sumR / readinessData.length).toFixed(1) + '/10';
+        }
+
+        // 4. TABLAS GENERADAS (HTML)
+        // Progresión de Sobrecarga (TOP 10 Ejercicios más frecuentes)
         let exerciseTableRows = '';
-        Object.keys(exerciseMap).sort().forEach(exName => {
+        const sortedExercises = Object.keys(exerciseMap).sort((a,b) => exerciseMap[b].length - exerciseMap[a].length).slice(0, 10);
+        
+        sortedExercises.forEach(exName => {
             const records = exerciseMap[exName];
-            const first = records[0];
-            const last = records[records.length - 1];
-            const gain = last.weight && first.weight ? ((last.weight - first.weight) / first.weight * 100).toFixed(1) : '—';
-            const trendColor = parseFloat(gain) >= 0 ? '#10B981' : '#EF4444';
-            exerciseTableRows += `<tr>
-                <td>${exName}</td>
-                <td>${first?.weight || '—'}kg × ${first?.reps || '—'}</td>
-                <td>${last?.weight || '—'}kg × ${last?.reps || '—'}</td>
-                <td style="color:${trendColor};font-weight:700;">${parseFloat(gain) >= 0 ? '+' : ''}${gain}%</td>
-            </tr>`;
+            if (records.length >= 2) {
+                const first = records[0];
+                const last = records[records.length - 1];
+                const gain = ((last.weight - first.weight) / (first.weight || 1) * 100).toFixed(1);
+                const trendColor = parseFloat(gain) >= 0 ? '#10B981' : '#EF4444';
+                const trendIcon = parseFloat(gain) >= 0 ? '↗' : '↘';
+                
+                exerciseTableRows += `<tr>
+                    <td><strong>${exName}</strong><br><span style="font-size:0.7rem;color:#666;">${records.length} registros</span></td>
+                    <td>${first.weight}kg × ${first.reps}<br><span style="font-size:0.7rem;color:#888;">${first.date}</span></td>
+                    <td>${last.weight}kg × ${last.reps}<br><span style="font-size:0.7rem;color:#888;">${last.date}</span></td>
+                    <td style="color:${trendColor};font-weight:800;font-size:1.1rem;">${parseFloat(gain) > 0 ? '+' : ''}${gain}% ${parseFloat(gain) !== 0 ? trendIcon:''}</td>
+                </tr>`;
+            }
         });
 
-        let prRows = prs.slice(-10).map(p => `<tr><td>${p.exercise}</td><td>${p.weight}kg × ${p.reps}</td><td>${p.date}</td></tr>`).join('');
-        let compRows = bodyComp.slice(-3).map(b => `<tr><td>${b.date || '—'}</td><td>${b.bodyFat ? b.bodyFat.toFixed(1) + '%' : '—'}</td><td>${b.muscleMass ? b.muscleMass + 'kg' : '—'}</td></tr>`).join('');
+        // PRs y Tests
+        let prRows = prs.slice(-6).reverse().map(p => `<tr>
+            <td><strong>${p.exercise}</strong></td>
+            <td style="color:#E040FB;font-weight:700;">${p.weight}kg × ${p.reps}</td>
+            <td><strong>${p.e1rm ? parseFloat(p.e1rm).toFixed(1) + 'kg' : '—'}</strong></td>
+            <td>${p.date || '—'}</td>
+        </tr>`).join('');
 
+        // Composición Corporal
+        let compRows = bodyComp.slice(-5).reverse().map(b => `<tr>
+            <td>${b.date || '—'}</td>
+            <td><strong>${b.weight ? b.weight + 'kg' : '—'}</strong></td>
+            <td style="color:#F59E0B;">${b.bodyFat ? parseFloat(b.bodyFat).toFixed(1) + '%' : '—'}</td>
+            <td style="color:#10B981;">${b.muscleMass ? parseFloat(b.muscleMass).toFixed(1) + 'kg' : '—'}</td>
+        </tr>`).join('');
+
+        // 5. CONSTRUCCIÓN DEL HTML PREMIUM
         const html = `<!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8"><title>Resumen de Mesociclo — ${name}</title>
-<style>
-  body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:24px;color:#111;}
-  h1{color:#6B21A8;border-bottom:2px solid #6B21A8;padding-bottom:8px;}
-  h2{color:#1D4ED8;margin-top:24px;font-size:1rem;}
-  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:0.85rem;}
-  th{background:#6B21A8;color:#fff;padding:6px 10px;text-align:left;}
-  td{padding:5px 10px;border-bottom:1px solid #ddd;}
-  tr:nth-child(even){background:#f5f5ff;}
-  .badge{display:inline-block;background:#E9D5FF;color:#6B21A8;padding:2px 8px;border-radius:4px;font-weight:700;font-size:0.8rem;}
-  .footer{margin-top:32px;font-size:0.75rem;color:#666;text-align:center;}
-</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte Élite — ${name}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; max-width: 900px; margin: 0 auto; padding: 40px; color: #1f2937; background: #ffffff; }
+        .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid #10B981; padding-bottom: 15px; margin-bottom: 30px; }
+        .logo-title { font-size: 2.2rem; font-weight: 800; color: #111827; margin: 0; }
+        .logo-title span { color: #E040FB; }
+        .date-badge { background: #f3f4f6; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #4b5563; }
+        
+        .grid-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 35px; }
+        .card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card.premium { border-color: #E040FB; background: #fdfaef; }
+        .card__val { font-size: 1.8rem; font-weight: 800; color: #111827; }
+        .card__val.accent { color: #10B981; }
+        .card__lbl { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; font-weight: 600; }
+        
+        .section-title { font-size: 1.3rem; font-weight: 800; color: #111827; margin: 40px 0 15px 0; display: flex; align-items: center; gap: 8px; }
+        .section-title::before { content: ''; display: inline-block; width: 6px; height: 24px; background: #E040FB; border-radius: 3px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+        th { background: #111827; color: white; padding: 12px 15px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+        td { padding: 12px 15px; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+        tr:nth-child(even) td { background: #f9fafb; }
+        
+        .sfr-bar { display: flex; gap: 15px; background: #111827; color: white; padding: 20px; border-radius: 12px; margin-top: 20px; justify-content: space-around; }
+        .sfr-item { text-align: center; }
+        .sfr-item-val { font-size: 1.5rem; font-weight: 800; color: #10B981; }
+        .sfr-item-lbl { font-size: 0.75rem; text-transform: uppercase; opacity: 0.8; letter-spacing: 0.5px; margin-top: 4px; }
+        
+        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+        
+        /* Ocultar elementos en impresión para que sea limpio */
+        @media print { body { padding: 10px; } }
+    </style>
 </head>
 <body>
-<h1>🏋️ Resumen del Mesociclo — ${name}</h1>
-<p><strong>Metodología:</strong> <span class="badge">${methodology}</span> &nbsp; <strong>Sesiones completadas:</strong> ${totalSessions} &nbsp; <strong>Generado:</strong> ${today}</p>
 
-<h2>📈 Progresión por Ejercicio</h2>
-<table><thead><tr><th>Ejercicio</th><th>Inicio</th><th>Final</th><th>Cambio</th></tr></thead>
-<tbody>${exerciseTableRows || '<tr><td colspan="4">Sin datos de sesiones registrados.</td></tr>'}</tbody></table>
+    <div class="header">
+        <div>
+            <h1 class="logo-title">RP <span>COACH</span></h1>
+            <p style="margin: 5px 0 0 0; color: #6b7280; font-weight: 600; font-size: 0.9rem;">REPORTE DE RENDIMIENTO ÉLITE <span style="color:#E040FB;">• ${periodLabel}</span></p>
+        </div>
+        <div class="date-badge">🗓️ Emitido: ${today}</div>
+    </div>
 
-<h2>🏆 Últimos PRs Registrados</h2>
-<table><thead><tr><th>Ejercicio</th><th>Marca</th><th>Fecha</th></tr></thead>
-<tbody>${prRows || '<tr><td colspan="3">Sin PRs registrados.</td></tr>'}</tbody></table>
+    <!-- CARDS PRINCIPALES -->
+    <div class="grid-cards">
+        <div class="card">
+            <div class="card__val">${name}</div>
+            <div class="card__lbl">Atleta / ${level}</div>
+        </div>
+        <div class="card">
+            <div class="card__val">${methodology}</div>
+            <div class="card__lbl">Metodología (${split})</div>
+        </div>
+        <div class="card">
+            <div class="card__val">${totalSessions}</div>
+            <div class="card__lbl">Sesiones Totales</div>
+        </div>
+        <div class="card premium">
+            <div class="card__val accent">${totalVolume >= 1000 ? (totalVolume/1000).toFixed(1) + 'k' : totalVolume} <span style="font-size:1rem;color:#111;">kg</span></div>
+            <div class="card__lbl">Volumen Total Alzado</div>
+        </div>
+    </div>
 
-<h2>📐 Composición Corporal</h2>
-<table><thead><tr><th>Fecha</th><th>% Grasa</th><th>Masa Muscular</th></tr></thead>
-<tbody>${compRows || '<tr><td colspan="3">Sin mediciones registradas.</td></tr>'}</tbody></table>
+    <!-- ESTADO DE RECUPERACIÓN / SFR -->
+    <h2 class="section-title">Análisis de Percepción y Fatiga (SFR)</h2>
+    <p style="font-size: 0.9rem; color: #4b5563; margin-bottom: 10px;">Promedios calculados a lo largo del mesociclo a partir de los datos registrados al final de cada sesión. Un Pump y Disrupción altos con Fatiga controlada representan hipertrofia óptima.</p>
+    <div class="sfr-bar">
+        <div class="sfr-item">
+            <div class="sfr-item-val">${avgPump}/5</div>
+            <div class="sfr-item-lbl">Pump Promedio</div>
+        </div>
+        <div class="sfr-item">
+            <div class="sfr-item-val">${avgDisruption}/5</div>
+            <div class="sfr-item-lbl">Disrupción Muscular</div>
+        </div>
+        <div class="sfr-item">
+            <div class="sfr-item-val" style="color: #F59E0B;">${avgFatigue}/5</div>
+            <div class="sfr-item-lbl">Fatiga Articular/SNC</div>
+        </div>
+        <div class="sfr-item">
+            <div class="sfr-item-val" style="color: #E040FB;">${avgReadiness}</div>
+            <div class="sfr-item-lbl">Readiness Histórico</div>
+        </div>
+    </div>
 
-<div class="footer">Generado por NEXUS-RP Coach v1.0 — Entrenamiento Inteligente Autorregulado</div>
-</body></html>`;
+    <!-- PROGRESIÓN DE SOBRECARGA -->
+    <h2 class="section-title">Sobrecarga Progresiva (Progreso Efectivo)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Ejercicio Frecuente</th>
+                <th>Marca Inicial</th>
+                <th>Marca Actual</th>
+                <th>Variación %</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${exerciseTableRows || '<tr><td colspan="4" style="text-align:center;color:#6b7280;">No hay suficientes datos de entrenamiento guardados para comparar la progresión.</td></tr>'}
+        </tbody>
+    </table>
 
+    <!-- RÉCORDS DE FUERZA (TESTS 1RM / PRS) -->
+    <h2 class="section-title">Mejores Marcas Absolutas (PRs y Tests)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Levantamiento</th>
+                <th>Récord Alcanzado (Peso x Reps)</th>
+                <th>e1RM Calculado</th>
+                <th>Fecha Alcanzado</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${prRows || '<tr><td colspan="4" style="text-align:center;color:#6b7280;">No hay récords de fuerza (PRs) registrados en el módulo de Tests.</td></tr>'}
+        </tbody>
+    </table>
+
+    <!-- COMPOSICIÓN CORPORAL -->
+    <h2 class="section-title">Evolución de Composición Corporal</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha de Medición</th>
+                <th>Peso Corporal Total</th>
+                <th>% Grasa Corporal</th>
+                <th>Masa Muscular Magra</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${compRows || '<tr><td colspan="4" style="text-align:center;color:#6b7280;">No existen mediciones físicas registradas en el módulo de Métricas.</td></tr>'}
+        </tbody>
+    </table>
+
+    <!-- FIRMA/FOOTER -->
+    <div class="footer">
+        GENERADO INTELIGENTEMENTE POR NEXUS RP-COACH SYSTEM<br>
+        <span style="font-weight: 400; opacity: 0.7;">Optimización de Volumen, Recuperación & Sobrecarga Guiada por IA</span>
+    </div>
+
+    <script>
+        // Imprimir automáticamente cuando cargue
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 500);
+        };
+    </script>
+</body>
+</html>`;
+
+        // Generación y apertura del reporte
         const win = window.open('', '_blank');
         win.document.write(html);
         win.document.close();
-        setTimeout(() => win.print(), 500);
 
     } catch (e) {
-        alert('Error al generar el PDF: ' + e.message);
+        alert('Error Crítico al construir el Reporte VIP: ' + e.message);
+        console.error(e);
     }
+};
+
+// ─── #8: Resumen Diario (Modal) ───────────────────────────────
+window.showDailySummary = function() {
+    try {
+        const modal = document.getElementById('daily-summary-modal');
+        if (!modal) return;
+        
+        // 1. Fecha
+        const dateEl = document.getElementById('daily-summary-date');
+        if (dateEl) {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateEl.textContent = today.toLocaleDateString('es-ES', options).replace(/^./, str => str.toUpperCase());
+        }
+
+        // 2. Readiness
+        const readinessData = JSON.parse(localStorage.getItem('rpCoach_readiness_history') || '[]');
+        const readinessEl = document.getElementById('ds-readiness');
+        if (readinessEl) {
+            if (readinessData.length > 0) {
+                const latest = readinessData[readinessData.length - 1];
+                readinessEl.textContent = `${latest.score}/10`;
+                readinessEl.style.color = latest.score >= 8 ? '#10B981' : (latest.score >= 5 ? '#F59E0B' : '#EF4444');
+            } else {
+                readinessEl.textContent = 'N/A';
+                readinessEl.style.color = '#A78BFA';
+            }
+        }
+
+        // 3. Volumen Total
+        const sessionHistory = JSON.parse(localStorage.getItem('rpCoach_session_history') || '[]');
+        const volumeEl = document.getElementById('ds-volume');
+        if (volumeEl) {
+            let totalVol = 0;
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - 7);
+            
+            sessionHistory.filter(s => new Date(s.date) >= weekStart).forEach(s => {
+                totalVol += (s.totalVolume || 0);
+            });
+            volumeEl.textContent = totalVol > 0 ? (totalVol / 1000).toFixed(1) + 'k' : '0';
+        }
+
+        // 4. Enfoque / Rutina Actual
+        const routine = JSON.parse(localStorage.getItem('rpCoach_active_routine') || '{}');
+        const focusEl = document.getElementById('ds-focus');
+        const methEl = document.getElementById('ds-methodology');
+        
+        if (focusEl) {
+            if (routine.split && routine.days && routine.days.length > 0) {
+                // Tratando de encontrar el día actual (simplificado)
+                const currentDayIndex = (routine.completedDays || 0) % routine.days.length;
+                focusEl.textContent = routine.days[currentDayIndex]?.name || 'Descanso / Pendiente';
+            } else {
+                focusEl.textContent = 'Sin rutina activa';
+            }
+        }
+        if (methEl) {
+            methEl.textContent = `Metodología: ${routine.methodology || 'Ninguna'}`;
+        }
+
+        // 5. Nutrición
+        const profile = JSON.parse(localStorage.getItem('rpCoach_profile') || '{}');
+        const calEl = document.getElementById('ds-cals');
+        const protEl = document.getElementById('ds-prot');
+        const carbEl = document.getElementById('ds-carbs');
+        
+        if (calEl && protEl && carbEl) {
+            const weight = parseFloat(profile.weight) || 80;
+            // Cálculos súper básicos y fijos para la demostración
+            const calories = Math.round(weight * 33); // Aprox mantenimiento/ligero superavit
+            const protein = Math.round(weight * 2.2); // 2.2g por kg
+            const carbs = Math.round(weight * 4); // 4g por kg
+            
+            calEl.textContent = `${calories} kcal`;
+            protEl.textContent = `${protein}g`;
+            carbEl.textContent = `${carbs}g`;
+        }
+        
+        // Show modal
+        modal.style.display = 'flex';
+        // Trigger reflow
+        void modal.offsetWidth;
+        modal.style.opacity = '1';
+        
+    } catch (e) {
+        console.error('Error al abrir el resumen diario:', e);
+    }
+};
+
+window.closeDailySummary = function() {
+    const modal = document.getElementById('daily-summary-modal');
+    if (modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    }
+};
+
+window.switchFeedbackTab = function(sectionId) {
+    const contents = document.querySelectorAll('.feedback-tab-content');
+    contents.forEach(c => {
+        c.classList.remove('active-tab');
+        c.style.display = 'none';
+        c.style.setProperty('display', 'none', 'important');
+    });
+
+    const target = document.getElementById(sectionId);
+    if(target) {
+        target.classList.add('active-tab');
+        target.style.display = 'block';
+        target.style.setProperty('display', 'block', 'important');
+    }
+
+    const btns = document.querySelectorAll('.feedback-tab-btn');
+    btns.forEach(b => {
+        b.classList.remove('active');
+        if(b.getAttribute('onclick') && b.getAttribute('onclick').includes(sectionId)) {
+            b.classList.add('active');
+        }
+    });
 };

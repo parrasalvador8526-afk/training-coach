@@ -60,6 +60,66 @@
             transform: translateY(-2px);
         }
 
+        /* ═══ Measurement Overlay — Solo textos ═══ */
+        .measure-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .measure-label {
+            position: absolute;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.85);
+            color: #FACC15;
+            font-size: 0.48rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(250,204,21,0.3);
+            line-height: 1.3;
+        }
+        /* Badge composición corporal */
+        .measure-comp-badge {
+            position: absolute;
+            top: 6px; left: 6px;
+            pointer-events: none;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .measure-comp-badge span {
+            background: rgba(0,0,0,0.85);
+            font-size: 0.48rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+        .measure-comp-badge .fat-badge { color: #F97316; border: 1px solid rgba(249,115,22,0.4); }
+        .measure-comp-badge .muscle-badge { color: #10B981; border: 1px solid rgba(16,185,129,0.4); }
+        .measure-unit-toggle {
+            position: absolute;
+            top: 4px; right: 4px;
+            background: rgba(0,0,0,0.75);
+            color: rgba(250,204,21,0.95);
+            border: 1px solid rgba(250,204,21,0.35);
+            border-radius: 4px;
+            font-size: 0.5rem;
+            padding: 2px 5px;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 3;
+            font-weight: 700;
+        }
+        .measure-unit-toggle:hover {
+            background: rgba(250,204,21,0.2);
+        }
+
         .photo-placeholder {
             display: flex;
             flex-direction: column;
@@ -102,6 +162,15 @@
             transform: scale(1.1);
         }
 
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .comp-slot:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(139,92,246,0.2);
+        }
+
         .silhouette-guide {
             max-height: 90%;
             max-width: 90%;
@@ -112,6 +181,39 @@
 </head>
 
 <body>
+    <!-- ========== LOGIN OVERLAY ========== -->
+    <div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.5s ease;">
+        <div class="card card--highlight" style="width: 100%; max-width: 400px; text-align: center; padding: 40px 20px;">
+            <div class="header__logo-icon" style="margin: 0 auto 20px auto; width: 80px; height: 80px; font-size: 2.5rem;">🧠</div>
+            <h2 class="card__title" style="margin-bottom: 25px;">NEXUS-RP <span class="text-gradient">Coach</span></h2>
+            
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Usuario</label>
+                    <input type="text" class="form-input" placeholder="Ingresa tu usuario" required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-input" placeholder="Ingresa tu contraseña" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--block mt-2" style="font-size: 1.1rem; padding: 15px;">
+                    Acceder
+                </button>
+            </form>
+        </div>
+        
+        <script>
+            function handleLogin(e) {
+                e.preventDefault();
+                const overlay = document.getElementById('login-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 500);
+            }
+        </script>
+    </div>
+
     <div class="app-container">
 
         <!-- ========== HEADER ========== -->
@@ -123,11 +225,15 @@
                     <p class="header__subtitle">Entrenamiento Inteligente Autorregulado</p>
                 </div>
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2" style="align-items:center;">
                 <a href="docs/RP_Coach_Protocolo.html" class="btn btn--secondary btn--sm"
                     style="text-decoration: none;">
                     📖 Guía de Protocolo
                 </a>
+                <button id="btn-header-profile" class="btn btn--sm"
+                    style="background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display:flex; align-items:center; gap:5px;">
+                    👤 Perfil
+                </button>
                 <span class="rp-badge">✨ RP Style</span>
                 <select id="methodology-selector" class="form-select" style="width: auto; min-width: 200px;">
                     <option value="Y3T">Cargando metodologías...</option>
@@ -143,9 +249,9 @@
                 <span class="nav-tab__icon">🏠</span>
                 INICIO
             </button>
-            <button class="nav-tab" data-module="profile">
-                <span class="nav-tab__icon">👤</span>
-                PERFIL
+            <button class="nav-tab" data-module="strength">
+                <span class="nav-tab__icon">💪</span>
+                TESTS DE FUERZA
             </button>
             <button class="nav-tab" data-module="workout">
                 <span class="nav-tab__icon">🏋️</span>
@@ -163,10 +269,8 @@
                 <span class="nav-tab__icon">📈</span>
                 PROGRESIÓN
             </button>
-            <button class="nav-tab" data-module="strength">
-                <span class="nav-tab__icon">💪</span>
-                TESTS DE FUERZA
-            </button>
+            <!-- Perfil movido al header -->
+            
             <button class="nav-tab" data-module="nutrition">
                 <span class="nav-tab__icon">🍽️</span>
                 COACH NUTRICIONAL
@@ -186,9 +290,163 @@
                         <p class="text-muted" style="margin-top: 5px;">Bienvenido a tu panel de control de NEXUS-RP
                             Coach.</p>
                     </div>
-                    <span class="rp-badge" style="background: linear-gradient(135deg, #00BFA5, #009688);">Resumen
-                        Diario</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button id="btn-export-pdf-home" onclick="window.showExportOptions()" class="btn btn--secondary"
+                            style="background: #3A3541; border: 1px solid #E040FB; color: #F59E0B; font-size: 0.85rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.3s ease;">
+                            📄 Exportar PDF
+                        </button>
+                        <button id="btn-daily-summary" onclick="window.showDailySummary()" class="btn"
+                            style="background: linear-gradient(135deg, #4ade80, #10b981); color: #ffffff; border: none; font-size: 0.85rem; font-weight: 700; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease;">
+                            RESUMEN DIARIO
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- ========== EXPORT OPTIONS MODAL ========== -->
+            <div id="export-options-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease;">
+                <div class="card card--highlight" style="width: 90%; max-width: 400px; padding: 30px; position: relative; border-color: #E040FB; box-shadow: 0 0 30px rgba(224, 64, 251, 0.3); text-align: center;">
+                    <button onclick="window.closeExportOptions()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                    <h3 style="color: #E040FB; font-size: 1.5rem; margin-bottom: 5px;">📄 Exportar Reporte</h3>
+                    <p class="text-muted" style="margin-bottom: 25px; font-size: 0.9rem;">Selecciona el periodo de rendimiento que deseas incluir en tu PDF VIP.</p>
+                    
+                    <button onclick="window.exportMesocyclePDF('week')" class="btn btn--secondary btn--block mt-2" style="background: rgba(255,255,255,0.05); justify-content: flex-start; padding: 15px; border-radius: 12px;">
+                        <span style="font-size: 1.2rem; margin-right: 10px;">📅</span> Semanal (Últimos 7 días)
+                    </button>
+                    <button onclick="window.exportMesocyclePDF('month')" class="btn btn--secondary btn--block mt-2" style="background: rgba(255,255,255,0.05); justify-content: flex-start; padding: 15px; border-radius: 12px;">
+                        <span style="font-size: 1.2rem; margin-right: 10px;">🗓️</span> Mensual (Últimos 30 días)
+                    </button>
+                    <button onclick="window.exportMesocyclePDF('all')" class="btn btn--primary btn--block mt-2" style="background: linear-gradient(135deg, #E040FB, #7C4DFF); justify-content: flex-start; padding: 15px; border-radius: 12px;">
+                        <span style="font-size: 1.2rem; margin-right: 10px;">🏆</span> Mesociclo Completo
+                    </button>
+                </div>
+            </div>
+
+            <!-- ========== DAILY SUMMARY MODAL ========== -->
+            <div id="daily-summary-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease;">
+                <div class="card card--highlight" style="width: 90%; max-width: 500px; padding: 30px; position: relative; border-color: #10B981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);">
+                    <button onclick="window.closeDailySummary()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h2 style="color: #10B981; font-size: 1.8rem; margin-bottom: 5px;">📅 Resumen Diario</h2>
+                        <p class="text-muted" id="daily-summary-date"></p>
+                    </div>
+                    
+                    <div class="module-grid" style="gap: 15px; margin-bottom: 20px;">
+                        <div class="stat-box" style="padding: 15px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div class="stat-box__value" id="ds-readiness" style="font-size: 1.8rem; color: #10B981;">--</div>
+                            <div class="stat-box__label">Readiness</div>
+                        </div>
+                        <div class="stat-box" style="padding: 15px; background: rgba(224, 64, 251, 0.1); border: 1px solid rgba(224, 64, 251, 0.2);">
+                            <div class="stat-box__value" id="ds-volume" style="font-size: 1.8rem; color: #E040FB;">--</div>
+                            <div class="stat-box__label">Volumen (kg)</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; color: #A78BFA;">🎯 Enfoque de Hoy</h4>
+                        <p id="ds-focus" style="font-size: 1.1rem; font-weight: 600;">Cargando...</p>
+                        <p id="ds-methodology" class="text-muted" style="font-size: 0.9rem; margin-top: 5px;"></p>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                        <h4 style="margin-bottom: 10px; color: #F59E0B;">🍽️ Nutrición Sugerida</h4>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                            <span>Calorías: <strong id="ds-cals">--</strong></span>
+                            <span>Prot: <strong id="ds-prot">--</strong></span>
+                            <span>Carbos: <strong id="ds-carbs">--</strong></span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.closeDailySummary()" class="btn btn--primary btn--block mt-3" style="background: linear-gradient(135deg, #10B981, #059669);">Entendido</button>
+                </div>
+            </div>
+
+            <!-- ===== 5. Readiness Pre-Entreno ===== -->
+            <div class="card mt-3 mb-3"
+                style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1);">
+                <h4
+                    style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🚦 Readiness Pre-Entreno</span>
+                    <span id="readiness-score-badge" class="rp-badge"
+                        style="background: #3B82F6;">Pendiente</span>
+                </h4>
+                <div class="module-grid" style="gap: 10px; margin-bottom: 12px;">
+                    <div class="form-group">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Sueño (1-5)</label>
+                        <select id="readiness-sleep" class="form-select" style="padding: 6px;">
+                            <option value="5">Excelente (8h+)</option>
+                            <option value="4">Bueno (7h)</option>
+                            <option value="3" selected>Regular (6h)</option>
+                            <option value="2">Malo (5h)</option>
+                            <option value="1">Pésimo (&lt;4h)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Estrés (1-5)</label>
+                        <select id="readiness-stress" class="form-select" style="padding: 6px;">
+                            <option value="5">Bajo (Relajado)</option>
+                            <option value="4">Algo de estrés</option>
+                            <option value="3" selected>Normal</option>
+                            <option value="2">Estrés Alto</option>
+                            <option value="1">Burnout extremo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">DOMS (1-5)</label>
+                        <select id="readiness-doms" class="form-select" style="padding: 6px;">
+                            <option value="5">Sin molestias</option>
+                            <option value="4">Ligera tensión</option>
+                            <option value="3" selected>Soreness normal</option>
+                            <option value="2">Dolor agudo</option>
+                            <option value="1">Dolor limitante</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="btn-eval-readiness" class="btn btn--secondary btn--sm btn--block">Evaluar
+                    Estado</button>
+                <div id="readiness-feedback" class="mt-2"
+                    style="font-size: 0.85rem; font-weight: 500; min-height: 20px;"></div>
+                <div id="readiness-history" style="margin-top: 12px; display: none;">
+                    <!-- Historial de readiness generado dinámicamente -->
+                </div>
+            </div>
+
+            <!-- ===== Detalles del Ciclo (Movido a Inicio) ===== -->
+            <div class="card mt-2 mb-3">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <span style="font-size: 1.2rem;">📋</span>
+                    <h4 style="margin: 0; font-size: 1.05rem; color: #E0E0E0;">Detalles del Ciclo Activo</h4>
+                </div>
+                <table class="data-table">
+                    <tr>
+                        <td style="width: 35%; color: var(--text-muted); font-weight: 500;">Metodología:</td>
+                        <td id="detail-methodology" style="color: #E0E0E0;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 500;">Protocolo:</td>
+                        <td id="detail-protocol" style="color: #E0E0E0;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 500;">Split:</td>
+                        <td id="detail-split" style="color: #E0E0E0;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 500;">Nivel:</td>
+                        <td id="detail-level" style="color: #E0E0E0;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 500;">Prioridad:</td>
+                        <td id="detail-priority" style="color: #E0E0E0;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 500;">Intensificadores:</td>
+                        <td id="detail-intensifiers" style="color: #E0E0E0;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 500;">Tempo:</td>
+                        <td id="detail-tempo" style="color: #E0E0E0;">-</td>
+                    </tr>
+                </table>
             </div>
 
             <div class="dashboard-grid">
@@ -233,7 +491,81 @@
                     <p class="text-muted" style="font-size: 0.85rem; margin-top: 10px;">Esfuerzo Objetivo: <strong
                             style="color: white;" id="home-target-rir">RIR 3</strong></p>
                 </div>
+                <!-- Widget 4: Composición Corporal -->
+                <div id="home-comp-reminder" class="card hidden" style="border-left: 4px solid #8B5CF6;">
+                    <h4 style="color:#8B5CF6; margin-bottom:10px;">📐 Composición Corporal</h4>
+                    <div id="home-next-measurement" style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <div style="flex:1;">
+                            <div style="font-size:0.7rem; color:var(--text-muted);">Próxima medición</div>
+                            <div id="home-next-date" style="font-size:0.85rem; font-weight:700; color:#10B981;"></div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div id="home-days-left" style="font-size:1.4rem; font-weight:800; line-height:1;"></div>
+                            <div id="home-days-label" style="font-size:0.55rem; color:var(--text-muted);">días</div>
+                        </div>
+                    </div>
+                    <div id="home-comp-calendar" style="margin-bottom:8px;"></div>
+                    <div id="home-comp-progress" style="margin-bottom:6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                            <span style="font-size:0.6rem; color:var(--text-muted);">Progreso</span>
+                            <span id="home-comp-progress-text" style="font-size:0.6rem; color:#A78BFA; font-weight:700;"></span>
+                        </div>
+                        <div style="height:4px; background:rgba(139,92,246,0.15); border-radius:4px; overflow:hidden;">
+                            <div id="home-comp-progress-fill" style="height:100%; background:linear-gradient(90deg,#8B5CF6,#A78BFA); border-radius:4px; transition:width 0.3s;"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn--secondary btn--sm"
+                        onclick="document.querySelector('.nav-tab[data-module=\'metrics\']').click();"
+                        style="width:100%; font-size:0.75rem; padding:6px;">
+                        Ir a Métricas →
+                    </button>
+                </div>
             </div>
+
+            <!-- PREMIUM INSIGHTS ROW -->
+            <div class="dashboard-grid mt-3">
+                
+                <!-- Widget 5: PR Tracker -->
+                <div class="card" style="border-left: 4px solid #F59E0B;">
+                    <h4 style="color: #F59E0B; margin-bottom: 10px;">🔥 Último Récord (PR)</h4>
+                    <div id="home-pr-exercise" style="font-size: 1.1rem; font-weight: bold; margin-bottom: 5px;">-</div>
+                    <div id="home-pr-details" class="text-muted" style="font-size: 0.9rem;">Sin PRs recientes</div>
+                </div>
+
+                <!-- Widget 6: Evolución de Peso -->
+                <div class="card" style="border-left: 4px solid #3B82F6;">
+                    <h4 style="color: #3B82F6; margin-bottom: 10px;">⚖️ Tendencia de Peso</h4>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span id="home-weight-current" style="font-size: 1.6rem; font-weight: bold;">- kg</span>
+                        <span id="home-weight-trend" style="font-size: 0.9rem; font-weight: 600;">-</span>
+                    </div>
+                    <div id="home-weight-desc" class="text-muted" style="font-size: 0.8rem; margin-top: 5px;">Respecto a medición inicial</div>
+                </div>
+                
+                <!-- Widget 7: Coach Tip -->
+                <div class="card" style="grid-column: 1 / -1; border-left: 4px solid #10B981; background: linear-gradient(to right, rgba(16,185,129,0.05), transparent);">
+                    <h4 style="color: #10B981; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                        <span>💡 Tip de Autorregulación</span>
+                        <span class="rp-badge" style="font-size:0.6rem; background:#10B981;">NEXUS AI</span>
+                    </h4>
+                    <p id="home-coach-tip" style="font-size: 0.95rem; line-height: 1.5; color: #E0E0E0; font-style: italic;">
+                        "Calculando recomendaciones basadas en tu fase actual..."
+                    </p>
+                </div>
+                
+                <!-- Widget 8: Rutina de Hoy (Preview) -->
+                <div class="card" style="grid-column: 1 / -1; border: 1px solid rgba(224,64,251,0.2);">
+                    <h4 style="color: #E040FB; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <span>📋 Preview: Rutina de Hoy</span>
+                        <span id="home-preview-muscles" style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;"></span>
+                    </h4>
+                    <div id="home-routine-preview-list" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div class="text-muted" style="font-size: 0.9rem;">Cargando ejercicios...</div>
+                    </div>
+                </div>
+
+            </div>
+
         </section>
 
         <!-- ========== MÓDULO: PERFIL (DATOS DEL USUARIO) ========== -->
@@ -247,12 +579,6 @@
                         <h3 class="card__title" style="margin:0;">👤 Configuración de Atleta</h3>
                         <span class="rp-badge">Setup Premium</span>
                     </div>
-                    <button
-                        onclick="if(window.runMesocycleSimulation){window.runMesocycleSimulation();setTimeout(()=>window.location.reload(),300);}else{alert('Script de simulación no cargado')}"
-                        class="btn btn--secondary"
-                        style="background:rgba(224,64,251,0.2);border:1px solid #E040FB;color:#fff;font-size:0.78rem;padding:0.4rem 0.9rem;border-radius:8px;cursor:pointer;">
-                        🧪 Simular Mesociclo Completo
-                    </button>
                 </div>
 
 
@@ -298,80 +624,7 @@
                 </div>
             </div>
 
-            <!-- ===== Composición Corporal (Opcional) ===== -->
-            <div class="card mt-2">
-                <div class="card__header" style="display:flex; justify-content:space-between; align-items:center;">
-                    <h4>📐 Composición Corporal</h4>
-                    <label style="position:relative; display:inline-block; width:50px; height:26px;">
-                        <input type="checkbox" id="toggle-body-comp" style="opacity:0; width:0; height:0;">
-                        <span id="toggle-slider-bc"
-                            style="position:absolute; cursor:pointer; inset:0; background:#333; border-radius:26px; transition:.3s;"></span>
-                    </label>
-                </div>
-                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Opcional — activa si
-                    tienes acceso a herramientas de medición (plicómetro, cinta métrica, báscula de bioimpedancia).
-                </p>
-
-                <div id="body-comp-fields" class="hidden">
-                    <div class="module-grid">
-                        <div class="form-group">
-                            <label class="form-label">% Grasa Corporal</label>
-                            <input type="number" id="bc-body-fat" class="form-input" placeholder="15" step="0.1">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Masa Muscular (kg)</label>
-                            <input type="number" id="bc-muscle-mass" class="form-input" placeholder="35" step="0.1">
-                        </div>
-                    </div>
-
-                    <h5 style="margin-top:12px; margin-bottom:8px; font-size:0.8rem; color:var(--text-muted);">
-                        Circunferencias (cm) — opcional</h5>
-                    <div class="module-grid">
-                        <div class="form-group">
-                            <label class="form-label">Pecho</label>
-                            <input type="number" id="bc-chest" class="form-input" placeholder="100" step="0.5">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Brazo (relajado)</label>
-                            <input type="number" id="bc-arm" class="form-input" placeholder="35" step="0.5">
-                        </div>
-                    </div>
-                    <div class="module-grid">
-                        <div class="form-group">
-                            <label class="form-label">Cintura</label>
-                            <input type="number" id="bc-waist" class="form-input" placeholder="80" step="0.5">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Muslo</label>
-                            <input type="number" id="bc-thigh" class="form-input" placeholder="58" step="0.5">
-                        </div>
-                    </div>
-                    <div class="module-grid">
-                        <div class="form-group">
-                            <label class="form-label">Cadera</label>
-                            <input type="number" id="bc-hip" class="form-input" placeholder="95" step="0.5">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Pantorrilla</label>
-                            <input type="number" id="bc-calf" class="form-input" placeholder="38" step="0.5">
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top:12px;">
-                        <label class="form-label">Frecuencia de medición</label>
-                        <select id="bc-frequency" class="form-select">
-                            <option value="weekly">Semanal</option>
-                            <option value="biweekly">Cada 2 semanas</option>
-                            <option value="monthly" selected>Mensual</option>
-                        </select>
-                    </div>
-
-                    <button id="btn-save-body-comp" class="btn btn--primary btn--block mt-2"
-                        style="background: linear-gradient(135deg, #E040FB, #7C3AED);">
-                        Siguiente ➡
-                    </button>
-                </div>
-            </div>
+            <!-- Composición Corporal movida a Métricas y Progresión -->
 
             <!-- Resumen del Perfil -->
             <div id="profile-summary" class="card mt-2 hidden">
@@ -572,6 +825,7 @@
                     </tr>
                 </table>
             </div>
+
         </section>
 
         <!-- ========== MÓDULO: TEMPLATES ========== -->
@@ -853,43 +1107,6 @@
 
                 <div id="routine-display-content" class="hidden">
 
-                    <!-- ===== Detalles del Ciclo (Movido aquí) ===== -->
-                    <div class="card mt-2 mb-3">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                            <span style="font-size: 1.2rem;">📋</span>
-                            <h4 style="margin: 0; font-size: 1.05rem; color: #E0E0E0;">Detalles del Ciclo</h4>
-                        </div>
-                        <table class="data-table">
-                            <tr>
-                                <td style="width: 35%; color: var(--text-muted); font-weight: 500;">Metodología:</td>
-                                <td id="detail-methodology" style="color: #E0E0E0;">-</td>
-                            </tr>
-                            <tr>
-                                <td style="color: var(--text-muted); font-weight: 500;">Protocolo:</td>
-                                <td id="detail-protocol" style="color: #E0E0E0;">-</td>
-                            </tr>
-                            <tr>
-                                <td style="color: var(--text-muted); font-weight: 500;">Split:</td>
-                                <td id="detail-split" style="color: #E0E0E0;">-</td>
-                            </tr>
-                            <tr>
-                                <td style="color: var(--text-muted); font-weight: 500;">Nivel:</td>
-                                <td id="detail-level" style="color: #E0E0E0;">-</td>
-                            </tr>
-                            <tr>
-                                <td style="color: var(--text-muted); font-weight: 500;">Prioridad:</td>
-                                <td id="detail-priority" style="color: #E0E0E0;">-</td>
-                            </tr>
-                            <tr>
-                                <td style="color: var(--text-muted); font-weight: 500;">Intensificadores:</td>
-                                <td id="detail-intensifiers" style="color: #E0E0E0;">-</td>
-                            </tr>
-                            <tr>
-                                <td style="color: var(--text-muted); font-weight: 500;">Tempo:</td>
-                                <td id="detail-tempo" style="color: #E0E0E0;">-</td>
-                            </tr>
-                        </table>
-                    </div>
 
                     <!-- ===== 1. RESUMEN DE CUMPLIMIENTO DEL MESOCICLO ===== -->
                     <div id="mesocycle-summary-section" class="card mt-2" style="display: none;">
@@ -955,121 +1172,82 @@
                     </div>
 
                     <!-- ===== ANALÍTICAS DE PROGRESIÓN ===== -->
+                    
+                    <div class="feedback-tabs-nav" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-top:24px; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:16px; scrollbar-width: none;">
+                        <style>
+                            .feedback-tabs-nav::-webkit-scrollbar { display: none; }
+                            .feedback-tab-btn { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+                            .feedback-tab-btn.active { background: rgba(139,92,246,0.15); color: #A78BFA; border-color: rgba(139,92,246,0.4); font-weight: 600; }
+                        </style>
+                        <button class="feedback-tab-btn active" onclick="window.switchFeedbackTab('dashboard-executive-section')">📊 Resumen Ejecutivo</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('coach-inteligente-section')">🧠 Coach Inteligente</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('estimated-1rm-section')">🏋️ 1RM Estimado</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('volume-analysis-section')">📐 Volumen MRV</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('rir-comparison-section')">🎯 RIR</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('week-comparison-section')">⚖️ Semanas</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('plateau-alerts-section')">⚠️ Alertas</button>
+                    </div>
 
                     <!-- Dashboard Resumen Ejecutivo -->
-                    <div id="dashboard-executive-section" class="card mt-3"
+                    <div id="dashboard-executive-section" class="feedback-tab-content card mt-0"
                         style="display:none; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.2);">
-                        <h4 style="color:#8B5CF6; margin-bottom:10px; font-size:0.95rem;">🎯 Resumen Ejecutivo</h4>
+                        <h4 style="color:#8B5CF6; margin-bottom:6px; font-size:0.95rem;">🎯 Resumen Ejecutivo</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Para qué sirve?</strong> Un vistazo rápido a tu progreso global. Muestra cuánto has completado del mesociclo, tu ganancia de fuerza promedio y alertas rápidas para asegurar que vas por buen camino.</p>
                         <div id="dashboard-executive-content"></div>
                     </div>
 
                     <!-- Coach Inteligente -->
-                    <div id="coach-inteligente-section" class="card mt-3"
+                    <div id="coach-inteligente-section" class="feedback-tab-content card mt-0"
                         style="display:none; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2);">
                         <h4 style="color:#10B981; margin-bottom:6px; font-size:0.95rem;">🧠 Coach Inteligente — Próxima
                             Sesión</h4>
-                        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">Sugerencias
-                            automáticas por ejercicio basadas en tu último rendimiento y las reglas de sobrecarga
-                            progresiva.</p>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Para qué sirve?</strong> Analiza tu desempeño anterior y genera recomendaciones exactas (cuánto peso subir o si debes buscar más repeticiones) guiándote para aplicar la sobrecarga progresiva sin fallar prematuramente.</p>
                         <div id="coach-inteligente-content"></div>
                     </div>
 
                     <!-- RIR Real vs Planeado -->
-                    <div id="rir-comparison-section" class="card mt-3" style="display:none;">
-                        <h4 style="color:#F59E0B; margin-bottom:10px; font-size:0.95rem;">🎯 RIR Real vs Planeado</h4>
-                        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">Compara tu esfuerzo
-                            real contra lo que tu mesociclo prescribía por semana.</p>
+                    <div id="rir-comparison-section" class="feedback-tab-content card mt-0" style="display:none;">
+                        <h4 style="color:#F59E0B; margin-bottom:6px; font-size:0.95rem;">🎯 RIR Real vs Planeado</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Para qué sirve?</strong> El RIR (Repeticiones en Reserva) mide qué tan cerca llegas al fallo. Esta tabla verifica si estás entrenando con la intensidad correcta: ni muy relajado al inicio, ni pasándote del límite antes de tu fase pico (Peak).</p>
                         <div id="rir-comparison-content"></div>
                     </div>
 
 
 
                     <!-- Alertas de Estancamiento -->
-                    <div id="plateau-alerts-section" class="card mt-3"
+                    <div id="plateau-alerts-section" class="feedback-tab-content card mt-0"
                         style="display:none; background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15);">
-                        <h4 style="color:#EF4444; margin-bottom:10px; font-size:0.95rem;">⚠️ Alertas de Estancamiento
+                        <h4 style="color:#EF4444; margin-bottom:6px; font-size:0.95rem;">⚠️ Alertas de Estancamiento
                         </h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Para qué sirve?</strong> Detecta automáticamente si llevas 3 o más sesiones levantando el mismo peso con las mismas repeticiones. Te avisa a tiempo para cambiar el ejercicio o hacer ajustes antes de estancarte por completo.</p>
                         <div id="plateau-alerts-content"></div>
                     </div>
 
 
                     <!-- 1RM Estimado -->
-                    <div id="estimated-1rm-section" class="card mt-3" style="display:none;">
-                        <h4 style="color:#8B5CF6; margin-bottom:10px; font-size:0.95rem;">🏋️ 1RM Estimado (Epley)</h4>
-                        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">Repetición máxima
-                            estimada basada en tus sesiones reales.</p>
+                    <div id="estimated-1rm-section" class="feedback-tab-content card mt-0" style="display:none;">
+                        <h4 style="color:#8B5CF6; margin-bottom:6px; font-size:0.95rem;">🏋️ 1RM Estimado (Epley)</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Para qué sirve?</strong> Calcula tu fuerza máxima teórica evaluando tu peso y repeticiones. Es la mejor forma métrica de saber si de verdad te estás haciendo más fuerte sesión tras sesión, sin tener que hacer levantamientos máximos peligrosos.</p>
                         <div id="estimated-1rm-content"></div>
                     </div>
 
                     <!-- Volumen Real vs MEV/MRV -->
-                    <div id="volume-analysis-section" class="card mt-3" style="display:none;">
-                        <h4 style="color:#10B981; margin-bottom:10px; font-size:0.95rem;">📐 Volumen Semanal Programado
+                    <div id="volume-analysis-section" class="feedback-tab-content card mt-0" style="display:none;">
+                        <h4 style="color:#10B981; margin-bottom:6px; font-size:0.95rem;">📐 Volumen Semanal Programado
                             vs Objetivo</h4>
-                        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">Series programadas en
-                            tu rutina comparadas con MEV/MAV/MRV por músculo.</p>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Para qué sirve?</strong> Compara la cantidad de series que haces vs los límites avalados por la ciencia (MEV = Mínimo para crecer, MRV = Máximo de lo que puedes recuperarte). Evita que hagas volumen basura o que te quedes muy corto.</p>
                         <div id="volume-analysis-content"></div>
                     </div>
 
                     <!-- Comparación entre Semanas -->
-                    <div id="week-comparison-section" class="card mt-3" style="display:none;">
-                        <h4 style="color:#F59E0B; margin-bottom:10px; font-size:0.95rem;">⚖️ Comparación entre Semanas
+                    <div id="week-comparison-section" class="feedback-tab-content card mt-0" style="display:none;">
+                        <h4 style="color:#F59E0B; margin-bottom:6px; font-size:0.95rem;">⚖️ Comparación entre Semanas
                         </h4>
-                        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">Volumen, intensidad y
-                            esfuerzo real por semana del mesociclo.</p>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Para qué sirve?</strong> Muestra la línea térmica de tu mesociclo. Idealmente, el volumen y la intensidad deben ir escalando desde tu semana 1 hasta la de mayor estrés, para maximizar la hipertrofia de forma inteligente.</p>
                         <div id="week-comparison-content"></div>
                     </div>
 
 
-
-                    <!-- ===== 5. Readiness Pre-Entreno ===== -->
-                    <div class="card mt-3"
-                        style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1);">
-                        <h4
-                            style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-                            <span>🚦 Readiness Pre-Entreno</span>
-                            <span id="readiness-score-badge" class="rp-badge"
-                                style="background: #3B82F6;">Pendiente</span>
-                        </h4>
-                        <div class="module-grid" style="gap: 10px; margin-bottom: 12px;">
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem; color: var(--text-muted);">Sueño (1-5)</label>
-                                <select id="readiness-sleep" class="form-select" style="padding: 6px;">
-                                    <option value="5">Excelente (8h+)</option>
-                                    <option value="4">Bueno (7h)</option>
-                                    <option value="3" selected>Regular (6h)</option>
-                                    <option value="2">Malo (5h)</option>
-                                    <option value="1">Pésimo (<4h)< /option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem; color: var(--text-muted);">Estrés (1-5)</label>
-                                <select id="readiness-stress" class="form-select" style="padding: 6px;">
-                                    <option value="5">Bajo (Relajado)</option>
-                                    <option value="4">Algo de estrés</option>
-                                    <option value="3" selected>Normal</option>
-                                    <option value="2">Estrés Alto</option>
-                                    <option value="1">Burnout extremo</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label style="font-size: 0.8rem; color: var(--text-muted);">DOMS (1-5)</label>
-                                <select id="readiness-doms" class="form-select" style="padding: 6px;">
-                                    <option value="5">Sin molestias</option>
-                                    <option value="4">Ligera tensión</option>
-                                    <option value="3" selected>Soreness normal</option>
-                                    <option value="2">Dolor agudo</option>
-                                    <option value="1">Dolor limitante</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button id="btn-eval-readiness" class="btn btn--secondary btn--sm btn--block">Evaluar
-                            Estado</button>
-                        <div id="readiness-feedback" class="mt-2"
-                            style="font-size: 0.85rem; font-weight: 500; min-height: 20px;"></div>
-                        <div id="readiness-history" style="margin-top: 12px; display: none;">
-                            <!-- Historial de readiness generado dinámicamente -->
-                        </div>
-                    </div>
 
                     <!-- ===== Elementos ocultos (requeridos por JS) ===== -->
                     <div style="display: none;">
@@ -1100,6 +1278,90 @@
                 <p class="mb-2">Documenta tu transformación física a lo largo del mesociclo.</p>
             </div>
 
+            <!-- Sistema de Composición Corporal -->
+            <div class="card mt-2 mb-2" id="comp-tracker-card" style="border:1px solid rgba(139,92,246,0.2); background:linear-gradient(135deg, rgba(139,92,246,0.03), transparent);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <h4 style="color:#8B5CF6; font-size:0.95rem;">📐 Composición Corporal</h4>
+                    <span class="rp-badge" style="background:#8B5CF6;">TRACKING</span>
+                </div>
+
+                <!-- Configuración de frecuencia -->
+                <div id="comp-freq-config" style="margin-bottom:12px;">
+                    <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:6px;">Frecuencia de mediciones:</label>
+                    <div style="display:flex; gap:6px;">
+                        <button class="comp-freq-btn" data-freq="weekly"
+                            style="flex:1; padding:8px; border-radius:8px; border:1px solid rgba(139,92,246,0.3); background:rgba(139,92,246,0.08); color:#A78BFA; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all 0.2s;">
+                            Semanal<br><span style="font-size:0.6rem; font-weight:400; opacity:0.7;">~20 mediciones</span>
+                        </button>
+                        <button class="comp-freq-btn" data-freq="biweekly"
+                            style="flex:1; padding:8px; border-radius:8px; border:1px solid rgba(139,92,246,0.3); background:rgba(139,92,246,0.08); color:#A78BFA; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all 0.2s;">
+                            Quincenal<br><span style="font-size:0.6rem; font-weight:400; opacity:0.7;">~10 mediciones</span>
+                        </button>
+                        <button class="comp-freq-btn" data-freq="monthly"
+                            style="flex:1; padding:8px; border-radius:8px; border:1px solid rgba(139,92,246,0.3); background:rgba(139,92,246,0.08); color:#A78BFA; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all 0.2s;">
+                            Mensual<br><span style="font-size:0.6rem; font-weight:400; opacity:0.7;">5 mediciones</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Timeline de mediciones (generado por JS) -->
+                <div id="comp-timeline" style="margin-bottom:10px;"></div>
+
+                <!-- Progreso visual -->
+                <div id="comp-progress-bar" style="display:none; margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <span style="font-size:0.65rem; color:var(--text-muted);">Progreso de mediciones</span>
+                        <span id="comp-progress-text" style="font-size:0.65rem; color:#A78BFA; font-weight:700;"></span>
+                    </div>
+                    <div style="height:4px; background:rgba(139,92,246,0.15); border-radius:4px; overflow:hidden;">
+                        <div id="comp-progress-fill" style="height:100%; background:linear-gradient(90deg,#8B5CF6,#A78BFA); border-radius:4px; transition:width 0.3s;"></div>
+                    </div>
+                </div>
+
+                <!-- Formulario de medición (oculto hasta seleccionar slot) -->
+                <div id="general-comp-form" class="hidden"
+                    style="margin-top:8px; padding:12px; background:rgba(139,92,246,0.05); border:1px solid rgba(139,92,246,0.2); border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span id="comp-form-title" style="font-size:0.8rem; color:#A78BFA; font-weight:700;"></span>
+                        <button id="btn-close-comp-form" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem;">&times;</button>
+                    </div>
+                    <div class="module-grid" style="gap:8px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">% Grasa</label><input
+                                type="number" id="bc-fat-gen" class="form-input" step="0.1" style="padding:6px;"></div>
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Masa Muscular
+                                (kg)</label><input type="number" id="bc-muscle-gen" class="form-input" step="0.1"
+                                style="padding:6px;"></div>
+                    </div>
+                    <div class="module-grid" style="gap:8px; margin-top:6px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Hombro</label><input
+                                type="number" id="bc-shoulder-gen" class="form-input" step="0.5" style="padding:6px;"></div>
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Pecho</label><input
+                                type="number" id="bc-chest-gen" class="form-input" step="0.5" style="padding:6px;"></div>
+                    </div>
+                    <div class="module-grid" style="gap:8px; margin-top:6px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Brazo</label><input
+                                type="number" id="bc-arm-gen" class="form-input" step="0.5" style="padding:6px;"></div>
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Cintura</label><input
+                                type="number" id="bc-waist-gen" class="form-input" step="0.5" style="padding:6px;"></div>
+                    </div>
+                    <div class="module-grid" style="gap:8px; margin-top:6px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Cadera</label><input
+                                type="number" id="bc-hip-gen" class="form-input" step="0.5" style="padding:6px;"></div>
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Muslo</label><input
+                                type="number" id="bc-thigh-gen" class="form-input" step="0.5" style="padding:6px;"></div>
+                    </div>
+                    <div class="module-grid" style="gap:8px; margin-top:6px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Pantorrilla</label><input
+                                type="number" id="bc-calf-gen" class="form-input" step="0.5" style="padding:6px;"></div>
+                        <div class="form-group"></div>
+                    </div>
+                    <button id="btn-save-general-comp" class="btn btn--primary btn--block mt-2"
+                        style="background:linear-gradient(135deg,#8B5CF6,#7C3AED); font-size:0.8rem; padding:8px;">
+                        💾 Guardar Medición
+                    </button>
+                </div>
+            </div>
+
             <!-- Composición Corporal (Gráfica Global) -->
             <div id="body-composition-global" class="card mt-3 mb-3" style="display:none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -1114,34 +1376,6 @@
 
             <!-- Siluetas: imágenes PNG recortadas de referencias 3D en /img/ -->
             <!-- sil-m-front.png, sil-m-side.png, sil-m-back.png, sil-f-front.png, sil-f-side.png, sil-f-back.png -->
-
-            <!-- ═══ CTA: Subir Foto de Progreso ═══ -->
-            <div class="card mt-2"
-                style="border:1px solid rgba(16,185,129,0.3); background:linear-gradient(135deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02)); text-align:center; padding:20px 16px;">
-                <div style="font-size:2.5rem; margin-bottom:8px;">📸</div>
-                <h4 style="color:#10B981; margin:0 0 6px; font-size:1rem;">¡Captura tu Progreso!</h4>
-                <p style="font-size:0.78rem; color:var(--text-muted); margin:0 0 14px;">Las fotos son la evidencia más
-                    honesta de tu transformación. Sube tus fotos de Inicio, Medio y Final del mesociclo.</p>
-                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                    <label for="photo-slot-start-front" style="cursor:pointer;">
-                        <div onclick="document.querySelector('#photo-slot-start-front .photo-input').click()"
-                            class="btn btn--primary"
-                            style="background:linear-gradient(135deg,#10B981,#059669); border:none; font-size:0.85rem; padding:10px 20px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
-                            📷 Subir Foto de Inicio
-                        </div>
-                    </label>
-                    <div onclick="document.querySelector('#photo-slot-mid-front .photo-input').click()"
-                        class="btn btn--secondary"
-                        style="font-size:0.85rem; padding:10px 20px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; border-color:#10B981; color:#10B981;">
-                        📷 Subir Foto de Medio
-                    </div>
-                    <div onclick="document.querySelector('#photo-slot-end-front .photo-input').click()"
-                        class="btn btn--secondary"
-                        style="font-size:0.85rem; padding:10px 20px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; border-color:#10B981; color:#10B981;">
-                        📷 Subir Foto Final
-                    </div>
-                </div>
-            </div>
 
             <!-- ═══ Fotos del Mesociclo: 3 fases × 3 poses ═══ -->
             <!-- FASE 1: INICIO (S1) -->
@@ -1165,7 +1399,7 @@
                                 <img class="silhouette-guide" data-pose="front" src="img/sil-m-front.png"
                                     style="opacity:0.15;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">FRONTAL</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 FRONTAL</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Inicio Frontal">
@@ -1178,7 +1412,7 @@
                                 <img class="silhouette-guide" data-pose="side" src="img/sil-m-side.png"
                                     style="opacity:0.15;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">LATERAL</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 LATERAL</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Inicio Lateral">
@@ -1191,7 +1425,7 @@
                                 <img class="silhouette-guide" data-pose="back" src="img/sil-m-back.png"
                                     style="opacity:0.15;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">ESPALDA</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 POSTERIOR</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Inicio Espalda">
@@ -1202,7 +1436,7 @@
 
             <!-- Mediciones S1 -->
             <div class="card mt-2 body-comp-phase-section" id="body-composition-s1" data-phase="s1"
-                style="display:none; border:1px solid rgba(16,185,129,0.15); background:linear-gradient(135deg, rgba(16,185,129,0.03), transparent);">
+                style="border:1px solid rgba(16,185,129,0.15); background:linear-gradient(135deg, rgba(16,185,129,0.03), transparent);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <h4 style="color:#10B981; font-size:0.95rem;">📐 Mediciones Iniciales</h4>
                     <span class="rp-badge" style="background:#10B981;">MEDICIONES S1</span>
@@ -1223,8 +1457,12 @@
                                 style="padding:6px;"></div>
                     </div>
                     <div class="module-grid" style="gap:8px; margin-top:6px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Hombro</label><input
+                                type="number" id="bc-shoulder-s1" class="form-input" step="0.5" style="padding:6px;"></div>
                         <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Pecho</label><input
                                 type="number" id="bc-chest-s1" class="form-input" step="0.5" style="padding:6px;"></div>
+                    </div>
+                    <div class="module-grid" style="gap:8px; margin-top:6px;">
                         <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Brazo</label><input
                                 type="number" id="bc-arm-s1" class="form-input" step="0.5" style="padding:6px;"></div>
                     </div>
@@ -1270,7 +1508,7 @@
                                 <img class="silhouette-guide" data-pose="front" src="img/sil-m-front.png"
                                     style="opacity:0.12;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">FRONTAL</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 FRONTAL</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Medio Frontal">
@@ -1283,7 +1521,7 @@
                                 <img class="silhouette-guide" data-pose="side" src="img/sil-m-side.png"
                                     style="opacity:0.12;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">LATERAL</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 LATERAL</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Medio Lateral">
@@ -1296,7 +1534,7 @@
                                 <img class="silhouette-guide" data-pose="back" src="img/sil-m-back.png"
                                     style="opacity:0.12;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">ESPALDA</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 POSTERIOR</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Medio Espalda">
@@ -1307,7 +1545,7 @@
 
             <!-- Mediciones S3 -->
             <div class="card mt-2 body-comp-phase-section" id="body-composition-s3" data-phase="s3"
-                style="display:none; border:1px solid rgba(245,158,11,0.15); background:linear-gradient(135deg, rgba(245,158,11,0.03), transparent);">
+                style="border:1px solid rgba(245,158,11,0.15); background:linear-gradient(135deg, rgba(245,158,11,0.03), transparent);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <h4 style="color:#F59E0B; font-size:0.95rem;">📐 Mediciones Intermedias</h4>
                     <span class="rp-badge" style="background:#F59E0B;">MEDICIONES S3</span>
@@ -1328,8 +1566,12 @@
                                 style="padding:6px;"></div>
                     </div>
                     <div class="module-grid" style="gap:8px; margin-top:6px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Hombro</label><input
+                                type="number" id="bc-shoulder-s3" class="form-input" step="0.5" style="padding:6px;"></div>
                         <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Pecho</label><input
                                 type="number" id="bc-chest-s3" class="form-input" step="0.5" style="padding:6px;"></div>
+                    </div>
+                    <div class="module-grid" style="gap:8px; margin-top:6px;">
                         <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Brazo</label><input
                                 type="number" id="bc-arm-s3" class="form-input" step="0.5" style="padding:6px;"></div>
                     </div>
@@ -1375,7 +1617,7 @@
                                 <img class="silhouette-guide" data-pose="front" src="img/sil-m-front.png"
                                     style="opacity:0.12;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">FRONTAL</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 FRONTAL</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Final Frontal">
@@ -1388,7 +1630,7 @@
                                 <img class="silhouette-guide" data-pose="side" src="img/sil-m-side.png"
                                     style="opacity:0.12;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">LATERAL</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 LATERAL</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Final Lateral">
@@ -1401,7 +1643,7 @@
                                 <img class="silhouette-guide" data-pose="back" src="img/sil-m-back.png"
                                     style="opacity:0.12;" alt="">
                                 <span
-                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px;">ESPALDA</span>
+                                    style="font-weight:700; font-size:0.8rem; color:rgba(160,160,200,0.5); letter-spacing:1px; display:inline-flex; align-items:center; gap:4px;">📷 POSTERIOR</span>
                             </div>
                         </label>
                         <img class="photo-preview hidden" alt="Final Espalda">
@@ -1412,7 +1654,7 @@
 
             <!-- Mediciones S5 -->
             <div class="card mt-2 body-comp-phase-section" id="body-composition-s5" data-phase="s5"
-                style="display:none; border:1px solid rgba(239,68,68,0.15); background:linear-gradient(135deg, rgba(239,68,68,0.03), transparent);">
+                style="border:1px solid rgba(239,68,68,0.15); background:linear-gradient(135deg, rgba(239,68,68,0.03), transparent);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <h4 style="color:#EF4444; font-size:0.95rem;">📐 Mediciones Finales</h4>
                     <span class="rp-badge" style="background:#EF4444;">MEDICIONES S5</span>
@@ -1433,8 +1675,12 @@
                                 style="padding:6px;"></div>
                     </div>
                     <div class="module-grid" style="gap:8px; margin-top:6px;">
+                        <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Hombro</label><input
+                                type="number" id="bc-shoulder-s5" class="form-input" step="0.5" style="padding:6px;"></div>
                         <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Pecho</label><input
                                 type="number" id="bc-chest-s5" class="form-input" step="0.5" style="padding:6px;"></div>
+                    </div>
+                    <div class="module-grid" style="gap:8px; margin-top:6px;">
                         <div class="form-group"><label class="form-label" style="font-size:0.72rem;">Brazo</label><input
                                 type="number" id="bc-arm-s5" class="form-input" step="0.5" style="padding:6px;"></div>
                     </div>
@@ -1541,6 +1787,106 @@
                         <span>ℹ️</span>
                         <span><strong>RPE = 10 − RIR.</strong> Ambas escalas miden lo mismo desde perspectivas opuestas.
                             La mayoría de la hipertrofia ocurre entre RIR 0-3 (RPE 7-10).</span>
+                    </div>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE B — SISTEMA DE TRACKING POR SERIE        ║
+                     ╚══════════════════════════════════════════════════╝ -->
+
+                <div class="card mt-2" style="border-left: 4px solid #E040FB;">
+                    <div class="card__header">
+                        <h4 style="color:#E040FB;">🔬 Sistema de Tracking por Serie</h4>
+                        <span class="rp-badge" style="background:#E040FB;">NEXUS</span>
+                    </div>
+                    <p class="text-muted mt-1">
+                        Cada serie se registra individualmente para una dosificación precisa del estímulo.
+                    </p>
+
+                    <!-- Auto-propagación de Peso -->
+                    <div style="padding:10px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.15); border-radius:8px; margin-top:12px; margin-bottom:10px;">
+                        <h5 style="color:#10B981; font-size:0.85rem; margin-bottom:6px;">⚖️ Auto-propagación de Peso</h5>
+                        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:6px;">
+                            Al registrar el peso de la <strong style="color:white;">Serie 1</strong>, este se propaga automáticamente como sugerencia a las series siguientes.
+                        </p>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr><th>Fundamento</th><th>Aplicación</th></tr>
+                            <tr>
+                                <td>Carga recta (Straight Sets)</td>
+                                <td>Mismo peso en todas las series — estándar RP para maximizar volumen efectivo</td>
+                            </tr>
+                            <tr>
+                                <td>Última serie como referencia</td>
+                                <td>Si necesitas ajustar, editas la serie individual sin afectar las demás</td>
+                            </tr>
+                            <tr>
+                                <td>Referencia de sesión anterior</td>
+                                <td>La columna "Últ. Peso" muestra el peso usado previamente para comparación directa</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- RIR Automático -->
+                    <div style="padding:10px; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.15); border-radius:8px; margin-bottom:10px;">
+                        <h5 style="color:#A78BFA; font-size:0.85rem; margin-bottom:6px;">🎯 RIR Automático desde RPE</h5>
+                        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:6px;">
+                            El RIR se calcula automáticamente con la fórmula <strong style="color:white;">RIR = 10 − RPE</strong>, basada en la escala de Tuchscherer adaptada por RP.
+                        </p>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr><th>RPE</th><th>RIR</th><th>Significado</th></tr>
+                            <tr><td style="color:#10B981; font-weight:700;">7</td><td>3</td><td>Podrías hacer 3 reps más — peso conservador</td></tr>
+                            <tr><td style="color:#FBBF24; font-weight:700;">8</td><td>2</td><td>Podrías hacer 2 reps más — zona óptima de hipertrofia</td></tr>
+                            <tr><td style="color:#F97316; font-weight:700;">9</td><td>1</td><td>Podrías hacer 1 rep más — alta intensidad</td></tr>
+                            <tr><td style="color:#EF4444; font-weight:700;">10</td><td>0</td><td>Fallo muscular — máxima intensidad</td></tr>
+                        </table>
+                        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:6px; font-style:italic;">
+                            RP recomienda trabajar entre RPE 7-9 (RIR 1-3) durante semanas de acumulación, y RPE 9-10 (RIR 0-1) solo en semanas de intensificación.
+                        </p>
+                    </div>
+
+                    <!-- Decisión de Progresión por Serie -->
+                    <div style="padding:10px; background:rgba(224,64,251,0.06); border:1px solid rgba(224,64,251,0.15); border-radius:8px; margin-bottom:10px;">
+                        <h5 style="color:#E040FB; font-size:0.85rem; margin-bottom:6px;">📊 Decisión de Progresión por Serie</h5>
+                        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:6px;">
+                            Al finalizar la sesión, el sistema <strong style="color:white;">promedia los datos de todas las series</strong> de cada ejercicio para tomar la decisión de progresión:
+                        </p>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr><th>Promedio de Series</th><th>Decisión</th><th>Ajuste</th></tr>
+                            <tr>
+                                <td>RIR promedio ≤ 1 y reps ≥ 8</td>
+                                <td style="color:#10B981; font-weight:700;">↑ Subir peso</td>
+                                <td>+2.5 kg</td>
+                            </tr>
+                            <tr>
+                                <td>RIR promedio ≥ 3</td>
+                                <td style="color:#10B981; font-weight:700;">↑↑ Subir más</td>
+                                <td>+5 kg</td>
+                            </tr>
+                            <tr>
+                                <td>Reps promedio &lt; 6</td>
+                                <td style="color:#EF4444; font-weight:700;">↓ Reducir</td>
+                                <td>−10%</td>
+                            </tr>
+                            <tr>
+                                <td>RIR 1-3 con reps en rango</td>
+                                <td style="color:#F59E0B; font-weight:700;">→ Mantener</td>
+                                <td>Intentar +1-2 reps</td>
+                            </tr>
+                        </table>
+                        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:6px; font-style:italic;">
+                            Basado en el principio de doble progresión de RP: primero aumentar repeticiones dentro del rango objetivo, luego incrementar la carga cuando todas las series alcanzan el tope del rango con RIR bajo.
+                        </p>
+                    </div>
+
+                    <!-- ¿Por qué registrar cada serie? -->
+                    <div style="padding:10px; background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15); border-radius:8px;">
+                        <h5 style="color:#FBBF24; font-size:0.85rem; margin-bottom:6px;">💡 ¿Por qué registrar cada serie?</h5>
+                        <ul style="font-size:0.78rem; color:var(--text-muted); padding-left:16px; margin:0;">
+                            <li style="margin-bottom:4px;"><strong style="color:white;">Fatiga acumulada:</strong> Es normal que las reps bajen entre series (ej. 10→9→8). Esto es <em>fatiga de performance</em>, no pérdida de estímulo.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:white;">Detectar series basura:</strong> Si en la Serie 4 haces solo 4 reps con RPE 10, esa serie genera más fatiga que estímulo — señal de que 3 series son suficientes.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:white;">Ajustar volumen individual:</strong> Según RP, el volumen ideal (MAV) varía entre personas. El tracking por serie te muestra exactamente cuándo dejas de ser productivo.</li>
+                            <li><strong style="color:white;">Progresión real:</strong> Comparar Serie 1 de la Semana 3 vs Serie 1 de la Semana 1 te da una medición real de fuerza sin interferencia de fatiga.</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -2888,7 +3234,7 @@
     <script src="js/modules/progressive-tables.js"></script>
 
     <!-- TEMPORAL: Simulación de mesociclo (quitar después de probar) -->
-    <script src="simulate-mesocycle.js"></script>
+    <script src="simular-mesociclo.js"></script>
 
     <!-- Controlador Principal -->
     <script src="js/rp-coach.js"></script>

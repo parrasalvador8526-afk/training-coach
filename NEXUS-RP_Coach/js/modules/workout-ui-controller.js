@@ -1777,18 +1777,76 @@ const WorkoutUIController = (() => {
         rows.forEach((row, idx) => {
             const repsInput = row.querySelector('.log-reps');
             const weightInput = row.querySelector('.log-weight');
+            const rpeInput = row.querySelector('.log-rpe');
+            const rirInput = row.querySelector('.log-rir');
+            const exIdx = parseInt(row.dataset.exerciseIdx);
+            const setNum = parseInt(row.dataset.setNum);
+
+            // Auto-cálculo: RPE → RIR
+            if (rpeInput && rirInput) {
+                rpeInput.addEventListener('input', () => {
+                    const rpe = parseFloat(rpeInput.value);
+                    if (!isNaN(rpe)) {
+                        rirInput.value = Math.max(0, (10 - rpe)).toFixed(1).replace('.0', '');
+                    } else {
+                        rirInput.value = '';
+                    }
+                });
+            }
+
+            // Auto-propagación de peso: Serie 1 → Serie 2, 3...
+            if (weightInput && setNum === 1) {
+                weightInput.addEventListener('input', () => {
+                    const w = weightInput.value;
+                    // Buscar las demás series del mismo ejercicio
+                    table.querySelectorAll(`tr[data-exercise-idx="${exIdx}"]`).forEach(r => {
+                        const s = parseInt(r.dataset.setNum);
+                        if (s > 1) {
+                            const otherWeight = r.querySelector('.log-weight');
+                            if (otherWeight && !otherWeight.value) {
+                                otherWeight.placeholder = w || '-';
+                            }
+                        }
+                    });
+                });
+            }
 
             function onInputFilled() {
                 const w = parseFloat(weightInput?.value) || 0;
                 const r = parseInt(repsInput?.value) || 0;
                 if (w <= 0 || r <= 0) return;
 
-                // #1 - Resaltar la fila actual como completada (verde sutil)
+                // Resaltar fila completada
                 row.style.transition = 'background 0.4s ease';
                 row.style.background = 'rgba(16,185,129,0.08)';
                 row.style.borderLeft = '3px solid #10B981';
 
-                // #1 - Quitar highlight de todas y resaltar la siguiente fila
+                // Actualizar contador de series completadas
+                const sameExRows = table.querySelectorAll(`tr[data-exercise-idx="${exIdx}"]`);
+                let completedSets = 0;
+                const totalSets = sameExRows.length;
+                sameExRows.forEach(r2 => {
+                    const rw = parseFloat(r2.querySelector('.log-weight')?.value) || 0;
+                    const rr = parseInt(r2.querySelector('.log-reps')?.value) || 0;
+                    if (rw > 0 && rr > 0) completedSets++;
+                });
+                const counter = document.getElementById(`set-counter-${exIdx}`);
+                if (counter) {
+                    counter.textContent = `${completedSets}/${totalSets} series`;
+                    counter.style.color = completedSets === totalSets ? '#10B981' : 'rgba(255,255,255,0.4)';
+                    if (completedSets === totalSets) counter.innerHTML = `✅ ${totalSets}/${totalSets} series`;
+                }
+
+                // Auto-llenar peso en siguiente serie si está vacío
+                if (setNum < totalSets) {
+                    const nextSetRow = table.querySelector(`tr[data-exercise-idx="${exIdx}"][data-set-num="${setNum + 1}"]`);
+                    if (nextSetRow) {
+                        const nextW = nextSetRow.querySelector('.log-weight');
+                        if (nextW && !nextW.value) nextW.value = w;
+                    }
+                }
+
+                // Resaltar siguiente fila
                 const nextRow = rows[idx + 1];
                 if (nextRow) {
                     rows.forEach(r2 => { if (r2 !== row) r2.style.outline = ''; });
@@ -1797,9 +1855,9 @@ const WorkoutUIController = (() => {
                     nextRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
 
-                // #6 - Lanzar temporizador de descanso basado en la rutina
+                // Temporizador de descanso (solo entre series, no al completar última serie del ejercicio)
                 const dayIdx = routine.currentDayIndex || 0;
-                const exercise = routine.days?.[dayIdx]?.exercises?.[idx];
+                const exercise = routine.days?.[dayIdx]?.exercises?.[exIdx];
                 const restSecs = exercise?.restSeconds || routine.parameters?.rest || 90;
                 if (restSecs > 0) startRestTimer(restSecs);
             }
@@ -1859,11 +1917,9 @@ const WorkoutUIController = (() => {
                 const info = INTENSIFIER_INSTRUCTIONS[intName];
                 if (!info) return '';
 
-                // Calcular pesos automáticos para intensificadores con porcentajes
                 let weightCalcHtml = '';
                 const lastData = getLastWeight(ex.name);
                 const lastWt = lastData ? lastData.weight : null;
-                // También intentar desde localStorage directo
                 const fallbackWt = lastWt || parseFloat(localStorage.getItem('rpCoach_lastWeight_' + ex.name)) || 0;
 
                 if (fallbackWt > 0) {
@@ -1883,26 +1939,53 @@ const WorkoutUIController = (() => {
                                 <span style="font-size: 0.75rem; color: #F59E0B; font-weight: 600;">⚡ ${ex.extraReps}</span>
                             </td>
                         </tr>` : '';
-            return `
-                        <tr data-exercise-idx="${idx}">
-                            <td class="${ex.isPrimary ? 'exercise-primary' : ''}">
+
+            // Generar N filas — una por cada serie del ejercicio
+            const numSets = ex.sets || params.sets || 3;
+            const suggestedWeight = formatLastWeight(ex.name);
+            let setRows = '';
+
+            for (let s = 0; s < numSets; s++) {
+                const isFirstSet = s === 0;
+                const setInputBg = 'background: rgba(224, 64, 251, 0.05);';
+                const setRowBorder = !isFirstSet ? 'border-top: 1px dashed rgba(255,255,255,0.06);' : '';
+
+                setRows += `<tr data-exercise-idx="${idx}" data-set-num="${s + 1}" class="set-row${isFirstSet ? ' set-row-first' : ''}" style="${setRowBorder}">`;
+
+                if (isFirstSet) {
+                    // Primera serie: muestra info del ejercicio con rowspan
+                    setRows += `
+                            <td class="${ex.isPrimary ? 'exercise-primary' : ''}" rowspan="${numSets}" style="vertical-align:top;">
                                 ${ex.isPrimary ? '⭐ ' : ''}${ex.name}
                                 <small style="display: block; color: var(--text-muted); font-size: 0.75rem;">
                                     ${ex.muscleGroup || ''}
                                 </small>
+                                <div class="set-counter" id="set-counter-${idx}" style="margin-top:6px; font-size:0.65rem; color:rgba(255,255,255,0.3);">0/${numSets} series</div>
                             </td>
-                            <td>${ex.sets || params.sets || 3}</td>
-                            <td>${formatRepsWithExtra(ex.targetReps || params.reps || '8-12', params.extraReps)}</td>
-                            <td>${ex.load || params.load || '-'}</td>
-                            <td class="tempo-cell">${ex.tempo || params.tempo || '-'}</td>
-                            <td>${ex.targetRIR !== undefined ? ex.targetRIR : (params.rir !== undefined ? params.rir : 2)}</td>
-                            <td class="rest-cell">${formatRestComplete(ex.restSeconds || params.rest, params.microRest)}</td>
-                            <td class="weight-cell">${formatLastWeight(ex.name)}</td>
-                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-weight" placeholder="-" step="0.5" style="${inputStyle}"></td>
-                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-reps" placeholder="-" min="1" max="50" style="${inputStyle}"></td>
-                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-rpe" placeholder="-" min="5" max="10" step="0.5" style="${inputStyle}"></td>
-                            <td style="background: rgba(224, 64, 251, 0.05);"><input type="number" class="log-input log-rir" placeholder="-" min="-2" max="5" style="${inputStyle}"></td>
-                        </tr>
+                            <td rowspan="${numSets}" style="vertical-align:top;">${numSets}</td>
+                            <td rowspan="${numSets}" style="vertical-align:top;">${formatRepsWithExtra(ex.targetReps || params.reps || '8-12', params.extraReps)}</td>
+                            <td rowspan="${numSets}" style="vertical-align:top;">${ex.load || params.load || '-'}</td>
+                            <td rowspan="${numSets}" class="tempo-cell" style="vertical-align:top;">${ex.tempo || params.tempo || '-'}</td>
+                            <td rowspan="${numSets}" style="vertical-align:top;">${ex.targetRIR !== undefined ? ex.targetRIR : (params.rir !== undefined ? params.rir : 2)}</td>
+                            <td rowspan="${numSets}" class="rest-cell" style="vertical-align:top;">${formatRestComplete(ex.restSeconds || params.rest, params.microRest)}</td>
+                            <td rowspan="${numSets}" class="weight-cell" style="vertical-align:top;">${suggestedWeight}</td>`;
+                }
+
+                // Columnas de input por serie (siempre presentes)
+                setRows += `
+                            <td style="${setInputBg}">
+                                <div style="display:flex; align-items:center; gap:2px;">
+                                    <span style="font-size:0.6rem; color:rgba(255,255,255,0.3); min-width:14px;">S${s + 1}</span>
+                                    <input type="number" class="log-input log-weight" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="-" step="0.5" style="${inputStyle}">
+                                </div>
+                            </td>
+                            <td style="${setInputBg}"><input type="number" class="log-input log-reps" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="-" min="1" max="50" style="${inputStyle}"></td>
+                            <td style="${setInputBg}"><input type="number" class="log-input log-rpe" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="-" min="5" max="10" step="0.5" style="${inputStyle}"></td>
+                            <td style="${setInputBg}"><input type="number" class="log-input log-rir" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="-" min="-2" max="5" style="${inputStyle}" readonly tabindex="-1"></td>
+                        </tr>`;
+            }
+
+            return `${setRows}
                         ${intensifierRows}
                         ${extraRepsRow}`;
         }).join('')}
@@ -2417,65 +2500,70 @@ const WorkoutUIController = (() => {
         const targetReps = params.reps || '8-12';
         const extraReps = params.extraReps || null;
 
-        rows.forEach((row, idx) => {
-            const exerciseName = row.querySelector('td')?.textContent?.trim()?.split('\n')[0]?.replace('⭐ ', '') || `Ejercicio ${idx + 1}`;
-            const weight = parseFloat(row.querySelector('.log-weight')?.value) || 0;
-            const reps = parseInt(row.querySelector('.log-reps')?.value) || 0;
-            const rpe = parseFloat(row.querySelector('.log-rpe')?.value) || 0;
-            const rir = parseInt(row.querySelector('.log-rir')?.value);
+        // Agrupar filas por ejercicio
+        const exerciseRowGroups = {};
+        rows.forEach(row => {
+            const exIdx = row.dataset.exerciseIdx;
+            if (!exerciseRowGroups[exIdx]) exerciseRowGroups[exIdx] = [];
+            exerciseRowGroups[exIdx].push(row);
+        });
 
-            // Guardar peso si se registró
-            if (weight > 0) {
-                saveExerciseWeight(exerciseName, weight);
-                hasData = true;
+        const currentDay = routine.days?.[routine.currentDayIndex || 0];
+
+        Object.entries(exerciseRowGroups).forEach(([exIdx, setRows]) => {
+            const exInfo = currentDay?.exercises?.[parseInt(exIdx)];
+            const exerciseName = exInfo?.name || `Ejercicio ${parseInt(exIdx) + 1}`;
+
+            // Recopilar datos de todas las series con datos
+            let totalWeight = 0, totalReps = 0, totalRPE = 0, count = 0;
+            setRows.forEach(row => {
+                const weight = parseFloat(row.querySelector('.log-weight')?.value) || 0;
+                const reps = parseInt(row.querySelector('.log-reps')?.value) || 0;
+                const rpe = parseFloat(row.querySelector('.log-rpe')?.value) || 0;
+                if (weight > 0 && reps > 0) {
+                    totalWeight += weight; totalReps += reps; totalRPE += rpe; count++;
+                    hasData = true;
+                }
+            });
+
+            if (count === 0) {
+                progressiveExercises.push({ name: exerciseName, weight: 0, newWeight: 0, reps: 0, newReps: targetReps, action: 'MAINTAIN', color: '#F59E0B', icon: '→', actionText: 'Sin datos' });
+                return;
             }
 
-            // Calcular progresión basada en reglas RP
+            // Usar promedios para la progresión
+            const avgWeight = Math.round(totalWeight / count * 2) / 2;
+            const avgReps = Math.round(totalReps / count);
+            const avgRPE = totalRPE / count;
+            const avgRIR = 10 - avgRPE;
+
+            saveExerciseWeight(exerciseName, avgWeight, avgReps);
+
             let action = 'MAINTAIN';
-            let newWeight = weight;
+            let newWeight = avgWeight;
             let newReps = targetReps;
             let color = '#F59E0B';
             let icon = '→';
             let actionText = 'Mantener';
 
-            if (weight > 0 && reps > 0) {
-                const actualRIR = !isNaN(rir) ? rir : (10 - rpe);
-
-                // Reglas RP de Progresión
-                if (actualRIR <= 1 && reps >= 8) {
-                    action = 'INCREASE_WEIGHT';
-                    newWeight = weight + 2.5;
-                    color = '#10B981';
-                    icon = '↑';
-                    actionText = 'Subir';
-                } else if (actualRIR >= 3) {
-                    action = 'INCREASE_WEIGHT_MORE';
-                    newWeight = weight + 5;
-                    color = '#10B981';
-                    icon = '↑↑';
-                    actionText = 'Subir +';
-                } else if (reps < 6) {
-                    action = 'REDUCE_WEIGHT';
-                    newWeight = Math.round(weight * 0.9 * 2) / 2;
-                    color = '#EF4444';
-                    icon = '↓';
-                    actionText = 'Reducir';
-                } else {
-                    newReps = `${targetReps} (+1-2)`;
-                    actionText = 'Mantener';
-                }
+            if (avgRIR <= 1 && avgReps >= 8) {
+                action = 'INCREASE_WEIGHT'; newWeight = avgWeight + 2.5; color = '#10B981'; icon = '↑'; actionText = 'Subir';
+            } else if (avgRIR >= 3) {
+                action = 'INCREASE_WEIGHT_MORE'; newWeight = avgWeight + 5; color = '#10B981'; icon = '↑↑'; actionText = 'Subir +';
+            } else if (avgReps < 6) {
+                action = 'REDUCE_WEIGHT'; newWeight = Math.round(avgWeight * 0.9 * 2) / 2; color = '#EF4444'; icon = '↓'; actionText = 'Reducir';
+            } else {
+                newReps = `${targetReps} (+1-2)`;
             }
 
             progressiveExercises.push({
                 name: exerciseName,
-                weight,
+                weight: avgWeight,
                 newWeight,
-                reps,
+                reps: avgReps,
+                setsCount: count,
                 newReps: extraReps ? `${newReps} (${extraReps})` : newReps,
-                action,
-                color,
-                icon,
-                actionText
+                action, color, icon, actionText
             });
         });
 
@@ -2684,61 +2772,45 @@ const WorkoutUIController = (() => {
             const targetRIR = routine.parameters?.rir ?? 2;
             const extraReps = routine.parameters?.extraReps || null;
 
-            rows.forEach((row, idx) => {
-                const exerciseName = row.querySelector('td')?.textContent?.trim()?.split('\n')[0]?.replace('⭐ ', '') || `Ejercicio ${idx + 1}`;
-                const weight = parseFloat(row.querySelector('.log-weight')?.value) || 0;
-                const reps = parseInt(row.querySelector('.log-reps')?.value) || 0;
-                const rpe = parseFloat(row.querySelector('.log-rpe')?.value) || 0;
-                const rir = parseInt(row.querySelector('.log-rir')?.value);
+            // Agrupar filas por ejercicio
+            const exGroups = {};
+            rows.forEach(row => {
+                const exIdx = row.dataset.exerciseIdx;
+                if (!exGroups[exIdx]) exGroups[exIdx] = [];
+                exGroups[exIdx].push(row);
+            });
 
-                // Calcular progresión basada en reglas RP
-                let action = 'MAINTAIN';
-                let newWeight = weight;
-                let newReps = targetReps;
-                let color = '#F59E0B'; // Amarillo/ámbar por defecto
-                let icon = '→';
+            const currentDay = routine.days?.[routine.currentDayIndex || 0];
 
-                if (weight > 0 && reps > 0) {
-                    hasData = true;
-                    const actualRIR = !isNaN(rir) ? rir : (10 - rpe);
+            Object.entries(exGroups).forEach(([exIdx, setRows]) => {
+                const exInfo = currentDay?.exercises?.[parseInt(exIdx)];
+                const exerciseName = exInfo?.name || `Ejercicio ${parseInt(exIdx) + 1}`;
 
-                    // Reglas RP de Progresión:
-                    // - Si RIR <= 0 y cumplió reps objetivo → Subir peso 2.5kg
-                    // - Si RIR <= 1 y cumplió reps objetivo → Subir peso 2.5kg
-                    // - Si RIR >= 3 → Peso muy ligero, subir más
-                    // - Si no llegó a reps mínimas → Reducir peso
-                    // - Si está en el rango → Mantener peso, intentar +reps
+                let totalW = 0, totalR = 0, totalRPE = 0, cnt = 0;
+                setRows.forEach(row => {
+                    const w = parseFloat(row.querySelector('.log-weight')?.value) || 0;
+                    const r = parseInt(row.querySelector('.log-reps')?.value) || 0;
+                    const rpe = parseFloat(row.querySelector('.log-rpe')?.value) || 0;
+                    if (w > 0 && r > 0) { totalW += w; totalR += r; totalRPE += rpe; cnt++; hasData = true; }
+                });
 
-                    if (actualRIR <= 1 && reps >= 8) {
-                        action = 'INCREASE_WEIGHT';
-                        newWeight = weight + 2.5;
-                        color = '#10B981'; // Verde
-                        icon = '↑';
-                    } else if (actualRIR >= 3) {
-                        action = 'INCREASE_WEIGHT_MORE';
-                        newWeight = weight + 5;
-                        color = '#10B981';
-                        icon = '↑↑';
-                    } else if (reps < 6) {
-                        action = 'REDUCE_WEIGHT';
-                        newWeight = Math.round(weight * 0.9 * 2) / 2; // Redondear a 0.5
-                        color = '#EF4444'; // Rojo
-                        icon = '↓';
-                    } else {
-                        // Mantener peso, ajustar reps
-                        newReps = `${targetReps} (+1-2)`;
-                    }
+                let action = 'MAINTAIN', color = '#F59E0B', icon = '→';
+                const avgW = cnt > 0 ? Math.round(totalW / cnt * 2) / 2 : 0;
+                const avgR = cnt > 0 ? Math.round(totalR / cnt) : 0;
+                const avgRIR = cnt > 0 ? 10 - (totalRPE / cnt) : 2;
+                let newWeight = avgW, newReps = targetReps;
+
+                if (cnt > 0) {
+                    if (avgRIR <= 1 && avgR >= 8) { action = 'INCREASE_WEIGHT'; newWeight = avgW + 2.5; color = '#10B981'; icon = '↑'; }
+                    else if (avgRIR >= 3) { action = 'INCREASE_WEIGHT_MORE'; newWeight = avgW + 5; color = '#10B981'; icon = '↑↑'; }
+                    else if (avgR < 6) { action = 'REDUCE_WEIGHT'; newWeight = Math.round(avgW * 0.9 * 2) / 2; color = '#EF4444'; icon = '↓'; }
+                    else { newReps = `${targetReps} (+1-2)`; }
                 }
 
                 results.push({
-                    name: exerciseName,
-                    weight,
-                    newWeight,
-                    reps,
+                    name: exerciseName, weight: avgW, newWeight, reps: avgR,
                     newReps: extraReps ? `${newReps} (${extraReps})` : newReps,
-                    action,
-                    color,
-                    icon
+                    action, color, icon
                 });
             });
 
@@ -2838,37 +2910,70 @@ const WorkoutUIController = (() => {
         const exerciseData = [];
         const muscleVolume = {}; // sets per muscle group
 
-        rows.forEach((row, idx) => {
-            const exerciseName = row.querySelector('td')?.textContent?.trim()?.split('\n')[0]?.replace('⭐ ', '') || `Ejercicio ${idx + 1}`;
-            const weight = parseFloat(row.querySelector('.log-weight')?.value) || 0;
-            const reps = parseInt(row.querySelector('.log-reps')?.value) || 0;
-            const rpe = parseFloat(row.querySelector('.log-rpe')?.value) || 0;
-            const rir = parseFloat(row.querySelector('.log-rir')?.value);
+        // Agrupar filas por ejercicio (cada ejercicio tiene múltiples filas de series)
+        const exerciseRows = {};
+        rows.forEach(row => {
+            const exIdx = row.dataset.exerciseIdx;
+            if (!exerciseRows[exIdx]) exerciseRows[exIdx] = [];
+            exerciseRows[exIdx].push(row);
+        });
 
-            if (weight > 0 && reps > 0) {
-                const volume = weight * reps;
-                totalVolume += volume;
-                totalSets++;
-                if (rpe > 0) {
-                    totalRPE += rpe;
-                    rpeCount++;
+        Object.entries(exerciseRows).forEach(([exIdx, setRows]) => {
+            const exInfo = currentDay?.exercises?.[parseInt(exIdx)];
+            const exerciseName = exInfo?.name || `Ejercicio ${parseInt(exIdx) + 1}`;
+            const muscleGroup = exInfo?.muscleGroup || 'General';
+            const setsCompleted = [];
+            let exVolume = 0;
+            let maxWeight = 0;
+
+            setRows.forEach(row => {
+                const weight = parseFloat(row.querySelector('.log-weight')?.value) || 0;
+                const reps = parseInt(row.querySelector('.log-reps')?.value) || 0;
+                const rpe = parseFloat(row.querySelector('.log-rpe')?.value) || 0;
+                const rir = parseFloat(row.querySelector('.log-rir')?.value);
+                const setNum = parseInt(row.dataset.setNum) || 1;
+
+                if (weight > 0 && reps > 0) {
+                    const volume = weight * reps;
+                    const actualRIR = !isNaN(rir) ? rir : (rpe > 0 ? 10 - rpe : 2);
+
+                    setsCompleted.push({
+                        setNumber: setNum,
+                        weight, reps, rpe,
+                        rir: actualRIR,
+                        volume
+                    });
+
+                    exVolume += volume;
+                    totalVolume += volume;
+                    totalSets++;
+                    if (weight > maxWeight) maxWeight = weight;
+                    if (rpe > 0) { totalRPE += rpe; rpeCount++; }
+                    totalRIR += actualRIR;
                 }
-                const actualRIR = !isNaN(rir) ? rir : (10 - rpe);
-                totalRIR += actualRIR;
+            });
 
-                // Save weight + reps for next session reference & warmup calc
-                saveExerciseWeight(exerciseName, weight, reps);
+            if (setsCompleted.length > 0) {
+                // Guardar peso de referencia para próxima sesión
+                saveExerciseWeight(exerciseName, maxWeight, setsCompleted[0].reps);
 
-                // Track volume per muscle
-                const muscleGroup = currentDay?.exercises?.[idx]?.muscleGroup || 'General';
-                muscleVolume[muscleGroup] = (muscleVolume[muscleGroup] || 0) + 1;
+                muscleVolume[muscleGroup] = (muscleVolume[muscleGroup] || 0) + setsCompleted.length;
 
                 exerciseData.push({
                     name: exerciseName,
-                    weight, reps, rpe,
-                    rir: actualRIR,
-                    volume,
-                    muscleGroup
+                    muscleGroup,
+                    sets: setsCompleted,
+                    totalSets: setsCompleted.length,
+                    totalVolume: exVolume,
+                    avgRPE: setsCompleted.filter(s => s.rpe > 0).length > 0
+                        ? (setsCompleted.reduce((sum, s) => sum + s.rpe, 0) / setsCompleted.filter(s => s.rpe > 0).length).toFixed(1)
+                        : '-',
+                    // Compatibilidad con formato anterior (usa datos de la primera serie)
+                    weight: setsCompleted[0].weight,
+                    reps: setsCompleted[0].reps,
+                    rpe: setsCompleted[0].rpe,
+                    rir: setsCompleted[0].rir,
+                    volume: exVolume
                 });
             }
         });
