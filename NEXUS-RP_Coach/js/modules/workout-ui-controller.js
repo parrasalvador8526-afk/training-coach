@@ -1900,7 +1900,7 @@ const WorkoutUIController = (() => {
                 });
             });
         }
-        let techniqueLabel = "Extra (Técnica)";
+        let techniqueLabel = "Reps";
         if (dayTechniques.size > 0) {
             const techArray = Array.from(dayTechniques);
             if (techArray.length <= 2) {
@@ -1909,7 +1909,7 @@ const WorkoutUIController = (() => {
                 techniqueLabel = "Reps " + techArray[0] + " / " + techArray[1] + "...";
             }
         } else {
-            techniqueLabel = "Reps Extra / Técnica";
+            techniqueLabel = "Reps " + (routine.methodologyName || routine.protocolName || "Avanzadas");
         }
 
         return `
