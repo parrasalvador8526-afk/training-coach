@@ -1892,8 +1892,15 @@ const WorkoutUIController = (() => {
         let dayTechniques = new Set();
         if (showDoubleTier) {
             day.exercises.forEach(ex => {
-                const exIntensifiers = ex.selectedIntensifiers || ex.intensifiers || params.intensifiers || [];
-                exIntensifiers.forEach(int => {
+                let currentIntensifiers = [];
+                if (ex.selectedIntensifiers && ex.selectedIntensifiers.length > 0) {
+                    currentIntensifiers = ex.selectedIntensifiers;
+                } else if (ex.intensifiers && ex.intensifiers.length > 0) {
+                    currentIntensifiers = ex.intensifiers;
+                } else if (params.intensifiers && params.intensifiers.length > 0) {
+                    currentIntensifiers = params.intensifiers;
+                }
+                currentIntensifiers.forEach(int => {
                     if (int && int !== 'Normal' && int !== '-' && typeof int === 'string') {
                         dayTechniques.add(int);
                     }
