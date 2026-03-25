@@ -1157,6 +1157,7 @@ const WorkoutUIController = (() => {
             }
             adapted.rpe = adjustRPE(params.rpe, -1.5);
             adapted.extraReps = null;
+            adapted.intensifiers = []; // Beginners don't use double-tier tracking or intensifiers
             adapted.levelNote = '🟢 Principiante: volumen reducido, RIR alto';
 
         } else if (level === 'intermediate') {
@@ -1885,6 +1886,32 @@ const WorkoutUIController = (() => {
             return d && d.weight > 0;
         });
 
+        const showDoubleTier = routine.level !== 'beginner';
+        
+        // Determinar técnicas/intensificadores presentes en este día para el título de la columna
+        let dayTechniques = new Set();
+        if (showDoubleTier) {
+            day.exercises.forEach(ex => {
+                const exIntensifiers = ex.selectedIntensifiers || ex.intensifiers || params.intensifiers || [];
+                exIntensifiers.forEach(int => {
+                    if (int && int !== 'Normal' && int !== '-' && typeof int === 'string') {
+                        dayTechniques.add(int);
+                    }
+                });
+            });
+        }
+        let techniqueLabel = "Extra (Técnica)";
+        if (dayTechniques.size > 0) {
+            const techArray = Array.from(dayTechniques);
+            if (techArray.length <= 2) {
+                techniqueLabel = "Reps " + techArray.join(" / ");
+            } else {
+                techniqueLabel = "Reps " + techArray[0] + " / " + techArray[1] + "...";
+            }
+        } else {
+            techniqueLabel = "Reps Extra / Técnica";
+        }
+
         return `
             ${hasWarmupData ? `<div style="display:flex; justify-content:flex-end; margin-bottom:6px;">
                 <button id="btn-toggle-warmup" onclick="document.querySelectorAll('.warmup-row').forEach(r=>r.classList.toggle('hidden')); this.dataset.visible = this.dataset.visible === '1' ? '0' : '1'; this.innerHTML = this.dataset.visible === '1' ? '🔥 Ocultar calentamiento' : '🔥 Ver calentamiento';" data-visible="1" style="font-size:0.75rem; padding:4px 10px; border-radius:8px; border:1px solid rgba(16,185,129,0.3); background:rgba(16,185,129,0.1); color:#10B981; cursor:pointer;">
@@ -1895,25 +1922,32 @@ const WorkoutUIController = (() => {
             <table class="routine-table" id="workout-log-table">
                 <thead>
                     <tr>
-                        <th>Ejercicio</th>
-                        <th>Series</th>
-                        <th>Reps</th>
-                        <th>%RM</th>
-                        <th>Tempo</th>
-                        <th>RIR</th>
-                        <th>Rest</th>
-                        <th>Últ. Peso</th>
-                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 70px;">Peso (kg)</th>
-                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 60px;">Reps</th>
-                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 60px;">RPE</th>
-                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 55px;">RIR</th>
+                        <th data-tooltip="El movimiento o máquina a ejecutar.">Ejercicio <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th data-tooltip="Total de series de trabajo (efectivas) programadas.">Series <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th data-tooltip="Objetivo de repeticiones a alcanzar por cada serie.">Reps <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th data-tooltip="Carga recomendada basada en el porcentaje de tu 1RM estimado (Repetición Máxima).">%RM <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th data-tooltip="Ritmo de ejecución (Bajada - Pausa - Subida). Ej. 2-0-2 es bajar en 2 seg, sin pausa, y subir en 2 seg.">Tempo <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th data-tooltip="Objetivo de RIR (Reps in Reserve) propuesto por la metodología. 0 significa entrenar hasta el fallo.">RIR <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th data-tooltip="Tiempo sugerido de descanso entre cada serie de trabajo.">Rest <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th data-tooltip="El peso mayor validado en tu historial más reciente para este ejercicio.">Últ. Peso <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 70px;" data-tooltip="Carga utilizada: Anota el peso total que levantaste en esta serie.">Peso (kg) <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 60px;" data-tooltip="Repeticiones: Anota la cantidad de repeticiones sin ayuda que lograste.">Reps <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 60px;" data-tooltip="RPE (Rate of Perceived Exertion): ¿Qué tan pesada sentiste la serie del 5 al 10? 10 significa que diste tu máximo esfuerzo.">RPE <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        <th style="background: rgba(224, 64, 251, 0.15); color: #E040FB; min-width: 55px;" data-tooltip="RIR (Reps in Reserve): ¿Cuántas repeticiones MÁS sentiste que podías hacer antes de fallar? (0 = llegaste al fallo).">RIR <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px;">ⓘ</span></th>
+                        ${showDoubleTier ? `<th style="background: rgba(224, 64, 251, 0.25); color: #E040FB; min-width: 80px; text-transform: uppercase;" data-tooltip="Registra aquí el esfuerzo de tus técnicas avanzadas (ej. parciales, isométricas) para no alterar tus récords base."><i>${techniqueLabel}</i> <span style="opacity: 0.65; font-size: 0.85em; margin-left: 2px; text-transform: none;">ⓘ</span></th>` : ''}
                     </tr>
                 </thead>
                 <tbody>
-                    ${buildWarmupBlock(day.exercises, params)}
+                    ${buildWarmupBlock(day.exercises, params, showDoubleTier)}
                     ${day.exercises.map((ex, idx) => {
             const exIntensifiers = ex.intensifiers || params.intensifiers || [];
-            const intensifierRows = exIntensifiers.map(intName => {
+            
+            // Double-Tier Tracking: Identificar si hay una técnica específica para esta serie
+            const preSelected = (showDoubleTier && ex.selectedIntensifiers && ex.selectedIntensifiers.length > 0) 
+                ? ex.selectedIntensifiers[0] 
+                : (showDoubleTier && exIntensifiers.length > 0 ? exIntensifiers[0] : '');
+                
+            const intensifierRows = showDoubleTier ? exIntensifiers.map(intName => {
                 const info = INTENSIFIER_INSTRUCTIONS[intName];
                 if (!info) return '';
 
@@ -1927,18 +1961,14 @@ const WorkoutUIController = (() => {
                 }
 
                 return `<tr class="intensifier-row">
-                                <td colspan="12" style="padding: 2px 12px 6px 28px; border-top: none; background: rgba(139, 92, 246, 0.08);">
+                                <td colspan="${showDoubleTier ? 13 : 12}" style="padding: 2px 12px 6px 28px; border-top: none; background: rgba(139, 92, 246, 0.08);">
                                     <span style="font-size: 0.75rem; color: #A78BFA; font-weight: 600;">${info.icon} ${intName}</span>
                                     <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 6px;">${info.instruction}</span>
                                     ${weightCalcHtml}
                                 </td>
                             </tr>`;
-            }).join('');
-            const extraRepsRow = ex.extraReps ? `<tr class="intensifier-row">
-                            <td colspan="12" style="padding: 2px 12px 6px 28px; border-top: none; background: rgba(245, 158, 11, 0.08);">
-                                <span style="font-size: 0.75rem; color: #F59E0B; font-weight: 600;">⚡ ${ex.extraReps}</span>
-                            </td>
-                        </tr>` : '';
+            }).join('') : '';
+            const extraRepsRow = ''; // Desactivado: ya se muestra junto a la celda de Reps principal.
 
             // Generar N filas — una por cada serie del ejercicio
             const numSets = ex.sets || params.sets || 3;
@@ -1947,6 +1977,18 @@ const WorkoutUIController = (() => {
 
             for (let s = 0; s < numSets; s++) {
                 const isFirstSet = s === 0;
+                // Si la metodología indica que solo la ÚLTIMA serie lleva intensificador, lo sugerimos ahí.
+                // Si es Rest-Pause u otro de serie única, lo sugerimos en todas porque suele ser solo 1 serie.
+                const isLastSet = s === numSets - 1;
+                const suggestTechnique = preSelected && (numSets === 1 || isLastSet || preSelected.includes('Rest-Pause'));
+                let placeholderSec = '-';
+                if (suggestTechnique) {
+                    if (preSelected.includes('Drop') || preSelected.includes('Descendente')) placeholderSec = 'Ej: 50 kg';
+                    else placeholderSec = 'Ej: +3 reps';
+                }
+                const secInputStyle = suggestTechnique ? 'border: 1px dashed #E040FB; color: #E040FB; font-weight: bold;' : 'border: 1px solid rgba(255,255,255,0.05); opacity: 0.3;';
+                const secDisabled = suggestTechnique ? '' : 'disabled';
+
                 const setInputBg = 'background: rgba(224, 64, 251, 0.05);';
                 const setRowBorder = !isFirstSet ? 'border-top: 1px dashed rgba(255,255,255,0.06);' : '';
 
@@ -1982,6 +2024,9 @@ const WorkoutUIController = (() => {
                             <td style="${setInputBg}"><input type="number" class="log-input log-reps" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="-" min="1" max="50" style="${inputStyle}"></td>
                             <td style="${setInputBg}"><input type="number" class="log-input log-rpe" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="-" min="5" max="10" step="0.5" style="${inputStyle}"></td>
                             <td style="${setInputBg}"><input type="number" class="log-input log-rir" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="-" min="-2" max="5" style="${inputStyle}" readonly tabindex="-1"></td>
+                            ${showDoubleTier ? `<td style="background: rgba(224, 64, 251, 0.05);">
+                                <input type="text" class="log-input log-sec-val" data-type="${preSelected}" data-exercise-idx="${idx}" data-set-num="${s + 1}" placeholder="${placeholderSec}" style="${inputStyle} font-size: 0.65rem; padding: 6px 2px; ${secInputStyle}" ${secDisabled}>
+                            </td>` : ''}
                         </tr>`;
             }
 
@@ -2426,8 +2471,12 @@ const WorkoutUIController = (() => {
 
         const bgBase = 'rgba(16,185,129,0.06)';
         const workPctLabel = matchPct ? `${matchPct[1]}-${matchPct[2]}%` : `${Math.round(workMinPct * 100)}%+`;
+        
+        const colspanFull = showDoubleTier ? 13 : 12;
+        const colspanEmpty = showDoubleTier ? 5 : 4;
+
         const headerRow = `<tr class="warmup-row">
-            <td colspan="12" style="padding:8px 12px; background:rgba(16,185,129,0.1); border-left:3px solid #10B981;">
+            <td colspan="${colspanFull}" style="padding:8px 12px; background:rgba(16,185,129,0.1); border-left:3px solid #10B981;">
                 <span style="font-size:0.8rem; color:#10B981; font-weight:700;">🔥 CALENTAMIENTO</span>
                 <span style="font-size:0.7rem; color:var(--text-muted); margin-left:8px;">Ref: ${baseEx.name} · e1RM ≈ ${Math.round(e1rm)}kg · Trabajo: ${workPctLabel} 1RM</span>
             </td>
@@ -2451,12 +2500,12 @@ const WorkoutUIController = (() => {
                 <td style="color:#10B981; font-weight:600;">4+</td>
                 <td>${s.rest}</td>
                 <td><span style="color:${color}; font-weight:700;">${kg} kg</span></td>
-                <td colspan="4" style="text-align:center; color:var(--text-muted); font-size:0.75rem;">Calentamiento</td>
+                <td colspan="${colspanEmpty}" style="text-align:center; color:var(--text-muted); font-size:0.75rem;">Calentamiento</td>
             </tr>`;
         }).filter(Boolean).join('');
 
         const separatorRow = `<tr class="warmup-row">
-            <td colspan="12" style="padding:4px 12px; background:rgba(16,185,129,0.08); border-left:3px solid #10B981; border-bottom:2px solid rgba(16,185,129,0.3);">
+            <td colspan="${colspanFull}" style="padding:4px 12px; background:rgba(16,185,129,0.08); border-left:3px solid #10B981; border-bottom:2px solid rgba(16,185,129,0.3);">
                 <span style="font-size:0.7rem; color:#10B981; font-weight:600;">SERIES DE TRABAJO ↓</span>
             </td>
         </tr>`;
@@ -2933,6 +2982,16 @@ const WorkoutUIController = (() => {
                 const rir = parseFloat(row.querySelector('.log-rir')?.value);
                 const setNum = parseInt(row.dataset.setNum) || 1;
 
+                // Double-tier tracking: extrayendo métrica secundaria
+                const secInput = row.querySelector('.log-sec-val');
+                let secondaryMetric = null;
+                if (secInput && secInput.value) {
+                    secondaryMetric = {
+                        type: secInput.dataset.type || 'Técnica',
+                        value: secInput.value
+                    };
+                }
+
                 if (weight > 0 && reps > 0) {
                     const volume = weight * reps;
                     const actualRIR = !isNaN(rir) ? rir : (rpe > 0 ? 10 - rpe : 2);
@@ -2941,7 +3000,8 @@ const WorkoutUIController = (() => {
                         setNumber: setNum,
                         weight, reps, rpe,
                         rir: actualRIR,
-                        volume
+                        volume,
+                        secondaryMetric
                     });
 
                     exVolume += volume;

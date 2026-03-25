@@ -169,7 +169,7 @@ const RoutineGenerator = (() => {
             dayNumber: idx + 1,
             name: day.name,
             muscles: day.muscles,
-            exercises: generateExercisesForDay(day.muscles, protData, methData, volumeConfig, priority, muscleFrequencies),
+            exercises: generateExercisesForDay(day.muscles, protData, methData, volumeConfig, priority, muscleFrequencies, level),
             completed: false
         }));
 
@@ -229,7 +229,7 @@ const RoutineGenerator = (() => {
     /**
      * Genera ejercicios para un día
      */
-    function generateExercisesForDay(muscles, protData, methData, volumeConfig, priority = 'none', muscleFrequencies = {}) {
+    function generateExercisesForDay(muscles, protData, methData, volumeConfig, priority = 'none', muscleFrequencies = {}, level = 'intermediate') {
         const exercises = [];
 
         // Ordenar músculos para que los prioritarios vayan primero
@@ -326,8 +326,8 @@ const RoutineGenerator = (() => {
                     sequences: protData.sequences || null,
 
                     // Intensificadores disponibles para este ejercicio
-                    availableIntensifiers: getAvailableIntensifiers(ex, protData, methData),
-                    selectedIntensifiers: [],
+                    availableIntensifiers: getAvailableIntensifiers(ex, protData, methData, level),
+                    selectedIntensifiers: getPreSelectedIntensifiers(ex, isPrimary, exIdx, sortedExercises.length, protData, methData, level),
 
                     // Para registro
                     setsCompleted: [],
@@ -343,7 +343,8 @@ const RoutineGenerator = (() => {
     /**
      * Obtiene intensificadores disponibles según ejercicio y metodología
      */
-    function getAvailableIntensifiers(exercise, protData, methData) {
+    function getAvailableIntensifiers(exercise, protData, methData, level) {
+        if (level === 'beginner') return [];
         const baseIntensifiers = protData.intensifiers || [];
 
         // Intensificadores adicionales según tipo de ejercicio
@@ -356,6 +357,43 @@ const RoutineGenerator = (() => {
 
         // Combinar y remover duplicados
         return [...new Set([...baseIntensifiers, ...availableForType])];
+    }
+
+    /**
+     * Lógica de Auto-etiquetado (Double-Tier Tracking):
+     * Pre-selecciona el intensificador principal según las reglas de la metodología
+     */
+    function getPreSelectedIntensifiers(exercise, isPrimary, exIdx, totalMuscExercises, protData, methData, level) {
+        if (level === 'beginner') return [];
+        if (!protData.intensifiers || protData.intensifiers.length === 0) return [];
+        
+        const mType = (methData.name || '').toLowerCase();
+        
+        // FST-7: Sólo el último ejercicio del músculo lleva la estructura FST-7
+        if (mType.includes('fst') || mType.includes('fst-7')) {
+            const isLast = exIdx === totalMuscExercises - 1;
+            // Si el array de intensificadores tiene FST-7, lo extraemos
+            const fstTag = protData.intensifiers.find(i => i.toLowerCase().includes('fst'));
+            return isLast && fstTag ? [fstTag] : [];
+        }
+        
+        // Heavy Duty / Blood & Guts / Doggcrapp: Todos los ejercicios suelen llevar el intensificador principal
+        if (mType.includes('heavy duty') || mType.includes('blood & guts') || mType.includes('dc training')) {
+             return [protData.intensifiers[0]];
+        }
+        
+        // Y3T: Semana 3 (Annihilation) lleva intensificadores en todo
+        if (mType.includes('y3t') && protData.id.includes('W3')) {
+            return [protData.intensifiers[0]]; 
+        }
+
+        // MTUT, SST, Rest-Pause System aplican su técnica a todos los ejercicios del bloque
+        if (['mtut', 'sst', 'rest-pause'].some(t => mType.includes(t))) {
+             return [protData.intensifiers[0]];
+        }
+
+        // Por defecto, no pre-seleccionar para no ensuciar series estándar (ej. Volumen alemán, DUP, Y3T Semana 1 y 2)
+        return [];
     }
 
     /**

@@ -17,6 +17,63 @@
     <!-- Estilos -->
     <link rel="stylesheet" href="css/rp-coach.css">
     <style>
+        /* Custom Fast Tooltips */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(15, 15, 20, 0.98);
+            color: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            width: max-content;
+            max-width: 250px;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 1px solid rgba(224, 64, 251, 0.3);
+            pointer-events: none;
+            font-weight: 400;
+            text-transform: none;
+            text-align: left;
+            line-height: 1.4;
+            animation: tooltipFadeIn 0.1s ease-out forwards;
+        }
+        [data-tooltip]:hover::before {
+            content: '';
+            position: absolute;
+            top: 105%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent rgba(224, 64, 251, 0.4) transparent;
+            z-index: 9999;
+            animation: tooltipFadeIn 0.1s ease-out forwards;
+        }
+        /* Prevents left cutoff for first column */
+        th:first-child[data-tooltip]:hover::after {
+            left: 0;
+            transform: none;
+        }
+        /* Prevents right cutoff for last column */
+        th:last-child[data-tooltip]:hover::after {
+            left: auto;
+            right: 0;
+            transform: none;
+        }
+        @keyframes tooltipFadeIn {
+            from { opacity: 0; margin-top: -5px; }
+            to { opacity: 1; margin-top: 0; }
+        }
+
         /* Toggle Switch */
         #toggle-slider-bc {
             display: block;
@@ -1947,6 +2004,39 @@
                             superas las 30 reps en un ejercicio, es señal de que la carga es insuficiente para reclutar
                             fibras tipo II. <strong>Aumenta el peso ~10-15%</strong> para volver al rango eficiente y
                             maximizar el estímulo muscular.</span>
+                    </div>
+
+                    <!-- NUEVA REGLA: DOUBLE-TIER TRACKING -->
+                    <div class="card mt-2" style="border-left: 4px solid #8B5CF6; background: rgba(139,92,246,0.05); padding: 15px;">
+                        <h5 style="color: #8B5CF6; font-size: 0.95rem; margin-bottom: 8px;">🧬 Escalabilidad de Doble Vía (Double-Tier Tracking)</h5>
+                        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px;">
+                            Método universal para medir el rendimiento de <strong>Intensificadores</strong> y <strong>Estructuras de Serie</strong> sin distorsionar el RIR principal de la serie.
+                        </p>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr>
+                                <th style="color:#A78BFA;">Técnica Aplicada</th>
+                                <th style="color:#A78BFA;">Métrica Secundaria</th>
+                                <th style="color:#A78BFA;">Condición de Progresión</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Intensificadores de Serie</strong><br><span style="font-size:0.65rem; color:#888;">(Drop Sets, Rest-Pause, Forzadas, Myo-Reps)</span></td>
+                                <td>Volumen Secundario</td>
+                                <td style="color:#10B981;">Aumentar "Reps Extra" o "Peso del Drop" con el peso principal fijo.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Estructuras / Densidad</strong><br><span style="font-size:0.65rem; color:#888;">(SST, Giant Sets, FST-7, Clusters)</span></td>
+                                <td>Tiempo de Descanso Real</td>
+                                <td style="color:#10B981;">Reducir los segundos de descanso entre series manteniendo reps/peso.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tensión Mecánica Continua</strong><br><span style="font-size:0.65rem; color:#888;">(MTUT, Isométricos Integrados)</span></td>
+                                <td>Segundos / Tempo Carga</td>
+                                <td style="color:#10B981;">Aumentar el tiempo (seg) en fase excéntrica o isométrica.</td>
+                            </tr>
+                        </table>
+                        <p style="font-size:0.7rem; color: #A78BFA; margin-top: 8px; font-style:italic;">
+                            *En la tabla de entrenamiento, actívalo con [+ Técnica] para separar estas métricas del cálculo lineal de la app.
+                        </p>
                     </div>
                 </div>
 
