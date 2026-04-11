@@ -107,6 +107,23 @@ const BioimpedanciaRP = (() => {
             showNotification('Por favor completa los campos requeridos', 'warning');
             return null;
         }
+        // Validación de rangos
+        if (datos.peso < 30 || datos.peso > 300) {
+            showNotification('Peso debe estar entre 30 y 300 kg', 'warning');
+            return null;
+        }
+        if (datos.altura < 100 || datos.altura > 250) {
+            showNotification('Altura debe estar entre 100 y 250 cm', 'warning');
+            return null;
+        }
+        if (datos.edad < 10 || datos.edad > 100) {
+            showNotification('Edad debe estar entre 10 y 100 años', 'warning');
+            return null;
+        }
+        if (datos.grasa && (datos.grasa < 3 || datos.grasa > 60)) {
+            showNotification('% de grasa debe estar entre 3% y 60%', 'warning');
+            return null;
+        }
 
         // Calcular TMB (Mifflin-St Jeor)
         let tmb;
@@ -325,17 +342,17 @@ const BioimpedanciaRP = (() => {
             metricas,
             fechaActualizacion: new Date().toISOString()
         };
-        localStorage.setItem('rpcoach_bioimpedancia', JSON.stringify(bioData));
+        localStorage.setItem('rpCoach_bioimpedancia', JSON.stringify(bioData));
 
         // También guardar en el perfil general
-        const profile = JSON.parse(localStorage.getItem('rpcoach_profile') || '{}');
+        const profile = JSON.parse(localStorage.getItem('rpCoach_profile') || '{}');
         profile.bioimpedancia = bioData;
-        localStorage.setItem('rpcoach_profile', JSON.stringify(profile));
+        localStorage.setItem('rpCoach_profile', JSON.stringify(profile));
     }
 
     function cargarDatosGuardados() {
         try {
-            const saved = localStorage.getItem('rpcoach_bioimpedancia');
+            const saved = localStorage.getItem('rpCoach_bioimpedancia');
             if (!saved) return;
 
             const data = JSON.parse(saved);
@@ -377,7 +394,7 @@ const BioimpedanciaRP = (() => {
 
     function getDatosCalculados() {
         try {
-            const saved = localStorage.getItem('rpcoach_bioimpedancia');
+            const saved = localStorage.getItem('rpCoach_bioimpedancia');
             if (saved) {
                 return JSON.parse(saved);
             }

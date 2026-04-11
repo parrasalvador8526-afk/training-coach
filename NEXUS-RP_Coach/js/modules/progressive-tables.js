@@ -239,22 +239,22 @@ const TablasProgresivas = (() => {
         }
 
         // Guardar en localStorage
-        const historial = JSON.parse(localStorage.getItem('rpcoach_sesiones') || '[]');
+        const historial = JSON.parse(localStorage.getItem('rpCoach_sesiones') || '[]');
         historial.push({
             fecha: new Date().toISOString(),
             ejercicios: sesion
         });
-        localStorage.setItem('rpcoach_sesiones', JSON.stringify(historial));
+        localStorage.setItem('rpCoach_sesiones', JSON.stringify(historial));
 
         // Guardar última sesión para progresión
-        localStorage.setItem('rpcoach_ultima_sesion', JSON.stringify(sesion));
+        localStorage.setItem('rpCoach_ultima_sesion', JSON.stringify(sesion));
 
         showNotification('✅ Sesión guardada correctamente', 'success');
     }
 
     function cargarUltimaSesion() {
         try {
-            const data = localStorage.getItem('rpcoach_ultima_sesion');
+            const data = localStorage.getItem('rpCoach_ultima_sesion');
             return data ? JSON.parse(data) : null;
         } catch (e) {
             return null;

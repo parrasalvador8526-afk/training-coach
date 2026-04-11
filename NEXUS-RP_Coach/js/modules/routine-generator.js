@@ -276,24 +276,23 @@ const RoutineGenerator = (() => {
                 let baseSets = parseSets(protData.sets);
                 const mType = (methData.name || '').toLowerCase();
 
-                // 🧠 LÓGICA ASIMÉTRICA PARA METHODOLOGÍAS EXTREMAS
-                if (mType.includes('gvt') || mType.includes('german volume')) {
-                    // GVT: Sólo el primer ejercicio lleva los 10 sets (10x10)
-                    if (!isPrimary) baseSets = 3;
-                }
-                else if (mType.includes('fst') || mType.includes('fst-7')) {
+                // 🧠 LÓGICA ASIMÉTRICA PARA METHODOLOGÍAS CON SETS ESPECIALES
+                if (mType.includes('fst') || mType.includes('fst-7')) {
                     // FST-7: Sólo el ÚLTIMO ejercicio lleva el protocolo de 7 sets
                     const isLast = exIdx === sortedExercises.length - 1;
                     if (!isLast) baseSets = 3;
                     else baseSets = parseSets(protData.sets) || 7;
                 }
 
-                // Aplicar multiplicador por nivel sólo si no es una carga estática extrema (ej 10 sets de GVT o 7 de FST)
+                // Aplicar multiplicador por nivel sólo si no es una carga estática extrema (ej 7 de FST)
                 if (baseSets < 7) {
                     baseSets = Math.round(baseSets * volumeConfig.setsMultiplier);
                     if (isPriority) {
-                        baseSets += 1; // Añadir un set extra para ejercicios del músculo prioritario
+                        baseSets += 1;
                     }
+                    // Tope de sets base por nivel para evitar inflación con modulación de mesociclo
+                    const MAX_BASE_SETS = { beginner: 3, intermediate: 4, advanced: 4 };
+                    baseSets = Math.min(baseSets, MAX_BASE_SETS[level] || 4);
                 }
 
                 // Reducir sets para aislamientos en metodologías HIT (Heavy Duty)
@@ -377,8 +376,8 @@ const RoutineGenerator = (() => {
             return isLast && fstTag ? [fstTag] : [];
         }
         
-        // Heavy Duty / Blood & Guts / Doggcrapp: Todos los ejercicios suelen llevar el intensificador principal
-        if (mType.includes('heavy duty') || mType.includes('blood & guts') || mType.includes('dc training')) {
+        // Heavy Duty / Blood & Guts: Todos los ejercicios suelen llevar el intensificador principal
+        if (mType.includes('heavy duty') || mType.includes('blood & guts')) {
              return [protData.intensifiers[0]];
         }
         
@@ -392,7 +391,7 @@ const RoutineGenerator = (() => {
              return [protData.intensifiers[0]];
         }
 
-        // Por defecto, no pre-seleccionar para no ensuciar series estándar (ej. Volumen alemán, DUP, Y3T Semana 1 y 2)
+        // Por defecto, no pre-seleccionar para no ensuciar series estándar (ej. DUP, Y3T Semana 1 y 2)
         return [];
     }
 

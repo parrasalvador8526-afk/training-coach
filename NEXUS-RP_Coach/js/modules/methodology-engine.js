@@ -1,11 +1,18 @@
 /**
  * NEXUS-RP Coach - Motor de Metodologías v2
- * Carga y gestiona las 11 metodologías del sistema NEXUS
- * con todos sus 41 protocolos y configuraciones
+ * Carga y gestiona las 9 metodologías RPizadas del sistema NEXUS
+ * con todos sus protocolos y configuraciones optimizadas
+ *
+ * v3 - Actualización: Eliminadas GVT (score 73) y DC Training (score 67)
+ * por incompatibilidad científica. Metodologías #5-#9 mejoradas con:
+ * - Lengthened Partials (parciales en posición estirada)
+ * - Myo-Reps (mini-series post-activación)
+ * - Tempo excéntrico optimizado (2-4s, evidencia 2025)
+ * - Cluster Sets para mejor calidad de movimiento
  */
 
 const MethodologyEngine = (() => {
-    // Datos completos de las 11 metodologías con 41 protocolos
+    // Datos completos de las 9 metodologías RPizadas
     const FULL_METHODOLOGIES = {
         "Y3T": {
             id: "Y3T",
@@ -25,7 +32,7 @@ const MethodologyEngine = (() => {
                 { id: "Y3T-W3", name: "Week 3 Annihilation", description: "Alto volumen, técnicas intensas, pump máximo", reps: "15-30", sets: "3-5", rest: 45, rpe: "9-10", rir: 0, tut: "60-90s", load: "50-65% 1RM", tempo: "2-0-1", intensifiers: ["Drop Sets", "Superseries", "Giant Sets"] },
                 { id: "Y3T-DL", name: "Deload", description: "Semana de recuperación", reps: "12-15", sets: "2-3", rest: 90, rpe: "5-6", rir: 4, tut: "30-40s", load: "50-60% 1RM", tempo: "2-0-2", intensifiers: [] },
                 { id: "Y3T-MOD", name: "Modificado Principiante", description: "Versión reducida para principiantes", reps: "8-12", sets: "2-3", rest: 105, rpe: "6-7", rir: 3, tut: "40-50s", load: "60-70% 1RM", tempo: "2-1-2", intensifiers: [] },
-                { id: "Y3T-INT", name: "Intensificado Avanzado", description: "Con técnicas adicionales post-fallo", reps: "Varies", sets: "4-5", rest: 67, rpe: "10", rir: 0, tut: "70-100s", load: "75-90% 1RM", tempo: "2-0-2", intensifiers: ["Forced Reps", "Negativas", "Drop Sets"] }
+                { id: "Y3T-INT", name: "Intensificado Avanzado", description: "Con técnicas adicionales post-fallo", reps: "6-12", sets: "4-5", rest: 67, rpe: "10", rir: 0, tut: "70-100s", load: "75-90% 1RM", tempo: "2-0-2", intensifiers: ["Forced Reps", "Negativas", "Drop Sets"] }
             ],
             warmup: { week1: "3 sets progresivos (30% → 50% → 70%)", week2: "2 sets progresivos (40% → 60%)", week3: "1 set ligero (40%) + movilidad" },
             deload: { frequency: "Cada 6-9 semanas", duration: "1 semana", intensity: "50%" }
@@ -33,189 +40,153 @@ const MethodologyEngine = (() => {
 
         "HeavyDuty": {
             id: "HeavyDuty",
-            name: "Heavy Duty",
-            creator: "Mike Mentzer",
+            name: "HIT Inteligente (Heavy Duty RPizado)",
+            creator: "Mike Mentzer / RP Style",
             level: ["Intermedio", "Avanzado"],
-            philosophy: "HIT - Mínimo estímulo, máxima intensidad",
-            sessionDuration: "30-45 min",
+            philosophy: "HIT con volumen mínimo efectivo: 2-3 series (última al fallo), RIR progresivo, Myo-Reps como intensificador cuantificable",
+            sessionDuration: "35-50 min",
             frequency: "3-4 días/semana",
-            volume: "Muy Bajo",
-            intensity: "Máxima",
+            volume: "Bajo-Moderado",
+            intensity: "Alta",
             type: "HIT",
-            requiresSpotter: true,
+            requiresSpotter: false,
+            rpScore: 84,
+            rpImprovements: ["Myo-Reps post-fallo", "RIR progresivo 2→1→0", "2-3 series vs 1", "Beyond failure solo en peak"],
             protocols: [
-                { id: "HD-SU", name: "Serie Única al Fallo", description: "1 working set hasta fallo muscular absoluto", reps: "6-10", sets: "1", rest: 150, rpe: "10", rir: 0, tut: "40-60s", load: "80-85% 1RM", tempo: "2-1-4", intensifiers: [] },
-                { id: "HD-FR", name: "Forced Reps", description: "Reps asistidas después del fallo", reps: "6-10", extraReps: "+2-3 Forced", sets: "1", rest: 210, rpe: "10+", rir: -2, tut: "+10-15s", load: "80-85% 1RM", tempo: "2-1-2", intensifiers: ["Forced Reps"] },
-                { id: "HD-NEG", name: "Negativas", description: "Fase excéntrica supramáxima 4-6s", reps: "6-8", extraReps: "+3-4 Neg controladas 4-6s", sets: "1", rest: 240, rpe: "10+", rir: 0, tut: "4-6s por rep", load: "100-120% 1RM", tempo: "1-0-6", intensifiers: ["Negativas"] },
-                { id: "HD-RP", name: "Rest-Pause", description: "Micro descansos intra-serie 10-15s", reps: "8-10", extraReps: "+4-6 RP (10-15s rest)", sets: "1", rest: 15, rpe: "10", rir: 0, tut: "60-90s", load: "75-80% 1RM", tempo: "2-0-2", microRest: [10, 15], intensifiers: ["Rest-Pause"] },
-                { id: "HD-PE", name: "Pre-Exhaustion", description: "Aislamiento antes de compuesto", reps: "10-12 + 6-8", sets: "1+1", rest: 0, rpe: "10", rir: 0, tut: "60-80s", load: "60-70% + 80% 1RM", tempo: "2-0-2", intensifiers: ["Pre-Agotamiento"] },
-                { id: "HD-SS", name: "Superseries HIT", description: "Dos ejercicios sin descanso", reps: "8-10 + 8-10", sets: "1", rest: 0, rpe: "10", rir: 0, tut: "50-70s", load: "70-80% 1RM", tempo: "2-0-2", intensifiers: ["Superseries"] }
+                { id: "HD-RP", name: "HIT Progresivo", description: "2-3 series con RIR progresivo (3→2→1→0 por semana), última serie al fallo", reps: "6-10", sets: "2-3", rest: 150, rpe: "8-10", rir: 2, tut: "40-60s", load: "75-85% 1RM", tempo: "2-1-3", intensifiers: ["Rest-Pause"] },
+                { id: "HD-MYO", name: "HIT + Myo-Reps", description: "1 serie base al fallo + Myo-Reps: 20-30s descanso → 3-5 reps × 3 mini-series", reps: "6-10", extraReps: "+9-15 Myo-Reps (20-30s)", sets: "1+3 mini", rest: 25, rpe: "10", rir: 0, tut: "80-100s", load: "75-80% 1RM", tempo: "2-1-3", microRest: [20, 30], intensifiers: ["Myo-Reps"] },
+                { id: "HD-NEG", name: "Negativas Controladas", description: "Fase excéntrica 4s controlada (no supramáxima). Solo semana Peak", reps: "6-8", sets: "2", rest: 180, rpe: "9-10", rir: 0, tut: "50-70s", load: "80-85% 1RM", tempo: "2-0-4", intensifiers: ["Negativas"] },
+                { id: "HD-PE", name: "Pre-Exhaustion + Myo", description: "Aislamiento al fallo → compuesto → Myo-Reps en compuesto", reps: "12-15 + 6-8", extraReps: "+Myo 3-5x3", sets: "1+1+mini", rest: 0, rpe: "10", rir: 0, tut: "90-120s", load: "60-70% + 80% 1RM", tempo: "2-0-3", intensifiers: ["Pre-Agotamiento", "Myo-Reps"] },
+                { id: "HD-LP", name: "HIT Lengthened Partials", description: "Series al fallo + 3-4 parciales en posición estirada post-fallo", reps: "6-10", extraReps: "+3-4 lengthened partials", sets: "2", rest: 150, rpe: "10+", rir: 0, tut: "60-80s", load: "75-85% 1RM", tempo: "2-1-3", intensifiers: ["Lengthened Partials"] }
             ],
             warmup: { set1: "30% x 12 reps", set2: "50% x 8 reps", set3: "70% x 4 reps" },
-            deload: { frequency: "Cada 4-6 semanas", duration: "5-7 días", intensity: "50%", noFailure: true }
+            deload: { frequency: "Cada 4 semanas", duration: "1 semana", intensity: "50%", noFailure: true }
         },
 
         "BloodAndGuts": {
             id: "BloodAndGuts",
-            name: "Blood & Guts",
-            creator: "Dorian Yates",
+            name: "Blood & Guts (HIT Inteligente - Yates)",
+            creator: "Dorian Yates / RP Style",
             level: ["Intermedio", "Avanzado"],
-            philosophy: "HIT estilo Dorian - Intensidad máxima",
+            philosophy: "HIT estilo Dorian con volumen optimizado: 2-3 series, RIR progresivo, Myo-Reps y Lengthened Partials",
             sessionDuration: "45-60 min",
             frequency: "4 días/semana",
-            volume: "Bajo",
-            intensity: "Máxima",
+            volume: "Bajo-Moderado",
+            intensity: "Alta",
             type: "HIT",
-            requiresSpotter: true,
+            requiresSpotter: false,
+            rpScore: 84,
+            rpImprovements: ["Myo-Reps post-fallo", "Lengthened Partials", "2-3 series con RIR progresivo", "Sin supramáximas innecesarias"],
             protocols: [
-                { id: "BG-DY", name: "Dorian Yates Original", description: "2 warm-ups + 1 working set al fallo", reps: "8-10", sets: "1", rest: 120, rpe: "10", rir: 0, tut: "40-60s", load: "75-85% 1RM", tempo: "2-0-2", intensifiers: [] },
-                { id: "BG-FR", name: "Forced Reps Dorian", description: "2-3 reps asistidas post-fallo", reps: "8-10", extraReps: "+2-3 Forced", sets: "1", rest: 180, rpe: "10+", rir: -2, tut: "+10s", load: "75-85% 1RM", tempo: "2-0-2", intensifiers: ["Forced Reps"] },
-                { id: "BG-NEG", name: "Negativas Controladas", description: "Excéntricas lentas 4-6s post-fallo", reps: "8-10", extraReps: "+3-4 Neg controladas 4-6s", sets: "1", rest: 240, rpe: "10+", rir: 0, tut: "60-80s", load: "100-120% 1RM", tempo: "2-0-4", intensifiers: ["Negativas"] },
-                { id: "BG-RP", name: "Rest-Pause Dorian", description: "Descanso 10-15s, continuar", reps: "8-10", extraReps: "+4-6 RP", sets: "1", rest: 12, rpe: "10", rir: 0, tut: "Varies", load: "70-80% 1RM", tempo: "2-0-2", intensifiers: ["Rest-Pause"] },
-                { id: "BG-PAR", name: "Partials", description: "Reps parciales post-fallo", reps: "8-10", extraReps: "+4-6 Partials", sets: "1", rest: 0, rpe: "10+", rir: 0, tut: "+15-20s", load: "80-90% 1RM", tempo: "1-0-1", intensifiers: ["Parciales"] },
-                { id: "BG-DS", name: "Drop Sets", description: "Reducir peso, continuar sin descanso", reps: "8→8→8", sets: "3 drops", rest: 0, rpe: "10+", rir: 0, tut: "60-90s", load: "70%→50% 1RM", tempo: "2-0-2", loadReduction: "20-30% por drop", intensifiers: ["Drop Sets"] }
+                { id: "BG-DY", name: "Yates Progresivo", description: "2-3 series con RIR 3→2→1→0 por semana. Última serie al fallo", reps: "8-10", sets: "2-3", rest: 120, rpe: "8-10", rir: 2, tut: "40-60s", load: "75-85% 1RM", tempo: "2-0-3", intensifiers: ["Forced Reps"] },
+                { id: "BG-MYO", name: "B&G + Myo-Reps", description: "Serie al fallo + Myo-Reps (25s descanso → 3-5 reps × 3)", reps: "8-10", extraReps: "+9-15 Myo-Reps", sets: "1+3 mini", rest: 25, rpe: "10", rir: 0, tut: "70-90s", load: "75-80% 1RM", tempo: "2-0-3", microRest: [25], intensifiers: ["Myo-Reps"] },
+                { id: "BG-LP", name: "B&G Lengthened Partials", description: "Serie al fallo + 4-6 parciales en posición estirada", reps: "8-10", extraReps: "+4-6 lengthened partials", sets: "2", rest: 150, rpe: "10+", rir: 0, tut: "60-80s", load: "75-85% 1RM", tempo: "2-0-3", intensifiers: ["Lengthened Partials"] },
+                { id: "BG-NEG", name: "Excéntrico Controlado", description: "Excéntrica 4s controlada (no supramáxima). Solo semana Peak", reps: "8-10", sets: "2", rest: 180, rpe: "9-10", rir: 0, tut: "60-80s", load: "80-85% 1RM", tempo: "2-0-4", intensifiers: ["Negativas"] },
+                { id: "BG-DS", name: "Drop Sets Progresivos", description: "Serie al fallo → drop 20% → Lengthened Partials finales", reps: "8→8→LP", sets: "1+2 drops", rest: 0, rpe: "10+", rir: 0, tut: "60-90s", load: "80%→60% 1RM", tempo: "2-0-3", loadReduction: "20% por drop", intensifiers: ["Drop Sets", "Lengthened Partials"] }
             ],
             warmup: { set1: "30% x 15 reps", set2: "50% x 10 reps" },
-            deload: { frequency: "Cada 6-8 semanas", duration: "1 semana", intensity: "60%" }
+            deload: { frequency: "Cada 4 semanas", duration: "1 semana", intensity: "50%" }
         },
 
         "MTUT": {
             id: "MTUT",
-            name: "MTUT (Tiempo Bajo Tensión)",
-            creator: "Varios",
+            name: "Control Excéntrico Periodizado (MTUT RPizado)",
+            creator: "Varios / RP Style",
             level: ["Principiante", "Intermedio", "Avanzado"],
-            philosophy: "Tiempo bajo tensión extremo",
+            philosophy: "Concéntrica explosiva + excéntrica controlada 2s→3s→4s por mesociclo. Lengthened Partials en peak. Evidencia 2025: >4s no aporta beneficio adicional",
             sessionDuration: "45-60 min",
             frequency: "3-4 días/semana",
             volume: "Moderado",
-            intensity: "Moderada",
+            intensity: "Moderada-Alta",
             type: "VOLUME",
             requiresSpotter: false,
+            rpScore: 85,
+            rpImprovements: ["Tempo excéntrico 2-4s (evidencia 2025)", "Concéntrica explosiva", "Lengthened Partials en peak", "RIR progresivo", "Cargas más altas que MTUT original"],
             protocols: [
-                { id: "MTUT-TCE", name: "Tempo Concéntrico Extremo", description: "Fase concéntrica ultra-lenta (4s+)", reps: "6-8", sets: "3", rest: 75, rpe: "8-9", rir: 1, tut: "40-60s", tempo: "4-1-2", load: "40-50% 1RM", intensifiers: ["Tempo Lento"] },
-                { id: "MTUT-TEE", name: "Tempo Excéntrico Extremo", description: "Fase excéntrica ultra-lenta (4s+)", reps: "6-8", sets: "3", rest: 75, rpe: "8-9", rir: 1, tut: "50-70s", tempo: "2-1-4", load: "45-55% 1RM", intensifiers: ["Negativas Lentas"] },
-                { id: "MTUT-VE", name: "Variante Equilibrada", description: "Ambas fases lentas", reps: "5-7", sets: "3", rest: 52, rpe: "8-9", rir: 1, tut: "45-65s", tempo: "3-2-3", load: "40-50% 1RM", intensifiers: ["Tempo Controlado"] },
-                { id: "MTUT-ISO", name: "Isométricos Integrados", description: "Pausas isométricas en puntos clave", reps: "5-6", sets: "3", rest: 75, rpe: "9", rir: 1, tut: "50-70s", load: "40-50% 1RM", tempo: "2-3-2", intensifiers: ["Isométricos"] },
-                { id: "MTUT-SH", name: "Shock Sets", description: "Combinación de tempos sin descanso", reps: "15-20 total", sets: "1", rest: 120, rpe: "10", rir: 0, tut: "90-120s", load: "30-40% 1RM", tempo: "Variable", intensifiers: ["Shock Sets"] },
-                { id: "MTUT-SS", name: "Superseries MTUT", description: "Dos ejercicios con tempo lento", reps: "6-8 + 6-8", sets: "2-3", rest: 90, rpe: "9", rir: 1, tut: "80-100s", load: "40-50% 1RM", tempo: "3-1-3", intensifiers: ["Superseries", "Tempo Lento"] }
+                { id: "MTUT-EXP", name: "Excéntrico Progresivo", description: "Concéntrica explosiva + excéntrica 2s→3s→4s según semana del mesociclo", reps: "8-10", sets: "3-4", rest: 90, rpe: "7-9", rir: 2, tut: "50-70s", tempo: "X-0-3", load: "65-75% 1RM", intensifiers: ["Tempo Lento"] },
+                { id: "MTUT-LP", name: "Excéntrico + Lengthened Partials", description: "Series con tempo excéntrico 3-4s + 3-4 parciales en posición estirada al final", reps: "6-8", extraReps: "+3-4 LP", sets: "3", rest: 90, rpe: "9-10", rir: 0, tut: "60-80s", tempo: "X-0-4", load: "70-80% 1RM", intensifiers: ["Lengthened Partials"] },
+                { id: "MTUT-ISO", name: "Isométricos en Estiramiento", description: "Pausa 2-3s en posición de máximo estiramiento muscular", reps: "6-8", sets: "3", rest: 90, rpe: "8-9", rir: 1, tut: "60-80s", load: "60-70% 1RM", tempo: "X-3-3", intensifiers: ["Isométricos", "Lengthened Partials"] },
+                { id: "MTUT-VE", name: "Equilibrado Progresivo", description: "Tempo controlado ambas fases con RIR progresivo 3→1", reps: "8-10", sets: "3-4", rest: 75, rpe: "7-9", rir: 2, tut: "50-70s", tempo: "2-1-3", load: "60-70% 1RM", intensifiers: ["Tempo Controlado"] },
+                { id: "MTUT-SS", name: "Superseries Excéntricas", description: "Dos ejercicios con énfasis excéntrico, segundo en posición estirada", reps: "8 + 8", sets: "3", rest: 90, rpe: "9", rir: 1, tut: "80-100s", load: "60-70% 1RM", tempo: "X-0-3", intensifiers: ["Superseries", "Lengthened Partials"] }
             ],
-            warmup: { mobility: "5 min articular", set1: "30% x 8 reps @ tempo normal", set2: "40% x 5 reps @ tempo MTUT" },
-            deload: { frequency: "Cada 6-8 semanas", duration: "1 semana", intensity: "Subir peso 20%, tempo normal" }
+            warmup: { mobility: "5 min articular", set1: "30% x 8 reps @ tempo normal", set2: "50% x 5 reps @ tempo excéntrico" },
+            deload: { frequency: "Cada 4 semanas", duration: "1 semana", intensity: "Subir peso 15%, tempo normal (sin excéntrico lento)" }
         },
 
         "SST": {
             id: "SST",
-            name: "SST (Sarcoplasm Stimulating Training)",
-            creator: "Varios",
+            name: "Estrés Metabólico Progresivo (SST RPizado)",
+            creator: "Varios / RP Style",
             level: ["Intermedio", "Avanzado"],
-            philosophy: "Estrés metabólico extremo",
+            philosophy: "Series base con RIR progresivo + SST finisher como estrés metabólico. Semanas 3-4 cambia SST por Myo-Reps para cuantificar mejor la progresión",
             sessionDuration: "45-75 min",
             frequency: "4-5 días/semana",
             volume: "Moderado",
-            intensity: "Alta (múltiples fallos)",
+            intensity: "Alta",
             type: "HYBRID",
             requiresSpotter: false,
+            rpScore: 84,
+            rpImprovements: ["Series base con RIR progresivo", "SST como finisher (no base)", "Myo-Reps en semanas peak", "Progresión cuantificable", "Lengthened Partials opcionales"],
             protocols: [
-                { id: "SST-RIV", name: "Rest Interval Variable", description: "Descansos crecientes 5s→25s entre mini-sets", reps: "Hasta fallo x 6-9", sets: "1 protocolo", rest: [5, 10, 15, 20, 25], rpe: "10", rir: 0, tut: "3-5 min total", failures: 9, load: "60-70% 1RM", tempo: "2-0-2", microRest: [5, 10, 15, 20, 25], intensifiers: ["Rest-Pause Progresivo", "Fallo Múltiple"] },
-                { id: "SST-CT", name: "Contracción Tipo", description: "Alternar tipos de contracción", reps: "8-10 + variantes", sets: "1 protocolo", rest: 15, rpe: "10", rir: 0, tut: "2-3 min", failures: 4, load: "65-75% 1RM", tempo: "2-1-2", microRest: [15], intensifiers: ["Variación Contracción"] },
-                { id: "SST-RT", name: "Rest Time", description: "Micro descansos fijos 10-15s", reps: "Hasta fallo x 3-4", sets: "1 protocolo", rest: 12, rpe: "10", rir: 0, tut: "2 min", failures: 4, load: "75-80% 1RM", tempo: "2-0-2", microRest: [10, 15], intensifiers: ["Rest-Pause Fijo"] },
-                { id: "SST-TM", name: "Tempo Manipulation", description: "Cambios de tempo dentro del set", reps: "12-15 total", sets: "1", rest: 90, rpe: "9-10", rir: 0, tut: "60-90s", load: "60-70% 1RM", tempo: "Variable", intensifiers: ["Tempo Variable"] },
-                { id: "SST-ISOM", name: "Isométrico SST", description: "Holds isométricos en puntos de fallo", reps: "5-6 + holds", sets: "1", rest: 120, rpe: "10", rir: 0, tut: "45-60s", load: "65-75% 1RM", tempo: "2-5-2", intensifiers: ["Isométricos"] },
-                { id: "SST-NEG", name: "Negativas SST", description: "Excéntricas lentas 4s post-fallo", reps: "8-10", extraReps: "+3-4 Neg 4s", sets: "1", rest: 120, rpe: "10+", rir: 0, tut: "50-70s", load: "70-80% 1RM", tempo: "2-0-4", intensifiers: ["Negativas"] }
+                { id: "SST-BASE", name: "Base + SST Finisher", description: "3 series base RIR 3→1 + 1 protocolo SST finisher (secuencia 8-6-4)", reps: "8-12", extraReps: "+SST 8-6-4", sets: "3+1 SST", rest: 90, rpe: "7-9", rir: 2, tut: "60-80s", load: "65-75% 1RM", tempo: "2-0-2", intensifiers: ["Rest-Pause Progresivo"] },
+                { id: "SST-MYO", name: "Base + Myo-Reps Finisher", description: "3 series base + Myo-Reps (activación 15-20 reps → mini-series 5-3-3). Semanas 3-4", reps: "8-12", extraReps: "+15-20 act + 5-3-3 Myo", sets: "3+1 Myo", rest: 90, rpe: "9-10", rir: 1, tut: "80-120s", load: "65-75% 1RM", tempo: "2-0-2", microRest: [20, 30], intensifiers: ["Myo-Reps"] },
+                { id: "SST-LP", name: "SST + Lengthened Partials", description: "Protocolo SST clásico pero las reps finales como parciales en estiramiento", reps: "Hasta fallo x 4-6", extraReps: "+LP finales", sets: "1 protocolo", rest: [5, 10, 15, 20], rpe: "10", rir: 0, tut: "3-4 min", failures: 6, load: "60-70% 1RM", tempo: "2-0-2", microRest: [5, 10, 15, 20], intensifiers: ["Rest-Pause Progresivo", "Lengthened Partials"] },
+                { id: "SST-CT", name: "Contracción Tipo Progresiva", description: "Alternar contracciones con RIR decreciente por semana", reps: "8-10 + variantes", sets: "1 protocolo", rest: 15, rpe: "8-10", rir: 1, tut: "2-3 min", failures: 4, load: "65-75% 1RM", tempo: "2-1-2", microRest: [15], intensifiers: ["Variación Contracción"] },
+                { id: "SST-TM", name: "Tempo Metabólico", description: "Excéntrica controlada 3s + SST finisher. Combina estrés mecánico y metabólico", reps: "10-12", sets: "3", rest: 75, rpe: "8-9", rir: 1, tut: "70-90s", load: "60-70% 1RM", tempo: "X-0-3", intensifiers: ["Tempo Controlado", "Rest-Pause Progresivo"] }
             ],
             warmup: { general: "5 min cardio + movilidad", set1: "30% x 15 reps", set2: "50% x 10 reps", hydration: "500ml agua pre-protocolo" },
-            deload: { frequency: "Cada 4-6 semanas", duration: "1 semana sin SST", training: "3x10-12 normal" }
+            deload: { frequency: "Cada 4 semanas", duration: "1 semana sin SST/Myo-Reps", training: "3x10-12 normal" }
         },
 
         "FST7": {
             id: "FST7",
-            name: "FST-7 (Fascia Stretch Training)",
-            creator: "Hany Rambod",
+            name: "FST-7 + Lengthened Partials",
+            creator: "Hany Rambod / RP Style",
             level: ["Principiante", "Intermedio", "Avanzado"],
-            philosophy: "Estiramiento de fascia con 7 series finales",
+            philosophy: "Series base con RIR progresivo + 7 series finisher en posición estirada (Lengthened Partials). Evidencia 2025: parciales en estiramiento = o > ROM completo para hipertrofia",
             sessionDuration: "60-75 min",
             frequency: "5-6 días/semana",
             volume: "Alto (finisher)",
             intensity: "Moderada-Alta",
             type: "HYBRID",
             requiresSpotter: false,
+            rpScore: 86,
+            rpImprovements: ["7 series FST en posición estirada (Lengthened Partials)", "Series base con RIR progresivo", "Evidencia 2025 respalda parciales estirados"],
             protocols: [
-                { id: "FST7-CL", name: "FST-7 Clásico", description: "7 series al final con 30-45s descanso", reps: "8-12", sets: "7", rest: 35, rpe: "8-9", rir: 1, tut: "Varies", load: "50-60% 1RM", intensifiers: ["Pump Extremo"] },
-                { id: "FST7-BN", name: "FST-7 Burn", description: "Con drop set en serie final", reps: "12-15 + drop", sets: "7", rest: 35, rpe: "10", rir: 0, tut: "Varies", load: "40-50% 1RM", intensifiers: ["Drop Sets", "Pump Extremo"] },
-                { id: "FST7-ST", name: "FST-7 Stretch", description: "Con énfasis en posición de estiramiento", reps: "10-12", sets: "7", rest: 35, rpe: "8-9", rir: 1, tut: "Varies", load: "50-60% 1RM", intensifiers: ["Stretch Profundo"] },
-                { id: "FST7-DL", name: "FST-7 Double", description: "Dos grupos con FST-7 en misma sesión", reps: "8-12", sets: "7+7", rest: 35, rpe: "9", rir: 1, tut: "Varies", load: "50-60% 1RM", tempo: "2-0-2", intensifiers: ["Alto Volumen"] },
-                { id: "FST7-HY", name: "FST-7 Híbrido", description: "Combinado con otra metodología", reps: "10-12", sets: "5-7", rest: 40, rpe: "8-9", rir: 1, tut: "Varies", load: "55-65% 1RM", tempo: "2-0-2", intensifiers: ["Flexible"] }
+                { id: "FST7-LP", name: "FST-7 Lengthened Partials", description: "3-4 series base ROM completo RIR 3→1 + 7 series FST en mitad estirada del ROM", reps: "8-12", sets: "3-4 + 7 LP", rest: 35, rpe: "8-9", rir: 1, tut: "Varies", load: "50-65% 1RM", tempo: "2-0-2", intensifiers: ["Pump Extremo", "Lengthened Partials"] },
+                { id: "FST7-CL", name: "FST-7 Clásico RPizado", description: "Series base progresivas + 7 series finisher con 30-45s descanso", reps: "8-12", sets: "3-4 + 7", rest: 35, rpe: "8-9", rir: 2, tut: "Varies", load: "50-65% 1RM", tempo: "2-0-2", intensifiers: ["Pump Extremo"] },
+                { id: "FST7-BN", name: "FST-7 Burn + LP", description: "7 series con Lengthened Partials + drop set final en posición estirada", reps: "10-12 + drop LP", sets: "7", rest: 35, rpe: "10", rir: 0, tut: "Varies", load: "40-55% 1RM", tempo: "2-0-2", intensifiers: ["Drop Sets", "Pump Extremo", "Lengthened Partials"] },
+                { id: "FST7-ST", name: "FST-7 Stretch Máximo", description: "Ejercicios seleccionados por máximo estiramiento + Lengthened Partials", reps: "10-12", sets: "7", rest: 35, rpe: "8-9", rir: 1, tut: "Varies", load: "50-60% 1RM", tempo: "2-1-2", intensifiers: ["Stretch Profundo", "Lengthened Partials"] },
+                { id: "FST7-HY", name: "FST-7 Híbrido", description: "Combinable con otra metodología. 5-7 series finisher adaptables", reps: "10-12", sets: "5-7", rest: 40, rpe: "8-9", rir: 1, tut: "Varies", load: "55-65% 1RM", tempo: "2-0-2", intensifiers: ["Flexible", "Lengthened Partials"] }
             ],
             warmup: { compounds: "Calentamiento normal", preFST: "1 set ligero (30%) x 15 reps", hydration: "Beber agua entre cada serie" },
-            deload: { frequency: "Cada 6-8 semanas", duration: "1 semana sin FST-7", alternative: "Reducir a 4 series" }
+            deload: { frequency: "Cada 4 semanas", duration: "1 semana sin FST-7", alternative: "Reducir a 4 series, sin LP" }
         },
 
         "RestPause": {
             id: "RestPause",
-            name: "Rest-Pause System",
-            creator: "Raúl Carrasco",
+            name: "Rest-Pause + Clusters (RPizado)",
+            creator: "Raúl Carrasco / RP Style",
             level: ["Intermedio", "Avanzado"],
-            philosophy: "Micro-descansos para múltiples fallos en serie extendida",
+            philosophy: "Rest-Pause con progresión dual (peso + densidad). Reps post-pausa como Lengthened Partials. Cluster Sets para mejor calidad. Meta-análisis 2024: RP mejora IGF-1 y ratio follistatin/myostatin",
             sessionDuration: "45-60 min",
             frequency: "4-5 días/semana",
             volume: "Moderado",
             intensity: "Alta",
             type: "HIT",
             requiresSpotter: false,
+            rpScore: 85,
+            rpImprovements: ["Reps post-pausa como Lengthened Partials", "Progresión dual: peso + densidad (20s→15s→10s)", "Cluster Sets opcionales", "RIR progresivo por mesociclo"],
             protocols: [
-                { id: "RP-RC", name: "Rest-Pause Clásico", description: "10-12 reps + 10-20s + 4-6 reps + 10-20s + 2-4 reps", reps: "10-12", extraReps: "+6-10 RP (10-20s)", sets: "1 extendida", rest: 15, rpe: "10", rir: 0, tut: "90-120s", load: "70-80% 1RM", tempo: "2-0-2", sequences: 3, microRest: [10, 20], intensifiers: ["Rest-Pause"] },
-                { id: "RP-EXT", name: "Rest-Pause Extendido", description: "4 secuencias para volumen extremo", reps: "8-10", extraReps: "+12-20 RP (15-20s x4)", sets: "1 extendida", rest: 17, rpe: "10+", rir: 0, tut: "120-150s", load: "65-75% 1RM", tempo: "2-0-2", sequences: 4, microRest: [15, 20], intensifiers: ["Rest-Pause Extendido"] },
-                { id: "RP-MYO", name: "Myo-Reps Style", description: "Set activación + mini-sets de 3-5 reps (5s rest)", reps: "12-15", extraReps: "+3-5 x 4-5 (5s)", sets: "1 extendida", rest: 5, rpe: "9-10", rir: 0, tut: "60-90s", load: "70-80% 1RM", tempo: "2-0-2", microRest: [5], intensifiers: ["Myo-Reps"] },
-                { id: "RP-DS", name: "Rest-Pause + Drop Sets", description: "Rest-Pause seguido de drop set", reps: "10+4 + AMRAP", sets: "1 extendida", rest: 10, rpe: "10+", rir: 0, tut: "120-180s", load: "75%→55% 1RM", tempo: "2-0-2", dropPercent: "30%", intensifiers: ["Rest-Pause", "Drop Sets"] },
-                { id: "RP-NEG", name: "Rest-Pause Excéntrico", description: "Énfasis en fase excéntrica de 4s", reps: "8-10", extraReps: "+4-6 RP (4s exc)", sets: "1 extendida", rest: 15, rpe: "10", rir: 0, tut: "100-130s", load: "70-75% 1RM", tempo: "2-0-4", microRest: [15], intensifiers: ["Rest-Pause", "Negativas"] },
-                { id: "RP-ISO", name: "Rest-Pause Isométrico", description: "Con holds isométricos en contracción máxima", reps: "8+4+2", sets: "1 extendida", rest: 12, rpe: "10", rir: 0, tut: "80-100s", load: "65-70% 1RM", tempo: "2-3-2", holdDuration: "3-5s", intensifiers: ["Rest-Pause", "Isométricos"] }
+                { id: "RP-LP", name: "Rest-Pause + Lengthened Partials", description: "Serie al fallo → 15-20s → reps adicionales como parciales en posición estirada", reps: "10-12", extraReps: "+4-6 LP (15-20s)", sets: "1 extendida", rest: 17, rpe: "10", rir: 0, tut: "90-120s", load: "70-80% 1RM", tempo: "2-0-2", sequences: 3, microRest: [15, 20], intensifiers: ["Rest-Pause", "Lengthened Partials"] },
+                { id: "RP-DEN", name: "Rest-Pause Densidad Progresiva", description: "Descanso intra-serie decreciente por mesociclo: 20s → 15s → 10s", reps: "10-12", extraReps: "+6-10 RP (progresivo)", sets: "1 extendida", rest: 15, rpe: "9-10", rir: 0, tut: "90-120s", load: "70-80% 1RM", tempo: "2-0-2", sequences: 3, microRest: [10, 15, 20], intensifiers: ["Rest-Pause"] },
+                { id: "RP-CL", name: "Cluster Rest-Pause", description: "Series cluster (5 reps → 15s → 5 reps → 15s → 5 reps) para calidad de movimiento", reps: "5+5+5", sets: "1 cluster", rest: 15, rpe: "8-9", rir: 1, tut: "60-80s", load: "80-85% 1RM", tempo: "2-0-2", microRest: [15], intensifiers: ["Rest-Pause"] },
+                { id: "RP-MYO", name: "Myo-Reps", description: "Set activación 12-15 reps → mini-sets 3-5 reps con 5-10s descanso", reps: "12-15", extraReps: "+3-5 x 4-5 (5-10s)", sets: "1 extendida", rest: 7, rpe: "9-10", rir: 0, tut: "60-90s", load: "65-75% 1RM", tempo: "2-0-2", microRest: [5, 10], intensifiers: ["Myo-Reps"] },
+                { id: "RP-DS", name: "Rest-Pause + Drop + LP", description: "RP al fallo → drop 25% → Lengthened Partials finales", reps: "10+4 + LP", sets: "1 extendida", rest: 10, rpe: "10+", rir: 0, tut: "120-180s", load: "75%→55% 1RM", tempo: "2-0-2", dropPercent: "25%", intensifiers: ["Rest-Pause", "Drop Sets", "Lengthened Partials"] },
+                { id: "RP-ECC", name: "Rest-Pause Excéntrico", description: "Reps post-pausa con excéntrica 4s en posición estirada", reps: "8-10", extraReps: "+4-6 RP (4s exc LP)", sets: "1 extendida", rest: 15, rpe: "10", rir: 0, tut: "100-130s", load: "70-75% 1RM", tempo: "2-0-4", microRest: [15], intensifiers: ["Rest-Pause", "Negativas", "Lengthened Partials"] }
             ],
             warmup: { set1: "30% x 15 reps", set2: "50% x 10 reps" },
-            deload: { frequency: "Cada 3-4 semanas", duration: "1 semana", intensity: "50%, sin RP" }
-        },
-
-        "DCTraining": {
-            id: "DCTraining",
-            name: "DC Training (DoggCrapp)",
-            creator: "Dante Trudel",
-            level: ["Avanzado"],
-            philosophy: "Alta frecuencia, bajo volumen, rest-pause extremo",
-            sessionDuration: "45-60 min",
-            frequency: "3 días/semana (A-B-A)",
-            volume: "Muy Bajo",
-            intensity: "Máxima",
-            type: "HIT",
-            requiresSpotter: true,
-            protocols: [
-                { id: "DC-RP", name: "Rest-Pause DC", description: "11-15 reps + 10-15 respiraciones + reps hasta fallo x2", reps: "11-15", extraReps: "+4-6 + 2-3 RP (10-15 resp)", sets: "1", rest: 10, rpe: "10+", rir: 0, tut: "80-100s", load: "75-85% 1RM", tempo: "2-0-2", restBreaths: "10-15 resp", intensifiers: ["Rest-Pause DC"] },
-                { id: "DC-SS", name: "Straight Sets DC", description: "Para ejercicios donde RP no es práctico", reps: "15-20", sets: "1", rest: 120, rpe: "10", rir: 0, tut: "60-80s", load: "60-70% 1RM", tempo: "2-0-2", intensifiers: [] },
-                { id: "DC-WD", name: "Widowmaker", description: "1 set de 20 reps brutales post-ejercicio", reps: "20", sets: "1", rest: 180, rpe: "10+", rir: 0, tut: "90-120s", load: "50-60% 1RM", tempo: "2-0-2", intensifiers: ["Widowmaker"] },
-                { id: "DC-ES", name: "Extreme Stretching", description: "60-90s stretch post-ejercicio", reps: "N/A", sets: "1", rest: 0, rpe: "7-8", rir: 0, duration: "60-90s", intensifiers: ["Extreme Stretch"] }
-            ],
-            warmup: { set1: "30% x 12", set2: "50% x 8", set3: "70% x 4" },
-            deload: { frequency: "Cada 2 semanas (blast/cruise)", duration: "1-2 semanas", intensity: "Sin fallo" }
-        },
-
-        "GVT": {
-            id: "GVT",
-            name: "GVT (German Volume Training)",
-            creator: "Rolf Feser / Vince Gironda",
-            level: ["Intermedio", "Avanzado"],
-            philosophy: "10x10 - Volumen extremo para hipertrofia",
-            sessionDuration: "60-75 min",
-            frequency: "4-5 días/semana",
-            volume: "Extremadamente Alto",
-            intensity: "Moderada",
-            type: "VOLUME",
-            requiresSpotter: false,
-            protocols: [
-                { id: "GVT-CL", name: "GVT Clásico 10x10", description: "10 series de 10 reps con 60% 1RM", reps: "10", sets: "10", rest: 60, rpe: "7→9", rir: 3, tut: "40-50s", load: "60% 1RM", tempo: "4-0-2", intensifiers: ["Alto Volumen"] },
-                { id: "GVT-66", name: "GVT 6x6", description: "Variante de fuerza-hipertrofia", reps: "6", sets: "6", rest: 90, rpe: "8-9", rir: 2, tut: "30-40s", load: "70-75% 1RM", tempo: "3-0-2", intensifiers: ["Volumen Moderado"] },
-                { id: "GVT-55", name: "GVT 5x5", description: "Variante de fuerza", reps: "5", sets: "5", rest: 120, rpe: "9", rir: 1, tut: "25-35s", load: "80% 1RM", tempo: "2-1-2", intensifiers: ["Fuerza"] },
-                { id: "GVT-1012", name: "GVT Modificado 10x12", description: "Mayor TUT por serie", reps: "12", sets: "10", rest: 45, rpe: "8→10", rir: 2, tut: "50-60s", load: "55% 1RM", tempo: "4-0-2", intensifiers: ["Alto TUT"] }
-            ],
-            warmup: { set1: "30% x 15", set2: "45% x 10", set3: "55% x 5" },
-            deload: { frequency: "Cada 4-6 semanas", duration: "1 semana", volume: "5x5 @ 60%" }
+            deload: { frequency: "Cada 4 semanas", duration: "1 semana", intensity: "50%, sin RP" }
         },
 
         "DUP": {
@@ -231,10 +202,10 @@ const MethodologyEngine = (() => {
             type: "VOLUME",
             requiresSpotter: false,
             protocols: [
-                { id: "DUP-HY", name: "DUP Día Hipertrofia", description: "Alto volumen, moderada intensidad", reps: "8-12", sets: "3-4", rest: 90, rpe: "7-8", rir: 2, tut: "40-50s", load: "65-75% 1RM", tempo: "2-0-2", intensifiers: [] },
-                { id: "DUP-ST", name: "DUP Día Fuerza", description: "Bajo volumen, alta intensidad", reps: "3-5", sets: "4-6", rest: 180, rpe: "9", rir: 1, tut: "15-25s", load: "85-90% 1RM", tempo: "1-1-1", intensifiers: [] },
+                { id: "DUP-HY", name: "DUP Día Hipertrofia", description: "Alto volumen, moderada intensidad", reps: "8-12", sets: "3-4", rest: 90, rpe: "7-8", rir: 2, tut: "40-50s", load: "65-75% 1RM", tempo: "2-0-2", intensifiers: ["Tempo Controlado"] },
+                { id: "DUP-ST", name: "DUP Día Fuerza", description: "Bajo volumen, alta intensidad", reps: "3-5", sets: "4-6", rest: 180, rpe: "9", rir: 1, tut: "15-25s", load: "85-90% 1RM", tempo: "1-1-1", intensifiers: ["Fuerza"] },
                 { id: "DUP-PW", name: "DUP Día Potencia", description: "Velocidad explosiva", reps: "1-3", sets: "5-8", rest: 180, rpe: "8", rir: 0, tut: "5-10s", load: "70-80% 1RM", tempo: "X-0-1", intensifiers: ["Explosivo"] },
-                { id: "DUP-EN", name: "DUP Día Resistencia", description: "Alto reps, bajo peso", reps: "15-20", sets: "2-3", rest: 60, rpe: "7-8", rir: 3, tut: "60-80s", load: "50-60% 1RM", tempo: "2-0-2", intensifiers: [] }
+                { id: "DUP-EN", name: "DUP Día Resistencia", description: "Alto reps, bajo peso", reps: "15-20", sets: "2-3", rest: 60, rpe: "7-8", rir: 3, tut: "60-80s", load: "50-60% 1RM", tempo: "2-0-2", intensifiers: ["Pump Extremo"] }
             ],
             warmup: { general: "5 min cardio + movilidad específica", progressive: "Según día (más en día fuerza)" },
             deload: { frequency: "Cada 4 semanas", duration: "1 semana", method: "50% volumen, mantener intensidad" }
@@ -274,7 +245,7 @@ const MethodologyEngine = (() => {
      * Inicializa el motor
      */
     function init() {
-        console.log('🔧 MethodologyEngine v2: Inicializando con 11 metodologías completas');
+        console.log('🔧 MethodologyEngine v3: Inicializando con 9 metodologías RPizadas');
         loadFromStorage();
         emitChange();
         console.log(`✅ Metodología actual: ${current.methodology} - ${current.protocol}`);

@@ -139,8 +139,6 @@ const VolumeMEVMRVModule = (() => {
     const METHODOLOGY_ADJUSTMENTS = {
         'HeavyDuty': { factor: 0.3, note: 'Volumen ultra-bajo compensado por intensidad máxima' },
         'BloodAndGuts': { factor: 0.4, note: 'Bajo volumen, alta intensidad' },
-        'DCTraining': { factor: 0.4, note: 'Rest-pause = menos series pero más efectivas' },
-        'GVT': { factor: 1.3, note: '10x10 = alto volumen de trabajo' },
         'Y3T': { factor: 1.1, note: 'Volumen variable por semana' },
         'FST7': { factor: 1.2, note: '7 sets finales aumentan volumen total' },
         'SST': { factor: 0.8, note: 'Múltiples fallos por set = menos series necesarias' },

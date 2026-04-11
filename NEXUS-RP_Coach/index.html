@@ -234,6 +234,58 @@
             object-fit: contain;
             filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.15));
         }
+
+        /* Gate Check */
+        .gate-light {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s;
+        }
+        .gate-light.active-green { background: #10B981; color: white; }
+        .gate-light.active-yellow { background: #F59E0B; color: white; }
+        .gate-light.active-red { background: #EF4444; color: white; }
+        .gate-override-btn {
+            padding: 6px 10px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.05);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .gate-override-btn:hover { background: rgba(255,255,255,0.15); }
+        /* Doble Progresión */
+        .dp-exercise-card {
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 8px;
+        }
+        .dp-progress-bar {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+        .dp-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        .dp-ready { border-left: 3px solid #10B981; }
+        .dp-in-progress { border-left: 3px solid #F59E0B; }
+        .dp-suggestion-badge {
+            margin: 4px 0;
+            padding: 4px 8px;
+            background: rgba(16,185,129,0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(16,185,129,0.2);
+        }
     </style>
 </head>
 
@@ -323,7 +375,7 @@
                 MÉTRICAS Y PROGRESO
             </button>
             <button class="nav-tab" data-module="progress">
-                <span class="nav-tab__icon">📈</span>
+                <span class="nav-tab__icon">⬆️</span>
                 PROGRESIÓN
             </button>
             <!-- Perfil movido al header -->
@@ -468,6 +520,76 @@
                 </div>
             </div>
 
+            <!-- ===== GATE CHECK - Evaluación Semanal ===== -->
+            <div id="gate-check-widget" class="card mt-3 mb-3" style="display:none; border-left: 4px solid #F59E0B;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4 style="color:#F59E0B; margin:0;">🚧 Gate Check Semanal</h4>
+                    <span id="gate-check-week-badge" class="rp-badge" style="background:#F59E0B;">Semana 1→2</span>
+                </div>
+
+                <!-- Semáforo visual -->
+                <div id="gate-check-traffic" style="display:flex; justify-content:center; gap:12px; margin:12px 0;">
+                    <div id="gate-light-green" class="gate-light" style="background:#ccc;">✅ Avanzar</div>
+                    <div id="gate-light-yellow" class="gate-light" style="background:#ccc;">⚠️ Precaución</div>
+                    <div id="gate-light-red" class="gate-light" style="background:#ccc;">🛑 Detener</div>
+                </div>
+
+                <!-- Métricas -->
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin:8px 0;">
+                    <div style="text-align:center; padding:8px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                        <div style="font-size:0.7rem; color:#999;">Readiness</div>
+                        <div id="gate-metric-readiness" style="font-size:1.3rem; font-weight:bold;">-</div>
+                    </div>
+                    <div style="text-align:center; padding:8px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                        <div style="font-size:0.7rem; color:#999;">Fatiga</div>
+                        <div id="gate-metric-fatigue" style="font-size:1.3rem; font-weight:bold;">-</div>
+                    </div>
+                    <div style="text-align:center; padding:8px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                        <div style="font-size:0.7rem; color:#999;">Rendimiento</div>
+                        <div id="gate-metric-performance" style="font-size:1.3rem; font-weight:bold;">-</div>
+                    </div>
+                </div>
+
+                <!-- Barra de Gate Score -->
+                <div style="margin:10px 0;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                        <span>Gate Score</span>
+                        <span id="gate-score-value">0/100</span>
+                    </div>
+                    <div style="height:8px; background:#333; border-radius:4px; overflow:hidden;">
+                        <div id="gate-score-bar" style="height:100%; width:0%; border-radius:4px; transition:width 0.5s;"></div>
+                    </div>
+                </div>
+
+                <!-- Recomendación -->
+                <div id="gate-recommendation" style="padding:10px; border-radius:8px; margin:8px 0; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3);">
+                    <div id="gate-rec-title" style="font-weight:bold; font-size:0.9rem;"></div>
+                    <div id="gate-rec-description" style="font-size:0.8rem; color:#ccc; margin-top:4px;"></div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                    <button id="btn-gate-accept" onclick="GateCheck.acceptRecommendation()"
+                        style="flex:1; padding:8px; border:none; border-radius:8px; background:#10B981; color:white; cursor:pointer; font-weight:bold;">
+                        Aceptar Recomendación
+                    </button>
+                    <button id="btn-gate-override" onclick="GateCheck.showOverrideOptions()"
+                        style="padding:8px 12px; border:1px solid #666; border-radius:8px; background:transparent; color:#ccc; cursor:pointer;">
+                        Forzar
+                    </button>
+                </div>
+
+                <!-- Override options (hidden by default) -->
+                <div id="gate-override-options" style="display:none; margin-top:8px; padding:8px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                    <div style="font-size:0.75rem; color:#F59E0B; margin-bottom:6px;">⚠️ Forzar acción (bajo tu responsabilidad):</div>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button onclick="GateCheck.forceAction('advance')" class="gate-override-btn">Avanzar ➡️</button>
+                        <button onclick="GateCheck.forceAction('repeat')" class="gate-override-btn">Repetir 🔄</button>
+                        <button onclick="GateCheck.forceAction('deload')" class="gate-override-btn">Deload ⬇️</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- ===== Detalles del Ciclo (Movido a Inicio) ===== -->
             <div class="card mt-2 mb-3">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
@@ -572,7 +694,7 @@
                         </div>
                     </div>
                     <button class="btn btn--secondary btn--sm"
-                        onclick="document.querySelector('.nav-tab[data-module=\'metrics\']').click();"
+                        onclick="document.querySelector('.nav-tab[data-module=\'visual\']').click();"
                         style="width:100%; font-size:0.75rem; padding:6px;">
                         Ir a Métricas →
                     </button>
@@ -703,273 +825,6 @@
         <!-- Dashboard y RIR Dinámico integrados en Progresión -->
         <!-- Volumen MEV-MRV integrado en Progresión -->
 
-        <!-- ========== MÓDULO: SESSION LOGGER ========== -->
-        <section id="module-logger" class="module-section hidden">
-            <div class="card card--highlight">
-                <div class="card__header">
-                    <h3 class="card__title">📝 Registro de Sesión</h3>
-                    <span class="rp-badge">RP Style</span>
-                </div>
-
-                <form id="session-form">
-                    <div class="module-grid">
-                        <div class="form-group">
-                            <label class="form-label">Ejercicio</label>
-                            <input type="text" id="log-exercise" class="form-input" placeholder="Ej: Press Banca"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Grupo Muscular</label>
-                            <select id="log-muscle" class="form-select">
-                                <option value="chest">Pecho</option>
-                                <option value="back">Espalda</option>
-                                <option value="shoulders">Hombros</option>
-                                <option value="quadriceps">Cuádriceps</option>
-                                <option value="hamstrings">Isquios</option>
-                                <option value="biceps">Bíceps</option>
-                                <option value="triceps">Tríceps</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="module-grid">
-                        <div class="form-group">
-                            <label class="form-label">Peso (kg)</label>
-                            <input type="number" id="log-weight" class="form-input" placeholder="80" step="0.5"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Reps</label>
-                            <input type="number" id="log-reps" class="form-input" placeholder="10" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">RPE</label>
-                            <input type="number" id="log-rpe" class="form-input" placeholder="8" min="1" max="10"
-                                step="0.5">
-                        </div>
-                    </div>
-
-                    <h4 class="mt-3 mb-2" style="font-size: 0.9rem; color: #10B981;">📊 Evaluación SFR (Stimulus to
-                        Fatigue)</h4>
-                    <div class="module-grid" style="gap: 10px;">
-                        <div class="form-group">
-                            <label class="form-label" style="font-size: 0.8rem;">Pump (1-5)</label>
-                            <select id="log-sfr-pump" class="form-select" style="padding: 6px;">
-                                <option value="5">Masivo (Piel a punto de estallar)</option>
-                                <option value="4">Fuerte</option>
-                                <option value="3" selected>Moderado</option>
-                                <option value="2">Ligero</option>
-                                <option value="1">Nulo (0 Pump)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" style="font-size: 0.8rem;">Disrupción (1-5)</label>
-                            <select id="log-sfr-disruption" class="form-select" style="padding: 6px;">
-                                <option value="5">Extremo (Músculo aniquilado)</option>
-                                <option value="4">Fuerte tensión y quema</option>
-                                <option value="3" selected>Trabajo notorio</option>
-                                <option value="2">Trabajo leve</option>
-                                <option value="1">No lo sentí en el músculo</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" style="font-size: 0.8rem;">Fatiga Articular/Sistémica
-                                (1-5)</label>
-                            <select id="log-sfr-fatigue" class="form-select" style="padding: 6px;">
-                                <option value="5">Insoportable (Articulaciones / SNC frito)</option>
-                                <option value="4">Molestias medias altas</option>
-                                <option value="3">Fatiga normal</option>
-                                <option value="2">Ligeramente cansado</option>
-                                <option value="1" selected>Fresco como lechuga</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn--primary btn--block mt-2">
-                        💾 Guardar Sesión
-                    </button>
-                </form>
-            </div>
-
-            <div class="card mt-2">
-                <div class="card__header">
-                    <h3 class="card__title">Registros Recientes</h3>
-                    <div class="card__icon">📋</div>
-                </div>
-                <div id="recent-logs">
-                    <p class="text-muted">No hay registros recientes</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========== MÓDULO: SOBRECARGA PROGRESIVA ========== -->
-        <section id="module-overload" class="module-section hidden">
-            <div class="card card--highlight">
-                <div class="card__header">
-                    <h3 class="card__title">🏋️ Sobrecarga Progresiva</h3>
-                    <span class="rp-badge">RP Style</span>
-                </div>
-                <p class="mb-2">Calcula el peso y reps para tu próxima sesión basándote en tu rendimiento anterior.</p>
-
-                <h4 class="mt-3">Última Sesión</h4>
-                <div class="module-grid mt-1">
-                    <div class="form-group">
-                        <label class="form-label">Ejercicio</label>
-                        <input type="text" id="overload-exercise" class="form-input" placeholder="Press Banca">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Peso Usado (kg)</label>
-                        <input type="number" id="overload-weight" class="form-input" placeholder="80" step="0.5">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Reps Completadas</label>
-                        <input type="number" id="overload-reps" class="form-input" placeholder="10">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">RPE Alcanzado</label>
-                        <input type="number" id="overload-rpe" class="form-input" placeholder="8" min="1" max="10"
-                            step="0.5">
-                    </div>
-                </div>
-
-                <h4 class="mt-3">Objetivos</h4>
-                <div class="module-grid mt-1">
-                    <div class="form-group">
-                        <label class="form-label">Reps Objetivo</label>
-                        <input type="number" id="overload-target-reps" class="form-input" placeholder="10">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">RIR Objetivo</label>
-                        <input type="number" id="overload-target-rir" class="form-input" placeholder="2" min="0"
-                            max="5">
-                    </div>
-                </div>
-
-                <button id="btn-calculate-overload" class="btn btn--primary btn--block mt-2">
-                    🧮 Calcular Próxima Sesión
-                </button>
-            </div>
-
-            <!-- Resultado -->
-            <div id="overload-result" class="mt-2"></div>
-
-            <div class="card mt-2">
-                <h4>Reglas de Progresión</h4>
-                <table class="data-table mt-1">
-                    <tr>
-                        <th>Condición</th>
-                        <th>Acción</th>
-                    </tr>
-                    <tr>
-                        <td>Reps objetivo + RIR ≤ 1</td>
-                        <td class="text-success">Subir peso (+2.5-5kg)</td>
-                    </tr>
-                    <tr>
-                        <td>Reps objetivo + RIR 2-3</td>
-                        <td class="text-primary">Añadir 1-2 reps</td>
-                    </tr>
-                    <tr>
-                        <td>Reps objetivo + RIR ≥ 4</td>
-                        <td class="text-warning">Subir peso más</td>
-                    </tr>
-                    <tr>
-                        <td>No alcanzas reps</td>
-                        <td class="text-muted">Mantener y trabajar</td>
-                    </tr>
-                    <tr>
-                        <td>Fallo significativo</td>
-                        <td class="text-danger">Reducir peso 5-10%</td>
-                    </tr>
-                </table>
-            </div>
-
-        </section>
-
-        <!-- ========== MÓDULO: TEMPLATES ========== -->
-        <section id="module-templates" class="module-section hidden">
-            <div class="card card--highlight">
-                <div class="card__header">
-                    <h3 class="card__title">📋 Templates de Entrenamiento</h3>
-                    <span class="rp-badge">RP Style</span>
-                </div>
-                <p class="mb-2">Plantillas pre-diseñadas por metodología y tipo de split.</p>
-
-                <div class="module-grid">
-                    <div class="form-group">
-                        <label class="form-label">Metodología</label>
-                        <select id="template-methodology" class="form-select">
-                            <option value="Y3T">Y3T - Neil Hill</option>
-                            <option value="HeavyDuty">Heavy Duty - Mentzer</option>
-                            <option value="BloodAndGuts">Blood & Guts - Yates</option>
-                            <option value="FST7">FST-7 - Hany Rambod</option>
-                            <option value="SST">SST - Estrés Metabólico</option>
-                            <option value="MTUT">MTUT - Tempo Lento</option>
-                            <option value="RestPause">Rest-Pause - Carrasco</option>
-                            <option value="GVT">GVT - 10x10</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tipo de Split</label>
-                        <select id="template-split" class="form-select">
-                            <option value="push_pull_legs">Push/Pull/Legs (6 días)</option>
-                            <option value="upper_lower">Upper/Lower (4 días)</option>
-                            <option value="bro_split">Bro Split (5 días)</option>
-                            <option value="hit_3day">HIT 3 Días</option>
-                            <option value="full_body">Full Body (3 días)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button id="btn-generate-template" class="btn btn--primary btn--block mt-2">
-                    🎯 Ver Template
-                </button>
-            </div>
-
-            <!-- Vista del Template -->
-            <div id="template-view" class="mt-2"></div>
-
-            <!-- Día de ejemplo -->
-            <div class="card mt-2">
-                <div class="card__header">
-                    <h4>Splits Disponibles</h4>
-                    <div class="card__icon">📊</div>
-                </div>
-                <table class="data-table">
-                    <tr>
-                        <th>Split</th>
-                        <th>Días</th>
-                        <th>Ideal Para</th>
-                    </tr>
-                    <tr>
-                        <td>Push/Pull/Legs</td>
-                        <td>6</td>
-                        <td class="text-success">Y3T, FST-7, SST</td>
-                    </tr>
-                    <tr>
-                        <td>Upper/Lower</td>
-                        <td>4</td>
-                        <td class="text-success">Y3T, Rest-Pause, DUP</td>
-                    </tr>
-                    <tr>
-                        <td>Bro Split</td>
-                        <td>5</td>
-                        <td class="text-success">HIT, FST-7, SST</td>
-                    </tr>
-                    <tr>
-                        <td>HIT 3 Días</td>
-                        <td>3</td>
-                        <td class="text-success">Heavy Duty, B&G</td>
-                    </tr>
-                    <tr>
-                        <td>Full Body</td>
-                        <td>3</td>
-                        <td class="text-success">GVT, 5/3/1</td>
-                    </tr>
-                </table>
-
-            </div>
-        </section>
-
         <!-- ========== MÓDULO: ENTRENAMIENTO ========== -->
         <!-- Sección ENTRENAMIENTO con wizard visible -->
         <section id="module-workout" class="module-section hidden">
@@ -992,10 +847,8 @@
                         <option value="SST">SST - Sarcoplasm Stimulating</option>
                         <option value="MTUT">MTUT - Tiempo Bajo Tensión</option>
                         <option value="RestPause">Rest-Pause - Raúl Carrasco</option>
-                        <option value="GVT">GVT - German Volume Training</option>
                         <option value="DUP">DUP - Daily Undulating</option>
                         <option value="531">5/3/1 - Jim Wendler</option>
-                        <option value="DCTraining">DC Training - Doggcrapp</option>
                     </select>
                 </div>
 
@@ -1243,6 +1096,9 @@
                         <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('rir-comparison-section')">🎯 RIR</button>
                         <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('week-comparison-section')">⚖️ Semanas</button>
                         <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('plateau-alerts-section')">⚠️ Alertas</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('rpized-methods-section')">🔬 RPizado</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('weight-tracking-section')">⚖️ Peso Corporal</button>
+                        <button class="feedback-tab-btn" onclick="window.switchFeedbackTab('double-progression-section')">📈 Doble Prog.</button>
                     </div>
 
                     <!-- Dashboard Resumen Ejecutivo -->
@@ -1304,7 +1160,32 @@
                         <div id="week-comparison-content"></div>
                     </div>
 
+                    <!-- Metodologías RPizadas -->
+                    <div id="rpized-methods-section" class="feedback-tab-content card mt-0" style="display:none;">
+                        <h4 style="color:#E040FB; margin-bottom:6px; font-size:0.95rem;">🔬 Metodologías RPizadas</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;"><strong>¿Qué es esto?</strong> Las 9 metodologías activas han sido optimizadas con principios RP Style y evidencia científica 2024-2025 (Lengthened Partials, Myo-Reps, tempo excéntrico optimizado). GVT y DC Training fueron eliminadas por incompatibilidad.</p>
+                        <div id="rpized-methods-content"></div>
+                    </div>
 
+                    <!-- Peso Corporal (Feedback Tab) -->
+                    <div id="weight-tracking-section" class="feedback-tab-content card mt-0"
+                        style="display:none; background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.2);">
+                        <h4 style="color:#3B82F6; margin-bottom:6px; font-size:0.95rem;">⚖️ Peso Corporal Diario</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+                            <strong>¿Para qué sirve?</strong> Registra tu peso diario para alimentar el Motor Metabólico.
+                            El promedio de 7 días elimina fluctuaciones y permite ajustes nutricionales precisos.
+                        </p>
+                        <div id="weight-tracking-content"></div>
+                    </div>
+
+                    <!-- Doble Progresión -->
+                    <div id="double-progression-section" class="feedback-tab-content card mt-0" style="display:none;">
+                        <h4 style="color:#10B981; margin-bottom:6px; font-size:0.95rem;">📈 Motor de Doble Progresión</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+                            <strong>¿Cómo funciona?</strong> Trabajas dentro de un rango de reps (ej: 8-12). Cuando logras el tope del rango en TODOS los sets, subes peso y vuelves al mínimo. Así progresas de forma autoregulada.
+                        </p>
+                        <div id="double-progression-content"></div>
+                    </div>
 
                     <!-- ===== Elementos ocultos (requeridos por JS) ===== -->
                     <div style="display: none;">
@@ -1783,17 +1664,170 @@
                     <h3 class="card__title">📈 Progresión y Próxima Sesión</h3>
                     <span class="rp-badge">Autorregulado</span>
                 </div>
-                <p class="mb-3">Sistema completo de progresión: desde los conceptos fundamentales hasta las herramientas
-                    de cálculo y las reglas específicas de cada metodología.</p>
+                <p class="mb-3">Sistema completo de progresión ordenado como un razonamiento: primero tu plan (mesociclo y volumen), luego cómo medir el esfuerzo (RIR/RPE), después cómo registrar y cuándo subir peso, y finalmente las reglas de tu metodología.</p>
 
                 <!-- ╔══════════════════════════════════════════════════╗
-                     ║  BLOQUE A — FUNDAMENTOS DE ESFUERZO             ║
+                     ║  BLOQUE 1 — PLANIFICACIÓN DEL MESOCICLO         ║
+                     ╚══════════════════════════════════════════════════╝ -->
+
+                <!-- ===== 7. Estructura del Mesociclo ===== -->
+                <div class="card mt-2">
+                    <div class="card__header">
+                        <h4>📅 1. Estructura del Mesociclo</h4>
+                        <span class="rp-badge">Planificación</span>
+                    </div>
+                    <p class="text-muted mt-1">Un mesociclo típico dura 4-6 semanas con progresión ondulante de volumen
+                        e intensidad:</p>
+                    <table class="data-table mt-2">
+                        <tr>
+                            <th>Semana</th>
+                            <th>Fase</th>
+                            <th>RIR</th>
+                            <th>Volumen</th>
+                            <th>Objetivo</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Acumulación</td>
+                            <td>3</td>
+                            <td>MEV</td>
+                            <td>Establecer base, técnica perfecta</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Progresión</td>
+                            <td>2</td>
+                            <td>MEV→MAV</td>
+                            <td>Aumentar estímulo gradualmente</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Intensificación</td>
+                            <td>1</td>
+                            <td>MAV</td>
+                            <td>Empujar cerca del límite</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Peak</td>
+                            <td>0</td>
+                            <td>MAV→MRV</td>
+                            <td>Máximo esfuerzo controlado</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Deload</td>
+                            <td>4-5</td>
+                            <td>50% MEV</td>
+                            <td>Recuperación y supercompensación</td>
+                        </tr>
+                    </table>
+                    <div class="alert alert--info mt-2">
+                        <span>ℹ️</span>
+                        <span><strong>Excepciones:</strong> 5/3/1 tiene deload integrado en semana 4 · Y3T cicla
+                            cada 3 semanas · HIT Inteligente (HD/BG) usa mesociclo corto de 4 semanas.</span>
+                    </div>
+                </div>
+
+                <!-- ===== 8. Gráfica del Mesociclo ===== -->
+                <div class="card mt-2">
+                    <div class="card__header">
+                        <h4>📈 2. Evolución Gráfica del Mesociclo</h4>
+                        <span class="rp-badge">Plan Teórico</span>
+                    </div>
+                    <p class="text-muted mt-1 mb-2" style="font-size: 0.9rem; line-height: 1.4;">
+                        <strong>Análisis Teórico:</strong> Esta gráfica demuestra la proyección matemática
+                        <strong>ideal</strong> de tu plan de entrenamiento.
+                        Calcula tu volumen (Series), la exigencia al fallo (RIR) y la sobrecarga (Carga) basándose
+                        iterativamente en tu <strong>Metodología Seleccionada</strong> y tu <strong>Nivel de
+                            Experiencia</strong>, demostrando cómo fluctuarán con exactitud durante cada microciclo.
+                    </p>
+                    <div
+                        style="position: relative; height: 220px; width: 100%; background: var(--surface-color, #1A1A2E); border-radius: 8px; padding: 10px;">
+                        <canvas id="mesocycle-progression-chart"
+                            style="width: 100%; height: 100%; display: block;"></canvas>
+                    </div>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 2 — LANDMARKS DE VOLUMEN                 ║
+                     ╚══════════════════════════════════════════════════╝ -->
+
+                <!-- ===== 3. Control de Volumen (MEV → MRV) ===== -->
+                <div class="card mt-3">
+                    <h4>📈 3. Control de Volumen (MEV → MRV)</h4>
+                    <div id="progress-volume-control-container">
+                        <p class="text-muted">Genera una rutina para ver el control de volumen por grupo muscular.</p>
+                    </div>
+                </div>
+
+                <!-- ===== 4. Radar de Volumen Semanal (MEV/MAV/MRV) ===== -->
+                <div class="card mt-3">
+                    <h4>📊 4. Radar de Volumen Semanal (MEV/MAV/MRV)</h4>
+                    <div class="module-grid mt-2" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.8rem;">Grupo Muscular</label>
+                            <select id="progress-muscle-selector" class="form-select" style="padding: 6px;"
+                                onchange="RPCoachApp.updateProgressVolume && RPCoachApp.updateProgressVolume()">
+                                <option value="chest">💪 Pecho</option>
+                                <option value="back">🔙 Espalda</option>
+                                <option value="shoulders">🎯 Hombros</option>
+                                <option value="quadriceps">🦵 Cuádriceps</option>
+                                <option value="hamstrings">🦿 Isquiotibiales</option>
+                                <option value="biceps">💪 Bíceps</option>
+                                <option value="triceps">💪 Tríceps</option>
+                                <option value="calves">🦶 Pantorrillas</option>
+                                <option value="abs">🎯 Abdominales</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.8rem;">Nivel de Experiencia</label>
+                            <select id="progress-experience-selector" class="form-select" style="padding: 6px;"
+                                onchange="RPCoachApp.updateProgressVolume && RPCoachApp.updateProgressVolume()">
+                                <option value="beginner">Principiante</option>
+                                <option value="intermediate" selected>Intermedio</option>
+                                <option value="advanced">Avanzado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="progress-volume-bar" class="volume-bar mt-3" style="margin-bottom: 5px;">
+                        <div class="volume-bar__zone volume-bar__mev" style="width: 40%; left: 0;">MEV: 8</div>
+                        <div class="volume-bar__zone volume-bar__mav" style="width: 40%; left: 40%;">MAV: 12-16</div>
+                        <div class="volume-bar__zone volume-bar__mrv" style="width: 20%; left: 80%;">MRV: 20</div>
+                    </div>
+                    <table id="progress-volume-table" class="data-table mt-2">
+                        <tr>
+                            <th>Zona</th>
+                            <th>Series/Semana</th>
+                            <th>Descripción</th>
+                        </tr>
+                        <tr>
+                            <td class="text-warning">MEV</td>
+                            <td>8</td>
+                            <td>Mínimo Efectivo</td>
+                        </tr>
+                        <tr>
+                            <td class="text-success">MAV</td>
+                            <td>12-16</td>
+                            <td>Máximo Adaptativo</td>
+                        </tr>
+                        <tr>
+                            <td class="text-danger">MRV</td>
+                            <td>20</td>
+                            <td>Máximo Recuperable</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 3 — FUNDAMENTOS DE ESFUERZO             ║
                      ╚══════════════════════════════════════════════════╝ -->
 
                 <!-- ===== 1. ¿Qué es el RIR? ===== -->
                 <div class="card mt-2">
                     <div class="card__header">
-                        <h4>🎯 1. ¿Qué es el RIR?</h4>
+                        <h4>🎯 5. ¿Qué es el RIR?</h4>
                         <span class="rp-badge">Fundamento</span>
                     </div>
                     <p class="text-muted mt-1">
@@ -1848,12 +1882,71 @@
                 </div>
 
                 <!-- ╔══════════════════════════════════════════════════╗
-                     ║  BLOQUE B — SISTEMA DE TRACKING POR SERIE        ║
+                     ║  BLOQUE 4 — CONTROL DINÁMICO EN TIEMPO REAL     ║
+                     ╚══════════════════════════════════════════════════╝ -->
+
+                <!-- ===== 9. RIR Dinámico por Semana ===== -->
+                <div class="card mt-2">
+                    <div class="card__header">
+                        <h4>💪 6. RIR Dinámico por Semana</h4>
+                        <span class="rp-badge">RP Style</span>
+                    </div>
+                    <p class="text-muted mt-1">El esfuerzo exacto (Repeticiones en Reserva) según la semana del
+                        mesociclo y tu metodología seleccionada.</p>
+
+                    <div class="form-group mt-2">
+                        <label class="form-label">Metodología</label>
+                        <select id="progress-methodology-selector" class="form-select"
+                            onchange="RPCoachApp.updateProgressRIR && RPCoachApp.updateProgressRIR()">
+                            <option value="Y3T">Cargando metodologías...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label class="form-label">Semana del Mesociclo</label>
+                        <select id="progress-week-selector" class="form-select"
+                            onchange="RPCoachApp.updateProgressRIR && RPCoachApp.updateProgressRIR()">
+                            <option value="1">Semana 1 - Acumulación</option>
+                            <option value="2">Semana 2 - Progresión</option>
+                            <option value="3">Semana 3 - Intensificación</option>
+                            <option value="4">Semana 4 - Peak</option>
+                            <option value="5">Semana 5 - Deload</option>
+                        </select>
+                    </div>
+
+                    <div class="flex-center gap-2 mt-3">
+                        <div class="stat-box" style="flex: 1;">
+                            <div id="progress-rir-value" class="stat-box__value">3</div>
+                            <div class="stat-box__label">RIR Target</div>
+                        </div>
+                    </div>
+
+                    <p id="progress-rir-description" class="text-center mt-2">Acumulación inicial - Técnica con reserva
+                    </p>
+
+                    <div class="flex-center mt-3">
+                        <div id="progress-week-indicators" class="rir-indicator">
+                            <div class="rir-dot active">3</div>
+                            <div class="rir-dot">2</div>
+                            <div class="rir-dot">1</div>
+                            <div class="rir-dot">0</div>
+                            <div class="rir-dot">4</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert--info mt-3">
+                        <span>ℹ️</span>
+                        <span id="progress-methodology-note">Progresión estándar de mesociclo.</span>
+                    </div>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 5 — SISTEMA DE TRACKING POR SERIE        ║
                      ╚══════════════════════════════════════════════════╝ -->
 
                 <div class="card mt-2" style="border-left: 4px solid #E040FB;">
                     <div class="card__header">
-                        <h4 style="color:#E040FB;">🔬 Sistema de Tracking por Serie</h4>
+                        <h4 style="color:#E040FB;">🔬 7. Sistema de Tracking por Serie</h4>
                         <span class="rp-badge" style="background:#E040FB;">NEXUS</span>
                     </div>
                     <p class="text-muted mt-1">
@@ -1948,13 +2041,13 @@
                 </div>
 
                 <!-- ╔══════════════════════════════════════════════════╗
-                     ║  BLOQUE C — REGLAS DE SOBRECARGA PROGRESIVA     ║
+                     ║  BLOQUE 6 — REGLAS DE SOBRECARGA PROGRESIVA     ║
                      ╚══════════════════════════════════════════════════╝ -->
 
                 <!-- ===== 5. Reglas Generales de Sobrecarga ===== -->
                 <div class="card mt-2">
                     <div class="card__header">
-                        <h4>📏 5. Reglas de Sobrecarga Progresiva</h4>
+                        <h4>📏 8. Reglas de Sobrecarga Progresiva</h4>
                         <span class="rp-badge">Universal</span>
                     </div>
                     <p class="text-muted mt-1">Reglas universales para decidir cómo ajustar peso y repeticiones según tu
@@ -2040,11 +2133,30 @@
                     </div>
                 </div>
 
-                <!-- ===== 6. Progresión Específica por Metodología ===== -->
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 7 — DOBLE PROGRESIÓN por Ejercicio   ║
+                     ╚══════════════════════════════════════════════════╝ -->
+                <div class="card mt-3" style="background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.15);">
+                    <div class="card__header">
+                        <h4>📈 Doble Progresión — Dosificación por Ejercicio</h4>
+                        <span class="rp-badge" style="background:rgba(16,185,129,0.2); color:#10B981;">Micro-Progresión</span>
+                    </div>
+                    <p class="text-muted mt-1" style="font-size:0.78rem; line-height:1.5;">
+                        Define <strong>cuándo subir peso</strong> en cada ejercicio individual, independientemente de la metodología.
+                        Es el complemento de la macro-progresión del mesociclo (RIR semanal, volumen MEV→MRV).
+                    </p>
+                    <div id="dp-progress-section-content" class="mt-2"></div>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 8 — PROGRESIÓN POR METODOLOGÍA          ║
+                     ╚══════════════════════════════════════════════════╝ -->
+
+                <!-- ===== 9. Progresión Específica por Metodología ===== -->
                 <div class="card mt-2">
                     <div class="card__header">
-                        <h4>📚 6. Progresión por Metodología</h4>
-                        <span class="rp-badge">11 Sistemas</span>
+                        <h4>📚 9. Progresión por Metodología</h4>
+                        <span class="rp-badge">9 Sistemas</span>
                     </div>
                     <p class="text-muted mt-1">Cada metodología tiene reglas de progresión, protocolos y estructura de
                         mesociclo únicos. Selecciona cualquiera para ver su guía completa.</p>
@@ -2280,69 +2392,6 @@
                         </div>
                     </details>
 
-                    <!-- ── DC Training ── -->
-                    <details class="mt-2"
-                        style="cursor:pointer; border:1px solid rgba(255,82,82,0.2); border-radius:8px; padding:0;">
-                        <summary
-                            style="font-weight:700; color:var(--rp-danger); padding:12px 16px; background:rgba(255,82,82,0.08); border-radius:8px;">
-                            ⚡ DC Training (DoggCrapp) <span
-                                style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">(Dante Trudel) ·
-                                HIT · Solo Avanzado</span>
-                        </summary>
-                        <div style="padding:12px 16px;">
-                            <p class="text-muted" style="font-size:0.85rem; line-height:1.5;">
-                                <strong>Filosofía:</strong> Bajo volumen extremo con altísima intensidad. Rest-Pause
-                                como protocolo central + Extreme Stretching post-ejercicio. Sistema Blast/Cruise en vez
-                                de mesociclos tradicionales.
-                            </p>
-                            <p class="text-muted mt-1" style="font-size:0.85rem;"><strong>Duración sesión:</strong>
-                                40-60 min · <strong>Frecuencia:</strong> 3 días/semana (A-B-A) ·
-                                <strong>Volumen:</strong> Muy Bajo · <strong>Requiere Spotter:</strong> Sí
-                            </p>
-                            <table class="data-table mt-2" style="font-size:0.8rem;">
-                                <tr>
-                                    <th>Protocolo</th>
-                                    <th>Reps</th>
-                                    <th>Sets</th>
-                                    <th>Descanso</th>
-                                    <th>RPE</th>
-                                    <th>Carga</th>
-                                </tr>
-                                <tr>
-                                    <td>DC Rest-Pause</td>
-                                    <td>11-15 total (3 mini-sets)</td>
-                                    <td>1</td>
-                                    <td>15s micro</td>
-                                    <td>10</td>
-                                    <td>65-75% 1RM</td>
-                                </tr>
-                                <tr>
-                                    <td>Extreme Stretching</td>
-                                    <td>1 hold (60-90s)</td>
-                                    <td>1</td>
-                                    <td>0s</td>
-                                    <td>10</td>
-                                    <td>80-85% 1RM</td>
-                                </tr>
-                                <tr>
-                                    <td>Widowmaker</td>
-                                    <td>20</td>
-                                    <td>1</td>
-                                    <td>180s</td>
-                                    <td>10+</td>
-                                    <td>50-60% 1RM</td>
-                                </tr>
-                            </table>
-                            <p class="mt-2" style="font-size:0.8rem;"><strong>Calentamiento:</strong> 30%×10, 50%×6,
-                                70%×3</p>
-                            <p style="font-size:0.8rem;"><strong>Blast/Cruise:</strong> 2 semanas blast (máxima
-                                intensidad) → 1 semana cruise (50% intensidad). Ciclo cada 4-6 semanas con 1-2 semanas
-                                cruise completo.</p>
-                            <p style="font-size:0.8rem;"><strong>Progresión:</strong> Superar las reps totales del RP de
-                                la sesión anterior (ej: 8+5+3=16 → siguiente vez apuntar a 17+). Si no mejoras en 2
-                                sesiones consecutivas, rotar ejercicio.</p>
-                        </div>
-                    </details>
 
                     <!-- ── Rest-Pause System ── -->
                     <details class="mt-2"
@@ -2549,56 +2598,6 @@
                             <p style="font-size:0.8rem;"><strong>Progresión:</strong> Cada día se progresa de forma
                                 independiente. Hipertrofia: subir reps → peso. Fuerza: subir peso directamente.
                                 Potencia: subir velocidad → luego peso.</p>
-                        </div>
-                    </details>
-
-                    <!-- ── GVT ── -->
-                    <details class="mt-2"
-                        style="cursor:pointer; border:1px solid rgba(0,230,118,0.2); border-radius:8px; padding:0;">
-                        <summary
-                            style="font-weight:700; color:var(--rp-success); padding:12px 16px; background:rgba(0,230,118,0.08); border-radius:8px;">
-                            🔟 GVT — German Volume Training <span
-                                style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">(Charles Poliquin)
-                                · VOLUME · Intermedio-Avanzado</span>
-                        </summary>
-                        <div style="padding:12px 16px;">
-                            <p class="text-muted" style="font-size:0.85rem; line-height:1.5;">
-                                <strong>Filosofía:</strong> 10 series × 10 repeticiones — volumen extremo con carga
-                                moderada. El objetivo es acumular 100 reps totales por grupo muscular con tempo
-                                controlado, generando un estímulo hipertrófico masivo.
-                            </p>
-                            <p class="text-muted mt-1" style="font-size:0.85rem;"><strong>Duración sesión:</strong>
-                                60-70 min · <strong>Frecuencia:</strong> 3 días/semana · <strong>Volumen:</strong>
-                                Extremo · <strong>Intensidad:</strong> Moderada</p>
-                            <table class="data-table mt-2" style="font-size:0.8rem;">
-                                <tr>
-                                    <th>Protocolo</th>
-                                    <th>Reps</th>
-                                    <th>Sets</th>
-                                    <th>Descanso</th>
-                                    <th>RPE</th>
-                                    <th>RIR</th>
-                                    <th>Carga</th>
-                                    <th>Tempo</th>
-                                </tr>
-                                <tr>
-                                    <td>10×10 Classic</td>
-                                    <td>10</td>
-                                    <td>10</td>
-                                    <td>60-90s</td>
-                                    <td>8-9</td>
-                                    <td>2-3</td>
-                                    <td>60-65% 1RM</td>
-                                    <td>4-0-2</td>
-                                </tr>
-                            </table>
-                            <p class="mt-2" style="font-size:0.8rem;"><strong>Calentamiento:</strong> Movilidad ligera +
-                                10 reps con barra sola</p>
-                            <p style="font-size:0.8rem;"><strong>Duración del ciclo:</strong> 4-6 semanas completas (no
-                                deload tradicional — es un bloque finito)</p>
-                            <p style="font-size:0.8rem;"><strong>Progresión:</strong> Muy simple — agregar +2.5-5 kg
-                                SOLO cuando completas las 10×10 con técnica perfecta y tempo controlado en todas las
-                                series. Si fallas reps en series finales, mantener peso.</p>
                         </div>
                     </details>
 
@@ -2849,219 +2848,8 @@
                     <div class="alert alert--info mt-3">
                         <span>ℹ️</span>
                         <span><strong>Compatibilidad entre metodologías:</strong> Y3T ↔ FST-7/SST/MTUT · Heavy Duty ↔
-                            Blood & Guts · Rest-Pause ↔ HD/BG/DC · DUP ↔ 5/3/1. <strong>Incompatibles:</strong> HIT ✗
-                            Alto Volumen (ej: Heavy Duty ✗ GVT).</span>
+                            Blood & Guts · Rest-Pause ↔ HD/BG · DUP ↔ 5/3/1. Todas las 9 metodologías están RPizadas con principios científicos (Lengthened Partials, Myo-Reps, RIR progresivo).</span>
                     </div>
-                </div>
-
-                <!-- ╔══════════════════════════════════════════════════╗
-                     ║  BLOQUE D — PLANIFICACIÓN DEL MESOCICLO         ║
-                     ╚══════════════════════════════════════════════════╝ -->
-
-                <!-- ===== 7. Estructura del Mesociclo ===== -->
-                <div class="card mt-2">
-                    <div class="card__header">
-                        <h4>📅 7. Estructura del Mesociclo</h4>
-                        <span class="rp-badge">Planificación</span>
-                    </div>
-                    <p class="text-muted mt-1">Un mesociclo típico dura 4-6 semanas con progresión ondulante de volumen
-                        e intensidad:</p>
-                    <table class="data-table mt-2">
-                        <tr>
-                            <th>Semana</th>
-                            <th>Fase</th>
-                            <th>RIR</th>
-                            <th>Volumen</th>
-                            <th>Objetivo</th>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Acumulación</td>
-                            <td>3</td>
-                            <td>MEV</td>
-                            <td>Establecer base, técnica perfecta</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Progresión</td>
-                            <td>2</td>
-                            <td>MEV→MAV</td>
-                            <td>Aumentar estímulo gradualmente</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Intensificación</td>
-                            <td>1</td>
-                            <td>MAV</td>
-                            <td>Empujar cerca del límite</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Peak</td>
-                            <td>0</td>
-                            <td>MAV→MRV</td>
-                            <td>Máximo esfuerzo controlado</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Deload</td>
-                            <td>4-5</td>
-                            <td>50% MEV</td>
-                            <td>Recuperación y supercompensación</td>
-                        </tr>
-                    </table>
-                    <div class="alert alert--info mt-2">
-                        <span>ℹ️</span>
-                        <span><strong>Excepciones:</strong> DC Training usa ciclos Blast/Cruise (2 sem on / 1 sem off) ·
-                            GVT es un bloque de 4-6 sem completo · 5/3/1 tiene deload integrado en semana 4 · Y3T cicla
-                            cada 3 semanas.</span>
-                    </div>
-                </div>
-
-                <!-- ===== 8. Gráfica del Mesociclo ===== -->
-                <div class="card mt-2">
-                    <div class="card__header">
-                        <h4>📈 8. Evolución Gráfica del Mesociclo</h4>
-                        <span class="rp-badge">Plan Teórico</span>
-                    </div>
-                    <p class="text-muted mt-1 mb-2" style="font-size: 0.9rem; line-height: 1.4;">
-                        <strong>Análisis Teórico:</strong> Esta gráfica demuestra la proyección matemática
-                        <strong>ideal</strong> de tu plan de entrenamiento.
-                        Calcula tu volumen (Series), la exigencia al fallo (RIR) y la sobrecarga (Carga) basándose
-                        iterativamente en tu <strong>Metodología Seleccionada</strong> y tu <strong>Nivel de
-                            Experiencia</strong>, demostrando cómo fluctuarán con exactitud durante cada microciclo.
-                    </p>
-                    <div
-                        style="position: relative; height: 220px; width: 100%; background: var(--surface-color, #1A1A2E); border-radius: 8px; padding: 10px;">
-                        <canvas id="mesocycle-progression-chart"
-                            style="width: 100%; height: 100%; display: block;"></canvas>
-                    </div>
-                </div>
-
-                <!-- ╔══════════════════════════════════════════════════╗
-                     ║  BLOQUE E — CONTROL DINÁMICO EN TIEMPO REAL     ║
-                     ╚══════════════════════════════════════════════════╝ -->
-
-                <!-- ===== 9. RIR Dinámico por Semana ===== -->
-                <div class="card mt-2">
-                    <div class="card__header">
-                        <h4>💪 9. RIR Dinámico por Semana</h4>
-                        <span class="rp-badge">RP Style</span>
-                    </div>
-                    <p class="text-muted mt-1">El esfuerzo exacto (Repeticiones en Reserva) según la semana del
-                        mesociclo y tu metodología seleccionada.</p>
-
-                    <div class="form-group mt-2">
-                        <label class="form-label">Metodología</label>
-                        <select id="progress-methodology-selector" class="form-select"
-                            onchange="RPCoachApp.updateProgressRIR && RPCoachApp.updateProgressRIR()">
-                            <option value="Y3T">Cargando metodologías...</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group mt-2">
-                        <label class="form-label">Semana del Mesociclo</label>
-                        <select id="progress-week-selector" class="form-select"
-                            onchange="RPCoachApp.updateProgressRIR && RPCoachApp.updateProgressRIR()">
-                            <option value="1">Semana 1 - Acumulación</option>
-                            <option value="2">Semana 2 - Progresión</option>
-                            <option value="3">Semana 3 - Intensificación</option>
-                            <option value="4">Semana 4 - Peak</option>
-                            <option value="5">Semana 5 - Deload</option>
-                        </select>
-                    </div>
-
-                    <div class="flex-center gap-2 mt-3">
-                        <div class="stat-box" style="flex: 1;">
-                            <div id="progress-rir-value" class="stat-box__value">3</div>
-                            <div class="stat-box__label">RIR Target</div>
-                        </div>
-                    </div>
-
-                    <p id="progress-rir-description" class="text-center mt-2">Acumulación inicial - Técnica con reserva
-                    </p>
-
-                    <div class="flex-center mt-3">
-                        <div id="progress-week-indicators" class="rir-indicator">
-                            <div class="rir-dot active">3</div>
-                            <div class="rir-dot">2</div>
-                            <div class="rir-dot">1</div>
-                            <div class="rir-dot">0</div>
-                            <div class="rir-dot">4</div>
-                        </div>
-                    </div>
-
-                    <div class="alert alert--info mt-3">
-                        <span>ℹ️</span>
-                        <span id="progress-methodology-note">Progresión estándar de mesociclo.</span>
-                    </div>
-                </div>
-
-                <!-- ===== Control de Volumen (MEV → MRV) ===== -->
-                <div class="card mt-3">
-                    <h4>📈 Control de Volumen (MEV → MRV)</h4>
-                    <div id="progress-volume-control-container">
-                        <p class="text-muted">Genera una rutina para ver el control de volumen por grupo muscular.</p>
-                    </div>
-                </div>
-
-                <!-- ===== Radar de Volumen Semanal (MEV/MAV/MRV) ===== -->
-                <div class="card mt-3">
-                    <h4>📊 Radar de Volumen Semanal (MEV/MAV/MRV)</h4>
-                    <div class="module-grid mt-2" style="grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div class="form-group">
-                            <label class="form-label" style="font-size: 0.8rem;">Grupo Muscular</label>
-                            <select id="progress-muscle-selector" class="form-select" style="padding: 6px;"
-                                onchange="RPCoachApp.updateProgressVolume && RPCoachApp.updateProgressVolume()">
-                                <option value="chest">💪 Pecho</option>
-                                <option value="back">🔙 Espalda</option>
-                                <option value="shoulders">🎯 Hombros</option>
-                                <option value="quadriceps">🦵 Cuádriceps</option>
-                                <option value="hamstrings">🦿 Isquiotibiales</option>
-                                <option value="biceps">💪 Bíceps</option>
-                                <option value="triceps">💪 Tríceps</option>
-                                <option value="calves">🦶 Pantorrillas</option>
-                                <option value="abs">🎯 Abdominales</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" style="font-size: 0.8rem;">Nivel de Experiencia</label>
-                            <select id="progress-experience-selector" class="form-select" style="padding: 6px;"
-                                onchange="RPCoachApp.updateProgressVolume && RPCoachApp.updateProgressVolume()">
-                                <option value="beginner">Principiante</option>
-                                <option value="intermediate" selected>Intermedio</option>
-                                <option value="advanced">Avanzado</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="progress-volume-bar" class="volume-bar mt-3" style="margin-bottom: 5px;">
-                        <div class="volume-bar__zone volume-bar__mev" style="width: 40%; left: 0;">MEV: 8</div>
-                        <div class="volume-bar__zone volume-bar__mav" style="width: 40%; left: 40%;">MAV: 12-16</div>
-                        <div class="volume-bar__zone volume-bar__mrv" style="width: 20%; left: 80%;">MRV: 20</div>
-                    </div>
-                    <table id="progress-volume-table" class="data-table mt-2">
-                        <tr>
-                            <th>Zona</th>
-                            <th>Series/Semana</th>
-                            <th>Descripción</th>
-                        </tr>
-                        <tr>
-                            <td class="text-warning">MEV</td>
-                            <td>8</td>
-                            <td>Mínimo Efectivo</td>
-                        </tr>
-                        <tr>
-                            <td class="text-success">MAV</td>
-                            <td>12-16</td>
-                            <td>Máximo Adaptativo</td>
-                        </tr>
-                        <tr>
-                            <td class="text-danger">MRV</td>
-                            <td>20</td>
-                            <td>Máximo Recuperable</td>
-                        </tr>
-                    </table>
                 </div>
 
             </div>
@@ -3108,14 +2896,8 @@
                 <p class="mb-3 text-muted">Ajuste automático de macros basado en el promedio semanal de peso y objetivos
                     de composición corporal.</p>
 
-                <!-- Tracking de Peso Corporal (Movido desde Métricas a Nutrición) -->
-                <div id="weight-tracking-section" class="card mt-2 mb-3"
-                    style="display:none; background:rgba(139,92,246,0.05); border:1px solid rgba(139,92,246,0.15);">
-                    <h4 style="color:#8B5CF6; margin-bottom:10px; font-size:0.95rem;">⚖️ Peso Corporal Diario</h4>
-                    <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">Registra tu peso diario
-                        para alimentar el Motor Metabólico con tu Promedio de 7 días.</p>
-                    <div id="weight-tracking-content"></div>
-                </div>
+                <!-- Tracking de Peso Corporal — se renderiza dentro de feedback tabs -->
+                <div id="weight-tracking-nutrition-placeholder"></div>
 
                 <!-- 1. Tablero de Macros -->
                 <div class="card mt-2">
@@ -3204,10 +2986,10 @@
         <footer class="card mt-3" style="text-align: center; padding: 20px;">
             <p class="text-muted">
                 <strong>NEXUS-RP Coach</strong> v1.0 | Inspirado en RP Hypertrophy App<br>
-                Sincronizado con 11 metodologías de entrenamiento
+                Sincronizado con 9 metodologías RPizadas de entrenamiento
             </p>
             <p class="mt-1" style="font-size: 0.8rem; color: var(--text-muted);">
-                Heavy Duty · Blood & Guts · DC Training · 5/3/1 · MTUT · Y3T · DUP · FST-7 · SST · GVT · Rest-Pause
+                RP Style · DUP · Y3T · 5/3/1 · FST-7+LP · HIT Inteligente · Rest-Pause+Clusters · SST+Myo · MTUT+LP
             </p>
         </footer>
 
@@ -3292,6 +3074,7 @@
     <script src="js/modules/volume-mev-mrv.js"></script>
     <script src="js/modules/session-logger.js"></script>
     <script src="js/modules/progressive-overload.js"></script>
+    <script src="js/modules/double-progression.js"></script>
     <script src="js/data/methodologies-sync.js"></script>
 
     <!-- Módulos Mejorados (RP App Style) -->
@@ -3302,6 +3085,7 @@
     <!-- Motor de Metodologías (PRIMERO) -->
     <script src="js/modules/methodology-engine.js"></script>
     <script src="js/modules/autoregulation-engine.js"></script>
+    <script src="js/modules/gate-check.js"></script>
 
     <!-- Módulos de Integración -->
     <script src="js/modules/routine-generator.js"></script>
@@ -3324,7 +3108,8 @@
     <script src="js/modules/progressive-tables.js"></script>
 
     <!-- TEMPORAL: Simulación de mesociclo (quitar después de probar) -->
-    <script src="simular-mesociclo.js"></script>
+    <!-- <script src="simular-mesociclo.js"></script> -->
+    <script src="simular-meister.js"></script>
 
     <!-- Controlador Principal -->
     <script src="js/rp-coach.js"></script>

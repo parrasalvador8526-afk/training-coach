@@ -23,7 +23,7 @@ const TrainingTemplatesModule = (() => {
                 { day: 5, name: 'Pull', muscles: ['back', 'biceps', 'forearms'] },
                 { day: 6, name: 'Legs', muscles: ['quadriceps', 'hamstrings', 'glutes', 'calves'] }
             ],
-            suitableFor: ['Y3T', 'FST7', 'MTUT', 'SST', 'GVT']
+            suitableFor: ['Y3T', 'FST7', 'MTUT', 'SST', 'DUP']
         },
         'upper_lower': {
             id: 'ul',
@@ -62,7 +62,7 @@ const TrainingTemplatesModule = (() => {
                 { day: 2, name: 'Pull/Hams', muscles: ['back', 'biceps', 'hamstrings', 'glutes'] },
                 { day: 3, name: 'Full Body', muscles: ['chest', 'back', 'shoulders', 'quadriceps', 'calves'] }
             ],
-            suitableFor: ['HeavyDuty', 'BloodAndGuts', 'RestPause', 'DCTraining']
+            suitableFor: ['HeavyDuty', 'BloodAndGuts', 'RestPause']
         },
         'full_body': {
             id: 'fb',
@@ -74,7 +74,7 @@ const TrainingTemplatesModule = (() => {
                 { day: 2, name: 'Full Body B', muscles: ['chest', 'back', 'hamstrings', 'shoulders', 'triceps'] },
                 { day: 3, name: 'Full Body C', muscles: ['chest', 'back', 'quadriceps', 'shoulders', 'calves'] }
             ],
-            suitableFor: ['Y3T', '531', 'DUP', 'GVT']
+            suitableFor: ['Y3T', '531', 'DUP']
         }
     };
 
@@ -242,8 +242,8 @@ const TrainingTemplatesModule = (() => {
             }
         },
         'RestPause': {
-            name: 'Rest-Pause - Raúl Carrasco',
-            description: 'Series extendidas con micro descansos (10-20s)',
+            name: 'Rest-Pause + Clusters',
+            description: 'Series extendidas con micro descansos (10-20s) + clusters intra-serie',
             level: ['Intermedio', 'Avanzado'],
             recommendedSplit: 'upper_lower',
             mesocycleLength: 4,
@@ -252,32 +252,54 @@ const TrainingTemplatesModule = (() => {
             setsPerMuscle: { min: 4, max: 8 },
             exercisesPerMuscle: { min: 2, max: 3 },
             sampleDay: {
-                name: 'Upper Rest-Pause',
+                name: 'Upper Rest-Pause + Clusters',
                 exercises: [
                     { name: 'Press Inclinado', sets: 3, reps: '8-12', technique: 'normal' },
                     { name: 'Pec Deck', sets: 1, reps: '10+4+2', technique: 'rest_pause', notes: '15s micro rest' },
-                    { name: 'Remo Hammer', sets: 3, reps: '8-10', technique: 'normal' },
+                    { name: 'Remo Hammer', sets: 3, reps: '8-10', technique: 'cluster', notes: '15-20s pausa intra-serie cada 3-5 reps' },
                     { name: 'Pulldown', sets: 1, reps: '12+5+3', technique: 'rest_pause', notes: '15s micro rest' }
                 ]
             }
         },
-        'GVT': {
-            name: 'GVT - German Volume Training',
-            description: '10 series x 10 reps. Alto volumen.',
+        'DUP': {
+            name: 'DUP - Periodización Ondulante Diaria',
+            description: 'Varía intensidad y volumen cada sesión: Fuerza, Hipertrofia y Potencia',
             level: ['Intermedio', 'Avanzado'],
-            recommendedSplit: 'full_body',
-            mesocycleLength: 6,
-            deloadFrequency: 6,
-            volumePerSession: 'very_high',
-            setsPerMuscle: { min: 10, max: 10 },
-            exercisesPerMuscle: { min: 1, max: 2 },
+            recommendedSplit: 'upper_lower',
+            mesocycleLength: 5,
+            deloadFrequency: 4,
+            volumePerSession: 'moderate-high',
+            setsPerMuscle: { min: 4, max: 10 },
+            exercisesPerMuscle: { min: 2, max: 4 },
             sampleDay: {
-                name: 'Chest/Back GVT',
+                name: 'Upper - Día Hipertrofia',
                 exercises: [
-                    { name: 'Press Banca', sets: 10, reps: '10', technique: 'gvt', tempo: '4-0-2', notes: '60s descanso' },
-                    { name: 'Remo Barra', sets: 10, reps: '10', technique: 'gvt', tempo: '4-0-2', notes: '60s descanso' },
-                    { name: 'Aperturas', sets: 3, reps: '10-12', technique: 'normal' },
-                    { name: 'Pullover', sets: 3, reps: '10-12', technique: 'normal' }
+                    { name: 'Press Banca', sets: 4, reps: '8-12', technique: 'normal', notes: '70-75% 1RM' },
+                    { name: 'Remo con Barra', sets: 4, reps: '8-12', technique: 'normal', notes: '70-75% 1RM' },
+                    { name: 'Press Militar', sets: 3, reps: '10-12', technique: 'normal' },
+                    { name: 'Dominadas', sets: 3, reps: '8-10', technique: 'normal' },
+                    { name: 'Curl Barra', sets: 3, reps: '10-12', technique: 'normal' },
+                    { name: 'Extensión Tríceps', sets: 3, reps: '10-12', technique: 'normal' }
+                ]
+            }
+        },
+        '531': {
+            name: '5/3/1 - Jim Wendler',
+            description: 'Progresión de fuerza a largo plazo con ciclos de 5s, 3s y 5/3/1',
+            level: ['Principiante', 'Intermedio', 'Avanzado'],
+            recommendedSplit: 'upper_lower',
+            mesocycleLength: 4,
+            deloadFrequency: 3,
+            volumePerSession: 'moderate',
+            setsPerMuscle: { min: 3, max: 8 },
+            exercisesPerMuscle: { min: 1, max: 3 },
+            sampleDay: {
+                name: 'Día Press Banca (Semana 5s)',
+                exercises: [
+                    { name: 'Press Banca', sets: 3, reps: '5', technique: 'normal', notes: '65%, 75%, 85% (AMRAP último set)' },
+                    { name: 'Press Banca BBB', sets: 5, reps: '10', technique: 'normal', notes: '50-60% 1RM (Boring But Big)' },
+                    { name: 'Remo DB', sets: 4, reps: '10-12', technique: 'normal' },
+                    { name: 'Face Pull', sets: 3, reps: '15-20', technique: 'normal' }
                 ]
             }
         }

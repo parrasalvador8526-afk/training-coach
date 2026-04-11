@@ -323,6 +323,21 @@ const ProgressiveOverloadModule = (() => {
         EXERCISE_CLASSIFICATION[exerciseName] = { type, equipment };
     }
 
+    /**
+     * Parsea un string de rango de reps → {min, max}
+     * Soporta: "8-12", "8–12", "10", número, null
+     */
+    function parseRepRange(repString) {
+        if (!repString) return { min: 8, max: 12 };
+        if (typeof repString === 'number') return { min: repString, max: repString };
+        const str = String(repString);
+        const rangeMatch = str.match(/(\d+)\s*[-–]\s*(\d+)/);
+        if (rangeMatch) return { min: parseInt(rangeMatch[1]), max: parseInt(rangeMatch[2]) };
+        const singleMatch = str.match(/(\d+)/);
+        if (singleMatch) { const n = parseInt(singleMatch[1]); return { min: n, max: n }; }
+        return { min: 8, max: 12 };
+    }
+
     // API Pública
     return {
         getExerciseClassification,
@@ -334,6 +349,7 @@ const ProgressiveOverloadModule = (() => {
         generateProgressionPlan,
         getPRHistory,
         addExerciseClassification,
+        parseRepRange,
         INCREMENT_CONFIG,
         PROGRESSION_RULES
     };

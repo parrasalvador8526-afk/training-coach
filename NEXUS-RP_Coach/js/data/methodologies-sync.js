@@ -21,10 +21,8 @@ const MethodologiesSyncModule = (() => {
         'SST': { id: 'SST', name: 'SST (Sarcoplasm Stimulating)', creator: 'Varios', volume: 'Moderado' },
         'FST7': { id: 'FST7', name: 'FST-7', creator: 'Hany Rambod', volume: 'Alto' },
         'RestPause': { id: 'RP', name: 'Rest-Pause System', creator: 'Raúl Carrasco', volume: 'Moderado' },
-        'GVT': { id: 'GVT', name: 'GVT (German Volume)', creator: 'Charles Poliquin', volume: 'Muy Alto' },
         'DUP': { id: 'DUP', name: 'DUP (Periodización Ondulante)', creator: 'Varios', volume: 'Variable' },
-        '531': { id: '531', name: '5/3/1', creator: 'Jim Wendler', volume: 'Moderado' },
-        'DCTraining': { id: 'DC', name: 'DC Training (Doggcrapp)', creator: 'Dante Trudel', volume: 'Bajo' }
+        '531': { id: '531', name: '5/3/1', creator: 'Jim Wendler', volume: 'Moderado' }
     };
 
     /**
@@ -161,15 +159,13 @@ const MethodologiesSyncModule = (() => {
         const factors = {
             'HeavyDuty': 0.3,
             'BloodAndGuts': 0.4,
-            'DCTraining': 0.4,
             'RestPause': 0.6,
             'SST': 0.8,
             'MTUT': 0.9,
             '531': 0.9,
             'DUP': 1.0,
             'Y3T': 1.1,
-            'FST7': 1.2,
-            'GVT': 1.3
+            'FST7': 1.2
         };
         return factors[methodologyId] || 1.0;
     }
@@ -183,10 +179,8 @@ const MethodologiesSyncModule = (() => {
         const profiles = {
             'HeavyDuty': { snc: 9, muscular: 7, recovery: 4 },
             'BloodAndGuts': { snc: 9, muscular: 8, recovery: 5 },
-            'DCTraining': { snc: 8, muscular: 9, recovery: 5 },
             '531': { snc: 7, muscular: 6, recovery: 3 },
             'Y3T': { snc: 6, muscular: 7, recovery: 4 },
-            'GVT': { snc: 6, muscular: 10, recovery: 5 },
             'DUP': { snc: 6, muscular: 6, recovery: 3 },
             'MTUT': { snc: 5, muscular: 8, recovery: 3 },
             'SST': { snc: 5, muscular: 9, recovery: 4 },

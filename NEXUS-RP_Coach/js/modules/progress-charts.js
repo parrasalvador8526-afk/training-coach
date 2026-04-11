@@ -299,8 +299,6 @@ const ProgressChartsModule = (() => {
         ctx.fillStyle = bgGradient;
         ctx.fillRect(0, 0, actualWidth, actualHeight);
 
-        const labels = ['S1 (Base)', 'S2 (Prog)', 'S3 (Int)', 'S4 (Peak)', 'S5 (Deload)'];
-
         let renderData = null;
         if (typeof WorkoutUIController !== 'undefined' && typeof WorkoutUIController.getMesocycleRenderData === 'function') {
             renderData = WorkoutUIController.getMesocycleRenderData(methodology, level);
@@ -311,9 +309,14 @@ const ProgressChartsModule = (() => {
                 volData: [40, 60, 80, 100, 20],
                 effData: [40, 60, 80, 100, 10],
                 intData: [60, 70, 85, 100, 50],
-                rawSets: [3, 4, 3, 2, 1]
+                rawSets: [3, 4, 3, 2, 1],
+                labels: ['S1 (Base)', 'S2 (Prog)', 'S3 (Int)', 'S4 (Peak)', 'S5 (Deload)']
             };
         }
+        
+        let labels = renderData.labels || ['S1', 'S2', 'S3', 'S4', 'S5'];
+        const numPoints = labels.length;
+        const xStep = chartW / Math.max(1, numPoints - 1);
 
         const datasets = [
             { label: 'Volumen', color: '#3B82F6', data: renderData.volData },
@@ -324,8 +327,9 @@ const ProgressChartsModule = (() => {
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        for (let i = 0; i <= 4; i++) {
-            let y = padding.top + (chartH / 4) * i;
+        for (let i = 0; i < numPoints; i++) {
+            let y = padding.top + (chartH / Math.max(1, numPoints - 1)) * i;
+            if (y > actualHeight - padding.bottom) break; // Evitar pintar fuera del área
             ctx.moveTo(padding.left, y);
             ctx.lineTo(actualWidth - padding.right, y);
         }
@@ -366,7 +370,7 @@ const ProgressChartsModule = (() => {
 
             let points = [];
             ds.data.forEach((val, i) => {
-                let x = padding.left + (chartW / 4) * i;
+                let x = padding.left + xStep * i;
                 let y = padding.top + chartH - (val / 100) * chartH;
                 points.push({ x, y });
             });
@@ -395,7 +399,7 @@ const ProgressChartsModule = (() => {
         datasets.forEach((ds) => {
             let points = [];
             ds.data.forEach((val, i) => {
-                let x = padding.left + (chartW / 4) * i;
+                let x = padding.left + xStep * i;
                 let y = padding.top + chartH - (val / 100) * chartH;
                 points.push({ x, y });
             });
@@ -445,7 +449,7 @@ const ProgressChartsModule = (() => {
         ctx.font = '500 12px Inter, sans-serif';
         ctx.textAlign = 'center';
         labels.forEach((text, i) => {
-            let x = padding.left + (chartW / 4) * i;
+            let x = padding.left + xStep * i;
             ctx.fillText(text, x, actualHeight - 15);
         });
     }
@@ -479,9 +483,6 @@ const ProgressChartsModule = (() => {
         ctx.fillStyle = bgGradient;
         ctx.fillRect(0, 0, actualWidth, actualHeight);
 
-        const labels = ['S1 (Base)', 'S2 (Prog)', 'S3 (Int)', 'S4 (Peak)', 'S5 (Deload)'];
-
-        // Extraer los datos teóricos de la metodología
         let renderData = null;
         if (typeof WorkoutUIController !== 'undefined' && typeof WorkoutUIController.getMesocycleRenderData === 'function') {
             renderData = WorkoutUIController.getMesocycleRenderData(methodology, level);
@@ -493,9 +494,14 @@ const ProgressChartsModule = (() => {
                 volData: [40, 60, 80, 100, 20],
                 effData: [40, 60, 80, 100, 10],
                 intData: [60, 70, 85, 100, 50],
-                rawSets: [3, 4, 3, 2, 1]
+                rawSets: [3, 4, 3, 2, 1],
+                labels: ['S1 (Base)', 'S2 (Prog)', 'S3 (Int)', 'S4 (Peak)', 'S5 (Deload)']
             };
         }
+
+        let labels = renderData.labels || ['S1', 'S2', 'S3', 'S4', 'S5'];
+        const numPoints = labels.length;
+        const xStep = chartW / Math.max(1, numPoints - 1);
 
         // === NUEVO LÓGICO DE CUMPLIMIENTO (COMPLIANCE) ===
         // 1. Deducir cuántos días a la semana tiene la rutina actual
@@ -511,7 +517,7 @@ const ProgressChartsModule = (() => {
         } catch (e) { }
 
         // 2. Extraer sesiones y agrupar por mesocycleWeek
-        let complianceRatios = [0, 0, 0, 0, 0]; // S1 a S5
+        let complianceRatios = new Array(numPoints).fill(0);
 
         // Fuente principal: rpCoach_session_history (usado por CalendarioTracker y ProgressAnalytics)
         let sessionData = [];
@@ -532,25 +538,27 @@ const ProgressChartsModule = (() => {
 
         if (sessionData.length > 0) {
             // Contar días únicos de entrenamiento por semana del mesociclo
-            const uniqueDaysPerWeek = { 1: new Set(), 2: new Set(), 3: new Set(), 4: new Set(), 5: new Set() };
+            const uniqueDaysPerWeek = {};
+            for (let w = 1; w <= numPoints; w++) uniqueDaysPerWeek[w] = new Set();
+            
             sessionData.forEach(session => {
                 const w = parseInt(session.mesocycleWeek);
-                if (w >= 1 && w <= 5) {
+                if (w >= 1 && w <= numPoints) {
                     const dateKey = session.date ? new Date(session.date).toISOString().split('T')[0] : session.dateFormatted;
                     if (dateKey) uniqueDaysPerWeek[w].add(dateKey);
                 }
             });
 
-            for (let w = 1; w <= 5; w++) {
+            for (let w = 1; w <= numPoints; w++) {
                 const completedDays = uniqueDaysPerWeek[w].size;
                 complianceRatios[w - 1] = Math.min(completedDays / targetSessionsPerWeek, 1.0);
             }
         }
 
         // 3. Multiplicar Data por Compliance Ratio
-        const actualVolData = renderData.volData.map((val, i) => val * complianceRatios[i]);
-        const actualEffData = renderData.effData.map((val, i) => val * complianceRatios[i]);
-        const actualIntData = renderData.intData.map((val, i) => val * complianceRatios[i]);
+        const actualVolData = renderData.volData.map((val, i) => val * (complianceRatios[i] || 0));
+        const actualEffData = renderData.effData.map((val, i) => val * (complianceRatios[i] || 0));
+        const actualIntData = renderData.intData.map((val, i) => val * (complianceRatios[i] || 0));
 
         const datasets = [
             { label: 'Volumen', color: '#3B82F6', data: actualVolData, rawSets: renderData.rawSets, theoryEff: renderData.effData, ratio: complianceRatios },
@@ -562,8 +570,9 @@ const ProgressChartsModule = (() => {
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        for (let i = 0; i <= 4; i++) {
-            let y = padding.top + (chartH / 4) * i;
+        for (let i = 0; i < numPoints; i++) {
+            let y = padding.top + (chartH / Math.max(1, numPoints - 1)) * i;
+            if (y > actualHeight - padding.bottom) break;
             ctx.moveTo(padding.left, y);
             ctx.lineTo(actualWidth - padding.right, y);
         }
@@ -609,7 +618,7 @@ const ProgressChartsModule = (() => {
 
             let points = [];
             ds.data.forEach((val, i) => {
-                let x = padding.left + (chartW / 4) * i;
+                let x = padding.left + xStep * i;
                 let y = padding.top + chartH - (val / 100) * chartH;
                 points.push({ x, y });
             });
@@ -644,7 +653,7 @@ const ProgressChartsModule = (() => {
         datasets.forEach((ds) => {
             let points = [];
             ds.data.forEach((val, i) => {
-                let x = padding.left + (chartW / 4) * i;
+                let x = padding.left + xStep * i;
                 let y = padding.top + chartH - (val / 100) * chartH;
                 points.push({ x, y });
             });
@@ -706,12 +715,11 @@ const ProgressChartsModule = (() => {
             });
         });
 
-        // Eje X Labels - Inferiores, más grandes y legibles
         ctx.fillStyle = '#C0C0D0';
         ctx.font = '500 12px Inter, sans-serif';
         ctx.textAlign = 'center';
         labels.forEach((text, i) => {
-            let x = padding.left + (chartW / 4) * i;
+            let x = padding.left + xStep * i;
             ctx.fillText(text, x, actualHeight - 15);
         });
     }

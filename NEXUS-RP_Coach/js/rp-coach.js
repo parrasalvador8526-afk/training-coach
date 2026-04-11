@@ -17,17 +17,19 @@ const RPCoachApp = (() => {
      */
     const METHODOLOGY_RADAR_TIPS = {
         'Y3T': 'Fase Y3T activa. Recuerda: Semana 1 (Fuerza, Tipo IIb), Semana 2 (Hipertrofia, Tipo IIa), Semana 3 (Aniquilación, Tipo I). Ajusta tu hidratación en la semana 3.',
-        'Heavy Duty': 'Heavy Duty: Solo 1 o 2 series de trabajo reales al fallo absoluto. Si puedes hacer otra serie, la primera no fue lo suficientemente dura. Prioriza la recuperación neuronal.',
-        'FST7': 'FST-7: En las 7 series finales, el objetivo principal es el estiramiento de la fascia y el máximo bombeo (Pump). Bebe agua intra-entreno y estira entre series.',
+        'HeavyDuty': 'HIT Inteligente: 2-3 series con RIR progresivo (3→2→1→0). Última serie al fallo. Usa Myo-Reps post-fallo (20-30s → 3-5 reps × 3) para maximizar effective reps.',
+        'BloodAndGuts': 'HIT Inteligente Yates: Estilo Dorian — 1-2 series de trabajo con Myo-Reps post-fallo + Lengthened Partials al final. RIR progresivo por semana, no fallo constante.',
+        'MTUT': 'Control Excéntrico Periodizado: Tempo 2-4s en excéntrica (óptimo según meta-análisis 2025). Combina con Lengthened Partials en semana peak. >4s no aporta beneficio adicional.',
+        'SST': 'Estrés Metabólico Progresivo: Series extendidas con descansos mínimos. Usa Myo-Reps como finisher (serie activación + mini-sets 3-5 reps × 30s). La quemazón es el estímulo.',
+        'FST7': 'FST-7 + Lengthened Partials: Las 7 series finisher se ejecutan en la mitad estirada del ROM. Esto multiplica el estímulo hipertrófico (evidencia 2025). Bebe agua entre series.',
+        'RestPause': 'Rest-Pause + Clusters: Semanas de acumulación usa clusters (3-5 reps + 15-20s pausa intra-serie). Solo en semana peak vas al Rest-Pause clásico con fallo repetido.',
+        'DUP': 'DUP: Hoy la intensidad y reps cambian respecto a tu sesión anterior. Revisa bien tu objetivo del día (Fuerza, Hipertrofia o Potencia) antes de calentar.',
+        '531': '5/3/1: Progresión lenta y segura a largo plazo. No quemes el sistema nervioso en tus series AMRAP. Deja siempre 1-2 repeticiones en el tanque a menos que estés probando PRs.',
         'PHAT': 'PHAT: Combina días de Potencia pura con días de Hipertrofia de alto volumen. No intentes mezclar las intenciones: sé explosivo en potencia, controla el tempo en hipertrofia.',
         'PHUL': 'PHUL: Separa claramente tus días Upper/Lower enfocados en fuerza y tus días enfocados en hipertrofia. Registra tus marcas de fuerza para asegurar progresión.',
         'PushPullLegs': 'PPL: Volumen sostenido. Si te sientes muy cansado al repetir el 4to día, añade un día de descanso (PPL-Descanso-PPL).',
         'UpperLower': 'Upper/Lower: Excelente para alta frecuencia. Asegúrate de que el MRV (Volumen Máximo Recuperable) no se sobrepase en los días Upper.',
-        'BroSplit': 'Bro Split: Como entrenas el músculo 1 vez por semana, necesitas alcanzar el MRV en esa única sesión. El nivel de disrupción (SFR) debe ser máximo.',
-        'DC': 'Doggcrapp: Calentamiento, un working set con rest-pauses hasta 11-15 reps, y estiramiento extremo. Si no vences tu libreta hoy, el ejercicio se rota.',
-        'GVT': 'GVT (10x10): El peso no cambia, el descanso es estricto (60-90s). El objetivo es la hipertrofia sarcoplasmática extrema. Si completas 10x10, sube 5% el peso.',
-        'DUP': 'DUP: Hoy la intensidad y reps cambian respecto a tu sesión anterior. Revisa bien tu objetivo del día (Fuerza, Hipertrofia o Potencia) antes de calentar.',
-        '531': '5/3/1: Progresión lenta y segura a largo plazo. No quemes el sistema nervioso en tus series AMRAP. Deja siempre 1-2 repeticiones en el tanque a menos que estés probando PRs.'
+        'BroSplit': 'Bro Split: Como entrenas el músculo 1 vez por semana, necesitas alcanzar el MRV en esa única sesión. El nivel de disrupción (SFR) debe ser máximo.'
     };
 
     /**
@@ -133,6 +135,11 @@ const RPCoachApp = (() => {
         if (window.RMCalculatorModule) {
             RMCalculatorModule.initAll();
         }
+
+        // Inicializar NEXUS Bridge (sincronización con NEXUS-APP)
+        if (window.NEXUSBridge?.init) {
+            try { NEXUSBridge.init(); } catch(e) { console.warn('NEXUSBridge init falló:', e.message); }
+        }
     }
 
     /**
@@ -192,12 +199,6 @@ const RPCoachApp = (() => {
                 updateRIRDisplay();
             });
         }
-
-        // Formulario de session logger
-        setupSessionLoggerListeners();
-
-        // Formulario de sobrecarga progresiva
-        setupProgressiveOverloadListeners();
 
         // Botón Evaluar Readiness
         const btnEvalReadiness = document.getElementById('btn-eval-readiness');
@@ -470,15 +471,12 @@ const RPCoachApp = (() => {
                 break;
             case 'progress':
                 renderProgress();
+                if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderDoubleProgression === 'function') {
+                    ProgressAnalytics.renderDoubleProgression();
+                }
                 break;
             case 'rir':
                 renderRIR();
-                break;
-            case 'logger':
-                renderSessionLogger();
-                break;
-            case 'overload':
-                renderProgressiveOverload();
                 break;
             case 'strength':
                 if (typeof StrengthTests !== 'undefined') StrengthTests.init();
@@ -491,6 +489,9 @@ const RPCoachApp = (() => {
                 if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderAll === 'function') {
                     ProgressAnalytics.renderAll();
                 }
+                break;
+            default:
+                console.warn(`[NEXUS] Módulo desconocido: ${state.currentModule}`);
                 break;
         }
     }
@@ -511,6 +512,8 @@ const RPCoachApp = (() => {
                 console.error("Error parsing profile for home dashboard", e);
             }
         }
+        // Gate Check semanal
+        if (window.GateCheck?.render) GateCheck.render();
         // Widget de recordatorio de composición corporal en Inicio
         renderHomeCompReminder();
         // Widgets Premium
@@ -525,7 +528,7 @@ const RPCoachApp = (() => {
             const prExEl = document.getElementById('home-pr-exercise');
             const prDetEl = document.getElementById('home-pr-details');
             if(prExEl) prExEl.textContent = lastPR.exercise;
-            if(prDetEl) prDetEl.innerHTML = `${lastPR.weight}kg × ${lastPR.reps} <br><span style="font-size:0.75rem; color:#10B981;">e1RM: ${parseFloat(lastPR.e1rm || 0).toFixed(1)}kg</span>`;
+            if(prDetEl) prDetEl.innerHTML = `${parseFloat(lastPR.weight).toFixed(1)}kg × ${lastPR.reps} <br><span style="font-size:0.75rem; color:#10B981;">e1RM: ${parseFloat(lastPR.e1rm || 0).toFixed(1)}kg</span>`;
         }
 
         // 2. Weight Trend
@@ -842,7 +845,7 @@ const RPCoachApp = (() => {
             }
             if (profile.weight) {
                 const weightEl = document.getElementById('profile-weight');
-                if (weightEl) weightEl.value = profile.weight;
+                if (weightEl) weightEl.value = parseFloat(profile.weight).toFixed(1);
             }
             if (profile.height) {
                 const heightEl = document.getElementById('profile-height');
@@ -883,15 +886,29 @@ const RPCoachApp = (() => {
      */
     function saveProfile() {
         const profile = {
-            name: document.getElementById('profile-name')?.value || '',
+            name: document.getElementById('profile-name')?.value?.trim() || '',
             gender: document.getElementById('profile-gender')?.value || 'male',
-            weight: parseFloat(document.getElementById('profile-weight')?.value) || 0,
+            weight: Math.round((parseFloat(document.getElementById('profile-weight')?.value) || 0) * 10) / 10,
             height: parseInt(document.getElementById('profile-height')?.value) || 0,
             age: parseInt(document.getElementById('profile-age')?.value) || 0,
-            level: document.getElementById('profile-level')?.value || 'intermediate',
+            level: document.getElementById('routine-level')?.value || 'intermediate',
             goal: 'hypertrophy',
-            days: parseInt(document.getElementById('profile-days')?.value) || 4
+            days: (() => {
+                const routine = JSON.parse(localStorage.getItem('rpCoach_routine') || 'null');
+                return routine?.days?.length || 4;
+            })()
         };
+
+        // Validación de campos esenciales
+        const errors = [];
+        if (!profile.name) errors.push('Nombre es requerido');
+        if (profile.weight <= 0 || profile.weight > 300) errors.push('Peso debe ser entre 1 y 300 kg');
+        if (profile.height <= 0 || profile.height > 250) errors.push('Altura debe ser entre 1 y 250 cm');
+        if (profile.age <= 0 || profile.age > 100) errors.push('Edad debe ser entre 1 y 100 años');
+        if (errors.length > 0) {
+            showNotification('⚠️ ' + errors.join('. '), 'warning');
+            return;
+        }
 
         localStorage.setItem('rpCoach_profile', JSON.stringify(profile));
 
@@ -1719,8 +1736,8 @@ const RPCoachApp = (() => {
         reader.onload = function (e) {
             const img = new Image();
             img.onload = function () {
-                // Resize to max 800px
-                const maxSize = 800;
+                // Resize to max 600px para optimizar localStorage
+                const maxSize = 600;
                 let w = img.width, h = img.height;
                 if (w > maxSize || h > maxSize) {
                     if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
@@ -1731,19 +1748,24 @@ const RPCoachApp = (() => {
                 canvas.height = h;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, w, h);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
 
-                // Save
-                const saved = JSON.parse(localStorage.getItem('rpCoach_progress_photos') || '{}');
-                saved[phase] = { dataUrl: dataUrl, date: new Date().toISOString().split('T')[0] };
-                localStorage.setItem('rpCoach_progress_photos', JSON.stringify(saved));
+                // Verificar quota de localStorage antes de guardar
+                try {
+                    const saved = JSON.parse(localStorage.getItem('rpCoach_progress_photos') || '{}');
+                    saved[phase] = { dataUrl: dataUrl, date: new Date().toISOString().split('T')[0] };
+                    localStorage.setItem('rpCoach_progress_photos', JSON.stringify(saved));
 
-                // Show preview
-                preview.src = dataUrl;
-                preview.classList.remove('hidden');
-                deleteBtn.classList.remove('hidden');
-                if (placeholder) placeholder.style.display = 'none';
-                showNotification('📸 Foto guardada');
+                    // Show preview
+                    preview.src = dataUrl;
+                    preview.classList.remove('hidden');
+                    deleteBtn.classList.remove('hidden');
+                    if (placeholder) placeholder.style.display = 'none';
+                    showNotification('📸 Foto guardada');
+                } catch (storageError) {
+                    console.error('localStorage quota exceeded:', storageError);
+                    showNotification('⚠️ Almacenamiento lleno. Elimina fotos antiguas antes de agregar nuevas.', 'error');
+                }
             };
             img.src = e.target.result;
         };
@@ -1780,7 +1802,7 @@ const RPCoachApp = (() => {
                         <div class="stat-box__label">Nombre</div>
                     </div>
                     <div class="stat-box" style="padding: 10px;">
-                        <div class="stat-box__value" style="font-size: 1.2rem;">${profile.weight}kg</div>
+                        <div class="stat-box__value" style="font-size: 1.2rem;">${parseFloat(profile.weight).toFixed(1)}kg</div>
                         <div class="stat-box__label">Peso</div>
                     </div>
                     <div class="stat-box" style="padding: 10px;">
@@ -2263,155 +2285,6 @@ const RPCoachApp = (() => {
     }
 
     /**
-     * Renderiza el session logger
-     */
-    function renderSessionLogger() {
-        const recentLogs = SessionLoggerModule.getLogsFromLastDays(7);
-        const container = document.getElementById('recent-logs');
-
-        if (container) {
-            if (recentLogs.length === 0) {
-                container.innerHTML = '<p class="text-muted">No hay registros recientes</p>';
-            } else {
-                container.innerHTML = recentLogs.slice(-10).reverse().map(log => `
-                    <div class="log-entry">
-                        <span class="log-entry__date">${log.dateFormatted}</span>
-                        <span class="log-entry__exercise">${log.exercise}</span>
-                        <span class="log-entry__data" style="font-size: 0.8rem;">
-                            ${log.sets.length} series · ${formatVolume(log.totalVolume)} kg<br>
-                            <span style="color: #10B981; font-weight: 500;">SFR:</span> Pump ${log.sfr?.pump || '-'}/5 | Disrup. ${log.sfr?.disruption || '-'}/5 | Fatiga ${log.sfr?.fatigue || '-'}/5
-                        </span>
-                    </div>
-                `).join('');
-            }
-        }
-    }
-
-    /**
-     * Configura listeners del session logger
-     */
-    function setupSessionLoggerListeners() {
-        const form = document.getElementById('session-form');
-        if (form) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                saveNewSession();
-            });
-        }
-    }
-
-    /**
-     * Guarda una nueva sesión
-     */
-    function saveNewSession() {
-        const exercise = document.getElementById('log-exercise')?.value;
-        const weight = parseFloat(document.getElementById('log-weight')?.value);
-        const reps = parseInt(document.getElementById('log-reps')?.value);
-        const rpe = parseFloat(document.getElementById('log-rpe')?.value);
-
-        const pump = parseInt(document.getElementById('log-sfr-pump')?.value) || 3;
-        const disruption = parseInt(document.getElementById('log-sfr-disruption')?.value) || 3;
-        const fatigue = parseInt(document.getElementById('log-sfr-fatigue')?.value) || 3;
-
-        if (!exercise || !weight || !reps) {
-            alert('Por favor completa los campos requeridos');
-            return;
-        }
-
-        const log = SessionLoggerModule.saveLog({
-            exercise,
-            sets: [SessionLoggerModule.createSet(weight, reps, rpe)],
-            sfr: { pump, disruption, fatigue },
-            methodology: state.selectedMethodology,
-            weekNumber: state.currentWeek
-        });
-
-        // Limpiar formulario
-        document.getElementById('session-form')?.reset();
-
-        // Actualizar vista
-        renderSessionLogger();
-
-        // Mostrar confirmación
-        showNotification('✅ Sesión guardada correctamente');
-    }
-
-    /**
-     * Renderiza el módulo de sobrecarga progresiva
-     */
-    function renderProgressiveOverload() {
-        // El formulario está en el HTML
-    }
-
-    /**
-     * Configura listeners de sobrecarga progresiva
-     */
-    function setupProgressiveOverloadListeners() {
-        const calcBtn = document.getElementById('btn-calculate-overload');
-        if (calcBtn) {
-            calcBtn.addEventListener('click', calculateOverload);
-        }
-    }
-
-    /**
-     * Calcula la sobrecarga progresiva
-     */
-    function calculateOverload() {
-        const exercise = document.getElementById('overload-exercise')?.value;
-        const weight = parseFloat(document.getElementById('overload-weight')?.value);
-        const reps = parseInt(document.getElementById('overload-reps')?.value);
-        const rpe = parseFloat(document.getElementById('overload-rpe')?.value);
-        const targetReps = parseInt(document.getElementById('overload-target-reps')?.value) || reps;
-        const targetRIR = parseInt(document.getElementById('overload-target-rir')?.value) || 2;
-
-        if (!exercise || !weight || !reps) {
-            alert('Por favor completa los campos requeridos');
-            return;
-        }
-
-        const result = ProgressiveOverloadModule.calculateNextSession(
-            exercise,
-            { weight, reps, rpe },
-            targetReps,
-            targetRIR
-        );
-
-        const resultContainer = document.getElementById('overload-result');
-        if (resultContainer) {
-            resultContainer.innerHTML = `
-                <div class="card card--highlight animate-fadeIn">
-                    <div class="card__header">
-                        <h3 class="card__title">Próxima Sesión</h3>
-                        <div class="status-indicator status-indicator--${result.action === 'INCREASE_WEIGHT' ? 'success' : 'optimal'}">
-                            ${result.action.replace('_', ' ')}
-                        </div>
-                    </div>
-                    <p class="mb-2">${result.message}</p>
-                    <div class="flex gap-2 mt-2">
-                        <div class="stat-box">
-                            <div class="stat-box__value">${result.recommendation.weight} kg</div>
-                            <div class="stat-box__label">Peso Recomendado</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box__value">${result.recommendation.reps}</div>
-                            <div class="stat-box__label">Reps Objetivo</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box__value">${result.recommendation.targetRIR}</div>
-                            <div class="stat-box__label">RIR Target</div>
-                        </div>
-                    </div>
-                    ${result.recommendation.increment !== 0 ? `
-                        <p class="mt-2 text-primary">
-                            <strong>Incremento:</strong> ${result.recommendation.increment > 0 ? '+' : ''}${result.recommendation.increment} kg
-                        </p>
-                    ` : ''}
-                </div>
-            `;
-        }
-    }
-
-    /**
      * Actualiza módulos cuando cambia la metodología
      */
     function updateModuleWithMethodology() {
@@ -2465,7 +2338,6 @@ const RPCoachApp = (() => {
         init,
         state,
         switchModule,
-        calculateOverload,
         updateProgressVolume,
         updateProgressRIR,
         renderRoutineDisplay
@@ -2533,7 +2405,7 @@ window.exportMesocyclePDF = function (period = 'all') {
 
         // 1. INFO DEL ATLETA Y GENERALIDADES
         const name = profile.name || 'Atleta VIP';
-        const weight = profile.weight ? profile.weight + ' kg' : '—';
+        const weight = profile.weight ? parseFloat(profile.weight).toFixed(1) + ' kg' : '—';
         const methodology = routine.methodology || 'Sin asignar';
         const split = routine.split ? routine.split.replace(/_/g, ' ').toUpperCase() : 'General';
         const level = profile.level ? profile.level.toUpperCase() : 'INTERMEDIO';
@@ -2927,4 +2799,7 @@ window.switchFeedbackTab = function(sectionId) {
             b.classList.add('active');
         }
     });
+
+    // Persistir tab activa
+    try { localStorage.setItem('rpCoach_activeFeedbackTab', sectionId); } catch(e) {}
 };

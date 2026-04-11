@@ -22,6 +22,51 @@ const WorkoutUIController = (() => {
         5: { rir: 4, name: 'Deload', color: '#10B981', description: 'Descarga activa, recuperación' }
     };
 
+    // Mapa de mesociclo específico por metodología
+    const METHODOLOGY_MESOCYCLE_MAP = {
+        'Y3T': {
+            weeks: 4, phases: [
+                { week: 1, name: 'Semana Pesada', rir: 2, color: '#EF4444' },
+                { week: 2, name: 'Semana Moderada', rir: 3, color: '#3B82F6' },
+                { week: 3, name: 'Semana Liviana', rir: 1, color: '#F59E0B' },
+                { week: 4, name: 'Deload', rir: 4, color: '#10B981' }
+            ]
+        },
+        'HeavyDuty': {
+            weeks: 4, phases: [
+                { week: 1, name: 'Adaptación HIT', rir: 1, color: '#F59E0B' },
+                { week: 2, name: 'Intensidad Máxima', rir: 0, color: '#EF4444' },
+                { week: 3, name: 'Beyond Failure', rir: 0, color: '#DC2626' },
+                { week: 4, name: 'Deload', rir: 4, color: '#10B981' }
+            ]
+        },
+        '531': {
+            weeks: 4, phases: [
+                { week: 1, name: '5s (65-85%)', rir: 3, color: '#3B82F6' },
+                { week: 2, name: '3s (70-90%)', rir: 2, color: '#F59E0B' },
+                { week: 3, name: '531 (75-95%)', rir: 1, color: '#EF4444' },
+                { week: 4, name: 'Deload', rir: 4, color: '#10B981' }
+            ]
+        },
+        'BloodAndGuts': {
+            weeks: 4, phases: [
+                { week: 1, name: 'Preparación', rir: 1, color: '#F59E0B' },
+                { week: 2, name: 'Intensidad Alta', rir: 0, color: '#EF4444' },
+                { week: 3, name: 'Al Fallo Total', rir: 0, color: '#DC2626' },
+                { week: 4, name: 'Deload', rir: 4, color: '#10B981' }
+            ]
+        },
+        'default': {
+            weeks: 5, phases: [
+                { week: 1, name: 'Acumulación', rir: 3, color: '#3B82F6' },
+                { week: 2, name: 'Progresión', rir: 2, color: '#F59E0B' },
+                { week: 3, name: 'Intensificación', rir: 1, color: '#EF4444' },
+                { week: 4, name: 'Peak', rir: 0, color: '#DC2626' },
+                { week: 5, name: 'Deload', rir: 4, color: '#10B981' }
+            ]
+        }
+    };
+
     // Instrucciones técnicas de cada intensificador
     const INTENSIFIER_INSTRUCTIONS = {
         'Forced Reps': { icon: '💪', instruction: 'Al fallo → compañero asiste mínimamente 2-3 reps extra. Solo última serie.', level: 'advanced' },
@@ -37,6 +82,7 @@ const WorkoutUIController = (() => {
         'Rest-Pause DC': { icon: '⏸️', instruction: 'DoggCrapp: serie 11-15 reps → 10-15 resp → 4-6 reps → 10-15 resp → 2-3 reps.', level: 'advanced' },
         'Myo-Reps': { icon: '⚡', instruction: 'Serie activación 12-15 reps → 5s pausa → 3-5 reps x 4-5 mini-series.', level: 'intermediate' },
         'Parciales': { icon: '📐', instruction: 'Al fallo en rango completo → 4-6 reps en rango parcial (parte fuerte del movimiento).', level: 'advanced' },
+        'Lengthened Partials': { icon: '🔻', instruction: 'Reps parciales en la mitad estirada del ROM (posición de máximo estiramiento muscular). Evidencia 2025: hasta 2x más hipertrofia que parciales acortadas.', level: 'intermediate' },
         'Pump Extremo': { icon: '💥', instruction: 'Series de 8-12 reps con 30-45s descanso para máximo bombeo muscular.', level: 'beginner' },
         'Tempo Lento': { icon: '🐌', instruction: 'Fase concéntrica 4s, pausa 1s, excéntrica 2s. Mantener tensión constante.', level: 'beginner' },
         'Tempo Controlado': { icon: '⏱️', instruction: 'Tempo 3-2-3: controlar ambas fases con pausa isométrica de 2s.', level: 'beginner' },
@@ -61,40 +107,35 @@ const WorkoutUIController = (() => {
     // Protocol difficulty → level mapping for filtering
     const PROTOCOL_LEVEL_ASSIGNMENTS = {
         // Blood & Guts
-        'BG-DY': 'intermediate', 'BG-DS': 'intermediate', 'BG-RP': 'intermediate',
-        'BG-FR': 'advanced', 'BG-NEG': 'advanced', 'BG-PAR': 'advanced',
+        'BG-DY': 'intermediate', 'BG-DS': 'intermediate', 'BG-MYO': 'intermediate',
+        'BG-LP': 'advanced', 'BG-NEG': 'advanced',
         // Heavy Duty
-        'HD-SU': 'intermediate', 'HD-RP': 'intermediate',
-        'HD-FR': 'advanced', 'HD-NEG': 'advanced', 'HD-PE': 'advanced', 'HD-SS': 'advanced',
+        'HD-RP': 'intermediate', 'HD-MYO': 'intermediate',
+        'HD-NEG': 'advanced', 'HD-PE': 'advanced', 'HD-LP': 'advanced',
         // Y3T
         'Y3T-MOD': 'beginner', 'Y3T-DL': 'beginner',
         'Y3T-W1': 'intermediate', 'Y3T-W2': 'intermediate', 'Y3T-W3': 'intermediate',
         'Y3T-INT': 'advanced',
         // MTUT
         'MTUT-VE': 'beginner', 'MTUT-ISO': 'beginner',
-        'MTUT-TCE': 'intermediate', 'MTUT-TEE': 'intermediate', 'MTUT-SS': 'intermediate',
-        'MTUT-SH': 'advanced',
+        'MTUT-EXP': 'intermediate', 'MTUT-SS': 'intermediate',
+        'MTUT-LP': 'advanced',
         // SST
         'SST-TM': 'beginner',
-        'SST-CT': 'intermediate', 'SST-RT': 'intermediate', 'SST-ISOM': 'intermediate',
-        'SST-RIV': 'advanced', 'SST-NEG': 'advanced',
+        'SST-BASE': 'intermediate', 'SST-CT': 'intermediate',
+        'SST-MYO': 'advanced', 'SST-LP': 'advanced',
         // FST-7
         'FST7-HY': 'beginner', 'FST7-ST': 'beginner',
-        'FST7-CL': 'intermediate', 'FST7-DL': 'intermediate',
+        'FST7-CL': 'intermediate', 'FST7-LP': 'intermediate',
         'FST7-BN': 'advanced',
         // Rest-Pause
-        'RP-MYO': 'intermediate', 'RP-RC': 'intermediate',
-        'RP-EXT': 'advanced', 'RP-DS': 'advanced', 'RP-NEG': 'advanced', 'RP-ISO': 'advanced',
-        // DC Training
-        'DC-RP': 'intermediate', 'DC-STR': 'intermediate',
-        'DC-WM': 'advanced',
-        // GVT
-        'GVT-10x10': 'intermediate',
+        'RP-MYO': 'intermediate', 'RP-CL': 'intermediate', 'RP-DEN': 'intermediate',
+        'RP-LP': 'advanced', 'RP-DS': 'advanced', 'RP-ECC': 'advanced',
         // DUP
-        'DUP-HYP': 'beginner',
-        'DUP-STR': 'intermediate', 'DUP-POW': 'advanced',
+        'DUP-HY': 'beginner', 'DUP-EN': 'beginner',
+        'DUP-ST': 'intermediate', 'DUP-PW': 'advanced',
         // 5/3/1
-        '531-BBB': 'beginner', '531-W1': 'beginner',
+        '531-BBB': 'beginner', '531-W1': 'beginner', '531-DL': 'beginner',
         '531-W2': 'intermediate',
         '531-W3': 'advanced'
     };
@@ -109,14 +150,14 @@ const WorkoutUIController = (() => {
      */
     const MESOCYCLE_PROTOCOL_MAP = {
         'BloodAndGuts': {
-            advanced: { 1: 'BG-DY', 2: 'BG-DS', 3: 'BG-RP', 4: 'BG-FR', 5: 'BG-DY' },
-            intermediate: { 1: 'BG-DY', 2: 'BG-DS', 3: 'BG-RP', 4: 'BG-DS', 5: 'BG-DY' },
+            advanced: { 1: 'BG-DY', 2: 'BG-MYO', 3: 'BG-LP', 4: 'BG-NEG', 5: 'BG-DS' },
+            intermediate: { 1: 'BG-DY', 2: 'BG-DY', 3: 'BG-MYO', 4: 'BG-LP', 5: 'BG-DY' },
             beginner: { 1: 'BG-DY', 2: 'BG-DY', 3: 'BG-DY', 4: 'BG-DY', 5: 'BG-DY' }
         },
         'HeavyDuty': {
-            advanced: { 1: 'HD-SU', 2: 'HD-SS', 3: 'HD-PE', 4: 'HD-FR', 5: 'HD-SU' },
-            intermediate: { 1: 'HD-SU', 2: 'HD-SS', 3: 'HD-RP', 4: 'HD-RP', 5: 'HD-SU' },
-            beginner: { 1: 'HD-SU', 2: 'HD-SU', 3: 'HD-SU', 4: 'HD-SU', 5: 'HD-SU' }
+            advanced: { 1: 'HD-RP', 2: 'HD-MYO', 3: 'HD-NEG', 4: 'HD-LP', 5: 'HD-RP' },
+            intermediate: { 1: 'HD-RP', 2: 'HD-RP', 3: 'HD-MYO', 4: 'HD-PE', 5: 'HD-RP' },
+            beginner: { 1: 'HD-RP', 2: 'HD-RP', 3: 'HD-RP', 4: 'HD-RP', 5: 'HD-RP' }
         },
         'Y3T': {
             advanced: { 1: 'Y3T-W1', 2: 'Y3T-W2', 3: 'Y3T-W3', 4: 'Y3T-INT', 5: 'Y3T-DL' },
@@ -124,43 +165,33 @@ const WorkoutUIController = (() => {
             beginner: { 1: 'Y3T-MOD', 2: 'Y3T-MOD', 3: 'Y3T-W1', 4: 'Y3T-W2', 5: 'Y3T-DL' }
         },
         'MTUT': {
-            advanced: { 1: 'MTUT-TCE', 2: 'MTUT-TEE', 3: 'MTUT-SS', 4: 'MTUT-SH', 5: 'MTUT-VE' },
-            intermediate: { 1: 'MTUT-VE', 2: 'MTUT-TCE', 3: 'MTUT-TEE', 4: 'MTUT-SS', 5: 'MTUT-VE' },
-            beginner: { 1: 'MTUT-VE', 2: 'MTUT-VE', 3: 'MTUT-ISO', 4: 'MTUT-ISO', 5: 'MTUT-VE' }
+            advanced: { 1: 'MTUT-EXP', 2: 'MTUT-VE', 3: 'MTUT-SS', 4: 'MTUT-LP', 5: 'MTUT-EXP' },
+            intermediate: { 1: 'MTUT-EXP', 2: 'MTUT-EXP', 3: 'MTUT-VE', 4: 'MTUT-ISO', 5: 'MTUT-EXP' },
+            beginner: { 1: 'MTUT-VE', 2: 'MTUT-VE', 3: 'MTUT-EXP', 4: 'MTUT-EXP', 5: 'MTUT-VE' }
         },
         'SST': {
-            advanced: { 1: 'SST-ISOM', 2: 'SST-CT', 3: 'SST-RT', 4: 'SST-RIV', 5: 'SST-TM' },
-            intermediate: { 1: 'SST-TM', 2: 'SST-ISOM', 3: 'SST-CT', 4: 'SST-RT', 5: 'SST-TM' },
-            beginner: { 1: 'SST-TM', 2: 'SST-TM', 3: 'SST-TM', 4: 'SST-TM', 5: 'SST-TM' }
+            advanced: { 1: 'SST-BASE', 2: 'SST-CT', 3: 'SST-LP', 4: 'SST-MYO', 5: 'SST-TM' },
+            intermediate: { 1: 'SST-TM', 2: 'SST-BASE', 3: 'SST-CT', 4: 'SST-BASE', 5: 'SST-TM' },
+            beginner: { 1: 'SST-TM', 2: 'SST-TM', 3: 'SST-BASE', 4: 'SST-BASE', 5: 'SST-TM' }
         },
         'FST7': {
-            advanced: { 1: 'FST7-ST', 2: 'FST7-CL', 3: 'FST7-BN', 4: 'FST7-DL', 5: 'FST7-HY' },
-            intermediate: { 1: 'FST7-HY', 2: 'FST7-ST', 3: 'FST7-CL', 4: 'FST7-CL', 5: 'FST7-HY' },
-            beginner: { 1: 'FST7-HY', 2: 'FST7-HY', 3: 'FST7-ST', 4: 'FST7-ST', 5: 'FST7-HY' }
+            advanced: { 1: 'FST7-CL', 2: 'FST7-LP', 3: 'FST7-BN', 4: 'FST7-ST', 5: 'FST7-HY' },
+            intermediate: { 1: 'FST7-HY', 2: 'FST7-CL', 3: 'FST7-LP', 4: 'FST7-LP', 5: 'FST7-HY' },
+            beginner: { 1: 'FST7-HY', 2: 'FST7-HY', 3: 'FST7-CL', 4: 'FST7-CL', 5: 'FST7-HY' }
         },
         'RestPause': {
-            advanced: { 1: 'RP-RC', 2: 'RP-DS', 3: 'RP-EXT', 4: 'RP-ISO', 5: 'RP-MYO' },
-            intermediate: { 1: 'RP-MYO', 2: 'RP-RC', 3: 'RP-RC', 4: 'RP-RC', 5: 'RP-MYO' },
-            beginner: { 1: 'RP-MYO', 2: 'RP-MYO', 3: 'RP-MYO', 4: 'RP-MYO', 5: 'RP-MYO' }
-        },
-        'DCTraining': {
-            advanced: { 1: 'DC-RP', 2: 'DC-STR', 3: 'DC-RP', 4: 'DC-WM', 5: 'DC-STR' },
-            intermediate: { 1: 'DC-RP', 2: 'DC-RP', 3: 'DC-STR', 4: 'DC-RP', 5: 'DC-STR' },
-            beginner: { 1: 'DC-RP', 2: 'DC-RP', 3: 'DC-RP', 4: 'DC-RP', 5: 'DC-STR' }
-        },
-        'GVT': {
-            advanced: { 1: 'GVT-10x10', 2: 'GVT-10x10', 3: 'GVT-10x10', 4: 'GVT-10x10', 5: 'GVT-10x10' },
-            intermediate: { 1: 'GVT-10x10', 2: 'GVT-10x10', 3: 'GVT-10x10', 4: 'GVT-10x10', 5: 'GVT-10x10' },
-            beginner: { 1: 'GVT-10x10', 2: 'GVT-10x10', 3: 'GVT-10x10', 4: 'GVT-10x10', 5: 'GVT-10x10' }
+            advanced: { 1: 'RP-DEN', 2: 'RP-LP', 3: 'RP-DS', 4: 'RP-ECC', 5: 'RP-MYO' },
+            intermediate: { 1: 'RP-MYO', 2: 'RP-DEN', 3: 'RP-LP', 4: 'RP-LP', 5: 'RP-MYO' },
+            beginner: { 1: 'RP-MYO', 2: 'RP-MYO', 3: 'RP-CL', 4: 'RP-CL', 5: 'RP-MYO' }
         },
         'DUP': {
-            advanced: { 1: 'DUP-HYP', 2: 'DUP-STR', 3: 'DUP-POW', 4: 'DUP-STR', 5: 'DUP-HYP' },
-            intermediate: { 1: 'DUP-HYP', 2: 'DUP-HYP', 3: 'DUP-STR', 4: 'DUP-POW', 5: 'DUP-HYP' },
-            beginner: { 1: 'DUP-HYP', 2: 'DUP-HYP', 3: 'DUP-HYP', 4: 'DUP-HYP', 5: 'DUP-HYP' }
+            advanced: { 1: 'DUP-HY', 2: 'DUP-ST', 3: 'DUP-PW', 4: 'DUP-ST', 5: 'DUP-HY' },
+            intermediate: { 1: 'DUP-HY', 2: 'DUP-HY', 3: 'DUP-ST', 4: 'DUP-PW', 5: 'DUP-HY' },
+            beginner: { 1: 'DUP-HY', 2: 'DUP-HY', 3: 'DUP-HY', 4: 'DUP-EN', 5: 'DUP-HY' }
         },
         '531': {
-            advanced: { 1: '531-W1', 2: '531-W2', 3: '531-W3', 4: '531-W3', 5: '531-BBB' },
-            intermediate: { 1: '531-BBB', 2: '531-W1', 3: '531-W2', 4: '531-W3', 5: '531-BBB' },
+            advanced: { 1: '531-W1', 2: '531-W2', 3: '531-W3', 4: '531-W3', 5: '531-DL' },
+            intermediate: { 1: '531-BBB', 2: '531-W1', 3: '531-W2', 4: '531-W3', 5: '531-DL' },
             beginner: { 1: '531-BBB', 2: '531-W1', 3: '531-W1', 4: '531-W2', 5: '531-BBB' }
         }
     };
@@ -1027,9 +1058,9 @@ const WorkoutUIController = (() => {
                         if (mesocycleWeek === 2 && ex.isPrimary) {
                             ex.sets = ex.baseSets + 1;
                         } else if (mesocycleWeek === 3) {
-                            ex.sets = ex.baseSets + 1;
+                            ex.sets = ex.isPrimary ? ex.baseSets + 1 : ex.baseSets;
                         } else if (mesocycleWeek === 4) {
-                            ex.sets = ex.isPrimary ? ex.baseSets + 2 : ex.baseSets + 1; // Peak MRV
+                            ex.sets = ex.isPrimary ? ex.baseSets + 1 : ex.baseSets; // Peak MRV: +1 solo en primarios
                         } else if (mesocycleWeek === 5) {
                             ex.sets = Math.max(Math.floor(ex.baseSets * 0.5), 1); // Deload
                         } else {
@@ -1512,9 +1543,12 @@ const WorkoutUIController = (() => {
                         RIR: ${routine.parameters?.rir ?? 2}
                     </span>
                     <span style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; padding: 3px 8px; border-radius: 4px;">
-                        Rest: ${formatRest(routine.parameters?.rest)}
+                        ⏱ Rest Sets: ${formatRest(routine.parameters?.rest)}
                     </span>
-                    ${routine.parameters?.tempo ? `<span style="background: rgba(139, 92, 246, 0.15); color: #8B5CF6; padding: 3px 8px; border-radius: 4px;">Tempo: ${routine.parameters.tempo}</span>` : ''}
+                    <span style="background: rgba(251, 146, 60, 0.15); color: #FB923C; padding: 3px 8px; border-radius: 4px;">
+                        🔄 Rest Ejerc: ${getRestBetweenExercises(routine.parameters?.rest)}
+                    </span>
+                    ${routine.parameters?.tempo ? `<span style="background: rgba(139, 92, 246, 0.15); color: #8B5CF6; padding: 3px 8px; border-radius: 4px;">🎵 Tempo: ${routine.parameters.tempo}</span>` : ''}
                     ${routine.parameters?.load ? `<span style="background: rgba(236, 72, 153, 0.15); color: #EC4899; padding: 3px 8px; border-radius: 4px;">Carga: ${routine.parameters.load}</span>` : ''}
                     ${routine.parameters?.tut ? `<span style="background: rgba(168, 85, 247, 0.15); color: #A855F7; padding: 3px 8px; border-radius: 4px;">TUT: ${routine.parameters.tut}</span>` : ''}
                 </div>
@@ -2037,9 +2071,19 @@ const WorkoutUIController = (() => {
                         </tr>`;
             }
 
+            // Fila separadora con descanso entre ejercicios (excepto último ejercicio)
+            const isLastExercise = idx === day.exercises.length - 1;
+            const restBetweenExercises = !isLastExercise ? `
+                        <tr class="exercise-separator-row">
+                            <td colspan="${showDoubleTier ? 13 : 12}" style="padding: 6px 12px; background: rgba(251,146,60,0.08); border-top: 2px solid rgba(251,146,60,0.25); border-bottom: 2px solid rgba(251,146,60,0.25); text-align: center;">
+                                <span style="font-size: 0.75rem; color: #FB923C; font-weight: 600;">🔄 Descanso entre ejercicios: ${getRestBetweenExercises(params.rest)}</span>
+                            </td>
+                        </tr>` : '';
+
             return `${setRows}
                         ${intensifierRows}
-                        ${extraRepsRow}`;
+                        ${extraRepsRow}
+                        ${restBetweenExercises}`;
         }).join('')}
                 </tbody>
             </table>
@@ -2169,6 +2213,7 @@ const WorkoutUIController = (() => {
                     ex.load = params.load || ex.load;
                     ex.tempo = params.tempo || ex.tempo;
                     ex.restSeconds = Array.isArray(params.rest) ? params.rest[0] : (params.rest || ex.restSeconds);
+                    if (params.microRest) ex.microRest = params.microRest;
                     // Intensificadores del protocolo de esta semana
                     ex.intensifiers = [...(params.intensifiers || [])];
                     ex.extraReps = ex.isPrimary ? (params.extraReps || null) : null;
@@ -2275,6 +2320,16 @@ const WorkoutUIController = (() => {
             return rest.map(r => `${r}s`).join('→');
         }
         return typeof rest === 'number' ? `${rest}s` : rest;
+    }
+
+    /**
+     * Calcula descanso entre ejercicios (mayor que entre sets)
+     */
+    function getRestBetweenExercises(rest) {
+        const baseRest = Array.isArray(rest) ? Math.max(...rest) : (typeof rest === 'number' ? rest : 90);
+        // Entre ejercicios: mínimo 120s, máximo 180s, o 1.5x el rest entre sets
+        const exerciseRest = Math.min(Math.max(Math.round(baseRest * 1.5), 120), 180);
+        return `${exerciseRest}s`;
     }
 
     /**
@@ -3050,6 +3105,27 @@ const WorkoutUIController = (() => {
             return;
         }
 
+        // Validación de datos: detectar valores sospechosos
+        const warnings = [];
+        exerciseData.forEach(ex => {
+            ex.sets.forEach(s => {
+                if (s.weight > 500) warnings.push(`${ex.name}: peso ${s.weight}kg parece excesivo`);
+                if (s.reps > 100) warnings.push(`${ex.name}: ${s.reps} reps parecen excesivas`);
+                if (s.rpe > 0 && s.rpe < 4) warnings.push(`${ex.name}: RPE ${s.rpe} es muy bajo (¿intencional?)`);
+                // Coherencia RPE ↔ RIR: RPE + RIR debe ≈ 10
+                if (s.rpe > 0 && !isNaN(s.rir) && s.rir >= 0) {
+                    const sum = s.rpe + s.rir;
+                    if (Math.abs(sum - 10) > 1.5) {
+                        warnings.push(`${ex.name} set ${s.setNumber}: RPE ${s.rpe} + RIR ${s.rir} = ${sum} (debería ≈ 10)`);
+                    }
+                }
+            });
+        });
+        if (warnings.length > 0) {
+            const proceed = confirm('⚠️ Datos posiblemente incorrectos:\n\n' + warnings.join('\n') + '\n\n¿Guardar de todas formas?');
+            if (!proceed) return;
+        }
+
         // Calculate averages
         const avgRPE = rpeCount > 0 ? (totalRPE / rpeCount).toFixed(1) : '-';
         const avgRIR = exerciseData.length > 0 ? (totalRIR / exerciseData.length).toFixed(1) : '-';
@@ -3085,6 +3161,11 @@ const WorkoutUIController = (() => {
 
         // Also save as last session for Progreso
         localStorage.setItem('rpCoach_last_session', JSON.stringify(sessionRecord));
+
+        // Doble Progresión: evaluar sesión completada
+        if (window.DoubleProgressionEngine?.processSession) {
+            DoubleProgressionEngine.processSession(sessionRecord);
+        }
 
         // Marcar asistencia en calendario del mesociclo
         if (typeof CalendarioTracker !== 'undefined') {
@@ -3423,12 +3504,37 @@ const WorkoutUIController = (() => {
             return '<span class="text-muted">Sin técnicas adicionales para este protocolo</span>';
         }
 
-        return intensifiers.map((int, idx) => `
-            <label class="checkbox-label" style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px; background: rgba(255,255,255,0.05); border-radius: 4px;">
-                <input type="checkbox" class="intensifier-checkbox" value="${int}" id="int-${idx}">
-                <span style="font-size: 0.85rem;">${int}</span>
-            </label>
-        `).join('');
+        // Si solo hay 1 intensificador, mostrarlo directamente preseleccionado
+        if (intensifiers.length === 1) {
+            const info = INTENSIFIER_INSTRUCTIONS[intensifiers[0]];
+            const icon = info?.icon || '💪';
+            const instruction = info?.instruction || '';
+            return `
+            <label class="checkbox-label" style="display: flex; flex-direction: column; gap: 4px; cursor: pointer; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="radio" name="intensifier-selection" class="intensifier-checkbox" value="${intensifiers[0]}" id="int-0" checked>
+                    <span style="font-size: 0.85rem; font-weight: 600;">${icon} ${intensifiers[0]}</span>
+                </div>
+                ${instruction ? `<span style="font-size: 0.7rem; color: var(--text-muted); padding-left: 22px; line-height: 1.3;">${instruction}</span>` : ''}
+            </label>`;
+        }
+
+        // Múltiples opciones: radio buttons (elegir UNO por ejercicio)
+        let html = `<p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px;">Elige <strong style="color: #FB923C;">1 técnica</strong> por ejercicio:</p>`;
+        html += intensifiers.map((int, idx) => {
+            const info = INTENSIFIER_INSTRUCTIONS[int];
+            const icon = info?.icon || '💪';
+            const instruction = info?.instruction || '';
+            return `
+            <label class="checkbox-label" style="display: flex; flex-direction: column; gap: 4px; cursor: pointer; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="radio" name="intensifier-selection" class="intensifier-checkbox" value="${int}" id="int-${idx}"${idx === 0 ? ' checked' : ''}>
+                    <span style="font-size: 0.85rem; font-weight: 600;">${icon} ${int}</span>
+                </div>
+                ${instruction ? `<span style="font-size: 0.7rem; color: var(--text-muted); padding-left: 22px; line-height: 1.3;">${instruction}</span>` : ''}
+            </label>`;
+        }).join('');
+        return html;
     }
 
     /**
@@ -3583,6 +3689,24 @@ const WorkoutUIController = (() => {
                 ? exercise.targetReps.match(/\d+/)?.[0] || '10'
                 : exercise.targetReps || 10;
             repsEl.placeholder = targetReps;
+        }
+
+        // Doble Progresión: mostrar sugerencia si existe
+        const dpBadge = document.getElementById('dp-workout-suggestion');
+        if (dpBadge) dpBadge.remove();
+        if (window.DoubleProgressionEngine) {
+            const dpSuggestions = DoubleProgressionEngine.getSuggestionsForDay([exercise.name]);
+            if (dpSuggestions.length > 0) {
+                const sug = dpSuggestions[0];
+                const badge = document.createElement('div');
+                badge.id = 'dp-workout-suggestion';
+                badge.className = 'dp-suggestion-badge';
+                badge.innerHTML = `<span style="color:#10B981; font-size:0.75rem;">📈 Doble Progresión: <strong>${sug.newWeight}kg × ${sug.newTargetReps} reps</strong></span>`;
+                const cardHeader = document.querySelector('.card--highlight .card__header');
+                if (cardHeader) cardHeader.after(badge);
+                // Actualizar placeholder del peso con la sugerencia DP
+                if (weightEl) weightEl.placeholder = sug.newWeight;
+            }
         }
     }
 
@@ -3853,6 +3977,52 @@ const WorkoutUIController = (() => {
     function showWorkoutSummary(summary) {
         if (!elements.activeWorkoutState) return;
 
+        // Evaluar autoregulación basada en RPE y duración (proxy temporal de fatiga)
+        let suggestedDeload = false;
+        let suggestedExtension = false;
+        
+        if (window.AutoregulationModule) {
+            // Proxy basico: si el RPE promedio es extremo (>= 9.5) o la tendencia de fatiga es alta
+            const avgRPE = parseFloat(summary.stats.avgRPE) || 8;
+            const pumpProxy = 3; // Promedio
+            const sorenessProxy = avgRPE > 9 ? 4 : 3;
+            const fatigueProxy = avgRPE >= 9.5 ? 5 : (avgRPE >= 8.5 ? 4 : 2);
+            
+            const evalResult = AutoregulationModule.evaluateSession(pumpProxy, sorenessProxy, fatigueProxy);
+            AutoregulationModule.saveEvaluation(evalResult);
+            
+            const trend = AutoregulationModule.getRecoveryTrend();
+            
+            if (evalResult.action === 'DELOAD' || trend.trend === 'DECLINING') {
+                suggestedDeload = true;
+            } else if (trend.trend === 'EXCELLENT') {
+                suggestedExtension = true;
+            }
+        }
+
+        let autoregulationHtml = '';
+        if (suggestedDeload) {
+            autoregulationHtml = `
+                <div class="alert alert--danger mt-3" style="background: rgba(239,68,68,0.1); border: 1px solid #EF4444; padding: 15px; border-radius: 8px;">
+                    <h4 style="color: #EF4444; margin-top: 0;">⚠️ Alerta del Coach: Fatiga Neural Detectada</h4>
+                    <p style="font-size: 0.85rem; color: #FCC;">Tus métricas recientes y RPE indican que has superado tu Volumen Máximo Recuperable (MRV). Continuar así limitará tu crecimiento muscular y aumentará el riesgo de lesión.</p>
+                    <button id="btn-reactive-deload" style="width: 100%; padding: 10px; background: #EF4444; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">
+                        Activar Deload Reactivo (Acortar Mesociclo)
+                    </button>
+                </div>
+            `;
+        } else if (suggestedExtension) {
+            autoregulationHtml = `
+                <div class="alert alert--success mt-3" style="background: rgba(16,185,129,0.1); border: 1px solid #10B981; padding: 15px; border-radius: 8px;">
+                    <h4 style="color: #10B981; margin-top: 0;">🌟 Coach: Recuperación Excelente</h4>
+                    <p style="font-size: 0.85rem; color: #A7F3D0;">Estás absorbiendo el volumen perfectamente sin señales de fatiga neural. Puedes extender este bloque de alta intensidad una semana más antes del deload programado.</p>
+                    <button id="btn-extend-block" style="width: 100%; padding: 10px; background: #10B981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">
+                        Extender Bloque (Overreaching)
+                    </button>
+                </div>
+            `;
+        }
+
         elements.activeWorkoutState.innerHTML = `
             <div class="card card--highlight">
                 <div class="card__header">
@@ -3876,14 +4046,32 @@ const WorkoutUIController = (() => {
                         <div class="stat-box__label">RPE Promedio</div>
                     </div>
                 </div>
+                
+                ${autoregulationHtml}
+                
                 <button id="btn-new-workout" class="btn btn--primary btn--block mt-2">
-                    🔄 Nuevo Entrenamiento
+                    🔄 Finalizar y Volver al Resumen
                 </button>
             </div>
         `;
 
         document.getElementById('btn-new-workout')?.addEventListener('click', () => {
             location.reload();
+        });
+
+        // Event listeners para Autoregulación Reactiva
+        document.getElementById('btn-reactive-deload')?.addEventListener('click', () => {
+            if (window.AutoregulationModule && AutoregulationModule.applyReactiveDeload()) {
+                alert('Deload Reactivo Activado. El mesociclo ha sido modificado y tu próxima semana será de recuperación.');
+                location.reload();
+            }
+        });
+
+        document.getElementById('btn-extend-block')?.addEventListener('click', () => {
+            if (window.AutoregulationModule && AutoregulationModule.applyExtendBlock()) {
+                alert('Bloque Extendido. Continuarás en alta intensidad la próxima semana.');
+                location.reload();
+            }
         });
     }
 
@@ -3944,15 +4132,30 @@ const WorkoutUIController = (() => {
      * Calcula iterativamente los valores paramétricos de los 5 microciclos S1-S5
      * para enviarlos a la gráfica dinámicamente según nivel y metodología (precisión real).
      */
+    /**
+     * Calcula iterativamente los valores paramétricos de los microciclos
+     * para enviarlos a la gráfica dinámicamente según nivel y metodología.
+     */
     function getMesocycleRenderData(methodology, level) {
-        const split = 'bro_split'; // Neutro para cálculo de parámetros
+        const split = 'bro_split';
         let volData = [];
         let rirData = [];
         let loadData = [];
+        let labels = [];
+        
+        // Determinar duración según la metodología
+        let duration = 5;
+        let methData = null;
+        if (window.MethodologyEngine) {
+            methData = window.MethodologyEngine.getMethodology(methodology);
+            if (methData && methData.estructura) {
+                duration = methData.estructura.length;
+            }
+        }
 
-        for (let week = 1; week <= 5; week++) {
+        for (let week = 1; week <= duration; week++) {
             const weekProtocolId = getProtocolForWeek(methodology, level, week);
-            const protocol = weekProtocolId || (methodology === 'GVT' ? 'GVT-10x10' : 'Y3T-W1');
+            const protocol = weekProtocolId || 'Y3T-W1';
 
             let routine;
             if (window.RoutineGenerator && typeof RoutineGenerator.createRoutine === 'function') {
@@ -3966,16 +4169,35 @@ const WorkoutUIController = (() => {
                 routine.parameters = adaptParamsToMesocycle(routine.parameters, week);
             }
 
-            // Extraer Volume base y modular según la fase
+            // Datos de la estructura real si los hay
+            let methEstLocal = null;
+            if (methData && methData.estructura && methData.estructura[week - 1]) {
+                methEstLocal = methData.estructura[week - 1];
+            }
+
+            // Nombre de la semana o label
+            if (methEstLocal && methEstLocal.tipo) {
+                labels.push(`S${week} (${methEstLocal.tipo.substring(0, 4)})`);
+            } else {
+                labels.push(week === duration ? `S${week} (Deload)` : `S${week}`);
+            }
+
+            // Extraer Volume base y modular
             let sets = parseInt(routine.parameters?.sets) || 3;
-            // Simulamos lo mismo para la gráfica central
-            if (week === 2) sets += 0.5;
-            else if (week === 3) sets += 1;
-            else if (week === 4) sets += 2; // Peak week MRV
-            else if (week === 5) sets = Math.max(Math.floor(sets * 0.5), 1);
+            // Solo simulamos subida en rutinas no-planas si no tenemos data real
+            if (!methEstLocal) {
+                if (week === 2) sets += 0.5;
+                else if (week === 3) sets += 1;
+                else if (week === duration - 1) sets += 2; // Peak week
+                else if (week === duration) sets = Math.max(Math.floor(sets * 0.5), 1);
+            }
 
             // Extraer RIR 
-            let rir = parseInt(routine.parameters?.rir) || 0;
+            let rir = parseInt(routine.parameters?.rir);
+            if (isNaN(rir) && methEstLocal && methEstLocal.parametros) {
+                rir = parseInt(methEstLocal.parametros.rir);
+            }
+            if (isNaN(rir)) rir = (week === duration) ? 3 : 1;
 
             // Convertir RIR a Esfuerzo Visual (0 a 100) donde 4 = Min y 0 = Max
             let rirScore = 100;
@@ -3985,42 +4207,48 @@ const WorkoutUIController = (() => {
             else if (rir === 1) rirScore = 85;
             else if (rir === 0) rirScore = 100;
 
-            // Si hay intensificadores (y no es deload) aumenta drásticamente el esfuerzo simulado
-            if (routine.parameters?.intensifiers?.length > 0 && week !== 5) {
+            // Intensificadores
+            if (routine.parameters?.intensifiers?.length > 0 && week !== duration) {
                 rirScore = Math.min(rirScore + 15, 100);
             }
 
-            // HIT effort base correction (siempre arrastran extremo RIR 0 fallos)
+            // HIT effort base correction
             const mLowerCase = (methodology || '').toLowerCase();
             if (mLowerCase.includes('heavy') || mLowerCase.includes('blood') || mLowerCase.includes('dc')) {
-                if (week !== 5) { rirScore = Math.min(rirScore + 25, 100); }
+                if (week !== duration) { rirScore = 100; sets = 1; }
+            }
+            if (mLowerCase === 'gvt' && week !== duration) {
+                sets = 10;
             }
 
-            // Cargas/Intensidad simulada para la gráfica (sobrecarga progresiva)
-            let loadScore = 70; // score base
-            if (week === 1) loadScore = 60;
-            else if (week === 2) loadScore = 75;
-            else if (week === 3) loadScore = 85;
-            else if (week === 4) loadScore = 100;
-            else if (week === 5) loadScore = 50;
+            // Cargas/Intensidad simulada (0 a 100)
+            let loadScore = 70;
+            if (methEstLocal && methEstLocal.parametros && methEstLocal.parametros.rpe) {
+                let rpeVal = parseFloat(methEstLocal.parametros.rpe.toString().split('-')[0]); // ej. "8-9" -> 8
+                loadScore = rpeVal * 10;
+            } else {
+                if (week === 1) loadScore = 60;
+                else if (week === Math.floor(duration / 2)) loadScore = 75;
+                else if (week === duration - 1) loadScore = 90;
+                else if (week === duration) loadScore = 50;
+            }
 
             volData.push(sets);
             rirData.push(rirScore);
             loadData.push(loadScore);
         }
 
-        // Normalizar volumen a Porcentajes base del Max Volume
+        // Normalizar volumen
         const maxVol = Math.max(...volData);
-        let maxTheoreticalVol = maxVol;
-        if (level === 'advanced' && methodology.toLowerCase().includes('gvt')) maxTheoreticalVol = 12; // GVT
-        else if (level === 'advanced') maxTheoreticalVol = 6;
+        let maxTheoreticalVol = maxVol || 1;
+        if (level === 'advanced') maxTheoreticalVol = 6;
         else if (level === 'beginner') maxTheoreticalVol = 4;
         else maxTheoreticalVol = 5;
 
         maxTheoreticalVol = Math.max(maxTheoreticalVol, maxVol);
         const volDataPercent = volData.map(v => Math.round((v / maxTheoreticalVol) * 100));
 
-        return { volData: volDataPercent, effData: rirData, intData: loadData, rawSets: volData };
+        return { volData: volDataPercent, effData: rirData, intData: loadData, rawSets: volData, labels: labels };
     }
 
     // Inicializar cuando DOM esté listo
@@ -4039,7 +4267,8 @@ const WorkoutUIController = (() => {
         startWorkout,
         updateUIState,
         getMesocycleRenderData,
-        renderVolumeControl
+        renderVolumeControl,
+        getMethodologyMesocycleMap: () => METHODOLOGY_MESOCYCLE_MAP
     };
 })();
 

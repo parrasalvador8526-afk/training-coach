@@ -255,6 +255,10 @@ const ProgressAnalytics = (() => {
     // ========== RENDER PRINCIPAL ==========
 
     function renderAll() {
+        // Estas secciones siempre se renderizan (tienen contenido educativo propio)
+        renderRPizedMethods();
+        renderDoubleProgression();
+
         const history = getHistory();
         if (history.length === 0) {
             hideAllSections();
@@ -269,7 +273,7 @@ const ProgressAnalytics = (() => {
         renderPlateaus();
         render1RMEstimates();
         renderWeekComparison();
-        
+
         // --- Enforce Tabs Layout ---
         // Al terminar de renderizar todo (lo cual pone display: block), forzamos
         // la vista de pestañas para que solo quede visible la pestaña activa.
@@ -282,8 +286,9 @@ const ProgressAnalytics = (() => {
                     window.switchFeedbackTab(match[1]);
                 }
             } else {
-                // Fallback to the first one
-                window.switchFeedbackTab('dashboard-executive-section');
+                // Restaurar tab persistida o fallback a la primera
+                const savedTab = localStorage.getItem('rpCoach_activeFeedbackTab');
+                window.switchFeedbackTab(savedTab || 'dashboard-executive-section');
             }
         }
     }
@@ -292,7 +297,8 @@ const ProgressAnalytics = (() => {
         ['volume-analysis-section',
             'plateau-alerts-section', 'estimated-1rm-section',
             'week-comparison-section', 'dashboard-executive-section',
-            'coach-inteligente-section', 'rir-comparison-section', 'weight-tracking-section'].forEach(id => {
+            'coach-inteligente-section', 'rir-comparison-section', 'weight-tracking-section',
+            'rpized-methods-section', 'double-progression-section'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
@@ -512,9 +518,9 @@ const ProgressAnalytics = (() => {
             const first = weightHistory[0].weight;
             const last = weightHistory[weightHistory.length - 1].weight;
             const diff = (last - first).toFixed(1);
-            weightText = last + 'kg (' + (diff > 0 ? '+' : '') + diff + 'kg)';
+            weightText = parseFloat(last).toFixed(1) + 'kg (' + (diff > 0 ? '+' : '') + diff + 'kg)';
         } else if (weightHistory.length === 1) {
-            weightText = weightHistory[0].weight + 'kg';
+            weightText = parseFloat(weightHistory[0].weight).toFixed(1) + 'kg';
         }
 
         // Construir resumen
@@ -597,7 +603,12 @@ const ProgressAnalytics = (() => {
 
             if (isPlateaued) {
                 // Estancamiento detectado
-                action = 'Cambiar variante o técnica de intensificación';
+                const methName = (routine.methodology || '').toLowerCase();
+                if (methName.includes('dc') || methName.includes('blood') || methName.includes('heavy duty')) {
+                    action = '🔥 Entrenamiento Fallido (Regla de Choque): Rotación obligatoria de ejercicio. Has perdido progresión, debes cambiar de variante.';
+                } else {
+                    action = 'Cambiar variante o aplicar técnica de intensificación (ej. Rest-Pause)';
+                }
                 nextWeight = latest.weight;
                 nextReps = latest.reps;
                 priority = 'alta';
@@ -979,12 +990,13 @@ const ProgressAnalytics = (() => {
         // Input para registrar peso
         const today = new Date().toISOString().split('T')[0];
         const todayEntry = weightHistory.find(e => e.date === today);
+        const inputWeight = todayEntry ? parseFloat(todayEntry.weight).toFixed(1) : (profile.weight ? parseFloat(profile.weight).toFixed(1) : '');
 
         let html =
             '<div style="display:flex; gap:8px; align-items:flex-end; margin-bottom:10px;">' +
             '<div style="flex:1;">' +
             '<label style="font-size:0.7rem; color:var(--text-muted);">Peso hoy (kg)</label>' +
-            '<input type="number" id="weight-today-input" step="0.1" value="' + (todayEntry ? todayEntry.weight : (profile.weight || '')) + '" ' +
+            '<input type="number" id="weight-today-input" step="0.1" value="' + inputWeight + '" ' +
             'style="width:100%; padding:6px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:4px; color:white; font-size:0.9rem;" placeholder="ej: 82.5">' +
             '</div>' +
             '<button id="btn-save-weight" style="padding:6px 16px; background:#8B5CF6; color:white; border:none; border-radius:4px; font-size:0.8rem; font-weight:600; cursor:pointer;">Guardar</button>' +
@@ -1001,9 +1013,9 @@ const ProgressAnalytics = (() => {
             const range = maxW - minW || 1;
 
             html += '<div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:6px;">' +
-                '<span style="color:var(--text-muted);">Inicio: <strong>' + first.weight + 'kg</strong> (' + first.date + ')</span>' +
+                '<span style="color:var(--text-muted);">Inicio: <strong>' + parseFloat(first.weight).toFixed(1) + 'kg</strong> (' + first.date + ')</span>' +
                 '<span style="color:' + diffColor + '; font-weight:600;">' + (diff > 0 ? '+' : '') + diff + 'kg</span>' +
-                '<span style="color:var(--text-muted);">Actual: <strong>' + last.weight + 'kg</strong></span>' +
+                '<span style="color:var(--text-muted);">Actual: <strong>' + parseFloat(last.weight).toFixed(1) + 'kg</strong></span>' +
                 '</div>';
 
             // Gráfica de línea simple con barras
@@ -1013,7 +1025,7 @@ const ProgressAnalytics = (() => {
                 const h = Math.max(6, ((e.weight - minW) / range) * 44);
                 const isToday = e.date === today;
                 html += '<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:1px;">' +
-                    '<div style="font-size:0.55rem; color:var(--text-muted);">' + e.weight + '</div>' +
+                    '<div style="font-size:0.55rem; color:var(--text-muted);">' + parseFloat(e.weight).toFixed(1) + '</div>' +
                     '<div style="width:100%; max-width:20px; height:' + h + 'px; background:' + (isToday ? '#8B5CF6' : 'rgba(139,92,246,0.4)') + '; border-radius:3px;"></div>' +
                     '</div>';
             });
@@ -1027,8 +1039,8 @@ const ProgressAnalytics = (() => {
 
             html += '<div style="display:flex; gap:12px; font-size:0.7rem; color:var(--text-muted); margin-top:4px;">' +
                 '<span>Prom. 7d: <strong style="color:#E0E0E0;">' + weekAvg + 'kg</strong></span>' +
-                '<span>Min: <strong style="color:#E0E0E0;">' + minW + 'kg</strong></span>' +
-                '<span>Max: <strong style="color:#E0E0E0;">' + maxW + 'kg</strong></span>' +
+                '<span>Min: <strong style="color:#E0E0E0;">' + parseFloat(minW).toFixed(1) + 'kg</strong></span>' +
+                '<span>Max: <strong style="color:#E0E0E0;">' + parseFloat(maxW).toFixed(1) + 'kg</strong></span>' +
                 '<span>Registros: <strong style="color:#E0E0E0;">' + weightHistory.length + '</strong></span>' +
                 '</div>';
         } else {
@@ -1042,7 +1054,7 @@ const ProgressAnalytics = (() => {
         if (btnSave) {
             btnSave.addEventListener('click', function () {
                 const input = document.getElementById('weight-today-input');
-                const weight = parseFloat(input?.value);
+                const weight = Math.round(parseFloat(input?.value) * 10) / 10;
                 if (!weight || weight < 30 || weight > 300) return;
 
                 const history = JSON.parse(localStorage.getItem('rpCoach_weight_history') || '[]');
@@ -1070,6 +1082,302 @@ const ProgressAnalytics = (() => {
         }
     }
 
+    // ========== RENDER: METODOLOGÍAS RPizadas ==========
+
+    function renderRPizedMethods() {
+        const container = document.getElementById('rpized-methods-content');
+        if (!container) return;
+
+        const updates = JSON.parse(localStorage.getItem('rpCoach_methodology_updates') || 'null');
+        const progress = JSON.parse(localStorage.getItem('rpCoach_rpized_progress') || 'null');
+
+        if (!updates) {
+            // Generar datos iniciales desde rutina activa si existe
+            const routine = JSON.parse(localStorage.getItem('rpCoach_active_routine') || 'null');
+            if (routine && routine.methodology) {
+                const initUpdates = generateInitialRPizedData(routine.methodology);
+                localStorage.setItem('rpCoach_methodology_updates', JSON.stringify(initUpdates));
+                renderRPizedMethods(); // Re-llamar con datos inicializados
+                return;
+            }
+            container.innerHTML = `<div style="padding:12px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.2); border-radius:8px;">
+                <p style="color:#A78BFA; font-size:0.85rem; font-weight:bold; margin-bottom:6px;">Sistemas RPizados</p>
+                <p style="color:var(--text-muted); font-size:0.8rem; line-height:1.5; margin-bottom:8px;">
+                    Los sistemas RPizados aplican los principios de Renaissance Periodization (autorregulación por RIR, volumen MEV→MRV, sobrecarga progresiva) a las 9 metodologías disponibles.
+                </p>
+                <p style="color:var(--text-muted); font-size:0.75rem;">Genera una rutina y completa sesiones para ver el ranking y análisis de tu metodología.</p>
+            </div>`;
+            return;
+        }
+
+        let html = '';
+
+        // Ranking de metodologías
+        html += '<div style="margin-bottom:12px;">';
+        html += '<h5 style="font-size:0.85rem; color:#E040FB; margin-bottom:8px;">Ranking de Metodologías (Score /100)</h5>';
+        html += '<div style="display:grid; gap:4px;">';
+        updates.ranking.forEach(m => {
+            const barWidth = m.score;
+            const barColor = m.score >= 90 ? '#10B981' : m.score >= 85 ? '#3B82F6' : '#F59E0B';
+            const suffix = m.category === 'rpized' ? ' *' : '';
+            html += `<div style="display:flex; align-items:center; gap:8px; font-size:0.75rem;">
+                <span style="width:18px; color:#999; text-align:right;">#${m.rank}</span>
+                <span style="width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${m.name}${suffix}">${m.name}${suffix}</span>
+                <div style="flex:1; height:14px; background:#333; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${barWidth}%; background:${barColor}; border-radius:4px; transition:width 0.5s;"></div>
+                </div>
+                <span style="width:28px; font-weight:bold; color:${barColor};">${m.score}</span>
+            </div>`;
+        });
+        html += '</div>';
+
+        // Eliminadas
+        html += '<div style="margin-top:8px; padding:6px 10px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:6px; font-size:0.75rem;">';
+        updates.eliminated.forEach(e => {
+            html += `<div style="color:#EF4444;">❌ <strong>${e.name}</strong> (${e.maxScore}/100) — ${e.reason}</div>`;
+        });
+        html += '</div></div>';
+
+        // Técnicas RPizadas (si hay progresión)
+        if (progress && progress.techniques) {
+            html += '<h5 style="font-size:0.85rem; color:#A78BFA; margin-bottom:8px; margin-top:12px;">Técnicas RPizadas Aplicadas</h5>';
+            html += '<div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:6px;">';
+
+            const techs = progress.techniques;
+            if (techs.myoReps) {
+                html += `<div style="padding:8px; background:rgba(255,255,255,0.05); border-radius:8px; text-align:center;">
+                    <div style="font-size:0.7rem; color:#999;">Myo-Reps</div>
+                    <div style="font-size:1.1rem; font-weight:bold; color:#10B981;">${techs.myoReps.usedInSessions} sesiones</div>
+                    <div style="font-size:0.7rem; color:#999;">+${techs.myoReps.avgExtraReps} reps extra/sesión</div>
+                </div>`;
+            }
+            if (techs.lengthenedPartials) {
+                html += `<div style="padding:8px; background:rgba(255,255,255,0.05); border-radius:8px; text-align:center;">
+                    <div style="font-size:0.7rem; color:#999;">Lengthened Partials</div>
+                    <div style="font-size:1.1rem; font-weight:bold; color:#3B82F6;">${techs.lengthenedPartials.usedInSessions} sesiones</div>
+                    <div style="font-size:0.7rem; color:#999;">+${techs.lengthenedPartials.avgExtraReps} LP reps/serie</div>
+                </div>`;
+            }
+            if (techs.eccentricTempo) {
+                html += `<div style="padding:8px; background:rgba(255,255,255,0.05); border-radius:8px; text-align:center;">
+                    <div style="font-size:0.7rem; color:#999;">Tempo Excéntrico</div>
+                    <div style="font-size:1.1rem; font-weight:bold; color:#F59E0B;">${techs.eccentricTempo.currentTempo}</div>
+                    <div style="font-size:0.7rem; color:#999;">Progresión 2s→3s→4s</div>
+                </div>`;
+            }
+            if (techs.clusterSets) {
+                html += `<div style="padding:8px; background:rgba(255,255,255,0.05); border-radius:8px; text-align:center;">
+                    <div style="font-size:0.7rem; color:#999;">Cluster Sets</div>
+                    <div style="font-size:1.1rem; font-weight:bold; color:#E040FB;">${techs.clusterSets.usedInSessions} sesiones</div>
+                    <div style="font-size:0.7rem; color:#999;">~${techs.clusterSets.avgTotalReps} reps totales</div>
+                </div>`;
+            }
+            html += '</div>';
+        }
+
+        // Progresión RIR semanal
+        if (progress && progress.weeklyRIRProgression) {
+            html += '<h5 style="font-size:0.85rem; color:#F59E0B; margin-bottom:8px; margin-top:12px;">Progresión RIR por Semana</h5>';
+            html += '<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:4px;">';
+            progress.weeklyRIRProgression.forEach(w => {
+                const diff = Math.abs(w.targetRIR - w.actualRIR);
+                const color = diff <= 0.3 ? '#10B981' : diff <= 0.8 ? '#F59E0B' : '#EF4444';
+                html += `<div style="padding:6px; background:rgba(255,255,255,0.05); border-radius:6px; text-align:center;">
+                    <div style="font-size:0.65rem; color:#999;">S${w.week}</div>
+                    <div style="font-size:0.9rem; font-weight:bold; color:${color};">RIR ${w.actualRIR}</div>
+                    <div style="font-size:0.6rem; color:#666;">Target: ${w.targetRIR}</div>
+                </div>`;
+            });
+            html += '</div>';
+        }
+
+        // Base científica
+        if (updates.scientificBasis) {
+            html += '<details style="margin-top:12px; cursor:pointer;">';
+            html += '<summary style="font-size:0.8rem; color:#A78BFA;">📚 Base Científica (2024-2025)</summary>';
+            html += '<div style="padding:8px; font-size:0.7rem; color:var(--text-muted); line-height:1.5;">';
+            Object.entries(updates.scientificBasis).forEach(([key, val]) => {
+                html += `<p style="margin:4px 0;"><strong>${key.replace(/_/g, ' ')}:</strong> ${val}</p>`;
+            });
+            html += '</div></details>';
+        }
+
+        container.innerHTML = html;
+    }
+
+    // ========== RENDER: DOBLE PROGRESIÓN ==========
+
+    function renderDoubleProgression() {
+        // ═══ CONTENIDO EDUCATIVO (siempre visible) ═══
+        const educationalHTML = `
+        <div style="background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.15); border-radius:10px; padding:14px; margin-bottom:16px;">
+            <h5 style="color:#10B981; font-size:0.85rem; margin:0 0 10px 0;">Principio de Doble Progresi\u00f3n</h5>
+            <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.5; margin:0 0 12px 0;">
+                La Doble Progresi\u00f3n es el m\u00e9todo m\u00e1s efectivo de micro-progresi\u00f3n por ejercicio.
+                Funciona independientemente de la metodolog\u00eda que uses, porque trabaja sobre el <strong style="color:#10B981;">rango de repeticiones</strong>
+                y el <strong style="color:#10B981;">peso</strong> de cada ejercicio individual.
+            </p>
+
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:12px; margin-bottom:12px;">
+                <div style="font-size:0.7rem; color:#999; text-align:center; margin-bottom:8px;">CICLO DE DOBLE PROGRESI\u00d3N</div>
+                <div style="display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap;">
+                    <div style="background:rgba(99,102,241,0.2); border:1px solid rgba(99,102,241,0.4); border-radius:8px; padding:8px 12px; text-align:center;">
+                        <div style="font-size:0.65rem; color:#999;">PASO 1</div>
+                        <div style="font-size:0.8rem; font-weight:bold; color:#6366F1;">80kg \u00d7 8 reps</div>
+                        <div style="font-size:0.6rem; color:#999;">M\u00ednimo del rango</div>
+                    </div>
+                    <span style="color:#999; font-size:1.2rem;">\u2192</span>
+                    <div style="background:rgba(245,158,11,0.2); border:1px solid rgba(245,158,11,0.4); border-radius:8px; padding:8px 12px; text-align:center;">
+                        <div style="font-size:0.65rem; color:#999;">PASO 2</div>
+                        <div style="font-size:0.8rem; font-weight:bold; color:#F59E0B;">80kg \u00d7 10 reps</div>
+                        <div style="font-size:0.6rem; color:#999;">Progresando...</div>
+                    </div>
+                    <span style="color:#999; font-size:1.2rem;">\u2192</span>
+                    <div style="background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); border-radius:8px; padding:8px 12px; text-align:center;">
+                        <div style="font-size:0.65rem; color:#999;">PASO 3</div>
+                        <div style="font-size:0.8rem; font-weight:bold; color:#10B981;">80kg \u00d7 12 reps</div>
+                        <div style="font-size:0.6rem; color:#10B981;">\u2713 Tope alcanzado</div>
+                    </div>
+                    <span style="color:#999; font-size:1.2rem;">\u2192</span>
+                    <div style="background:rgba(236,72,153,0.2); border:1px solid rgba(236,72,153,0.4); border-radius:8px; padding:8px 12px; text-align:center;">
+                        <div style="font-size:0.65rem; color:#999;">SUBE PESO</div>
+                        <div style="font-size:0.8rem; font-weight:bold; color:#EC4899;">82.5kg \u00d7 8 reps</div>
+                        <div style="font-size:0.6rem; color:#999;">Nuevo ciclo</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div style="background:rgba(255,255,255,0.03); border-radius:6px; padding:8px;">
+                    <div style="font-size:0.7rem; font-weight:bold; color:#F59E0B; margin-bottom:4px;">Condici\u00f3n para subir peso</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); line-height:1.4;">
+                        TODOS los sets de trabajo deben alcanzar el tope del rango de reps.
+                        Si haces 3 sets y solo 2 llegan al m\u00e1ximo, a\u00fan no es momento de subir.
+                    </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border-radius:6px; padding:8px;">
+                    <div style="font-size:0.7rem; font-weight:bold; color:#6366F1; margin-bottom:4px;">Incrementos recomendados</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); line-height:1.4;">
+                        <strong>Tren superior:</strong> +2.5 kg<br>
+                        <strong>Tren inferior:</strong> +5 kg<br>
+                        Peque\u00f1os saltos = progreso sostenible
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:10px; padding:8px; background:rgba(139,92,246,0.08); border-radius:6px; border-left:3px solid #8B5CF6;">
+                <div style="font-size:0.7rem; font-weight:bold; color:#A78BFA; margin-bottom:4px;">Compatible con las 9 metodolog\u00edas</div>
+                <div style="font-size:0.65rem; color:var(--text-muted); line-height:1.4;">
+                    La DP aplica autom\u00e1ticamente a cada ejercicio al completar una sesi\u00f3n.
+                    <strong>FST-7</strong>: solo series principales (no finisher) \u00b7
+                    <strong>Rest-Pause</strong>: serie de activaci\u00f3n \u00b7
+                    <strong>5/3/1</strong>: solo accesorios (BBB)
+                </div>
+            </div>
+        </div>`;
+
+        // ═══ CONTENIDO DE DATOS (si hay datos) ═══
+        let dataHTML = '';
+
+        if (window.DoubleProgressionEngine) {
+            const summary = DoubleProgressionEngine.getAnalyticsSummary();
+
+            if (summary.totalTracked === 0) {
+                dataHTML = `<div style="text-align:center; padding:16px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px dashed rgba(255,255,255,0.1);">
+                    <div style="font-size:1.5rem; margin-bottom:6px;">📊</div>
+                    <p style="color:#999; font-size:0.8rem; margin:0;">Completa al menos 1 sesi\u00f3n de entrenamiento para ver tu an\u00e1lisis de Doble Progresi\u00f3n aqu\u00ed.</p>
+                </div>`;
+            } else {
+                dataHTML += `<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:12px;">
+                    <div style="text-align:center; padding:8px; background:rgba(16,185,129,0.1); border-radius:8px;">
+                        <div style="font-size:0.7rem; color:#999;">Ejercicios Rastreados</div>
+                        <div style="font-size:1.3rem; font-weight:bold; color:#10B981;">${summary.totalTracked}</div>
+                    </div>
+                    <div style="text-align:center; padding:8px; background:rgba(245,158,11,0.1); border-radius:8px;">
+                        <div style="font-size:0.7rem; color:#999;">Listos para Subir</div>
+                        <div style="font-size:1.3rem; font-weight:bold; color:#F59E0B;">${summary.readyForProgression}</div>
+                    </div>
+                    <div style="text-align:center; padding:8px; background:rgba(99,102,241,0.1); border-radius:8px;">
+                        <div style="font-size:0.7rem; color:#999;">Progresiones Totales</div>
+                        <div style="font-size:1.3rem; font-weight:bold; color:#6366F1;">${summary.totalProgressions}</div>
+                    </div>
+                </div>`;
+
+                dataHTML += '<div style="font-size:0.8rem; font-weight:bold; margin-bottom:6px;">Estado por Ejercicio:</div>';
+
+                summary.exerciseDetails
+                    .sort((a, b) => b.progress - a.progress)
+                    .forEach(ex => {
+                        const statusClass = ex.ready ? 'dp-ready' : 'dp-in-progress';
+                        const barColor = ex.ready ? '#10B981' : (ex.progress >= 50 ? '#F59E0B' : '#6366F1');
+                        const statusText = ex.ready
+                            ? `SUBE a ${ex.suggestion?.newWeight || '?'}kg \u00d7 ${ex.suggestion?.newTargetReps || '?'} reps`
+                            : `${ex.progress}% \u2014 ${ex.repRange?.min || '?'}-${ex.repRange?.max || '?'} reps`;
+
+                        dataHTML += `<div class="dp-exercise-card ${statusClass}">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:0.8rem; font-weight:bold;">${ex.name}</span>
+                                <span style="font-size:0.7rem; color:${barColor};">${ex.weight}kg</span>
+                            </div>
+                            <div class="dp-progress-bar">
+                                <div class="dp-progress-fill" style="width:${ex.progress}%; background:${barColor};"></div>
+                            </div>
+                            <div style="font-size:0.7rem; color:${ex.ready ? '#10B981' : '#999'};">${statusText}</div>
+                        </div>`;
+                    });
+
+                if (summary.recentProgressions.length > 0) {
+                    dataHTML += '<div style="font-size:0.8rem; font-weight:bold; margin: 12px 0 6px;">Progresiones Recientes:</div>';
+                    summary.recentProgressions.forEach(p => {
+                        const date = new Date(p.latest.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                        dataHTML += `<div style="display:flex; justify-content:space-between; padding:4px 8px; font-size:0.75rem; background:rgba(16,185,129,0.05); border-radius:4px; margin-bottom:4px;">
+                            <span>${p.exercise}</span>
+                            <span style="color:#10B981;">${p.latest.fromWeight}kg \u2192 ${p.latest.toWeight}kg (${date})</span>
+                        </div>`;
+                    });
+                }
+            }
+        }
+
+        const fullHTML = educationalHTML + dataHTML;
+
+        // Renderizar en sección de Progresión (module-progress)
+        const progressContainer = document.getElementById('dp-progress-section-content');
+        if (progressContainer) progressContainer.innerHTML = fullHTML;
+    }
+
+    // Genera datos RPizados iniciales basados en la metodología activa
+    function generateInitialRPizedData(methodology) {
+        const METHODOLOGY_NAMES = {
+            'Y3T': 'Y3T (Neil Hill)', 'HeavyDuty': 'Heavy Duty (Mentzer)',
+            'BloodAndGuts': 'Blood & Guts (Yates)', 'RestPause': 'Rest-Pause (DC)',
+            '531': '5/3/1 (Wendler)', 'DUP': 'DUP (Periodización Ondulante)',
+            'MTUT': 'Max TUT', 'FST7': 'FST-7 (Hany Rambod)', 'SST': 'SST (Sarcoplasmic)'
+        };
+        const allMethods = Object.keys(METHODOLOGY_NAMES);
+        const ranking = allMethods.map((id, idx) => ({
+            rank: idx + 1, name: METHODOLOGY_NAMES[id] || id,
+            score: id === methodology ? 95 : Math.max(60, 95 - (idx + 1) * 4),
+            category: id === methodology ? 'rpized' : 'standard'
+        }));
+        // Mover la metodología activa al #1
+        const activeIdx = ranking.findIndex(r => r.category === 'rpized');
+        if (activeIdx > 0) {
+            const active = ranking.splice(activeIdx, 1)[0];
+            active.rank = 1;
+            ranking.unshift(active);
+            ranking.forEach((r, i) => r.rank = i + 1);
+        }
+        return {
+            ranking,
+            eliminated: [
+                { name: 'GVT (German Volume)', maxScore: 52, reason: 'Volumen junk excesivo sin autorregulación' },
+                { name: 'DC Training', maxScore: 48, reason: 'Frecuencia insuficiente para hipertrofia óptima' }
+            ],
+            basis: 'Análisis basado en principios RP: autorregulación por RIR, volumen MEV→MRV, sobrecarga progresiva'
+        };
+    }
+
     // API pública
     return {
         renderAll,
@@ -1082,6 +1390,8 @@ const ProgressAnalytics = (() => {
         getCoachSuggestions,
         renderCoachInteligente,
         renderWeightTracking,
+        renderRPizedMethods,
+        renderDoubleProgression,
         calculate1RM
     };
 })();

@@ -40,7 +40,7 @@ const NutricionRP = (() => {
         }
 
         // Obtener metodología activa
-        const methodology = localStorage.getItem('rpcoach_methodology') || 'Y3T';
+        const methodology = localStorage.getItem('rpCoach_methodology') || 'Y3T';
 
         container.innerHTML = `
             <div class="card card--highlight">
@@ -276,7 +276,7 @@ const NutricionRP = (() => {
     // =============================================
 
     function actualizarConMetodologia(metodologia) {
-        localStorage.setItem('rpcoach_methodology', metodologia);
+        localStorage.setItem('rpCoach_methodology', metodologia);
         renderPlanNutricional();
     }
 

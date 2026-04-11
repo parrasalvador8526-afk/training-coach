@@ -56,13 +56,11 @@ const AutoregulationEngine = (() => {
     const METHODOLOGY_TYPE_MAP = {
         'HeavyDuty': 'HIT',
         'BloodAndGuts': 'HIT',
-        'DCTraining': 'HIT',
         'RestPause': 'HIT',
         'Y3T': 'HYBRID',
         'FST7': 'HYBRID',
         'SST': 'HYBRID',
         'MTUT': 'VOLUME',
-        'GVT': 'VOLUME',
         'DUP': 'VOLUME',
         '531': 'VOLUME'
     };

@@ -49,17 +49,6 @@ const RIRDynamicModule = (() => {
             },
             note: 'Ciclo ondulante de 3 semanas. RIR varía según fase.'
         },
-        'GVT': {
-            name: 'GVT (German Volume Training)',
-            weeks: {
-                week1: { rir: 3, intensity: '60%', description: '10x10 con reserva inicial' },
-                week2: { rir: 2, intensity: '62.5%', description: '10x10 aumentando intensidad' },
-                week3: { rir: 1, intensity: '65%', description: '10x10 cerca del límite' },
-                week4: { rir: 0, intensity: '67.5%', description: '10x10 máximo esfuerzo' },
-                week5: { rir: 5, intensity: '50%', description: 'Deload - reducir a 5x10' }
-            },
-            note: 'Alto volumen = RIR más conservador. El peso es fijo pero la fatiga acumula.'
-        },
         'DUP': {
             name: 'DUP (Daily Undulating Periodization)',
             weeks: {
@@ -75,16 +64,6 @@ const RIRDynamicModule = (() => {
                 power: 2        // Día de potencia con reserva
             },
             note: 'El RIR varía según el tipo de día dentro de la semana.'
-        },
-        'DCTraining': {
-            name: 'DC Training (Doggcrapp)',
-            weeks: {
-                week1: { rir: 0, intensity: '90-95%', description: 'Rest-pause al fallo' },
-                week2: { rir: 0, intensity: '92-97%', description: 'Aumentar peso si es posible' },
-                week3: { rir: 0, intensity: '95-100%', description: 'Máximo esfuerzo' },
-                week4: { rir: 5, intensity: '50%', description: 'Cruise/Deload (2 semanas)' }
-            },
-            note: 'Rest-pause siempre al fallo. Blast & Cruise.'
         },
         'FST7': {
             name: 'FST-7',

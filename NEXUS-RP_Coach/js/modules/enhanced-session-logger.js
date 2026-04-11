@@ -39,7 +39,7 @@ const EnhancedSessionLogger = (() => {
             name: 'Rest-Pause',
             icon: '⏸️',
             description: 'Micro descansos intra-serie',
-            compatibleWith: ['RestPause', 'HeavyDuty', 'BloodAndGuts', 'DCTraining']
+            compatibleWith: ['RestPause', 'HeavyDuty', 'BloodAndGuts']
         },
         'forced_reps': {
             name: 'Reps Forzadas',
@@ -396,7 +396,6 @@ const EnhancedSessionLogger = (() => {
             'FST7': { weightIncrease: 0, focus: 'pump' },
             'SST': { weightIncrease: 0, focus: 'fatiga metabólica' },
             'MTUT': { weightIncrease: 0, focus: 'tempo' },
-            'GVT': { weightIncrease: 2.5, focus: 'volumen' },
             'RestPause': { weightIncrease: 2.5, focus: 'densidad' }
         };
 

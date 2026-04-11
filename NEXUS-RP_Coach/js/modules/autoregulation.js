@@ -207,6 +207,61 @@ const AutoregulationModule = (() => {
     }
 
     /**
+     * Aplica un Deload Reactivo a la rutina activa
+     */
+    function applyReactiveDeload() {
+        const routineStr = localStorage.getItem('rpCoach_active_routine');
+        if (!routineStr) return false;
+        
+        try {
+            const routine = JSON.parse(routineStr);
+            // Marcar que fue inducción reactiva
+            routine.isReactiveDeload = true;
+            
+            // Mover a la semana de descarga
+            if (window.MethodologyEngine) {
+                const methData = window.MethodologyEngine.getMethodology(routine.methodology);
+                // La mayoría tiene deload en la semana == duracion + 1 (ej. Y3T dura 3, deload es en W4. GVT dura 4-6)
+                // Usaremos 5 como default, o la duración que tenga la estructura si existe
+                let targetWeek = 5;
+                if (methData && methData.estructura) {
+                    targetWeek = methData.estructura.length; // la última suele ser deload
+                }
+                routine.currentWeek = targetWeek;
+            } else {
+                routine.currentWeek = 5;
+            }
+            
+            localStorage.setItem('rpCoach_active_routine', JSON.stringify(routine));
+            return true;
+        } catch(e) {
+            console.error('Error aplicando deload reactivo', e);
+            return false;
+        }
+    }
+
+    /**
+     * Extiende el bloque de intensidad si la recuperación es excelente
+     */
+    function applyExtendBlock() {
+        const routineStr = localStorage.getItem('rpCoach_active_routine');
+        if (!routineStr) return false;
+        
+        try {
+            const routine = JSON.parse(routineStr);
+            routine.isExtendedBlock = true;
+            // Para extender el bloque (ej. S4 Peak), no dejamos que pase a Deload
+            // Esto se manejará en el avance de día, pero aquí indicamos que se repite la semana actual
+            routine.currentWeek = Math.max(1, routine.currentWeek - 1);
+            localStorage.setItem('rpCoach_active_routine', JSON.stringify(routine));
+            return true;
+        } catch(e) {
+            console.error('Error extendiendo bloque', e);
+            return false;
+        }
+    }
+
+    /**
      * Limpia el historial de evaluaciones
      */
     function clearHistory() {
@@ -248,6 +303,8 @@ const AutoregulationModule = (() => {
         saveEvaluation,
         getHistory,
         getRecoveryTrend,
+        applyReactiveDeload,
+        applyExtendBlock,
         clearHistory,
         getValueDescriptors,
         RECOMMENDATIONS
