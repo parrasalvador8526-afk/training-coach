@@ -1980,6 +1980,7 @@ const WorkoutUIController = (() => {
                 </thead>
                 <tbody>
                     ${buildWarmupBlock(day.exercises, params, showDoubleTier)}
+                    ${(() => { window._fatigueCache = window.FatigueHeatmap?.calculateMuscleFatigue() || {}; return ''; })()}
                     ${day.exercises.map((ex, idx) => {
             const exIntensifiers = ex.intensifiers || params.intensifiers || [];
             
@@ -2011,10 +2012,27 @@ const WorkoutUIController = (() => {
             }).join('') : '';
             const extraRepsRow = ''; // Desactivado: ya se muestra junto a la celda de Reps principal.
 
+            // Verificar si el músculo está en sobrecarga (omitido temporalmente)
+            let isOmittedByFatigue = false;
+            if (window.FatigueHeatmap && ex.muscleGroup) {
+                const engId = FatigueHeatmap.MUSCLE_MAP[ex.muscleGroup];
+                if (window._fatigueCache[engId]?.zone === 'overreached') isOmittedByFatigue = true;
+            }
+
             // Generar N filas — una por cada serie del ejercicio
             const numSets = ex.sets || params.sets || 3;
             const suggestedWeight = formatLastWeight(ex.name);
             let setRows = '';
+
+            // Si está omitido por fatiga, mostrar fila colapsada
+            if (isOmittedByFatigue) {
+                return `<tr class="heatmap-omitted" data-exercise-idx="${idx}">
+                    <td colspan="${showDoubleTier ? 13 : 12}" style="padding:10px 12px; text-align:center; background:rgba(124,58,237,0.08); border-left:3px solid #7C3AED;">
+                        <span style="color:#7C3AED; font-weight:600;">${ex.isPrimary ? '⭐ ' : ''}${ex.name}</span>
+                        <span style="color:#A78BFA; font-size:0.75rem; margin-left:8px;">⚠️ Omitido — ${ex.muscleGroup} en sobrecarga. Se reintegra al recuperarse.</span>
+                    </td>
+                </tr>`;
+            }
 
             for (let s = 0; s < numSets; s++) {
                 const isFirstSet = s === 0;
@@ -3038,6 +3056,9 @@ const WorkoutUIController = (() => {
             let maxWeight = 0;
 
             setRows.forEach(row => {
+                // Excluir sets de calentamiento de las métricas
+                if (row.classList.contains('warmup-row')) return;
+
                 const weight = parseFloat(row.querySelector('.log-weight')?.value) || 0;
                 const reps = parseInt(row.querySelector('.log-reps')?.value) || 0;
                 const rpe = parseFloat(row.querySelector('.log-rpe')?.value) || 0;
@@ -3298,6 +3319,31 @@ const WorkoutUIController = (() => {
 
         if (workoutState) {
             console.log('✅ Entrenamiento iniciado correctamente', workoutState);
+
+            // Sobrecarga Localizada: omitir músculos en zona overreached
+            if (window.FatigueHeatmap) {
+                const fatigueData = FatigueHeatmap.calculateMuscleFatigue();
+                const omittedMuscles = [];
+
+                workoutState.exercises.forEach(ex => {
+                    const engId = FatigueHeatmap.MUSCLE_MAP[ex.muscleGroup];
+                    const mData = fatigueData[engId];
+                    if (mData && mData.zone === 'overreached') {
+                        ex._omittedByFatigue = true;
+                        if (!omittedMuscles.includes(ex.muscleGroup)) {
+                            omittedMuscles.push(ex.muscleGroup);
+                        }
+                    }
+                });
+
+                if (omittedMuscles.length > 0) {
+                    showNotification(
+                        `⚠️ ${omittedMuscles.join(', ')} en sobrecarga — ejercicios omitidos temporalmente. Se reintegran al recuperarse.`,
+                        'warning'
+                    );
+                }
+            }
+
             showActiveWorkoutUI(workoutState);
             updateActiveWorkoutDisplay();
             showNotification(`¡Entrenando ${workoutState.dayName}!`, 'success');
@@ -3888,9 +3934,11 @@ const WorkoutUIController = (() => {
                 skipTimer();
                 // Simple audio ping si es posible
                 try {
-                    const audio = new Audio('data:audio/mp3;base64,//OcxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq'); // Minimal silent beep o usar notification visual
+                    const audio = new Audio('data:audio/mp3;base64,//OcxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
                     audio.play().catch(e => e);
                 } catch (e) { }
+                // Vibración en dispositivos móviles
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                 showNotification('⏱️ ¡Tiempo de descanso terminado! Prepárate.', 'info');
             } else {
                 restSeconds--;

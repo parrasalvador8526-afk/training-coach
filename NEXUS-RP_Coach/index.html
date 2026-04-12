@@ -257,6 +257,49 @@
             font-size: 0.75rem;
         }
         .gate-override-btn:hover { background: rgba(255,255,255,0.15); }
+        /* Fatigue Heatmap */
+        .heatmap-muscle {
+            display: flex;
+            align-items: center;
+            padding: 5px 8px;
+            border-radius: 6px;
+            margin-bottom: 3px;
+            background: rgba(255,255,255,0.03);
+            transition: all 0.3s ease;
+        }
+        .heatmap-muscle:hover { background: rgba(255,255,255,0.06); }
+        .heatmap-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            margin: 0 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .heatmap-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        .heatmap-bar-mrv {
+            position: absolute;
+            top: -2px;
+            height: calc(100% + 4px);
+            width: 2px;
+            background: rgba(255,255,255,0.4);
+        }
+        .heatmap-suggestion {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-top: 6px;
+            border-left: 3px solid;
+        }
+        .heatmap-suggestion.danger { background: rgba(239,68,68,0.1); border-color: #EF4444; color: #FCA5A5; }
+        .heatmap-suggestion.warning { background: rgba(245,158,11,0.1); border-color: #F59E0B; color: #FDE68A; }
+        .heatmap-suggestion.opportunity { background: rgba(16,185,129,0.1); border-color: #10B981; color: #6EE7B7; }
+        .heatmap-omitted { opacity: 0.4; text-decoration: line-through; }
         /* Doble Progresión */
         .dp-exercise-card {
             padding: 10px;
@@ -587,6 +630,21 @@
                         <button onclick="GateCheck.forceAction('repeat')" class="gate-override-btn">Repetir 🔄</button>
                         <button onclick="GateCheck.forceAction('deload')" class="gate-override-btn">Deload ⬇️</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- ===== SOBRECARGA LOCALIZADA (Fatigue Heatmap) ===== -->
+            <div id="fatigue-heatmap-widget" class="card mt-3 mb-3"
+                style="border-left: 4px solid #EF4444; background: rgba(30, 41, 59, 0.5);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h4 style="color:#EF4444; margin:0;">🔥 Sobrecarga Localizada</h4>
+                    <span id="heatmap-global-badge" class="rp-badge" style="background:#10B981;">—</span>
+                </div>
+                <p style="font-size:0.7rem; color:var(--text-muted); margin-bottom:10px;">
+                    Fatiga por grupo muscular (últimos 7 días). Series acumuladas vs MRV.
+                </p>
+                <div id="fatigue-heatmap-content">
+                    <p style="color:#999; font-size:0.8rem;">Completa sesiones para ver el mapa de fatiga.</p>
                 </div>
             </div>
 
@@ -3072,6 +3130,7 @@
     <script src="js/modules/autoregulation.js"></script>
     <script src="js/modules/rir-dynamic.js"></script>
     <script src="js/modules/volume-mev-mrv.js"></script>
+    <script src="js/modules/fatigue-heatmap.js"></script>
     <script src="js/modules/session-logger.js"></script>
     <script src="js/modules/progressive-overload.js"></script>
     <script src="js/modules/double-progression.js"></script>

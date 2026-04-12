@@ -514,10 +514,117 @@ const RPCoachApp = (() => {
         }
         // Gate Check semanal
         if (window.GateCheck?.render) GateCheck.render();
+        // Heatmap de Sobrecarga Localizada
+        if (window.FatigueHeatmap) renderFatigueHeatmap();
         // Widget de recordatorio de composición corporal en Inicio
         renderHomeCompReminder();
         // Widgets Premium
         renderPremiumInsights();
+    }
+
+    /**
+     * Renderiza el widget de Sobrecarga Localizada (Fatigue Heatmap)
+     */
+    function renderFatigueHeatmap() {
+        const container = document.getElementById('fatigue-heatmap-content');
+        const globalBadge = document.getElementById('heatmap-global-badge');
+        if (!container) return;
+
+        const muscleData = FatigueHeatmap.calculateMuscleFatigue();
+        const global = FatigueHeatmap.getGlobalSummary();
+        const entries = Object.values(muscleData);
+
+        // Actualizar badge global
+        if (globalBadge) {
+            globalBadge.textContent = global.label;
+            globalBadge.style.background = global.color;
+        }
+
+        // Verificar si hay datos
+        const hasData = entries.some(d => d.zone !== 'rest');
+        if (!hasData) {
+            container.innerHTML = '<p style="color:#999; font-size:0.8rem;">Completa al menos 1 sesión para ver el mapa de fatiga muscular.</p>';
+            return;
+        }
+
+        let html = '';
+
+        // Grid de músculos con barras
+        entries
+            .sort((a, b) => b.fatigueScore - a.fatigueScore) // Más fatigados primero
+            .forEach(d => {
+                if (d.zone === 'rest') return;
+
+                const barWidth = Math.min(d.volumeRatio, 100);
+                const mavMarkerPos = d.mrv > 0 ? Math.round((d.mav / d.mrv) * 100) : 70;
+
+                // Tiempo de recuperación
+                let recoveryText = '';
+                if (d.recoveryRemaining > 0) {
+                    recoveryText = d.recoveryRemaining >= 24
+                        ? `~${Math.round(d.recoveryRemaining / 24)}d`
+                        : `~${d.recoveryRemaining}h`;
+                } else {
+                    recoveryText = '✓';
+                }
+
+                html += `<div class="heatmap-muscle" style="border-left: 3px solid ${d.color};">
+                    <span style="font-size:0.75rem; min-width:22px;">${d.icon}</span>
+                    <span style="font-size:0.7rem; min-width:75px; color:#E0E0E0; font-weight:500;">${d.name}</span>
+                    <div class="heatmap-bar-bg">
+                        <div class="heatmap-bar-fill" style="width:${barWidth}%; background:${d.color};"></div>
+                        <div class="heatmap-bar-mrv" style="left:${mavMarkerPos}%;" title="MAV"></div>
+                    </div>
+                    <span style="font-size:0.65rem; min-width:42px; text-align:right; color:${d.color}; font-weight:600;">${d.weeklySets}/${d.mrv}</span>
+                    <span style="font-size:0.6rem; min-width:28px; text-align:right; color:#999;" title="Recuperación">${recoveryText}</span>
+                </div>`;
+            });
+
+        // Leyenda compacta
+        html += `<div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+            <span style="font-size:0.6rem; color:#10B981;">● Fresco</span>
+            <span style="font-size:0.6rem; color:#F59E0B;">● Cargado</span>
+            <span style="font-size:0.6rem; color:#EF4444;">● Fatigado</span>
+            <span style="font-size:0.6rem; color:#7C3AED;">● Sobrecarga</span>
+            <span style="font-size:0.6rem; color:#999;">│ = MAV</span>
+        </div>`;
+
+        // Sugerencias para el día de hoy
+        const routineRaw = localStorage.getItem('rpCoach_active_routine');
+        if (routineRaw) {
+            try {
+                const routine = JSON.parse(routineRaw);
+                if (routine.days?.length > 0) {
+                    const currentDayIndex = (routine.completedDays || 0) % routine.days.length;
+                    const todayWorkout = routine.days[currentDayIndex];
+                    const todayMuscles = todayWorkout?.muscles || [];
+
+                    if (todayMuscles.length > 0) {
+                        const suggestions = FatigueHeatmap.getSuggestionsForToday(todayMuscles);
+                        if (suggestions.length > 0) {
+                            html += '<div style="margin-top:10px; font-size:0.7rem; font-weight:600; color:#E0E0E0;">Sugerencias para hoy:</div>';
+                            suggestions.forEach(s => {
+                                html += `<div class="heatmap-suggestion ${s.level}">${s.action}</div>`;
+                            });
+                        }
+                    }
+                }
+            } catch (e) { /* silenciar */ }
+        }
+
+        // KPIs compactos
+        if (global.musclesOverMRV > 0 || global.musclesBelowMEV > 0) {
+            html += `<div style="display:flex; gap:12px; margin-top:10px; padding:6px 10px; background:rgba(255,255,255,0.03); border-radius:6px;">`;
+            if (global.musclesOverMRV > 0) {
+                html += `<span style="font-size:0.7rem; color:#EF4444;">⚠️ ${global.musclesOverMRV} músculo(s) en/sobre MRV</span>`;
+            }
+            if (global.musclesBelowMEV > 0) {
+                html += `<span style="font-size:0.7rem; color:#F59E0B;">📉 ${global.musclesBelowMEV} músculo(s) bajo MEV</span>`;
+            }
+            html += '</div>';
+        }
+
+        container.innerHTML = html;
     }
 
     function renderPremiumInsights() {
