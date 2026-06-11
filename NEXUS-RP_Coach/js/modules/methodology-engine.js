@@ -363,10 +363,21 @@ const MethodologyEngine = (() => {
     }
 
     /**
-     * Obtiene una metodología completa
+     * Obtiene una metodología completa.
+     * Tolerante: resuelve por clave ('FST7'), por id corto ('FST-7') o por
+     * nombre completo ('FST-7 (Fascia Stretch Training)'), porque distintos
+     * módulos históricos pasan cualquiera de las tres formas.
      */
     function getMethodology(methodologyId) {
-        return FULL_METHODOLOGIES[methodologyId] || null;
+        if (!methodologyId) return null;
+        if (FULL_METHODOLOGIES[methodologyId]) return FULL_METHODOLOGIES[methodologyId];
+        const target = String(methodologyId).toLowerCase();
+        for (const meth of Object.values(FULL_METHODOLOGIES)) {
+            if (meth.id?.toLowerCase() === target || meth.name?.toLowerCase() === target) {
+                return meth;
+            }
+        }
+        return null;
     }
 
     /**

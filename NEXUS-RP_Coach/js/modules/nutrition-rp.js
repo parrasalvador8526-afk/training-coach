@@ -22,9 +22,16 @@ const NutricionRP = (() => {
         const container = document.getElementById('nutrition-plan-container');
         if (!container) return;
 
-        // Obtener datos de bioimpedancia
+        // Obtener datos de bioimpedancia (fallback: targets del Plan Flexible)
         const bioData = BioimpedanciaRP?.getDatosCalculados?.();
-        const macros = bioData?.metricas?.macros;
+        let macros = bioData?.metricas?.macros;
+        let usingFallback = false;
+
+        if (!macros && window.NutritionFlexible) {
+            const t = NutritionFlexible.getTargetsBase();
+            macros = { calorias: t.kcal, proteina: t.prot, carbohidratos: t.carb, grasas: t.grasa };
+            usingFallback = true;
+        }
 
         if (!macros) {
             container.innerHTML = `
@@ -76,6 +83,15 @@ const NutricionRP = (() => {
                 </div>
             </div>
             
+            ${usingFallback ? `
+                <div class="alert alert--info mt-2" style="padding:8px; font-size:0.75rem;">
+                    <span>ℹ️</span>
+                    <span>Menú con targets genéricos. Completa <strong>Perfil → DATOS</strong> para personalizarlo.</span>
+                </div>` : ''}
+
+            <!-- Menú del día generado (Plan Estricto) -->
+            ${renderMenuEstricto(macros)}
+
             <!-- Ciclado Ondulante -->
             ${renderCicladoOndulante(macros)}
             
@@ -84,6 +100,96 @@ const NutricionRP = (() => {
             
             <!-- Timing Nutricional -->
             ${renderTimingNutricional(macros)}
+        `;
+    }
+
+    // =============================================
+    // MENÚ DEL DÍA (PLAN ESTRICTO)
+    // =============================================
+
+    /**
+     * Genera un menú fijo de 4 comidas a partir de ALIMENTOS_DB, escalando
+     * porciones para acercarse a los macros objetivo. Rota las fuentes según
+     * el día de la semana para dar variedad sin aleatoriedad.
+     */
+    function generarMenuDiario(macros) {
+        const db = window.ALIMENTOS_DB || [];
+        if (!db.length) return null;
+
+        const pick = (cat, idx) => {
+            const items = db.filter(a => a.cat === cat);
+            return items.length ? items[idx % items.length] : null;
+        };
+        const dia = new Date().getDay();
+
+        // Distribución: desayuno 25%, comida 35%, cena 25%, snack 15%
+        const comidas = [
+            { nombre: '🌅 Desayuno', pKcal: 0.25, fuentes: [pick('proteina', dia + 8), pick('carb', dia + 2), pick('fruta', dia)] },
+            { nombre: '🍽️ Comida', pKcal: 0.35, fuentes: [pick('proteina', dia), pick('carb', dia), pick('veg', dia), pick('grasa', dia)] },
+            { nombre: '🌙 Cena', pKcal: 0.25, fuentes: [pick('proteina', dia + 3), pick('veg', dia + 2), pick('grasa', dia + 1)] },
+            { nombre: '🥜 Snack', pKcal: 0.15, fuentes: [pick('lacteo', dia), pick('fruta', dia + 1)] }
+        ];
+
+        return comidas.map(comida => {
+            const fuentes = comida.fuentes.filter(Boolean);
+            const kcalObjetivo = macros.calorias * comida.pKcal;
+            const kcalBase = fuentes.reduce((s, f) => s + f.kcal, 0) || 1;
+            // Escala global de la comida hacia su presupuesto calórico (límites razonables)
+            const escala = Math.min(2.5, Math.max(0.5, kcalObjetivo / kcalBase));
+
+            let totales = { kcal: 0, prot: 0, carb: 0, grasa: 0 };
+            const items = fuentes.map(f => {
+                const gramos = Math.round(f.gramos * escala);
+                const r = {
+                    nombre: f.nombre,
+                    gramos,
+                    kcal: Math.round(f.kcal * escala),
+                    prot: Math.round(f.prot * escala),
+                    carb: Math.round(f.carb * escala),
+                    grasa: Math.round(f.grasa * escala)
+                };
+                totales.kcal += r.kcal; totales.prot += r.prot;
+                totales.carb += r.carb; totales.grasa += r.grasa;
+                return r;
+            });
+            return { nombre: comida.nombre, items, totales };
+        });
+    }
+
+    function renderMenuEstricto(macros) {
+        const menu = generarMenuDiario(macros);
+        if (!menu) return '';
+
+        const totalDia = menu.reduce((acc, c) => ({
+            kcal: acc.kcal + c.totales.kcal, prot: acc.prot + c.totales.prot,
+            carb: acc.carb + c.totales.carb, grasa: acc.grasa + c.totales.grasa
+        }), { kcal: 0, prot: 0, carb: 0, grasa: 0 });
+
+        return `
+            <div class="card mt-3">
+                <div class="card__header">
+                    <h4>📋 Menú de Hoy (Plan Estricto)</h4>
+                    <span class="rp-badge" style="background:#10B981;">${totalDia.kcal} kcal</span>
+                </div>
+                ${menu.map(comida => `
+                    <div style="margin-top:12px; padding:10px; background:rgba(255,255,255,0.03); border-radius:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="font-size:0.85rem;">${comida.nombre}</strong>
+                            <span class="text-muted" style="font-size:0.68rem;">
+                                ${comida.totales.kcal} kcal · P ${comida.totales.prot}g · C ${comida.totales.carb}g · G ${comida.totales.grasa}g
+                            </span>
+                        </div>
+                        ${comida.items.map(i => `
+                            <div style="display:flex; justify-content:space-between; font-size:0.78rem; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <span>${i.nombre} <span class="text-muted" style="font-size:0.65rem;">(${i.gramos}g)</span></span>
+                                <span class="text-muted">${i.kcal} kcal</span>
+                            </div>`).join('')}
+                    </div>`).join('')}
+                <div class="alert alert--info mt-2" style="padding:8px; font-size:0.75rem;">
+                    <span>🔄</span>
+                    <span>El menú rota automáticamente cada día de la semana. Total: <strong>${totalDia.kcal} kcal · P ${totalDia.prot}g · C ${totalDia.carb}g · G ${totalDia.grasa}g</strong> (objetivo: ${macros.calorias} kcal).</span>
+                </div>
+            </div>
         `;
     }
 
@@ -272,6 +378,7 @@ const NutricionRP = (() => {
     }
 
     // =============================================
+    // =============================================
     // UTILIDADES
     // =============================================
 
@@ -279,6 +386,7 @@ const NutricionRP = (() => {
         localStorage.setItem('rpCoach_methodology', metodologia);
         renderPlanNutricional();
     }
+
 
     // API Pública
     return {

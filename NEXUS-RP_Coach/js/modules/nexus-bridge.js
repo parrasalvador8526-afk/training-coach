@@ -235,7 +235,7 @@ const NEXUSBridge = (() => {
      * Obtiene resumen de progreso
      */
     function getProgressSummary() {
-        const sessions = JSON.parse(localStorage.getItem('rpCoach_enhanced_sessions') || '[]');
+        const sessions = JSON.parse(localStorage.getItem('rpCoach_enhanced_logs') || '[]');
         const logs = JSON.parse(localStorage.getItem('rpCoach_session_logs') || '[]');
 
         // Calcular estadísticas

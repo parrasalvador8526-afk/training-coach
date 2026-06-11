@@ -1517,3 +1517,228 @@ h4 {
         font-size: 0.65rem;
     }
 }
+
+/* ═══════════════════════════════════════════════
+   PREMIUM UI — Dashboard de Evolución + Nutrición
+   ═══════════════════════════════════════════════ */
+
+/* Glassmorphism sutil sin sacrificar contraste (uso en gimnasio) */
+.glass-card {
+    background: linear-gradient(145deg, rgba(26, 26, 46, 0.75), rgba(37, 37, 64, 0.55));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Micro-interacciones globales: feedback táctil visual */
+.btn, .nav-tab, .evo-subtab, .nutri-subtab {
+    transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn:active, .nav-tab:active, .evo-subtab:active, .nutri-subtab:active {
+    transform: scale(0.96);
+    filter: brightness(1.15);
+}
+.btn { min-height: 44px; } /* objetivo táctil mínimo */
+
+/* ── Anillos estilo Apple Watch ── */
+.evo-rings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+}
+.evo-ring { text-align: center; }
+.evo-ring-svg { width: 100%; max-width: 130px; }
+.evo-ring-progress {
+    transition: stroke-dashoffset 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.evo-ring__title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    margin-top: 2px;
+}
+.evo-ring__label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* ── Sub-pestañas (Evolución y Nutrición) ── */
+.evo-subtabs, .nutri-subtabs {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+.evo-subtab, .nutri-subtab {
+    flex: 1;
+    white-space: nowrap;
+    padding: 10px 12px;
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+.evo-subtab.active, .nutri-subtab.active {
+    background: var(--gradient-primary);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(224, 64, 251, 0.35);
+}
+
+/* ── Filas de PRs en el dashboard ── */
+.evo-pr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.82rem;
+}
+.evo-pr-row:last-child { border-bottom: none; }
+
+/* ── Barras de macros fluidas (Plan Flexible) ── */
+.macro-bar { margin-bottom: 14px; }
+.macro-bar__head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    margin-bottom: 5px;
+}
+.macro-bar__track {
+    height: 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+}
+.macro-bar__fill {
+    height: 100%;
+    border-radius: 8px;
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    background-size: 200% 100%;
+}
+.macro-bar__fill--over {
+    animation: macroOverPulse 1.4s ease-in-out infinite;
+}
+@keyframes macroOverPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.65; }
+}
+
+/* ── Lista de comidas del diario ── */
+.meal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8rem;
+    animation: mealIn 0.3s ease;
+}
+@keyframes mealIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.meal-row__macros {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+.meal-row .btn-del {
+    background: none;
+    border: none;
+    color: var(--rp-danger);
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+/* ── Tarjetas de tiendas (geonutricional) ── */
+.store-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.2s ease;
+}
+.store-chip:active { transform: scale(0.95); }
+.store-chip.active {
+    border-color: var(--rp-accent);
+    box-shadow: 0 0 12px rgba(0, 191, 165, 0.3);
+}
+.store-suggestion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 10px;
+    background: rgba(0, 191, 165, 0.06);
+    border: 1px solid rgba(0, 191, 165, 0.18);
+    font-size: 0.8rem;
+}
+
+/* ── Escáner de códigos ── */
+#scanner-video {
+    width: 100%;
+    border-radius: 14px;
+    background: #000;
+    max-height: 280px;
+    object-fit: cover;
+}
+.scanner-status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 8px;
+}
+
+/* ── Banner de ajuste del coach (sinergia entreno↔nutrición) ── */
+.coach-adjustment-banner {
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(0, 230, 118, 0.35);
+    background: linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 191, 165, 0.05));
+    animation: mealIn 0.4s ease;
+}
+.coach-adjustment-banner--ignored {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    opacity: 0.75;
+}
+
+/* Skeleton loader para cargas async (Open Food Facts, geolocalización) */
+.skeleton {
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.05) 75%);
+    background-size: 200% 100%;
+    animation: skeletonWave 1.3s infinite;
+}
+@keyframes skeletonWave {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
+/* Accesibilidad: respeta usuarios con movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .evo-ring-progress, .macro-bar__fill, .meal-row, .skeleton { transition: none; animation: none; }
+}

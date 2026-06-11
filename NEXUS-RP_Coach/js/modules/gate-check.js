@@ -135,7 +135,12 @@ const GateCheck = (() => {
         if (window.AutoregulationEngine?.getMesocycleState) {
             currentWeek = window.AutoregulationEngine.getMesocycleState().week || 1;
         } else {
-            currentWeek = parseInt(localStorage.getItem('rpCoach_mesocycleWeek') || '1');
+            // Fallback: semana registrada en la rutina activa (rpCoach_mesocycleWeek no se escribe)
+            let routineWeek = 1;
+            try {
+                routineWeek = JSON.parse(localStorage.getItem('rpCoach_active_routine') || '{}').mesocycleWeek || 1;
+            } catch { }
+            currentWeek = parseInt(localStorage.getItem('rpCoach_mesocycleWeek') || routineWeek);
         }
 
         const totalWeeks = mesoConfig.weeks;

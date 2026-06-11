@@ -8,6 +8,14 @@
     <meta name="description"
         content="Sistema de autorregulación inteligente inspirado en RP Hypertrophy App, sincronizado con 11 metodologías de entrenamiento.">
 
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0D0D1A">
+    <link rel="icon" type="image/svg+xml" href="img/icon.svg">
+    <link rel="apple-touch-icon" href="img/icon.svg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -413,16 +421,12 @@
                 <span class="nav-tab__icon">📋</span>
                 FEEDBACK
             </button>
-            <button class="nav-tab" data-module="visual">
-                <span class="nav-tab__icon">📈</span>
-                MÉTRICAS Y PROGRESO
-            </button>
-            <button class="nav-tab" data-module="progress">
-                <span class="nav-tab__icon">⬆️</span>
-                PROGRESIÓN
+            <button class="nav-tab" data-module="evolution">
+                <span class="nav-tab__icon">🚀</span>
+                EVOLUCIÓN
             </button>
             <!-- Perfil movido al header -->
-            
+
             <button class="nav-tab" data-module="nutrition">
                 <span class="nav-tab__icon">🍽️</span>
                 COACH NUTRICIONAL
@@ -752,7 +756,7 @@
                         </div>
                     </div>
                     <button class="btn btn--secondary btn--sm"
-                        onclick="document.querySelector('.nav-tab[data-module=\'visual\']').click();"
+                        onclick="document.querySelector('.nav-tab[data-module=\'evolution\']').click();"
                         style="width:100%; font-size:0.75rem; padding:6px;">
                         Ir a Métricas →
                     </button>
@@ -1265,6 +1269,50 @@
         </section>
 
         <!-- ========== MÓDULO: PROGRESO VISUAL ========== -->
+        <!-- ========== MÓDULO: DASHBOARD DE EVOLUCIÓN (fusiona Métricas + Progresión) ========== -->
+        <section id="module-evolution" class="module-section hidden">
+            <div class="card card--highlight glass-card mb-2">
+                <div class="card__header">
+                    <h3 class="card__title">🚀 Dashboard de Evolución</h3>
+                    <span class="rp-badge" style="background:var(--gradient-primary);">PREMIUM</span>
+                </div>
+                <p class="text-muted" style="font-size:0.8rem;">Tu semana de un vistazo: adherencia, volumen y
+                    recuperación.</p>
+
+                <!-- Anillos estilo Apple Watch -->
+                <div id="evolution-rings" class="evo-rings"></div>
+            </div>
+
+            <!-- Sub-navegación interna -->
+            <div class="evo-subtabs">
+                <button class="evo-subtab active" data-sub="resumen">📊 Resumen</button>
+                <button class="evo-subtab" data-sub="metricas">📸 Métricas y Fotos</button>
+                <button class="evo-subtab" data-sub="progresion">⬆️ Progresión</button>
+            </div>
+
+            <!-- Vista Resumen: gráficas + PRs -->
+            <div id="evolution-resumen">
+                <div class="card glass-card mt-2">
+                    <div class="card__header">
+                        <h4>🏋️ Volumen semanal (series)</h4>
+                    </div>
+                    <div style="height:200px;"><canvas id="chart-evo-volume"></canvas></div>
+                </div>
+                <div class="card glass-card mt-2">
+                    <div class="card__header">
+                        <h4>📈 Tonelaje por sesión</h4>
+                    </div>
+                    <div style="height:200px;"><canvas id="chart-evo-tonnage"></canvas></div>
+                </div>
+                <div class="card glass-card mt-2">
+                    <div class="card__header">
+                        <h4>🏆 PRs recientes</h4>
+                    </div>
+                    <div id="evolution-prs"></div>
+                </div>
+            </div>
+        </section>
+
         <section id="module-visual" class="module-section hidden">
             <div class="card card--highlight mb-3">
                 <div class="card__header">
@@ -1728,62 +1776,32 @@
                      ║  BLOQUE 1 — PLANIFICACIÓN DEL MESOCICLO         ║
                      ╚══════════════════════════════════════════════════╝ -->
 
-                <!-- ===== 7. Estructura del Mesociclo ===== -->
-                <div class="card mt-2">
+                <!-- ===== 1. Estructura del Mesociclo (PREMIUM — Dinámica por Metodología) ===== -->
+                <div class="card mt-2" id="mesocycle-structure-card">
                     <div class="card__header">
                         <h4>📅 1. Estructura del Mesociclo</h4>
-                        <span class="rp-badge">Planificación</span>
+                        <span class="rp-badge" style="background:rgba(139,92,246,0.2); color:#A78BFA;">Dinámico</span>
                     </div>
-                    <p class="text-muted mt-1">Un mesociclo típico dura 4-6 semanas con progresión ondulante de volumen
-                        e intensidad:</p>
-                    <table class="data-table mt-2">
-                        <tr>
-                            <th>Semana</th>
-                            <th>Fase</th>
-                            <th>RIR</th>
-                            <th>Volumen</th>
-                            <th>Objetivo</th>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Acumulación</td>
-                            <td>3</td>
-                            <td>MEV</td>
-                            <td>Establecer base, técnica perfecta</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Progresión</td>
-                            <td>2</td>
-                            <td>MEV→MAV</td>
-                            <td>Aumentar estímulo gradualmente</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Intensificación</td>
-                            <td>1</td>
-                            <td>MAV</td>
-                            <td>Empujar cerca del límite</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Peak</td>
-                            <td>0</td>
-                            <td>MAV→MRV</td>
-                            <td>Máximo esfuerzo controlado</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Deload</td>
-                            <td>4-5</td>
-                            <td>50% MEV</td>
-                            <td>Recuperación y supercompensación</td>
-                        </tr>
-                    </table>
-                    <div class="alert alert--info mt-2">
-                        <span>ℹ️</span>
-                        <span><strong>Excepciones:</strong> 5/3/1 tiene deload integrado en semana 4 · Y3T cicla
-                            cada 3 semanas · HIT Inteligente (HD/BG) usa mesociclo corto de 4 semanas.</span>
+
+                    <!-- Selectores compactos inline -->
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+                        <div style="flex:1; min-width:140px;">
+                            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:3px;">Metodología</label>
+                            <select id="meso-struct-methodology" class="form-select" style="padding:5px 8px; font-size:0.78rem;"
+                                onchange="window.renderMesocycleStructure && window.renderMesocycleStructure()">
+                            </select>
+                        </div>
+                        <div style="flex:0 0 auto; min-width:130px;">
+                            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:3px;">Semana actual</label>
+                            <select id="meso-struct-week" class="form-select" style="padding:5px 8px; font-size:0.78rem;"
+                                onchange="window.renderMesocycleStructure && window.renderMesocycleStructure()">
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Contenido dinámico: tabla + barra de progreso + nota -->
+                    <div id="mesocycle-structure-content">
+                        <p class="text-muted" style="font-size:0.85rem;">Cargando estructura del mesociclo...</p>
                     </div>
                 </div>
 
@@ -1894,41 +1912,47 @@
                         Es la herramienta #1 para autorregular tu entrenamiento: RIR 3 = podrías hacer 3 más | RIR 0 =
                         llegaste al fallo.
                     </p>
-                    <table class="data-table mt-2">
+                    <table class="data-table mt-2" style="font-size:0.8rem;">
                         <tr>
                             <th>RIR</th>
                             <th>RPE</th>
-                            <th>% 1RM aprox.</th>
+                            <th>% 1RM</th>
+                            <th>Velocidad de Barra</th>
                             <th>Descripción</th>
                         </tr>
                         <tr>
-                            <td>4+</td>
+                            <td style="color:#10B981; font-weight:700;">4+</td>
                             <td>6</td>
                             <td>≤70%</td>
+                            <td style="color:#10B981; font-size:0.75rem;">Rápida y controlada</td>
                             <td>Calentamiento / Deload</td>
                         </tr>
                         <tr>
-                            <td>3</td>
+                            <td style="color:#10B981; font-weight:700;">3</td>
                             <td>7</td>
                             <td>~75%</td>
+                            <td style="color:#10B981; font-size:0.75rem;">Buena velocidad, sin lucha</td>
                             <td>Trabajo moderado — base de acumulación</td>
                         </tr>
                         <tr>
-                            <td>2</td>
+                            <td style="color:#6366F1; font-weight:700;">2</td>
                             <td>8</td>
                             <td>~80%</td>
+                            <td style="color:#6366F1; font-size:0.75rem;">Velocidad moderada, algo de lucha</td>
                             <td>Esfuerzo considerable — zona productiva</td>
                         </tr>
                         <tr>
-                            <td>1</td>
+                            <td style="color:#F59E0B; font-weight:700;">1</td>
                             <td>9</td>
                             <td>~85%</td>
+                            <td style="color:#F59E0B; font-size:0.75rem;">Notablemente lenta en la última rep</td>
                             <td>Muy cerca del fallo — máximo estímulo</td>
                         </tr>
                         <tr>
-                            <td>0</td>
+                            <td style="color:#EF4444; font-weight:700;">0</td>
                             <td>10</td>
                             <td>~90-100%</td>
+                            <td style="color:#EF4444; font-size:0.75rem;">Casi detenida o detenida (fallo)</td>
                             <td>Fallo muscular — usar con precaución</td>
                         </tr>
                     </table>
@@ -1936,6 +1960,41 @@
                         <span>ℹ️</span>
                         <span><strong>RPE = 10 − RIR.</strong> Ambas escalas miden lo mismo desde perspectivas opuestas.
                             La mayoría de la hipertrofia ocurre entre RIR 0-3 (RPE 7-10).</span>
+                    </div>
+
+                    <!-- Calibración de RIR -->
+                    <div style="margin-top:12px; padding:12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:8px;">
+                        <h5 style="color:#F59E0B; font-size:0.85rem; margin-bottom:8px;">🎓 Calibración del RIR — Cómo evitar errores comunes</h5>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr>
+                                <th>Error frecuente</th>
+                                <th>Consecuencia</th>
+                                <th>Corrección</th>
+                            </tr>
+                            <tr>
+                                <td>Reportar RIR 2 cuando en realidad es 0</td>
+                                <td style="color:#EF4444;">Subvaloras el esfuerzo → subes peso innecesariamente</td>
+                                <td>Usa la velocidad de barra como ancla objetiva</td>
+                            </tr>
+                            <tr>
+                                <td>Reportar RIR 0 en semanas de acumulación</td>
+                                <td style="color:#EF4444;">Fatiga acumulada excesiva → peor recuperación</td>
+                                <td>Si la barra se mueve rápido, el RIR real es mayor</td>
+                            </tr>
+                            <tr>
+                                <td>RIR inconsistente entre sesiones</td>
+                                <td style="color:#F59E0B;">Datos de progresión poco confiables</td>
+                                <td>Establece un "rep de calibración" con peso conocido al inicio</td>
+                            </tr>
+                            <tr>
+                                <td>No diferenciar fatiga de fallo muscular</td>
+                                <td style="color:#F59E0B;">Confundir fatiga sistémica con RIR bajo real</td>
+                                <td>Descansa 3 min → si puedes hacer más reps, era fatiga, no fallo</td>
+                            </tr>
+                        </table>
+                        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:8px; font-style:italic;">
+                            Tip: Los principiantes típicamente subestiman su RIR en 2-3 puntos. Los avanzados lo estiman con ±1 rep de precisión.
+                        </p>
                     </div>
                 </div>
 
@@ -2087,7 +2146,7 @@
                     </div>
 
                     <!-- ¿Por qué registrar cada serie? -->
-                    <div style="padding:10px; background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15); border-radius:8px;">
+                    <div style="padding:10px; background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15); border-radius:8px; margin-bottom:10px;">
                         <h5 style="color:#FBBF24; font-size:0.85rem; margin-bottom:6px;">💡 ¿Por qué registrar cada serie?</h5>
                         <ul style="font-size:0.78rem; color:var(--text-muted); padding-left:16px; margin:0;">
                             <li style="margin-bottom:4px;"><strong style="color:white;">Fatiga acumulada:</strong> Es normal que las reps bajen entre series (ej. 10→9→8). Esto es <em>fatiga de performance</em>, no pérdida de estímulo.</li>
@@ -2095,6 +2154,56 @@
                             <li style="margin-bottom:4px;"><strong style="color:white;">Ajustar volumen individual:</strong> Según RP, el volumen ideal (MAV) varía entre personas. El tracking por serie te muestra exactamente cuándo dejas de ser productivo.</li>
                             <li><strong style="color:white;">Progresión real:</strong> Comparar Serie 1 de la Semana 3 vs Serie 1 de la Semana 1 te da una medición real de fuerza sin interferencia de fatiga.</li>
                         </ul>
+                    </div>
+
+                    <!-- Control de Tempo -->
+                    <div style="padding:10px; background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.2); border-radius:8px;">
+                        <h5 style="color:#818CF8; font-size:0.85rem; margin-bottom:6px;">⏱️ Control de Tempo (Velocidad de Contracción)</h5>
+                        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">
+                            El tempo se escribe como <strong style="color:white;">4 números: Excéntrico – Pausa abajo – Concéntrico – Pausa arriba</strong>.
+                            Cada dígito es la duración en segundos de esa fase. Controlar el tempo multiplica el tiempo bajo tensión sin cambiar el peso.
+                        </p>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr>
+                                <th>Contexto</th>
+                                <th style="text-align:center;">Tempo</th>
+                                <th>Lectura</th>
+                                <th>Objetivo</th>
+                            </tr>
+                            <tr>
+                                <td>Hipertrofia estándar</td>
+                                <td style="text-align:center; color:#818CF8; font-weight:700; font-family:monospace;">3-1-2-0</td>
+                                <td style="font-size:0.72rem;">3s bajar · 1s pausa · 2s subir · sin pausa</td>
+                                <td style="font-size:0.72rem;">Máximo TUT productivo</td>
+                            </tr>
+                            <tr>
+                                <td>MTUT / Tensión Máxima</td>
+                                <td style="text-align:center; color:#A78BFA; font-weight:700; font-family:monospace;">4-2-3-1</td>
+                                <td style="font-size:0.72rem;">4s bajar · 2s pausa · 3s subir · 1s pausa</td>
+                                <td style="font-size:0.72rem;">Estrés metabólico extremo</td>
+                            </tr>
+                            <tr>
+                                <td>Fuerza / Potencia</td>
+                                <td style="text-align:center; color:#10B981; font-weight:700; font-family:monospace;">3-0-X-0</td>
+                                <td style="font-size:0.72rem;">3s bajar · sin pausa · explosivo · sin pausa</td>
+                                <td style="font-size:0.72rem;">Reclutamiento fibras tipo II</td>
+                            </tr>
+                            <tr>
+                                <td>Deload / Recuperación</td>
+                                <td style="text-align:center; color:#F59E0B; font-weight:700; font-family:monospace;">2-0-2-0</td>
+                                <td style="font-size:0.72rem;">2s bajar · sin pausa · 2s subir · sin pausa</td>
+                                <td style="font-size:0.72rem;">Flujo sanguíneo sin fatiga</td>
+                            </tr>
+                            <tr>
+                                <td>Énfasis excéntrico</td>
+                                <td style="text-align:center; color:#EF4444; font-weight:700; font-family:monospace;">5-0-1-0</td>
+                                <td style="font-size:0.72rem;">5s bajar · sin pausa · 1s subir · sin pausa</td>
+                                <td style="font-size:0.72rem;">Daño muscular controlado</td>
+                            </tr>
+                        </table>
+                        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:8px; font-style:italic;">
+                            <strong style="color:#818CF8;">Progresión de tempo:</strong> Antes de subir peso, intenta mantener el tempo objetivo. Si con 3-1-2-0 no puedes completar las reps, es señal de que el peso es el factor limitante correcto.
+                        </p>
                     </div>
                 </div>
 
@@ -2204,6 +2313,223 @@
                         Es el complemento de la macro-progresión del mesociclo (RIR semanal, volumen MEV→MRV).
                     </p>
                     <div id="dp-progress-section-content" class="mt-2"></div>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 8b — CALCULADORA DE CALENTAMIENTO        ║
+                     ╚══════════════════════════════════════════════════╝ -->
+                <div class="card mt-2" style="border-left:4px solid #F59E0B;">
+                    <div class="card__header">
+                        <h4 style="color:#F59E0B;">🔥 Calculadora de Calentamiento</h4>
+                        <span class="rp-badge" style="background:rgba(245,158,11,0.2); color:#F59E0B;">Protocolo RP</span>
+                    </div>
+                    <p class="text-muted mt-1" style="font-size:0.8rem;">
+                        El calentamiento específico prepara el SNC, la articulación y los patrones motores sin acumular fatiga que afecte la serie de trabajo. Ingresa tu peso de trabajo y obtén el protocolo completo.
+                    </p>
+                    <div style="display:flex; gap:10px; align-items:flex-end; margin-top:12px; flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1; min-width:120px; margin:0;">
+                            <label class="form-label" style="font-size:0.78rem;">Peso de trabajo (kg)</label>
+                            <input type="number" id="warmup-weight" class="form-input" placeholder="ej. 100" min="1" max="500"
+                                oninput="window.calcWarmup && window.calcWarmup()"
+                                style="padding:8px 10px; font-size:0.9rem;">
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:120px; margin:0;">
+                            <label class="form-label" style="font-size:0.78rem;">Tipo de movimiento</label>
+                            <select id="warmup-type" class="form-select" style="padding:8px 10px;"
+                                onchange="window.calcWarmup && window.calcWarmup()">
+                                <option value="compound">Compuesto (Press, Squat, Remo)</option>
+                                <option value="isolation">Aislamiento (Curl, Extension)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="warmup-result" class="mt-3" style="display:none;">
+                        <table class="data-table" style="font-size:0.8rem;" id="warmup-table">
+                            <tr>
+                                <th>Serie</th>
+                                <th>% Trabajo</th>
+                                <th>Peso (kg)</th>
+                                <th>Reps</th>
+                                <th>Descanso</th>
+                                <th>Propósito</th>
+                            </tr>
+                        </table>
+                        <div id="warmup-note" class="alert alert--info mt-2" style="font-size:0.78rem;"></div>
+                    </div>
+                    <div id="warmup-placeholder" class="mt-2" style="padding:12px; background:rgba(245,158,11,0.05); border:1px dashed rgba(245,158,11,0.3); border-radius:8px; text-align:center;">
+                        <p style="color:var(--text-muted); font-size:0.8rem; margin:0;">Ingresa tu peso de trabajo para ver el protocolo de calentamiento</p>
+                    </div>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 8c — SEÑALES DE DELOAD                   ║
+                     ╚══════════════════════════════════════════════════╝ -->
+                <div class="card mt-2" style="border-left:4px solid #EF4444;">
+                    <div class="card__header">
+                        <h4 style="color:#EF4444;">⚠️ Señales de Deload — Indicadores de Fatiga Acumulada</h4>
+                        <span class="rp-badge" style="background:rgba(239,68,68,0.2); color:#EF4444;">Autorregulación</span>
+                    </div>
+                    <p class="text-muted mt-1" style="font-size:0.8rem;">
+                        El deload no es opcional — es parte estructural del mesociclo. Estas señales te dicen cuándo tu sistema nervioso y muscular necesitan reducción de carga <em>antes</em> de que el rendimiento colapse.
+                    </p>
+
+                    <!-- Señales de Performance -->
+                    <div style="margin-top:12px; padding:10px; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:8px; margin-bottom:8px;">
+                        <h5 style="color:#EF4444; font-size:0.82rem; margin-bottom:8px;">💪 Señales de Rendimiento</h5>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr><th>Señal</th><th>Qué significa</th><th>Umbral de alarma</th></tr>
+                            <tr>
+                                <td>La barra se mueve más lenta sin cambio de peso</td>
+                                <td>Fatiga acumulada del SNC</td>
+                                <td style="color:#EF4444;">Velocidad caída &gt;20% vs semana 1</td>
+                            </tr>
+                            <tr>
+                                <td>No alcanzas el rango mínimo de reps</td>
+                                <td>Fatiga muscular / articular</td>
+                                <td style="color:#EF4444;">2 sesiones consecutivas por debajo</td>
+                            </tr>
+                            <tr>
+                                <td>RIR reportado no corresponde al esfuerzo real</td>
+                                <td>Desconexión mente-músculo por fatiga</td>
+                                <td style="color:#F59E0B;">Discrepancia de 2+ puntos repetida</td>
+                            </tr>
+                            <tr>
+                                <td>Necesitas más calentamiento para alcanzar el rendimiento</td>
+                                <td>Sistema nervioso subrecuperado</td>
+                                <td style="color:#F59E0B;">+2 series extra de calentamiento</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Señales de Recuperación -->
+                    <div style="padding:10px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.15); border-radius:8px; margin-bottom:8px;">
+                        <h5 style="color:#F59E0B; font-size:0.82rem; margin-bottom:8px;">😴 Señales de Recuperación</h5>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr><th>Señal</th><th>Umbral</th></tr>
+                            <tr>
+                                <td>Dolor muscular residual al comenzar la siguiente sesión</td>
+                                <td style="color:#EF4444;">Agujetas activas en el músculo entrenado &gt;72h</td>
+                            </tr>
+                            <tr>
+                                <td>Calidad del sueño degradada sin causa externa</td>
+                                <td style="color:#F59E0B;">3+ noches consecutivas con sueño fragmentado</td>
+                            </tr>
+                            <tr>
+                                <td>Frecuencia cardíaca en reposo elevada</td>
+                                <td style="color:#EF4444;">+5-7 bpm sobre tu basal normal</td>
+                            </tr>
+                            <tr>
+                                <td>Apetito suprimido o antojos de azúcar extremos</td>
+                                <td style="color:#F59E0B;">Patrón sostenido por más de 4 días</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Señales Psicológicas -->
+                    <div style="padding:10px; background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.15); border-radius:8px; margin-bottom:8px;">
+                        <h5 style="color:#818CF8; font-size:0.82rem; margin-bottom:8px;">🧠 Señales Psicológicas</h5>
+                        <ul style="font-size:0.75rem; color:var(--text-muted); padding-left:16px; margin:0;">
+                            <li style="margin-bottom:4px;"><strong style="color:white;">Aversión al entrenamiento:</strong> Antes disfrutabas ir al gym y ahora lo evitas o llegas sin motivación</li>
+                            <li style="margin-bottom:4px;"><strong style="color:white;">Irritabilidad post-entrenamiento:</strong> Fatiga del SNC que se traduce en estado de ánimo bajo</li>
+                            <li style="margin-bottom:4px;"><strong style="color:white;">Ansiedad sobre el rendimiento:</strong> Miedo a "fallar" en las series — síntoma claro de sobreentrenamiento funcional</li>
+                            <li><strong style="color:white;">Indiferencia ante el progreso:</strong> Logras un PR y no lo sientes como un logro — señal de agotamiento total</li>
+                        </ul>
+                    </div>
+
+                    <!-- Protocolo de Deload -->
+                    <div style="padding:10px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.15); border-radius:8px;">
+                        <h5 style="color:#10B981; font-size:0.82rem; margin-bottom:8px;">✅ Protocolo de Deload Estándar</h5>
+                        <table class="data-table" style="font-size:0.75rem;">
+                            <tr><th>Variable</th><th>Reducción</th><th>Mantener</th></tr>
+                            <tr>
+                                <td>Volumen (series)</td>
+                                <td style="color:#10B981;">−40 a −50%</td>
+                                <td>Frecuencia de entrenamiento</td>
+                            </tr>
+                            <tr>
+                                <td>Intensidad (carga)</td>
+                                <td style="color:#10B981;">−20 a −30% (RIR 4-5)</td>
+                                <td>Movimientos compuestos principales</td>
+                            </tr>
+                            <tr>
+                                <td>Duración</td>
+                                <td colspan="2">1 semana completa (no menos)</td>
+                            </tr>
+                        </table>
+                        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:8px; font-style:italic;">
+                            Un deload bien ejecutado = vuelta al entrenamiento con superbonificación de fuerza y +10-20% de capacidad de volumen tolerable.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ╔══════════════════════════════════════════════════╗
+                     ║  BLOQUE 8d — PROTOCOLO ANTI-PLATEAU              ║
+                     ╚══════════════════════════════════════════════════╝ -->
+                <div class="card mt-2" style="border-left:4px solid #8B5CF6; background:rgba(139,92,246,0.03);">
+                    <div class="card__header">
+                        <h4 style="color:#A78BFA;">🧩 Protocolo Anti-Plateau</h4>
+                        <span class="rp-badge" style="background:rgba(139,92,246,0.2); color:#A78BFA;">Resolución de Estancamiento</span>
+                    </div>
+                    <p class="text-muted mt-1" style="font-size:0.8rem;">
+                        Si llevas 2-3 sesiones consecutivas sin poder progresar en un ejercicio (mismo peso, mismas reps, RIR sin bajar), sigue este protocolo escalonado. No aumentes el volumen — diagnostica primero.
+                    </p>
+
+                    <!-- Árbol de decisiones -->
+                    <div style="margin-top:12px;">
+                        <div style="padding:10px 14px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:8px; margin-bottom:6px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="background:#8B5CF6; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">1</span>
+                                <div>
+                                    <p style="font-size:0.82rem; font-weight:700; color:white; margin:0;">Verifica el timing del deload</p>
+                                    <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0 0;">Si estás en semana 4-6 del mesociclo → el plateau es señal de que el deload es lo que necesitas, no un cambio de ejercicio. Ejecuta el deload y observa el rebote en la semana siguiente.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding:10px 14px; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); border-radius:8px; margin-bottom:6px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="background:#6366F1; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">2</span>
+                                <div>
+                                    <p style="font-size:0.82rem; font-weight:700; color:white; margin:0;">Cambia el rango de repeticiones</p>
+                                    <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0 0;">Si trabajabas 8-12 reps → baja a 6-8 con más peso (sobrecarga tensional) o sube a 12-15 con menos peso (estrés metabólico). Mismo músculo, diferente estímulo → rompe la adaptación.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding:10px 14px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:8px; margin-bottom:6px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="background:#F59E0B; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">3</span>
+                                <div>
+                                    <p style="font-size:0.82rem; font-weight:700; color:white; margin:0;">Añade un intensificador de serie</p>
+                                    <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0 0;">Agrega un Drop Set (−20% de peso × 6-8 reps extra) o Rest-Pause (15s descanso → 3-4 reps más) solo en la última serie del ejercicio. No en todas — genera fatiga extra sin el volumen adicional.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding:10px 14px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:8px; margin-bottom:6px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="background:#10B981; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">4</span>
+                                <div>
+                                    <p style="font-size:0.82rem; font-weight:700; color:white; margin:0;">Cambia el orden del ejercicio</p>
+                                    <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0 0;">Mueve el ejercicio estancado al inicio de la sesión (cuando el SNC está fresco) o al final (para eliminarlo como ejercicio prioritario y convertirlo en complemento). El orden altera el estímulo significativamente.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding:10px 14px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:8px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="background:#EF4444; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">5</span>
+                                <div>
+                                    <p style="font-size:0.82rem; font-weight:700; color:white; margin:0;">Swap del ejercicio — variante biomecánica</p>
+                                    <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0 0;">Último recurso: sustituye el ejercicio por una variante que cambie el perfil de tensión. Ej: Press plano → Press inclinado o Press con mancuernas. El músculo recibe un estímulo nuevo pero mecánicamente equivalente. Mantén el ejercicio original en el siguiente mesociclo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert mt-3" style="background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.25); border-radius:8px; padding:10px 14px;">
+                        <span>🧠</span>
+                        <span style="font-size:0.78rem;"><strong style="color:#A78BFA;">Regla de oro:</strong> Un plateau de 2 semanas es información — no fracaso. Te dice que una variable (volumen, intensidad, recuperación, ejercicio) está saturada. El protocolo te ayuda a identificar cuál.</span>
+                    </div>
                 </div>
 
                 <!-- ╔══════════════════════════════════════════════════╗
@@ -2945,12 +3271,41 @@
 
         <!-- ========== MÓDULO: COACH NUTRICIONAL ========== -->
         <section id="module-nutrition" class="module-section hidden">
-            <div class="card card--highlight"
+            <div class="card card--highlight glass-card mb-2"
                 style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(220, 38, 38, 0.02)); border: 1px solid rgba(239, 68, 68, 0.2);">
                 <div class="card__header">
                     <h3 class="card__title" style="color: #EF4444;">🍽️ Coach Nutricional</h3>
-                    <span class="rp-badge" style="background:linear-gradient(135deg,#EF4444,#DC2626);">BETA</span>
+                    <span class="rp-badge" style="background:var(--gradient-primary);">PREMIUM</span>
                 </div>
+                <p class="text-muted" style="font-size:0.8rem;">Plan flexible, menús estrictos, sugerencias por tienda y
+                    escáner de alimentos — sincronizado con tu entrenamiento.</p>
+            </div>
+
+            <!-- Banner de ajuste automático (sinergia entrenamiento ↔ nutrición) -->
+            <div id="nutrition-adjustment-banner"></div>
+
+            <!-- Sub-navegación del Coach Nutricional -->
+            <div class="nutri-subtabs">
+                <button class="nutri-subtab active" data-sub="flexible">🎯 Hoy</button>
+                <button class="nutri-subtab" data-sub="estricto">📋 Plan Estricto</button>
+                <button class="nutri-subtab" data-sub="tiendas">🛒 Tiendas</button>
+                <button class="nutri-subtab" data-sub="scanner">📷 Escáner</button>
+            </div>
+
+            <!-- Plan Flexible (render por NutritionFlexible) -->
+            <div id="nutri-sub-flexible"></div>
+
+            <!-- Asistente Geonutricional (render por NutritionStores) -->
+            <div id="nutri-sub-tiendas" class="hidden"></div>
+
+            <!-- Escáner (render por BarcodeScannerRP) -->
+            <div id="nutri-sub-scanner" class="hidden"></div>
+
+            <!-- Plan Estricto: menús generados + contenido legado -->
+            <div id="nutri-sub-estricto" class="hidden">
+            <div id="nutrition-plan-container"></div>
+            <div class="card card--highlight"
+                style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(220, 38, 38, 0.02)); border: 1px solid rgba(239, 68, 68, 0.2);">
                 <p class="mb-3 text-muted">Ajuste automático de macros basado en el promedio semanal de peso y objetivos
                     de composición corporal.</p>
 
@@ -3038,6 +3393,7 @@
                     </ul>
                 </div>
             </div>
+            </div><!-- /nutri-sub-estricto -->
         </section>
 
         <!-- ========== FOOTER ========== -->
@@ -3156,6 +3512,7 @@
     <!-- Calendario de Asistencia -->
     <script src="js/modules/calendario-tracker.js"></script>
     <script src="js/modules/progress-analytics.js"></script>
+    <script src="js/modules/evolution-dashboard.js"></script>
     <script src="js/modules/strength-tests.js"></script>
 
     <!-- Calculadora de RM -->
@@ -3163,7 +3520,13 @@
 
     <!-- Módulos de Bioimpedancia y Nutrición -->
     <script src="js/modules/bioimpedancia-rp.js"></script>
+    <script src="js/data/alimentos-db.js"></script>
+    <script src="js/data/tiendas-db.js"></script>
     <script src="js/modules/nutrition-rp.js"></script>
+    <script src="js/modules/nutrition-flexible.js"></script>
+    <script src="js/modules/nutrition-stores.js"></script>
+    <script src="js/modules/barcode-scanner.js"></script>
+    <script src="js/modules/recovery-nutrition-sync.js"></script>
     <script src="js/modules/progressive-tables.js"></script>
 
     <!-- TEMPORAL: Simulación de mesociclo (quitar después de probar) -->
@@ -3172,6 +3535,17 @@
 
     <!-- Controlador Principal -->
     <script src="js/rp-coach.js"></script>
+
+    <!-- PWA: Service Worker (solo sobre HTTP/HTTPS; en file:// se omite) -->
+    <script>
+        if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(() => console.log('✅ PWA: Service Worker activo (modo offline disponible)'))
+                    .catch(err => console.warn('PWA: no se pudo registrar el SW:', err.message));
+            });
+        }
+    </script>
 
 </body>
 

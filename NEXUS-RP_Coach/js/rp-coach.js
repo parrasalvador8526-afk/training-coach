@@ -205,6 +205,51 @@ const RPCoachApp = (() => {
         if (btnEvalReadiness) {
             btnEvalReadiness.addEventListener('click', evaluateReadiness);
         }
+
+        // Sub-pestañas del Dashboard de Evolución
+        document.querySelectorAll('.evo-subtab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.EvolutionDashboard) EvolutionDashboard.setSub(btn.dataset.sub);
+                document.querySelectorAll('.evo-subtab').forEach(b => b.classList.toggle('active', b === btn));
+                applyEvolutionSubview();
+            });
+        });
+
+        // Sub-pestañas del Coach Nutricional
+        document.querySelectorAll('.nutri-subtab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nutri-subtab').forEach(b => b.classList.toggle('active', b === btn));
+                applyNutritionSubview(btn.dataset.sub);
+            });
+        });
+    }
+
+    /**
+     * Muestra la sub-vista activa del Coach Nutricional y renderiza su módulo.
+     */
+    function applyNutritionSubview(sub) {
+        const views = { flexible: 'nutri-sub-flexible', estricto: 'nutri-sub-estricto', tiendas: 'nutri-sub-tiendas', scanner: 'nutri-sub-scanner' };
+        Object.entries(views).forEach(([key, id]) => {
+            document.getElementById(id)?.classList.toggle('hidden', key !== sub);
+        });
+
+        // Apagar la cámara al salir del escáner
+        if (sub !== 'scanner' && window.BarcodeScannerRP) BarcodeScannerRP.stopCamera();
+
+        switch (sub) {
+            case 'flexible':
+                if (window.NutritionFlexible) NutritionFlexible.render();
+                break;
+            case 'estricto':
+                if (typeof NutricionRP !== 'undefined') NutricionRP.renderPlanNutricional();
+                break;
+            case 'tiendas':
+                if (window.NutritionStores) NutritionStores.render();
+                break;
+            case 'scanner':
+                if (window.BarcodeScannerRP) BarcodeScannerRP.render();
+                break;
+        }
     }
 
     /**
@@ -339,18 +384,18 @@ const RPCoachApp = (() => {
                 if (eocModal) {
                     setTimeout(() => { eocModal.style.display = 'block'; }, 3000); // 3 segundos de retraso para el confeti
 
-                    // Cargar fotos de Semana 1 y Semana 5
+                    // Cargar fotos de Semana 1 y Semana 5 (viven en rpCoach_progress_photos
+                    // bajo las fases 'start-front' / 'end-front' del módulo de fotos)
                     try {
-                        const photosS1 = JSON.parse(localStorage.getItem('rpCoach_photos_s1'));
-                        const photosS5 = JSON.parse(localStorage.getItem('rpCoach_photos_s5'));
+                        const photos = JSON.parse(localStorage.getItem('rpCoach_progress_photos') || '{}');
 
-                        if (photosS1 && photosS1.front) {
-                            document.getElementById('eoc-img-s1').src = photosS1.front;
+                        if (photos['start-front']) {
+                            document.getElementById('eoc-img-s1').src = photos['start-front'];
                             document.getElementById('eoc-img-s1').style.display = 'block';
                             document.getElementById('eoc-noimg-s1').style.display = 'none';
                         }
-                        if (photosS5 && photosS5.front) {
-                            document.getElementById('eoc-img-s5').src = photosS5.front;
+                        if (photos['end-front']) {
+                            document.getElementById('eoc-img-s5').src = photos['end-front'];
                             document.getElementById('eoc-img-s5').style.display = 'block';
                             document.getElementById('eoc-noimg-s5').style.display = 'none';
                         }
@@ -415,9 +460,45 @@ const RPCoachApp = (() => {
     }
 
     /**
+     * Muestra la sub-vista activa dentro del Dashboard de Evolución.
+     * Las secciones module-visual y module-progress conservan su HTML original;
+     * aquí solo se des-ocultan según la sub-pestaña elegida.
+     */
+    function applyEvolutionSubview() {
+        const sub = window.EvolutionDashboard ? EvolutionDashboard.getSub() : 'resumen';
+        const resumen = document.getElementById('evolution-resumen');
+        const visual = document.getElementById('module-visual');
+        const progress = document.getElementById('module-progress');
+
+        if (resumen) resumen.classList.toggle('hidden', sub !== 'resumen');
+        if (visual) visual.classList.toggle('hidden', sub !== 'metricas');
+        if (progress) progress.classList.toggle('hidden', sub !== 'progresion');
+
+        if (sub === 'metricas') {
+            initProgressPhotos();
+            renderBodyCompositionFeedback();
+            if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderAll === 'function') {
+                ProgressAnalytics.renderAll();
+            }
+        } else if (sub === 'progresion') {
+            renderProgress();
+            if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderDoubleProgression === 'function') {
+                ProgressAnalytics.renderDoubleProgression();
+            }
+        }
+    }
+
+    /**
      * Cambia el módulo activo
      */
     function switchModule(moduleName) {
+        // Compatibilidad: las pestañas viejas "visual" y "progress" viven ahora dentro de "evolution"
+        if (moduleName === 'visual' || moduleName === 'progress') {
+            if (window.EvolutionDashboard) {
+                EvolutionDashboard.setSub(moduleName === 'visual' ? 'metricas' : 'progresion');
+            }
+            moduleName = 'evolution';
+        }
         state.currentModule = moduleName;
         saveState();
 
@@ -489,6 +570,10 @@ const RPCoachApp = (() => {
                 if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderAll === 'function') {
                     ProgressAnalytics.renderAll();
                 }
+                break;
+            case 'evolution':
+                if (window.EvolutionDashboard) EvolutionDashboard.render();
+                applyEvolutionSubview();
                 break;
             default:
                 console.warn(`[NEXUS] Módulo desconocido: ${state.currentModule}`);
@@ -638,37 +723,48 @@ const RPCoachApp = (() => {
             if(prDetEl) prDetEl.innerHTML = `${parseFloat(lastPR.weight).toFixed(1)}kg × ${lastPR.reps} <br><span style="font-size:0.75rem; color:#10B981;">e1RM: ${parseFloat(lastPR.e1rm || 0).toFixed(1)}kg</span>`;
         }
 
-        // 2. Weight Trend
-        const bodyCompRaw = localStorage.getItem('rpCoach_body_composition');
-        if (bodyCompRaw && bodyCompRaw !== '{}') {
-            try {
+        // 2. Weight Trend (usa weight_history como fuente principal, body_composition como fallback)
+        try {
+            const whRaw = localStorage.getItem('rpCoach_weight_history');
+            const bodyCompRaw = localStorage.getItem('rpCoach_body_composition');
+            let weights = [];
+
+            if (whRaw) {
+                const wh = JSON.parse(whRaw);
+                if (Array.isArray(wh) && wh.length > 0) {
+                    weights = wh.filter(e => e.weight != null).map(e => parseFloat(e.weight));
+                }
+            }
+            if (weights.length === 0 && bodyCompRaw && bodyCompRaw !== '{}') {
                 const bodyComp = JSON.parse(bodyCompRaw);
                 const measures = Array.isArray(bodyComp) ? bodyComp : (bodyComp.measurements || []);
-                if (measures.length > 0) {
-                    const current = measures[measures.length - 1];
-                    const wCur = document.getElementById('home-weight-current');
-                    if(wCur) wCur.textContent = parseFloat(current.weight).toFixed(1) + ' kg';
-                    
-                    if (measures.length > 1) {
-                        const prev = measures[measures.length - 2];
-                        const diff = (current.weight - prev.weight).toFixed(1);
-                        const trendEl = document.getElementById('home-weight-trend');
-                        if(trendEl) {
-                            if (diff > 0) {
-                                trendEl.textContent = `+${diff}kg`;
-                                trendEl.style.color = '#F59E0B'; // Ambar
-                            } else if (diff < 0) {
-                                trendEl.textContent = `${diff}kg`;
-                                trendEl.style.color = '#10B981'; // Verde
-                            } else {
-                                trendEl.textContent = `=`;
-                                trendEl.style.color = '#6b7280';
-                            }
+                weights = measures.filter(m => m.weight != null).map(m => parseFloat(m.weight));
+            }
+
+            if (weights.length > 0) {
+                const currentW = weights[weights.length - 1];
+                const wCur = document.getElementById('home-weight-current');
+                if (wCur && !isNaN(currentW)) wCur.textContent = currentW.toFixed(1) + ' kg';
+
+                if (weights.length > 1) {
+                    const prevW = weights[weights.length - 2];
+                    const diff = (currentW - prevW).toFixed(1);
+                    const trendEl = document.getElementById('home-weight-trend');
+                    if (trendEl && !isNaN(diff)) {
+                        if (diff > 0) {
+                            trendEl.textContent = `+${diff}kg`;
+                            trendEl.style.color = '#F59E0B';
+                        } else if (diff < 0) {
+                            trendEl.textContent = `${diff}kg`;
+                            trendEl.style.color = '#10B981';
+                        } else {
+                            trendEl.textContent = `=`;
+                            trendEl.style.color = '#6b7280';
                         }
                     }
                 }
-            } catch(e) { console.warn("Error parsing body comp in home dashboard", e); }
-        }
+            }
+        } catch(e) { console.warn("Error parsing weight trend in home dashboard", e); }
 
         // 3. Coach Tip
         const tipEl = document.getElementById('home-coach-tip');
@@ -719,7 +815,7 @@ const RPCoachApp = (() => {
                                     <span style="color:#E040FB; margin-right:4px;">→</span>${ex.name}
                                 </span>
                                 <span style="color:var(--text-muted); font-size:0.8rem; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px;">
-                                    ${ex.sets}x${ex.reps}
+                                    ${ex.sets || 3}x${ex.targetReps || ex.reps || '8-12'}
                                 </span>
                             </div>`;
                         }).join('');
@@ -854,6 +950,16 @@ const RPCoachApp = (() => {
         if (typeof NutricionRP !== 'undefined') {
             NutricionRP.init();
         }
+
+        // Evaluar sinergia entrenamiento↔nutrición y pintar banner de ajuste
+        if (window.RecoveryNutritionSync) {
+            RecoveryNutritionSync.evaluateToday();
+            RecoveryNutritionSync.renderBanner();
+        }
+
+        // Renderizar la sub-vista activa (por defecto: Plan Flexible "Hoy")
+        const activeSub = document.querySelector('.nutri-subtab.active')?.dataset.sub || 'flexible';
+        applyNutritionSubview(activeSub);
 
         // Renderizar el peso corporal que vive en la nueva pestaña
         if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderWeightTracking === 'function') {
@@ -1001,7 +1107,7 @@ const RPCoachApp = (() => {
             level: document.getElementById('routine-level')?.value || 'intermediate',
             goal: 'hypertrophy',
             days: (() => {
-                const routine = JSON.parse(localStorage.getItem('rpCoach_routine') || 'null');
+                const routine = JSON.parse(localStorage.getItem('rpCoach_active_routine') || 'null');
                 return routine?.days?.length || 4;
             })()
         };
@@ -2062,6 +2168,8 @@ const RPCoachApp = (() => {
          */
     function renderProgress() {
 
+        // === 1. Estructura dinámica del Mesociclo ===
+        renderMesocycleStructure();
 
         // === 2. Sincronizar Volumen MEV→MRV dentro de Progreso ===
         updateProgressVolume();
@@ -2072,6 +2180,153 @@ const RPCoachApp = (() => {
 
         // === 4. Control de Volumen (MEV → MRV) desde rutina activa ===
         renderProgressVolumeControl();
+    }
+
+    /**
+     * Renderiza la Estructura del Mesociclo de forma dinámica.
+     * Tabla + barra de progreso + nota específica de la metodología seleccionada.
+     */
+    function renderMesocycleStructure() {
+        const methodSelector = document.getElementById('meso-struct-methodology');
+        const weekSelector   = document.getElementById('meso-struct-week');
+        const content        = document.getElementById('mesocycle-structure-content');
+        if (!methodSelector || !weekSelector || !content) return;
+        if (typeof RIRDynamicModule === 'undefined') return;
+
+        // ── Poblar selector de metodología (solo la primera vez) ──
+        if (methodSelector.options.length === 0) {
+            const methodologies = [
+                { id: 'Y3T',          name: 'Y3T — Yoda 3 Training'     },
+                { id: 'HeavyDuty',    name: 'Heavy Duty'                 },
+                { id: 'BloodAndGuts', name: 'Blood & Guts'               },
+                { id: 'FST7',         name: 'FST-7'                      },
+                { id: 'SST',          name: 'SST — Sarcoplasm Stimulating'},
+                { id: 'MTUT',         name: 'MTUT — Tiempo Bajo Tensión' },
+                { id: 'RestPause',    name: 'Rest-Pause System'          },
+                { id: 'DUP',          name: 'DUP — Daily Undulating'     },
+                { id: '531',          name: '5/3/1 — Wendler'            }
+            ];
+            const active = state.selectedMethodology || 'Y3T';
+            methodologies.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.id;
+                opt.textContent = m.name;
+                if (m.id === active) opt.selected = true;
+                methodSelector.appendChild(opt);
+            });
+        }
+
+        const methodology = methodSelector.value || state.selectedMethodology || 'Y3T';
+        const progression  = RIRDynamicModule.getFullProgression(methodology);
+        const phaseNames   = getMesocyclePhaseNames(methodology);
+
+        // ── Poblar / refrescar selector de semanas (cambia según metodología) ──
+        const prevWeek = parseInt(weekSelector.value) || state.currentWeek || 1;
+        weekSelector.innerHTML = '';
+        progression.weeks.forEach((w, i) => {
+            const opt = document.createElement('option');
+            opt.value = w.week;
+            opt.textContent = `S${w.week} — ${phaseNames[i] || `Semana ${w.week}`}`;
+            if (w.week === prevWeek) opt.selected = true;
+            weekSelector.appendChild(opt);
+        });
+
+        const currentWeek  = parseInt(weekSelector.value) || 1;
+        const totalWeeks   = progression.weeks.length;
+
+        // ── Helpers de color y etiqueta ──
+        const rirColor = rir => {
+            if (rir >= 4) return '#10B981';
+            if (rir >= 2) return '#6366F1';
+            if (rir >= 1) return '#F59E0B';
+            return '#EF4444';
+        };
+        const volumeLabel = rir => {
+            if (rir >= 4) return '50% MEV';
+            if (rir >= 3) return 'MEV';
+            if (rir >= 2) return 'MEV→MAV';
+            if (rir >= 1) return 'MAV';
+            return 'MAV→MRV';
+        };
+
+        // ── Tabla dinámica ──
+        let tableHTML = `<table class="data-table" style="font-size:0.78rem;">
+            <tr>
+                <th>Semana</th>
+                <th>Fase</th>
+                <th style="text-align:center;">RIR</th>
+                <th>Intensidad</th>
+                <th>Volumen</th>
+            </tr>`;
+
+        progression.weeks.forEach((w, i) => {
+            const isCurrent  = (w.week === currentWeek);
+            const color      = rirColor(w.rir);
+            const phaseLabel = phaseNames[i] || w.description;
+
+            tableHTML += `<tr style="${isCurrent
+                ? 'background:rgba(139,92,246,0.12); border-left:3px solid #8B5CF6;'
+                : ''}">
+                <td style="font-weight:${isCurrent ? '700' : '400'}; white-space:nowrap;">
+                    ${isCurrent ? '▶ ' : ''}S${w.week}
+                    ${isCurrent ? '<span style="font-size:0.62rem; color:#8B5CF6; margin-left:4px; font-weight:400;">ESTÁS AQUÍ</span>' : ''}
+                </td>
+                <td style="color:${isCurrent ? '#E2E8F0' : 'var(--text-muted)'}; font-size:0.75rem;">${phaseLabel}</td>
+                <td style="text-align:center;">
+                    <span style="background:${color}22; color:${color}; border:1px solid ${color}44;
+                        border-radius:4px; padding:2px 8px; font-weight:700; font-size:0.8rem;">${w.rir}</span>
+                </td>
+                <td style="color:var(--text-muted); font-size:0.72rem;">${w.intensity || '—'}</td>
+                <td style="color:var(--text-muted); font-size:0.72rem;">${volumeLabel(w.rir)}</td>
+            </tr>`;
+        });
+        tableHTML += '</table>';
+
+        // ── Barra de progreso del mesociclo ──
+        const pct = ((currentWeek - 1) / totalWeeks * 100).toFixed(0);
+        const progressHTML = `
+            <div style="margin-top:10px; padding:10px 12px; background:rgba(139,92,246,0.06);
+                border:1px solid rgba(139,92,246,0.15); border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-size:0.72rem; color:var(--text-muted);">Avance del mesociclo</span>
+                    <span style="font-size:0.72rem; color:#A78BFA; font-weight:600;">
+                        Semana ${currentWeek} de ${totalWeeks}
+                    </span>
+                </div>
+                <div style="height:6px; background:rgba(139,92,246,0.15); border-radius:3px; overflow:hidden;">
+                    <div style="height:100%; width:${pct}%; background:linear-gradient(90deg,#8B5CF6,#A78BFA);
+                        border-radius:3px; transition:width 0.4s;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                    <span style="font-size:0.65rem; color:#8B5CF6;">Inicio</span>
+                    <span style="font-size:0.65rem; color:#10B981;">Fin → Supercompensación</span>
+                </div>
+            </div>`;
+
+        // ── Nota específica de la metodología ──
+        const noteHTML = progression.note
+            ? `<div class="alert alert--info mt-2"><span>ℹ️</span><span>${progression.note}</span></div>`
+            : '';
+
+        content.innerHTML = tableHTML + progressHTML + noteHTML;
+    }
+
+    /**
+     * Nombres de fase por semana para cada metodología.
+     */
+    function getMesocyclePhaseNames(methodology) {
+        const phases = {
+            'Y3T':          ['Pesado (6-10 reps)', 'Moderado (10-14 reps)', 'Aniquilación (15-30+)', 'Reinicio ciclo'],
+            'HeavyDuty':    ['Máxima Intensidad', 'Máxima Intensidad', 'Intensidad + Técnicas', 'Deload'],
+            'BloodAndGuts': ['Aproximación al fallo', 'Working Set Fallo', 'Fallo + Intensificadores', 'Fallo + Forzadas', 'Deload'],
+            'DUP':          ['Acumulación', 'Progresión', 'Intensificación', 'Peak', 'Deload'],
+            'FST7':         ['FST-7 con reserva', 'Pump progresivo', 'FST-7 al fallo', 'Pump máximo', 'Deload → FST-4'],
+            'SST':          ['Adaptación Metabólica', 'Estrés Metabólico', 'Volumen Extremo', 'Deload'],
+            'MTUT':         ['TUT Moderado', 'TUT Progresivo', 'TUT Máximo', 'Fallo por Tensión', 'Deload'],
+            '531':          ['5+ reps (85%)', '3+ reps (90%)', '1+ rep (95%)', 'Deload'],
+            'RestPause':    ['2 Secuencias RP', '3 Secuencias RP', '3+ Secuencias + Técnicas', 'Deload']
+        };
+        return phases[methodology] || ['Acumulación', 'Progresión', 'Intensificación', 'Peak', 'Deload'];
     }
 
     function renderProgressVolumeControl() {
@@ -2150,11 +2405,12 @@ const RPCoachApp = (() => {
             if (typeof ProgressChartsModule !== 'undefined') {
                 ProgressChartsModule.renderDashboardCharts('dashboard-charts');
 
-                // Extraer el nombre de la metodología actual para pasarlo a la gráfica
+                // Pasar el ID de la metodología (value), no el texto visible:
+                // el texto puede ser "Cargando metodologías..." y rompe el lookup
                 let methodName = state.selectedMethodology;
                 const methodSelector = document.getElementById('methodology-selector');
-                if (methodSelector && methodSelector.options[methodSelector.selectedIndex]) {
-                    methodName = methodSelector.options[methodSelector.selectedIndex].text;
+                if (methodSelector && methodSelector.value && methodSelector.options.length) {
+                    methodName = methodSelector.value;
                 }
 
                 ProgressChartsModule.drawMesocycleProgressionChart(
@@ -2301,8 +2557,8 @@ const RPCoachApp = (() => {
         // 🔄 [NUEVO] Actualizar gráfica de mesociclo si el usuario cambia el selector de metodología en esta misma sección
         if (typeof ProgressChartsModule !== 'undefined' && typeof ProgressChartsModule.drawMesocycleProgressionChart === 'function') {
             let methodName = methodology;
-            if (methodSelector && methodSelector.options[methodSelector.selectedIndex]) {
-                methodName = methodSelector.options[methodSelector.selectedIndex].text;
+            if (methodSelector && methodSelector.value && methodSelector.options.length) {
+                methodName = methodSelector.value;
             }
             ProgressChartsModule.drawMesocycleProgressionChart('mesocycle-progression-chart', methodName, state.experienceLevel || 'intermediate');
         }
@@ -2447,9 +2703,78 @@ const RPCoachApp = (() => {
         switchModule,
         updateProgressVolume,
         updateProgressRIR,
-        renderRoutineDisplay
+        renderRoutineDisplay,
+        renderMesocycleStructure
     };
 })();
+
+// Exponer renderMesocycleStructure globalmente para los onchange handlers del HTML
+window.renderMesocycleStructure = () => RPCoachApp.renderMesocycleStructure();
+
+// ─── Calculadora de Calentamiento ────────────────────────────────────────────
+window.calcWarmup = function() {
+    const weightInput = document.getElementById('warmup-weight');
+    const typeSelect = document.getElementById('warmup-type');
+    const resultDiv = document.getElementById('warmup-result');
+    const placeholder = document.getElementById('warmup-placeholder');
+    const tableEl = document.getElementById('warmup-table');
+    const noteEl = document.getElementById('warmup-note');
+
+    if (!weightInput || !typeSelect || !resultDiv || !tableEl) return;
+
+    const workWeight = parseFloat(weightInput.value);
+    if (!workWeight || workWeight <= 0) {
+        resultDiv.style.display = 'none';
+        if (placeholder) placeholder.style.display = 'block';
+        return;
+    }
+
+    const isCompound = typeSelect.value === 'compound';
+
+    // Protocolos según tipo de movimiento
+    const protocol = isCompound
+        ? [
+            { pct: 40, reps: 10, rest: '—', purpose: 'Activación neuromuscular' },
+            { pct: 55, reps: 6,  rest: '60s', purpose: 'Reclutamiento fibras tipo II' },
+            { pct: 70, reps: 4,  rest: '90s', purpose: 'Aproximación de patrón motor' },
+            { pct: 82, reps: 2,  rest: '90s', purpose: 'Calibración de esfuerzo real' },
+            { pct: 90, reps: 1,  rest: '2min', purpose: 'Potenciación post-activación (PAP)' },
+        ]
+        : [
+            { pct: 40, reps: 12, rest: '—', purpose: 'Flujo sanguíneo articular' },
+            { pct: 60, reps: 8,  rest: '45s', purpose: 'Activación neuromuscular' },
+            { pct: 80, reps: 3,  rest: '60s', purpose: 'Calibración de esfuerzo' },
+        ];
+
+    const round = (n) => Math.round(n / 2.5) * 2.5; // Redondea al 2.5kg más cercano
+
+    // Reconstruir tabla sin headers
+    const rows = protocol.map((s, i) => {
+        const kg = round(workWeight * s.pct / 100);
+        const isLast = i === protocol.length - 1;
+        return `<tr${isLast ? ' style="background:rgba(245,158,11,0.08);"' : ''}>
+            <td style="font-weight:${isLast ? '700' : '400'};color:${isLast ? '#F59E0B' : 'inherit'};">S${i + 1}</td>
+            <td>${s.pct}%</td>
+            <td style="font-weight:600;">${kg} kg</td>
+            <td>${s.reps}</td>
+            <td>${s.rest}</td>
+            <td style="font-size:0.72rem; color:var(--text-muted);">${s.purpose}</td>
+        </tr>`;
+    }).join('');
+
+    tableEl.innerHTML = `<tr>
+        <th>Serie</th><th>% Trabajo</th><th>Peso (kg)</th><th>Reps</th><th>Descanso</th><th>Propósito</th>
+    </tr>${rows}`;
+
+    const tipNote = isCompound
+        ? '⚡ La última serie de calentamiento (90%) activa la potenciación post-activación (PAP): tu SNC llega más reclutado a la primera serie de trabajo. Descansa 2 min completos antes de empezar.'
+        : '💡 Para aislamientos el calentamiento es más breve. Si el movimiento es articulación-intensivo (hombro, rodilla), añade 2 sets de movilidad antes del protocolo.';
+
+    noteEl.innerHTML = `<span>ℹ️</span><span style="font-size:0.78rem;">${tipNote}</span>`;
+
+    resultDiv.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+};
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {

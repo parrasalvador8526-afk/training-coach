@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+*.bak
+*.bak_*
+NEXUS-RP_Coach/capturas-verificacion-*.png
+NEXUS-RP_Coach/audit-findings.json

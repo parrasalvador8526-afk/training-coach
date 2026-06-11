@@ -6,8 +6,13 @@
  */
 
 const MethodologiesSyncModule = (() => {
-    // Ruta relativa al JSON de metodologías
-    const JSON_PATH = '../Metodos creados HTML/metodologias_data.json';
+    // Rutas del JSON de metodologías: primero la copia local (funciona servida
+    // por HTTP), después la fuente original de NEXUS (solo accesible si la
+    // carpeta padre también está servida).
+    const JSON_PATHS = [
+        'js/data/metodologias_data.json',
+        '../Metodos creados HTML/metodologias_data.json'
+    ];
 
     // Cache de metodologías cargadas
     let methodologiesCache = null;
@@ -34,21 +39,24 @@ const MethodologiesSyncModule = (() => {
             return methodologiesCache;
         }
 
-        try {
-            const response = await fetch(JSON_PATH);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+        for (const path of JSON_PATHS) {
+            try {
+                const response = await fetch(path);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
 
-            const data = await response.json();
-            methodologiesCache = data.methodologies;
-            console.log('✅ Metodologías cargadas:', Object.keys(methodologiesCache).length);
-            return methodologiesCache;
-        } catch (error) {
-            console.warn('⚠️ No se pudo cargar JSON, usando datos de respaldo:', error.message);
-            methodologiesCache = FALLBACK_METHODOLOGIES;
-            return methodologiesCache;
+                const data = await response.json();
+                methodologiesCache = data.methodologies;
+                console.log('✅ Metodologías cargadas:', Object.keys(methodologiesCache).length);
+                return methodologiesCache;
+            } catch (error) {
+                console.warn(`⚠️ No se pudo cargar ${path}:`, error.message);
+            }
         }
+        console.warn('⚠️ Usando metodologías de respaldo embebidas');
+        methodologiesCache = FALLBACK_METHODOLOGIES;
+        return methodologiesCache;
     }
 
     /**

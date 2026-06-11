@@ -466,7 +466,7 @@ const SmartAlerts = (() => {
 
     // Helpers
     function getPerformanceHistory() {
-        const enhanced = JSON.parse(localStorage.getItem('rpCoach_enhanced_sessions') || '[]');
+        const enhanced = JSON.parse(localStorage.getItem('rpCoach_enhanced_logs') || '[]');
         const logs = JSON.parse(localStorage.getItem('rpCoach_session_logs') || '[]');
         return [...enhanced, ...logs].sort((a, b) =>
             new Date(b.date || b.timestamp) - new Date(a.date || a.timestamp)

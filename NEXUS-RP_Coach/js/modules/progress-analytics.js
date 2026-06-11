@@ -1280,17 +1280,68 @@ const ProgressAnalytics = (() => {
         let dataHTML = '';
 
         if (window.DoubleProgressionEngine) {
-            const summary = DoubleProgressionEngine.getAnalyticsSummary();
+            const summary    = DoubleProgressionEngine.getAnalyticsSummary();
+            const allStates  = DoubleProgressionEngine.getAllExerciseStates();
 
             if (summary.totalTracked === 0) {
-                dataHTML = `<div style="text-align:center; padding:16px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px dashed rgba(255,255,255,0.1);">
-                    <div style="font-size:1.5rem; margin-bottom:6px;">📊</div>
-                    <p style="color:#999; font-size:0.8rem; margin:0;">Completa al menos 1 sesi\u00f3n de entrenamiento para ver tu an\u00e1lisis de Doble Progresi\u00f3n aqu\u00ed.</p>
+                // ── Estado cero: demo visual para que el usuario sepa qué esperar ──
+                dataHTML = `
+                <div style="background:rgba(16,185,129,0.04); border:1px dashed rgba(16,185,129,0.25);
+                    border-radius:10px; padding:14px; margin-bottom:10px;">
+                    <div style="font-size:0.75rem; color:#10B981; font-weight:600; margin-bottom:10px;">
+                        👆 Vista previa — así se verá tu progresión tras la primera sesión
+                    </div>
+
+                    <!-- Tarjeta demo: en progreso -->
+                    <div class="dp-exercise-card dp-in-progress" style="opacity:0.75; pointer-events:none;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.8rem; font-weight:bold;">Press Banca
+                                <span style="font-size:0.62rem; background:rgba(245,158,11,0.2); color:#F59E0B;
+                                    border-radius:3px; padding:1px 5px; margin-left:4px;">2 sesiones en tope</span>
+                            </span>
+                            <span style="font-size:0.7rem; color:#F59E0B;">80 kg</span>
+                        </div>
+                        <div class="dp-progress-bar">
+                            <div class="dp-progress-fill" style="width:66%; background:#F59E0B;"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.7rem; color:#999;">66% — rango 8-12 reps</span>
+                            <span style="font-size:0.65rem; color:#10B981;">Última subida: hace 7d</span>
+                        </div>
+                        <!-- Sparkline demo -->
+                        <div style="height:22px; display:flex; align-items:flex-end; gap:2px; padding:0 2px; margin-top:6px;">
+                            <div style="flex:1; height:30%; background:#6366F1; border-radius:1px; opacity:0.7;"></div>
+                            <div style="flex:1; height:45%; background:#6366F1; border-radius:1px; opacity:0.7;"></div>
+                            <div style="flex:1; height:60%; background:#6366F1; border-radius:1px; opacity:0.7;"></div>
+                            <div style="flex:1; height:75%; background:#6366F1; border-radius:1px; opacity:0.7;"></div>
+                            <div style="flex:1; height:90%; background:#6366F1; border-radius:1px; opacity:0.7;"></div>
+                            <span style="font-size:0.62rem; color:#999; margin-left:5px; align-self:center;">80 kg</span>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta demo: lista para subir -->
+                    <div class="dp-exercise-card dp-ready" style="opacity:0.75; pointer-events:none; margin-top:6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.8rem; font-weight:bold;">Curl con Barra</span>
+                            <span style="font-size:0.7rem; color:#10B981;">35 kg</span>
+                        </div>
+                        <div class="dp-progress-bar">
+                            <div class="dp-progress-fill" style="width:100%; background:#10B981;"></div>
+                        </div>
+                        <div style="font-size:0.7rem; color:#10B981; font-weight:600;">
+                            ↑ SUBE a 37.5 kg × 8 reps
+                        </div>
+                    </div>
+
+                    <p style="font-size:0.72rem; color:var(--text-muted); margin:10px 0 0; font-style:italic;">
+                        Completa tu primera sesión de entrenamiento para activar el motor de Doble Progresión.
+                    </p>
                 </div>`;
             } else {
-                dataHTML += `<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:12px;">
+                // ── Contadores de resumen ──
+                dataHTML += `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px;">
                     <div style="text-align:center; padding:8px; background:rgba(16,185,129,0.1); border-radius:8px;">
-                        <div style="font-size:0.7rem; color:#999;">Ejercicios Rastreados</div>
+                        <div style="font-size:0.7rem; color:#999;">Rastreados</div>
                         <div style="font-size:1.3rem; font-weight:bold; color:#10B981;">${summary.totalTracked}</div>
                     </div>
                     <div style="text-align:center; padding:8px; background:rgba(245,158,11,0.1); border-radius:8px;">
@@ -1298,41 +1349,96 @@ const ProgressAnalytics = (() => {
                         <div style="font-size:1.3rem; font-weight:bold; color:#F59E0B;">${summary.readyForProgression}</div>
                     </div>
                     <div style="text-align:center; padding:8px; background:rgba(99,102,241,0.1); border-radius:8px;">
-                        <div style="font-size:0.7rem; color:#999;">Progresiones Totales</div>
+                        <div style="font-size:0.7rem; color:#999;">Progresiones</div>
                         <div style="font-size:1.3rem; font-weight:bold; color:#6366F1;">${summary.totalProgressions}</div>
                     </div>
                 </div>`;
 
-                dataHTML += '<div style="font-size:0.8rem; font-weight:bold; margin-bottom:6px;">Estado por Ejercicio:</div>';
+                dataHTML += '<div style="font-size:0.8rem; font-weight:bold; margin-bottom:8px;">Estado por Ejercicio:</div>';
 
                 summary.exerciseDetails
                     .sort((a, b) => b.progress - a.progress)
                     .forEach(ex => {
                         const statusClass = ex.ready ? 'dp-ready' : 'dp-in-progress';
-                        const barColor = ex.ready ? '#10B981' : (ex.progress >= 50 ? '#F59E0B' : '#6366F1');
-                        const statusText = ex.ready
-                            ? `SUBE a ${ex.suggestion?.newWeight || '?'}kg \u00d7 ${ex.suggestion?.newTargetReps || '?'} reps`
-                            : `${ex.progress}% \u2014 ${ex.repRange?.min || '?'}-${ex.repRange?.max || '?'} reps`;
+                        const barColor    = ex.ready ? '#10B981' : (ex.progress >= 50 ? '#F59E0B' : '#6366F1');
+                        const statusText  = ex.ready
+                            ? `\u2191 SUBE a ${ex.suggestion?.newWeight || '?'}kg \u00d7 ${ex.suggestion?.newTargetReps || '?'} reps`
+                            : `${ex.progress}% \u2014 rango ${ex.repRange?.min || '?'}-${ex.repRange?.max || '?'} reps`;
+
+                        // ── Datos adicionales del estado completo ──
+                        const fullEx = allStates[ex.name] || {};
+
+                        // Días desde la última progresión (subida de peso)
+                        let daysSinceHTML = '';
+                        if (fullEx.progressions?.length > 0) {
+                            const lastProg = fullEx.progressions[fullEx.progressions.length - 1];
+                            const days     = Math.floor((Date.now() - new Date(lastProg.date)) / 86400000);
+                            const dColor   = days > 21 ? '#EF4444' : days > 14 ? '#F59E0B' : '#10B981';
+                            daysSinceHTML  = `<span style="font-size:0.65rem; color:${dColor};">hace ${days}d</span>`;
+                        }
+
+                        // Badge de sesiones consecutivas en tope
+                        const streak = ex.consecutiveAtMax || 0;
+                        const streakBadge = streak >= 2
+                            ? `<span style="font-size:0.6rem; background:rgba(245,158,11,0.2); color:#F59E0B;
+                                border-radius:3px; padding:1px 5px; margin-left:4px;">${streak} sesiones en tope</span>`
+                            : '';
+
+                        // ── Sparkline de historial de peso (progressions[]) ──
+                        let sparklineHTML = '';
+                        const progs = fullEx.progressions || [];
+                        if (progs.length >= 1) {
+                            // Serie de pesos: peso inicial + cada "toWeight"
+                            const weights = [progs[0].fromWeight, ...progs.map(p => p.toWeight)];
+                            const slice   = weights.slice(-8);          // máx 8 barras
+                            const minW    = Math.min(...slice);
+                            const maxW    = Math.max(...slice);
+                            const range   = maxW - minW || 1;
+                            const bars    = slice.map(w => {
+                                const h = Math.max(20, Math.round(((w - minW) / range) * 75 + 20));
+                                return `<div style="flex:1; height:${h}%; background:#6366F1;
+                                    border-radius:1px 1px 0 0; opacity:0.75;"></div>`;
+                            }).join('<div style="width:1px;"></div>');
+
+                            sparklineHTML = `
+                            <div style="height:22px; display:flex; align-items:flex-end; gap:2px;
+                                padding:0 2px; margin-top:6px; border-top:1px solid rgba(255,255,255,0.05); padding-top:5px;">
+                                ${bars}
+                                <span style="font-size:0.62rem; color:#999; margin-left:5px; align-self:center; white-space:nowrap;">
+                                    ${slice[slice.length - 1]} kg
+                                </span>
+                            </div>`;
+                        }
 
                         dataHTML += `<div class="dp-exercise-card ${statusClass}">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-size:0.8rem; font-weight:bold;">${ex.name}</span>
-                                <span style="font-size:0.7rem; color:${barColor};">${ex.weight}kg</span>
+                                <span style="font-size:0.8rem; font-weight:bold;">${ex.name}${streakBadge}</span>
+                                <span style="font-size:0.7rem; color:${barColor}; font-weight:600;">${ex.weight} kg</span>
                             </div>
                             <div class="dp-progress-bar">
                                 <div class="dp-progress-fill" style="width:${ex.progress}%; background:${barColor};"></div>
                             </div>
-                            <div style="font-size:0.7rem; color:${ex.ready ? '#10B981' : '#999'};">${statusText}</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:0.7rem; color:${ex.ready ? '#10B981' : '#999'}; font-weight:${ex.ready ? '600' : '400'};">${statusText}</span>
+                                ${daysSinceHTML}
+                            </div>
+                            ${sparklineHTML}
                         </div>`;
                     });
 
+                // ── Últimas progresiones registradas ──
                 if (summary.recentProgressions.length > 0) {
-                    dataHTML += '<div style="font-size:0.8rem; font-weight:bold; margin: 12px 0 6px;">Progresiones Recientes:</div>';
+                    dataHTML += '<div style="font-size:0.8rem; font-weight:bold; margin:14px 0 6px;">Historial de subidas:</div>';
                     summary.recentProgressions.forEach(p => {
                         const date = new Date(p.latest.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-                        dataHTML += `<div style="display:flex; justify-content:space-between; padding:4px 8px; font-size:0.75rem; background:rgba(16,185,129,0.05); border-radius:4px; margin-bottom:4px;">
-                            <span>${p.exercise}</span>
-                            <span style="color:#10B981;">${p.latest.fromWeight}kg \u2192 ${p.latest.toWeight}kg (${date})</span>
+                        dataHTML += `<div style="display:flex; justify-content:space-between; align-items:center;
+                            padding:5px 10px; font-size:0.75rem; background:rgba(16,185,129,0.05);
+                            border-radius:5px; margin-bottom:4px; border-left:2px solid #10B981;">
+                            <span style="color:var(--text-secondary);">${p.exercise}</span>
+                            <span style="color:#10B981; font-weight:600;">
+                                ${p.latest.fromWeight} kg \u2192 ${p.latest.toWeight} kg
+                                <span style="color:#666; font-weight:400;">(${date})</span>
+                            </span>
                         </div>`;
                     });
                 }

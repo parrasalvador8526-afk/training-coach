@@ -1,0 +1,20 @@
+{
+    "name": "NEXUS-RP Coach",
+    "short_name": "RP Coach",
+    "description": "Entrenamiento inteligente autorregulado + Coach Nutricional con sugerencias por tienda y escáner de alimentos.",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0D0D1A",
+    "theme_color": "#0D0D1A",
+    "lang": "es",
+    "icons": [
+        {
+            "src": "img/icon.svg",
+            "sizes": "192x192 512x512 any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}
