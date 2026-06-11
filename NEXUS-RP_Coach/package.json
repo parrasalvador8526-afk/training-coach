@@ -1,5 +1,12 @@
 {
-  "devDependencies": {
-    "playwright": "^1.58.2"
-  }
+    "name": "nexus-rp-coach",
+    "version": "2.0.0",
+    "description": "PWA de entrenamiento de hipertrofia autorregulado + Coach Nutricional",
+    "scripts": {
+        "start": "npx --yes serve --listen 8080 --no-clipboard .",
+        "test": "node test-premium.js && node test-auditoria.js"
+    },
+    "devDependencies": {
+        "playwright": "^1.58.2"
+    }
 }
