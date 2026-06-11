@@ -318,7 +318,12 @@ const RMCalculatorModule = (() => {
             <button class="btn btn--primary mt-2" onclick="RMCalculatorModule.ejecutarCalculo()" style="width:100%;">
                 Calcular 1RM
             </button>
-            <div id="rm-resultado" class="mt-3"></div>
+            <div id="rm-resultado" class="mt-3">
+                <p class="text-muted" style="font-size:0.75rem; text-align:center; padding:8px;">
+                    💡 Ingresa peso y repeticiones y presiona <strong>Calcular 1RM</strong> para ver
+                    tu estimación con 14 fórmulas científicas.
+                </p>
+            </div>
         `;
     }
 

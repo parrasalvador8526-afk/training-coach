@@ -89,6 +89,17 @@ const RPCoachApp = (() => {
     async function init() {
         console.log('🚀 Iniciando NEXUS-RP Coach...');
 
+        // Manejo global de errores: el usuario ve un aviso amable en lugar
+        // de una app rota en silencio (máx. 1 aviso cada 15s para no saturar)
+        let lastErrorToast = 0;
+        const notifyError = () => {
+            if (Date.now() - lastErrorToast < 15000) return;
+            lastErrorToast = Date.now();
+            try { showNotification('⚠️ Algo salió mal. Si el problema persiste, recarga la app.'); } catch { }
+        };
+        window.addEventListener('error', notifyError);
+        window.addEventListener('unhandledrejection', notifyError);
+
         // Cargar estado guardado
         loadState();
 
@@ -605,6 +616,72 @@ const RPCoachApp = (() => {
         renderHomeCompReminder();
         // Widgets Premium
         renderPremiumInsights();
+        // Guía de primeros pasos para usuarios nuevos
+        renderOnboardingChecklist();
+    }
+
+    /**
+     * Onboarding de 3 pasos: visible solo mientras falte alguno.
+     * Desaparece solo cuando el usuario completa perfil, rutina y readiness.
+     */
+    function renderOnboardingChecklist() {
+        const container = document.getElementById('onboarding-checklist');
+        if (!container) return;
+
+        let profile = {};
+        try { profile = JSON.parse(localStorage.getItem('rpCoach_profile') || '{}'); } catch { }
+        const steps = [
+            {
+                icon: '👤', titulo: 'Completa tu perfil',
+                detalle: 'Peso, altura y nivel para personalizar rutina y macros',
+                done: !!(profile.weight && profile.height),
+                accion: () => switchModule('profile')
+            },
+            {
+                icon: '🏋️', titulo: 'Genera tu primera rutina',
+                detalle: 'Elige metodología y días: el sistema arma tu mesociclo',
+                done: !!localStorage.getItem('rpCoach_active_routine'),
+                accion: () => switchModule('workout')
+            },
+            {
+                icon: '⚡', titulo: 'Evalúa tu primer readiness',
+                detalle: 'Sueño, estrés y DOMS: la app ajusta tu sesión de hoy',
+                done: JSON.parse(localStorage.getItem('rpCoach_readiness_history') || '[]').length > 0,
+                accion: () => {
+                    switchModule('home');
+                    document.getElementById('btn-eval-readiness')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        ];
+
+        if (steps.every(s => s.done)) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const completados = steps.filter(s => s.done).length;
+        container.innerHTML = `
+            <div class="card glass-card onboarding-card mt-2">
+                <div class="card__header">
+                    <h4>🚀 Primeros pasos (${completados}/3)</h4>
+                    <span class="rp-badge" style="background:var(--gradient-primary);">NUEVO</span>
+                </div>
+                ${steps.map((s, i) => `
+                    <div class="onboarding-step ${s.done ? 'onboarding-step--done' : ''}">
+                        <span class="onboarding-step__check">${s.done ? '✅' : s.icon}</span>
+                        <div style="flex:1;">
+                            <strong style="font-size:0.85rem;">${s.titulo}</strong>
+                            <p class="text-muted" style="font-size:0.72rem; margin:2px 0 0;">${s.detalle}</p>
+                        </div>
+                        ${s.done ? '' : `<button class="btn btn--sm onboarding-step__btn" data-step="${i}"
+                            style="background:var(--gradient-primary); color:white; white-space:nowrap;">Ir →</button>`}
+                    </div>`).join('')}
+            </div>
+        `;
+
+        container.querySelectorAll('.onboarding-step__btn').forEach(btn => {
+            btn.addEventListener('click', () => steps[parseInt(btn.dataset.step)].accion());
+        });
     }
 
     /**
@@ -2814,6 +2891,12 @@ window.exportMesocyclePDF = function (period = 'all') {
         if (!Array.isArray(prs)) prs = [];
         if (!Array.isArray(bodyComp)) bodyComp = [];
         if (!Array.isArray(readinessData)) readinessData = [];
+
+        // Sin datos no hay reporte: avisar en lugar de generar un PDF vacío
+        if (!sessions.length && !routine?.days?.length) {
+            showNotification('📄 Aún no hay datos para el reporte. Genera una rutina y registra tu primera sesión.');
+            return;
+        }
 
         // Filtrado por periodo
         let periodLabel = 'MESOCICLO COMPLETO';

@@ -4,7 +4,7 @@
  * - Open Food Facts: stale-while-revalidate (el escáner y las sugerencias
  *   funcionan dentro del súper aunque se pierda la señal).
  */
-const CACHE_VERSION = 'rp-coach-v2';
+const CACHE_VERSION = 'rp-coach-v3';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const OFF_CACHE = CACHE_VERSION + '-openfoodfacts';
@@ -15,6 +15,8 @@ const PRECACHE_URLS = [
     './manifest.json',
     './css/rp-coach.css',
     './img/icon.svg',
+    './img/icon-192.png',
+    './img/icon-512.png',
     './js/rp-coach.js',
     './js/data/methodologies-sync.js',
     './js/data/alimentos-db.js',
@@ -73,6 +75,21 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
     if (event.request.method !== 'GET') return;
+
+    // Navegación (index.html): network-first para que las actualizaciones
+    // lleguen de inmediato; el cache solo es fallback sin conexión.
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request).then(response => {
+                const copy = response.clone();
+                caches.open(STATIC_CACHE).then(cache => cache.put('./index.html', copy));
+                return response;
+            }).catch(async () =>
+                (await caches.match(event.request)) || (await caches.match('./index.html'))
+            )
+        );
+        return;
+    }
 
     // Open Food Facts: stale-while-revalidate
     if (url.hostname.endsWith('openfoodfacts.org')) {

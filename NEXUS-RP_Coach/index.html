@@ -12,7 +12,8 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0D0D1A">
     <link rel="icon" type="image/svg+xml" href="img/icon.svg">
-    <link rel="apple-touch-icon" href="img/icon.svg">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="img/icon-512.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -341,36 +342,59 @@
 </head>
 
 <body>
-    <!-- ========== LOGIN OVERLAY ========== -->
+    <!-- ========== PANTALLA DE BIENVENIDA ==========
+         Los datos viven solo en este dispositivo: no hay cuentas ni contraseñas.
+         Si ya hay perfil con nombre, la pantalla se omite automáticamente. -->
     <div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.5s ease;">
-        <div class="card card--highlight" style="width: 100%; max-width: 400px; text-align: center; padding: 40px 20px;">
-            <div class="header__logo-icon" style="margin: 0 auto 20px auto; width: 80px; height: 80px; font-size: 2.5rem;">🧠</div>
-            <h2 class="card__title" style="margin-bottom: 25px;">NEXUS-RP <span class="text-gradient">Coach</span></h2>
-            
+        <div class="card card--highlight welcome-card" style="width: 100%; max-width: 400px; text-align: center; padding: 40px 20px;">
+            <div class="header__logo-icon welcome-logo" style="margin: 0 auto 20px auto; width: 80px; height: 80px; font-size: 2.5rem;">🧠</div>
+            <h2 class="card__title" style="margin-bottom: 8px;">NEXUS-RP <span class="text-gradient">Coach</span></h2>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 25px;">Entrenamiento inteligente autorregulado + Coach Nutricional</p>
+
             <form id="login-form" onsubmit="handleLogin(event)">
                 <div class="form-group" style="text-align: left;">
-                    <label class="form-label">Usuario</label>
-                    <input type="text" class="form-input" placeholder="Ingresa tu usuario" required>
-                </div>
-                <div class="form-group" style="text-align: left;">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" class="form-input" placeholder="Ingresa tu contraseña" required>
+                    <label class="form-label">¿Cómo te llamas, atleta?</label>
+                    <input type="text" id="welcome-name" class="form-input" placeholder="Tu nombre" maxlength="40" required>
                 </div>
                 <button type="submit" class="btn btn--primary btn--block mt-2" style="font-size: 1.1rem; padding: 15px;">
-                    Acceder
+                    🚀 Comenzar
                 </button>
             </form>
+            <p class="text-muted" style="font-size: 0.68rem; margin-top: 18px;">
+                🔒 Tus datos se guardan únicamente en este dispositivo.
+            </p>
         </div>
-        
+
         <script>
+            function dismissWelcome(overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            }
             function handleLogin(e) {
                 e.preventDefault();
-                const overlay = document.getElementById('login-overlay');
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 500);
+                const name = document.getElementById('welcome-name')?.value.trim();
+                if (name) {
+                    try {
+                        const profile = JSON.parse(localStorage.getItem('rpCoach_profile') || '{}');
+                        profile.name = name;
+                        localStorage.setItem('rpCoach_profile', JSON.stringify(profile));
+                        const span = document.getElementById('home-greeting-name');
+                        if (span) span.textContent = name.split(' ')[0];
+                    } catch (err) { }
+                }
+                dismissWelcome(document.getElementById('login-overlay'));
             }
+            // Usuario que regresa: directo a la app, sin fricción
+            (function () {
+                try {
+                    const profile = JSON.parse(localStorage.getItem('rpCoach_profile') || '{}');
+                    if (profile.name) {
+                        const overlay = document.getElementById('login-overlay');
+                        overlay.style.opacity = '0';
+                        overlay.style.display = 'none';
+                    }
+                } catch (err) { }
+            })();
         </script>
     </div>
 
@@ -477,6 +501,9 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Onboarding de 3 pasos: solo visible para usuarios nuevos (render por JS) -->
+            <div id="onboarding-checklist"></div>
 
             <!-- ========== DAILY SUMMARY MODAL ========== -->
             <div id="daily-summary-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease;">
@@ -3530,8 +3557,10 @@
     <script src="js/modules/progressive-tables.js"></script>
 
     <!-- TEMPORAL: Simulación de mesociclo (quitar después de probar) -->
-    <!-- <script src="simular-mesociclo.js"></script> -->
-    <script src="simular-meister.js"></script>
+    <!-- Scripts de SIMULACIÓN (solo desarrollo — NUNCA cargar en producción:
+         borran las claves rpCoach_* del usuario e inyectan datos de demo)
+    <script src="simular-mesociclo.js"></script>
+    <script src="simular-meister.js"></script> -->
 
     <!-- Controlador Principal -->
     <script src="js/rp-coach.js"></script>

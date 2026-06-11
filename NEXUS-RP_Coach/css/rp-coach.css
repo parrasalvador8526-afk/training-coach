@@ -1742,3 +1742,54 @@ h4 {
 @media (prefers-reduced-motion: reduce) {
     .evo-ring-progress, .macro-bar__fill, .meal-row, .skeleton { transition: none; animation: none; }
 }
+
+/* ═══════════════════════════════════════════════
+   CAPA WOW — Bienvenida, onboarding y transiciones
+   ═══════════════════════════════════════════════ */
+
+/* Entrada de la pantalla de bienvenida */
+.welcome-card {
+    animation: welcomeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.welcome-logo {
+    animation: welcomePulse 2.4s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(224, 64, 251, 0.35);
+}
+@keyframes welcomeIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes welcomePulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(224, 64, 251, 0.25); }
+    50% { box-shadow: 0 0 38px rgba(124, 77, 255, 0.5); }
+}
+
+/* Transición sutil al cambiar de módulo */
+.module-section:not(.hidden) {
+    animation: moduleIn 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes moduleIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Onboarding de 3 pasos */
+.onboarding-card {
+    border: 1px solid rgba(224, 64, 251, 0.25);
+}
+.onboarding-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.onboarding-step:last-child { border-bottom: none; }
+.onboarding-step--done { opacity: 0.55; }
+.onboarding-step--done strong { text-decoration: line-through; }
+.onboarding-step__check { font-size: 1.4rem; min-width: 32px; text-align: center; }
+.onboarding-step__btn { min-height: 38px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .welcome-card, .welcome-logo, .module-section:not(.hidden) { animation: none; }
+}
