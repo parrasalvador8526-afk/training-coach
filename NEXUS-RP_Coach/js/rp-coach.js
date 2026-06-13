@@ -139,7 +139,7 @@ const RPCoachApp = (() => {
         // Cargar metodologías
         if (window.MethodologiesSyncModule) {
             await MethodologiesSyncModule.loadMethodologies();
-            await populateMethodologySelector();
+            syncMethodologyFromRoutine();
         }
 
         // Inicializar Calculadora de RM
@@ -154,19 +154,17 @@ const RPCoachApp = (() => {
     }
 
     /**
-     * Llena el selector de metodologías
+     * Sincroniza la metodología activa desde la rutina (fuente de verdad).
+     * El selector global del header se eliminó: la metodología la decide
+     * el wizard de ENTRENAMIENTO al generar la rutina.
      */
-    async function populateMethodologySelector() {
-        const selector = document.getElementById('methodology-selector');
-        if (!selector) return;
-
-        const methodologies = await MethodologiesSyncModule.getMethodologyList();
-
-        selector.innerHTML = methodologies.map(m =>
-            `<option value="${m.id}" ${m.id === state.selectedMethodology ? 'selected' : ''}>
-                ${m.name}
-            </option>`
-        ).join('');
+    function syncMethodologyFromRoutine() {
+        try {
+            const routine = JSON.parse(localStorage.getItem('rpCoach_active_routine') || 'null');
+            if (routine?.methodology) {
+                state.selectedMethodology = routine.methodology;
+            }
+        } catch { }
     }
 
     /**
@@ -188,16 +186,6 @@ const RPCoachApp = (() => {
                 switchModule('profile');
                 // Resaltar botón activo
                 document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            });
-        }
-
-        // Selector de metodología
-        const methodSelector = document.getElementById('methodology-selector');
-        if (methodSelector) {
-            methodSelector.addEventListener('change', (e) => {
-                state.selectedMethodology = e.target.value;
-                saveState();
-                updateModuleWithMethodology();
             });
         }
 
@@ -514,6 +502,7 @@ const RPCoachApp = (() => {
             moduleName = 'evolution';
         }
         state.currentModule = moduleName;
+        syncMethodologyFromRoutine();
         saveState();
 
         // Actualizar tabs activas
@@ -2414,13 +2403,8 @@ const RPCoachApp = (() => {
             if (typeof ProgressChartsModule !== 'undefined') {
                 ProgressChartsModule.renderDashboardCharts('dashboard-charts');
 
-                // Pasar el ID de la metodología (value), no el texto visible:
-                // el texto puede ser "Cargando metodologías..." y rompe el lookup
-                let methodName = state.selectedMethodology;
-                const methodSelector = document.getElementById('methodology-selector');
-                if (methodSelector && methodSelector.value && methodSelector.options.length) {
-                    methodName = methodSelector.value;
-                }
+                // La metodología viene de la rutina activa (sincronizada en switchModule)
+                const methodName = state.selectedMethodology || 'Y3T';
 
                 ProgressChartsModule.drawMesocycleProgressionChart(
                     'mesocycle-progression-chart',
@@ -2659,11 +2643,6 @@ const RPCoachApp = (() => {
     /**
      * Actualiza módulos cuando cambia la metodología
      */
-    function updateModuleWithMethodology() {
-        renderCurrentModule();
-        updateRIRDisplay();
-    }
-
     // Utilidades auxiliares
     function formatVolume(volume) {
         if (volume >= 1000) {

@@ -4,7 +4,7 @@
  * - Open Food Facts: stale-while-revalidate (el escáner y las sugerencias
  *   funcionan dentro del súper aunque se pierda la señal).
  */
-const CACHE_VERSION = 'rp-coach-v4';
+const CACHE_VERSION = 'rp-coach-v5';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const OFF_CACHE = CACHE_VERSION + '-openfoodfacts';
