@@ -1694,8 +1694,10 @@ const WorkoutUIController = (() => {
                     return;
                 }
 
-                generateProgressiveRoutine();
+                // Guardar PRIMERO la sesión (lee los inputs de la tabla);
+                // generateProgressiveRoutine re-renderiza la tabla y la vacía.
                 saveSessionToHistory(routine);
+                generateProgressiveRoutine();
 
                 // Disable button so they don't click it twice accidentally
                 const btn = document.getElementById('btn-finish-session');
@@ -2507,7 +2509,7 @@ const WorkoutUIController = (() => {
      *   - Si trabajo = 80-90% → calentamiento: 30%, 40%, 55%
      *   - Default (hipertrofia): 20%, 35%, 50% — siempre debajo de la zona de trabajo
      */
-    function buildWarmupBlock(exercises, params) {
+    function buildWarmupBlock(exercises, params, showDoubleTier) {
         // Buscar ejercicio base: primero isPrimary con peso, luego cualquiera con peso
         let baseEx = null;
         let baseData = null;

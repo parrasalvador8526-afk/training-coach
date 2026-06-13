@@ -382,6 +382,9 @@ const RPCoachApp = (() => {
 
         renderReadinessHistory(history);
 
+        // Refrescar la guía de primeros pasos (este era su último paso pendiente)
+        renderOnboardingChecklist();
+
         // ===== GAMIFICACIÓN: Check de fin de mesociclo =====
         if (currentPhase === 'Deload' || currentPhase === 'Peak') {
             // Solo mostrar si no se ha mostrado hoy (evitar spam)
@@ -1038,80 +1041,9 @@ const RPCoachApp = (() => {
         const activeSub = document.querySelector('.nutri-subtab.active')?.dataset.sub || 'flexible';
         applyNutritionSubview(activeSub);
 
-        // Renderizar el peso corporal que vive en la nueva pestaña
-        if (typeof ProgressAnalytics !== 'undefined' && typeof ProgressAnalytics.renderWeightTracking === 'function') {
-            ProgressAnalytics.renderWeightTracking();
-        }
-
-        // Feature 4: Alerta de Fatiga Alta (Recuperación)
-        const container = document.getElementById('module-nutrition');
-        if (container && localStorage.getItem('rpCoach_fatigue_carb_boost') === 'true') {
-            // Check si ya agregamos la alerta para evitar duplicados
-            if (!document.getElementById('fatigue-carb-alert')) {
-                const alertDiv = document.createElement('div');
-                alertDiv.id = 'fatigue-carb-alert';
-                alertDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-                alertDiv.style.border = '1px solid #EF4444';
-                alertDiv.style.borderRadius = '8px';
-                alertDiv.style.padding = '12px';
-                alertDiv.style.marginTop = '15px';
-                alertDiv.style.marginBottom = '15px';
-
-                alertDiv.innerHTML = `
-                    <div style="display: flex; gap: 10px; align-items: flex-start;">
-                        <span style="font-size: 1.5rem;">⚠️</span>
-                        <div>
-                            <h4 style="color: #EF4444; margin-bottom: 4px; font-size: 0.95rem;">Aviso del Motor Metabólico</h4>
-                            <p style="color: #E0E0E0; font-size: 0.85rem; margin-bottom: 8px;">Hemos detectado niveles muy altos de fatiga (SNC/Muscular) en tu última sesión. Para facilitar tu recuperación sistémica, se sugiere un <strong>aumento táctico de +30g de carbohidratos</strong> intra o post-entrenamiento.</p>
-                            <button id="btn-apply-fatigue-carbs" class="btn btn--sm" style="background: #10B981; color: white;">Aplicar +30g Carbos Ahora</button>
-                        </div>
-                    </div>
-                `;
-
-                // Insertarlo antes de las tarjetas de nutrición o al inicio
-                const cardsContainer = container.querySelector('.dashboard-grid') || container.querySelector('.card');
-                if (cardsContainer && cardsContainer.parentNode) {
-                    cardsContainer.parentNode.insertBefore(alertDiv, cardsContainer);
-                } else {
-                    container.appendChild(alertDiv);
-                }
-
-                document.getElementById('btn-apply-fatigue-carbs').addEventListener('click', (e) => {
-                    const carbDisplay = document.getElementById('macro-carbs');
-                    if (carbDisplay) {
-                        let currentCarbs = parseInt(carbDisplay.innerText);
-                        if (!isNaN(currentCarbs)) {
-                            carbDisplay.innerText = (currentCarbs + 30) + 'g';
-                            showNotification('⚡ +30g de carbohidratos de recuperación aplicados exitosamente.');
-                            e.target.parentElement.innerHTML = '<p style="color: #10B981; font-weight: bold; font-size: 0.85rem;">✅ Protocolo de recuperación activado.</p>';
-                            localStorage.removeItem('rpCoach_fatigue_carb_boost');
-                        }
-                    }
-                });
-            }
-        }
-
-        // Configurar interacción básica del Motor Metabólico (Demo Auto-Ajuste)
-        const btnAdjust = document.getElementById('btn-auto-adjust-macros');
-        if (btnAdjust && !btnAdjust.hasListener) {
-            btnAdjust.hasListener = true;
-            btnAdjust.addEventListener('click', () => {
-                const carbDisplay = document.getElementById('macro-carbs');
-                if (carbDisplay) {
-                    let currentCarbs = parseInt(carbDisplay.innerText);
-                    if (!isNaN(currentCarbs)) {
-                        carbDisplay.innerText = (currentCarbs + 25) + 'g';
-                        showNotification('✅ +25g de carbohidratos añadidos a tus macros diarios y guardados en tu perfil.');
-
-                        // Actualizar UI del motor
-                        btnAdjust.style.background = 'var(--surface-color)';
-                        btnAdjust.style.color = 'var(--text-muted)';
-                        btnAdjust.innerHTML = '✔️ Ajuste Aplicado para esta semana';
-                        btnAdjust.disabled = true;
-                    }
-                }
-            });
-        }
+        // La alerta de fatiga y el "Motor Metabólico" demo (hardcodeados) se
+        // eliminaron: RecoveryNutritionSync cubre ambos con datos reales,
+        // incluyendo el flag rpCoach_fatigue_carb_boost.
     }
 
     // renderDashboard() y updateAutoregulationStatus() eliminados — lógica integrada en renderProgress()
