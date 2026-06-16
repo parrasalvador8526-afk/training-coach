@@ -227,7 +227,7 @@ const RPCoachApp = (() => {
      * Muestra la sub-vista activa del Coach Nutricional y renderiza su módulo.
      */
     function applyNutritionSubview(sub) {
-        const views = { flexible: 'nutri-sub-flexible', estricto: 'nutri-sub-estricto', tiendas: 'nutri-sub-tiendas', scanner: 'nutri-sub-scanner' };
+        const views = { flexible: 'nutri-sub-flexible', tiendas: 'nutri-sub-tiendas', scanner: 'nutri-sub-scanner' };
         Object.entries(views).forEach(([key, id]) => {
             document.getElementById(id)?.classList.toggle('hidden', key !== sub);
         });

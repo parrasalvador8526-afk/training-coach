@@ -108,9 +108,26 @@ const NutricionRP = (() => {
     // =============================================
 
     /**
-     * Genera un menú fijo de 4 comidas a partir de ALIMENTOS_DB, escalando
-     * porciones para acercarse a los macros objetivo. Rota las fuentes según
-     * el día de la semana para dar variedad sin aleatoriedad.
+     * Mapea la categoría de un alimento al macro que debe gobernar su escalado.
+     * Las proteínas/lácteos escalan hacia el objetivo de proteína, los
+     * carbohidratos/frutas/snacks hacia el de carbohidratos, las grasas hacia
+     * el de grasas. Las verduras son de bajo aporte y no se escalan (saciedad).
+     */
+    function grupoEscalado(cat) {
+        if (cat === 'proteina' || cat === 'lacteo') return 'prot';
+        if (cat === 'carb' || cat === 'fruta' || cat === 'snack' || cat === 'bebida') return 'carb';
+        if (cat === 'grasa') return 'grasa';
+        return 'veg';
+    }
+
+    /**
+     * Genera un menú fijo de 4 comidas a partir de ALIMENTOS_DB. A diferencia de
+     * un escalado por calorías (que dispara la proteína muy por encima del
+     * objetivo), aquí cada grupo de fuentes se escala hacia SU macro objetivo:
+     * proteínas → target proteína, carbohidratos → target carbos, grasas →
+     * target grasas. Así los totales del menú aterrizan cerca de los 4 macros y
+     * el "Progreso de Hoy" solo marca exceso (⚠️) cuando realmente lo hay.
+     * Rota las fuentes según el día de la semana para dar variedad sin azar.
      */
     function generarMenuDiario(macros) {
         const db = window.ALIMENTOS_DB || [];
@@ -122,31 +139,50 @@ const NutricionRP = (() => {
         };
         const dia = new Date().getDay();
 
-        // Distribución: desayuno 25%, comida 35%, cena 25%, snack 15%
         const comidas = [
-            { nombre: '🌅 Desayuno', pKcal: 0.25, fuentes: [pick('proteina', dia + 8), pick('carb', dia + 2), pick('fruta', dia)] },
-            { nombre: '🍽️ Comida', pKcal: 0.35, fuentes: [pick('proteina', dia), pick('carb', dia), pick('veg', dia), pick('grasa', dia)] },
-            { nombre: '🌙 Cena', pKcal: 0.25, fuentes: [pick('proteina', dia + 3), pick('veg', dia + 2), pick('grasa', dia + 1)] },
-            { nombre: '🥜 Snack', pKcal: 0.15, fuentes: [pick('lacteo', dia), pick('fruta', dia + 1)] }
+            { nombre: '🌅 Desayuno', fuentes: [pick('proteina', dia + 8), pick('carb', dia + 2), pick('fruta', dia)] },
+            { nombre: '🍽️ Comida', fuentes: [pick('proteina', dia), pick('carb', dia), pick('veg', dia), pick('grasa', dia)] },
+            { nombre: '🌙 Cena', fuentes: [pick('proteina', dia + 3), pick('veg', dia + 2), pick('grasa', dia + 1)] },
+            { nombre: '🥜 Snack', fuentes: [pick('lacteo', dia), pick('fruta', dia + 1)] }
         ];
+
+        // Lista plana de fuentes para resolver el escalado global
+        const fuentesPlano = [];
+        comidas.forEach(c => c.fuentes.filter(Boolean).forEach(f => fuentesPlano.push(f)));
+
+        const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
+        const escala = { prot: 1, carb: 1, grasa: 1, veg: 1 };
+
+        // Totales de cada macro con un set de escalas dado (cada fuente aporta a
+        // los 3 macros, no solo al de su grupo — de ahí el acoplamiento)
+        const totalesCon = (s) => fuentesPlano.reduce((acc, f) => {
+            const k = s[grupoEscalado(f.cat)];
+            acc.prot += f.prot * k; acc.carb += f.carb * k; acc.grasa += f.grasa * k;
+            return acc;
+        }, { prot: 0, carb: 0, grasa: 0 });
+
+        // Ajuste iterativo (Gauss-Seidel): cada grupo persigue su macro objetivo
+        // teniendo en cuenta el aporte cruzado de las demás fuentes. Converge en
+        // pocas vueltas porque cada macro está dominado por su propio grupo.
+        for (let i = 0; i < 8; i++) {
+            const t = totalesCon(escala);
+            if (t.prot  > 0) escala.prot  = clamp(escala.prot  * (macros.proteina     / t.prot),  0.35, 3.5);
+            if (t.carb  > 0) escala.carb  = clamp(escala.carb  * (macros.carbohidratos / t.carb),  0.35, 3.5);
+            if (t.grasa > 0) escala.grasa = clamp(escala.grasa * (macros.grasas        / t.grasa), 0.35, 3.5);
+        }
 
         return comidas.map(comida => {
             const fuentes = comida.fuentes.filter(Boolean);
-            const kcalObjetivo = macros.calorias * comida.pKcal;
-            const kcalBase = fuentes.reduce((s, f) => s + f.kcal, 0) || 1;
-            // Escala global de la comida hacia su presupuesto calórico (límites razonables)
-            const escala = Math.min(2.5, Math.max(0.5, kcalObjetivo / kcalBase));
-
             let totales = { kcal: 0, prot: 0, carb: 0, grasa: 0 };
             const items = fuentes.map(f => {
-                const gramos = Math.round(f.gramos * escala);
+                const s = escala[grupoEscalado(f.cat)];
                 const r = {
                     nombre: f.nombre,
-                    gramos,
-                    kcal: Math.round(f.kcal * escala),
-                    prot: Math.round(f.prot * escala),
-                    carb: Math.round(f.carb * escala),
-                    grasa: Math.round(f.grasa * escala)
+                    gramos: Math.round((f.gramos || 0) * s),
+                    kcal: Math.round(f.kcal * s),
+                    prot: Math.round(f.prot * s),
+                    carb: Math.round(f.carb * s),
+                    grasa: Math.round(f.grasa * s)
                 };
                 totales.kcal += r.kcal; totales.prot += r.prot;
                 totales.carb += r.carb; totales.grasa += r.grasa;
@@ -392,7 +428,8 @@ const NutricionRP = (() => {
     return {
         init,
         renderPlanNutricional,
-        actualizarConMetodologia
+        actualizarConMetodologia,
+        generarMenuDiario
     };
 })();
 

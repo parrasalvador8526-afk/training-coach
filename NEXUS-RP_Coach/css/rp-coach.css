@@ -1793,3 +1793,75 @@ h4 {
 @media (prefers-reduced-motion: reduce) {
     .welcome-card, .welcome-logo, .module-section:not(.hidden) { animation: none; }
 }
+
+/* ── Coach Nutricional Onboarding ── */
+.nutri-onboarding {
+    background: linear-gradient(145deg, rgba(22, 22, 38, 0.9), rgba(30, 30, 52, 0.8));
+    backdrop-filter: blur(15px);
+    border-radius: var(--border-radius-lg);
+    padding: 30px 20px;
+    animation: welcomeIn 0.5s ease;
+}
+
+.nutri-onboarding #bioimpedancia-form-container {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius-md);
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ── Coach Nutricional: Toggle Switch y Sustitución ── */
+.nutri-toggle-container {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 30px;
+    padding: 4px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nutri-toggle-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 26px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.nutri-toggle-btn.active {
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    color: white;
+    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+}
+
+.food-item-flexible {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.food-item-flexible:hover {
+    background: rgba(139, 92, 246, 0.15) !important;
+}
+
+.sustitucion-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sustitucion-card:hover {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10B981;
+}

@@ -406,7 +406,7 @@
                 <div class="header__logo-icon">🧠</div>
                 <div>
                     <h1 class="header__title">NEXUS-RP <span class="text-gradient">Coach</span></h1>
-                    <p class="header__subtitle">Entrenamiento Inteligente Autorregulado</p>
+                    <p class="header__subtitle">Donde la ciencia construye tu músculo</p>
                 </div>
             </div>
             <div class="flex gap-2" style="align-items:center;">
@@ -418,7 +418,6 @@
                     style="background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display:flex; align-items:center; gap:5px;">
                     👤 Perfil
                 </button>
-                <span class="rp-badge">✨ RP Style</span>
                 <!-- El selector global de metodología se eliminó: la metodología
                      la define la rutina activa (wizard de ENTRENAMIENTO) -->
             </div>
@@ -3297,23 +3296,25 @@
 
         <!-- ========== MÓDULO: COACH NUTRICIONAL ========== -->
         <section id="module-nutrition" class="module-section hidden">
-            <div class="card card--highlight glass-card mb-2"
-                style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(220, 38, 38, 0.02)); border: 1px solid rgba(239, 68, 68, 0.2);">
-                <div class="card__header">
-                    <h3 class="card__title" style="color: #EF4444;">🍽️ Coach Nutricional</h3>
-                    <span class="rp-badge" style="background:var(--gradient-primary);">PREMIUM</span>
-                </div>
-                <p class="text-muted" style="font-size:0.8rem;">Plan flexible, menús estrictos, sugerencias por tienda y
-                    escáner de alimentos — sincronizado con tu entrenamiento.</p>
-            </div>
-
             <!-- Banner de ajuste automático (sinergia entrenamiento ↔ nutrición) -->
             <div id="nutrition-adjustment-banner"></div>
 
+            <!-- Vista Onboarding (cuando no hay datos) -->
+            <div id="nutri-onboarding-view" class="hidden nutri-onboarding card glass-card mb-2" style="border: 1px solid #E040FB; box-shadow: 0 0 20px rgba(224,64,251,0.15);">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="color: #E040FB; margin-bottom: 10px;">¡Bienvenido al Coach Nutricional!</h2>
+                    <p class="text-muted" style="font-size: 0.9rem;">Para generar tu plan personalizado y calcular tus macros con precisión matemática, necesitamos los datos de tu báscula de bioimpedancia.</p>
+                </div>
+                <div id="bioimpedancia-form-container"></div>
+                <div id="bio-results-container" class="mt-3"></div>
+                <button id="btn-continue-onboarding" class="btn btn--block mt-3 hidden" style="background: linear-gradient(135deg, #10B981, #059669); color: white; font-weight: bold; font-size: 1.1rem; padding: 12px;">
+                    Generar Plan Nutricional ➔
+                </button>
+            </div>
+
             <!-- Sub-navegación del Coach Nutricional -->
             <div class="nutri-subtabs">
-                <button class="nutri-subtab active" data-sub="flexible">🎯 Hoy</button>
-                <button class="nutri-subtab" data-sub="estricto">📋 Plan Estricto</button>
+                <button class="nutri-subtab active" data-sub="flexible">🎯 Mi Menú de Hoy</button>
                 <button class="nutri-subtab" data-sub="tiendas">🛒 Tiendas</button>
                 <button class="nutri-subtab" data-sub="scanner">📷 Escáner</button>
             </div>
@@ -3326,21 +3327,25 @@
 
             <!-- Escáner (render por BarcodeScannerRP) -->
             <div id="nutri-sub-scanner" class="hidden"></div>
-
-            <!-- Plan Estricto: menús generados + contenido legado -->
-            <div id="nutri-sub-estricto" class="hidden">
-            <div id="nutrition-plan-container"></div>
-            </div><!-- /nutri-sub-estricto -->
+            
+            <!-- Modal de Sustitución Inteligente (se oculta por defecto) -->
+            <div id="sustitucion-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; flex-direction: column; justify-content: flex-end;">
+                <div class="card glass-card" style="border-radius: 20px 20px 0 0; padding: 20px; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 id="sustitucion-title" style="margin: 0; color: #E040FB;">Sustituir Alimento</h3>
+                        <button id="btn-close-sustitucion" style="background: none; border: none; color: white; font-size: 1.5rem;">&times;</button>
+                    </div>
+                    <div id="sustitucion-original-info" class="mb-3 text-muted" style="font-size: 0.85rem;"></div>
+                    <div id="sustitucion-sugerencias-container"></div>
+                </div>
+            </div>
         </section>
 
         <!-- ========== FOOTER ========== -->
-        <footer class="card mt-3" style="text-align: center; padding: 20px;">
-            <p class="text-muted">
-                <strong>NEXUS-RP Coach</strong> v1.0 | Inspirado en RP Hypertrophy App<br>
-                Sincronizado con 9 metodologías RPizadas de entrenamiento
-            </p>
-            <p class="mt-1" style="font-size: 0.8rem; color: var(--text-muted);">
-                RP Style · DUP · Y3T · 5/3/1 · FST-7+LP · HIT Inteligente · Rest-Pause+Clusters · SST+Myo · MTUT+LP
+        <footer class="card mt-3" style="text-align: center; padding: 28px 20px;">
+            <h2 class="text-gradient" style="margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: 2px;">NEXUS</h2>
+            <p class="mt-1" style="font-size: 0.9rem; color: var(--text-muted);">
+                Donde la ciencia construye tu mejor versión.
             </p>
         </footer>
 
@@ -3456,13 +3461,13 @@
     <script src="js/modules/rm-calculator.js"></script>
 
     <!-- Módulos de Bioimpedancia y Nutrición -->
-    <script src="js/modules/bioimpedancia-rp.js"></script>
-    <script src="js/data/alimentos-db.js"></script>
-    <script src="js/data/tiendas-db.js"></script>
-    <script src="js/modules/nutrition-rp.js"></script>
-    <script src="js/modules/nutrition-flexible.js"></script>
-    <script src="js/modules/nutrition-stores.js"></script>
-    <script src="js/modules/barcode-scanner.js"></script>
+    <script src="js/modules/bioimpedancia-rp.js?v=20260613o"></script>
+    <script src="js/data/alimentos-db.js?v=20260613o"></script>
+    <script src="js/data/tiendas-db.js?v=20260613o"></script>
+    <script src="js/modules/nutrition-rp.js?v=20260613o"></script>
+    <script src="js/modules/nutrition-flexible.js?v=20260613o"></script>
+    <script src="js/modules/nutrition-stores.js?v=20260613o"></script>
+    <script src="js/modules/barcode-scanner.js?v=20260613o"></script>
     <script src="js/modules/recovery-nutrition-sync.js"></script>
     <script src="js/modules/progressive-tables.js"></script>
 

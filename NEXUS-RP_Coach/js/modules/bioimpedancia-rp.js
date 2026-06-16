@@ -59,17 +59,39 @@ const BioimpedanciaRP = (() => {
             
             <div class="alert alert--info mt-2" style="padding: 8px;">
                 <span>📊</span>
-                <span style="font-size: 0.8rem;">Datos de bioimpedancia (opcionales)</span>
+                <span style="font-size: 0.8rem;">Datos de báscula de bioimpedancia (opcionales)</span>
             </div>
             
             <div class="module-grid mt-2">
                 <div class="form-group">
-                    <label class="form-label">% Grasa Corporal</label>
-                    <input type="number" class="form-input" id="bio-grasa" min="5" max="50" step="0.1" placeholder="15.5">
+                    <label class="form-label">TMB (kcal)</label>
+                    <input type="number" class="form-input" id="bio-tmb" min="1000" max="4000" step="1" placeholder="Ej: 1850">
                 </div>
                 <div class="form-group">
+                    <label class="form-label">IMC</label>
+                    <input type="number" class="form-input" id="bio-imc" min="15" max="50" step="0.1" placeholder="Ej: 24.5">
+                </div>
+            </div>
+
+            <div class="module-grid mt-2">
+                <div class="form-group">
+                    <label class="form-label">% Grasa Corporal</label>
+                    <input type="number" class="form-input" id="bio-grasa" min="3" max="60" step="0.1" placeholder="Ej: 15.5">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Masa Grasa (kg)</label>
+                    <input type="number" class="form-input" id="bio-masa-grasa" min="2" max="100" step="0.1" placeholder="Ej: 12.5">
+                </div>
+            </div>
+
+            <div class="module-grid mt-2">
+                <div class="form-group">
                     <label class="form-label">Masa Muscular (kg)</label>
-                    <input type="number" class="form-input" id="bio-muscular" min="20" max="100" step="0.1" placeholder="55.0">
+                    <input type="number" class="form-input" id="bio-muscular" min="20" max="100" step="0.1" placeholder="Ej: 55.0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">% Muscular</label>
+                    <input type="number" class="form-input" id="bio-porcentaje-muscular" min="10" max="80" step="0.1" placeholder="Ej: 45.5">
                 </div>
             </div>
             
@@ -125,12 +147,14 @@ const BioimpedanciaRP = (() => {
             return null;
         }
 
-        // Calcular TMB (Mifflin-St Jeor)
-        let tmb;
-        if (datos.sexo === 'M') {
-            tmb = 10 * datos.peso + 6.25 * datos.altura - 5 * datos.edad + 5;
-        } else {
-            tmb = 10 * datos.peso + 6.25 * datos.altura - 5 * datos.edad - 161;
+        // Calcular TMB (Mifflin-St Jeor) o usar el input
+        let tmb = datos.tmbInput;
+        if (!tmb) {
+            if (datos.sexo === 'M') {
+                tmb = 10 * datos.peso + 6.25 * datos.altura - 5 * datos.edad + 5;
+            } else {
+                tmb = 10 * datos.peso + 6.25 * datos.altura - 5 * datos.edad - 161;
+            }
         }
 
         // Factor de actividad para TDEE
@@ -143,9 +167,12 @@ const BioimpedanciaRP = (() => {
         };
         const tdee = Math.round(tmb * (factores[datos.actividad] || 1.55));
 
-        // Calcular IMC
-        const alturaM = datos.altura / 100;
-        const imc = datos.peso / (alturaM * alturaM);
+        // Calcular IMC o usar el input
+        let imc = datos.imcInput;
+        if (!imc) {
+            const alturaM = datos.altura / 100;
+            imc = datos.peso / (alturaM * alturaM);
+        }
 
         // Clasificar IMC
         let clasificacionIMC;
@@ -156,6 +183,9 @@ const BioimpedanciaRP = (() => {
 
         // Estimar % grasa si no se proporciona
         let porcentajeGrasa = datos.grasa;
+        if (!porcentajeGrasa && datos.masaGrasaInput && datos.peso) {
+            porcentajeGrasa = (datos.masaGrasaInput / datos.peso) * 100;
+        }
         if (!porcentajeGrasa) {
             if (datos.sexo === 'M') {
                 porcentajeGrasa = imc < 25 ? 15 : (imc < 30 ? 22 : 30);
@@ -165,22 +195,39 @@ const BioimpedanciaRP = (() => {
         }
 
         // Calcular masa libre de grasa y masa grasa
-        const masaGrasa = datos.peso * (porcentajeGrasa / 100);
+        let masaGrasa = datos.masaGrasaInput;
+        if (!masaGrasa) {
+            masaGrasa = datos.peso * (porcentajeGrasa / 100);
+        }
         const ffm = datos.peso - masaGrasa;
 
-        // Macros recomendados (volumen por defecto)
+        // Masa muscular (para mostrar en reporte, opcional)
+        let masaMuscular = datos.muscular;
+        let porcentajeMuscular = datos.muscularPctInput;
+        if (masaMuscular && !porcentajeMuscular && datos.peso) {
+            porcentajeMuscular = (masaMuscular / datos.peso) * 100;
+        } else if (porcentajeMuscular && !masaMuscular && datos.peso) {
+            masaMuscular = datos.peso * (porcentajeMuscular / 100);
+        }
+
+        // Macros recomendados (volumen por defecto). Proteína por masa magra,
+        // grasa al 25% del TDEE y carbohidratos = calorías restantes, de modo
+        // que P+C+G sumen EXACTAMENTE el TDEE (sin calorías "huérfanas").
         const proteina = Math.round(ffm * 2.2); // 2.2g/kg FFM
-        const carbos = Math.round(tdee * 0.5 / 4); // 50% de calorías
-        const grasas = Math.round(tdee * 0.25 / 9); // 25% de calorías
+        const repartoMacros = repartirMacros(tdee, proteina);
+        const carbos = repartoMacros.carbohidratos;
+        const grasas = repartoMacros.grasas;
 
         const metricas = {
             tmb: Math.round(tmb),
             tdee: tdee,
             imc: parseFloat(imc.toFixed(1)),
             clasificacionIMC,
-            porcentajeGrasa,
+            porcentajeGrasa: parseFloat(porcentajeGrasa.toFixed(1)),
             masaGrasa: parseFloat(masaGrasa.toFixed(1)),
             ffm: parseFloat(ffm.toFixed(1)),
+            masaMuscular: masaMuscular ? parseFloat(masaMuscular.toFixed(1)) : null,
+            porcentajeMuscular: porcentajeMuscular ? parseFloat(porcentajeMuscular.toFixed(1)) : null,
             macros: {
                 calorias: tdee,
                 proteina,
@@ -211,7 +258,11 @@ const BioimpedanciaRP = (() => {
             grasa: parseFloat(document.getElementById('bio-grasa')?.value) || null,
             muscular: parseFloat(document.getElementById('bio-muscular')?.value) || null,
             visceral: parseInt(document.getElementById('bio-visceral')?.value) || null,
-            actividad: document.getElementById('bio-actividad')?.value || 'moderado'
+            actividad: document.getElementById('bio-actividad')?.value || 'moderado',
+            tmbInput: parseInt(document.getElementById('bio-tmb')?.value) || null,
+            imcInput: parseFloat(document.getElementById('bio-imc')?.value) || null,
+            masaGrasaInput: parseFloat(document.getElementById('bio-masa-grasa')?.value) || null,
+            muscularPctInput: parseFloat(document.getElementById('bio-porcentaje-muscular')?.value) || null
         };
     }
 
@@ -352,10 +403,34 @@ const BioimpedanciaRP = (() => {
 
     function cargarDatosGuardados() {
         try {
-            const saved = localStorage.getItem('rpCoach_bioimpedancia');
-            if (!saved) return;
+            const savedBio = localStorage.getItem('rpCoach_bioimpedancia');
+            const savedProfile = localStorage.getItem('rpCoach_profile');
+            
+            let dataBio = savedBio ? JSON.parse(savedBio) : {};
+            let dataProfile = savedProfile ? JSON.parse(savedProfile) : {};
 
-            const data = JSON.parse(saved);
+            // Mapear sexo (profile usa 'male'/'female', bio usa 'M'/'F')
+            let profileSexo = '';
+            if (dataProfile.gender === 'male' || dataProfile.gender === 'M') profileSexo = 'M';
+            if (dataProfile.gender === 'female' || dataProfile.gender === 'F') profileSexo = 'F';
+
+            // Priorizar datos de bioimpedancia, y si no hay, usar los del perfil general
+            const data = {
+                nombre: dataBio.nombre || dataProfile.name || '',
+                edad: dataBio.edad || dataProfile.age || '',
+                sexo: dataBio.sexo || profileSexo || '',
+                peso: dataBio.peso || dataProfile.weight || '',
+                altura: dataBio.altura || dataProfile.height || '',
+                grasa: dataBio.grasa || '',
+                muscular: dataBio.muscular || '',
+                visceral: dataBio.visceral || '',
+                actividad: dataBio.actividad || dataProfile.actividad || 'moderado',
+                tmbInput: dataBio.tmbInput || '',
+                imcInput: dataBio.imcInput || '',
+                masaGrasaInput: dataBio.masaGrasaInput || '',
+                muscularPctInput: dataBio.muscularPctInput || '',
+                metricas: dataBio.metricas || null
+            };
 
             // Rellenar formulario
             setTimeout(() => {
@@ -368,6 +443,10 @@ const BioimpedanciaRP = (() => {
                 if (data.muscular) document.getElementById('bio-muscular').value = data.muscular;
                 if (data.visceral) document.getElementById('bio-visceral').value = data.visceral;
                 if (data.actividad) document.getElementById('bio-actividad').value = data.actividad;
+                if (data.tmbInput) document.getElementById('bio-tmb').value = data.tmbInput;
+                if (data.imcInput) document.getElementById('bio-imc').value = data.imcInput;
+                if (data.masaGrasaInput) document.getElementById('bio-masa-grasa').value = data.masaGrasaInput;
+                if (data.muscularPctInput) document.getElementById('bio-porcentaje-muscular').value = data.muscularPctInput;
 
                 // Mostrar métricas si existen
                 if (data.metricas) {
@@ -392,11 +471,53 @@ const BioimpedanciaRP = (() => {
     // UTILIDAD: Obtener datos para otros módulos
     // =============================================
 
+    /**
+     * Reparte las calorías en macros coherentes: proteína fija (g), grasa al
+     * 25% del TDEE y carbohidratos = calorías restantes. Si los carbohidratos
+     * caerían por debajo del 10% (déficit alto / mucha proteína), recorta la
+     * grasa hasta un piso del 20% para preservar un mínimo de carbohidratos.
+     * Garantiza que proteína*4 + carbohidratos*4 + grasas*9 ≈ calorías.
+     */
+    function repartirMacros(cal, proteina) {
+        const protKcal = proteina * 4;
+        let grasaKcal = cal * 0.25;
+        let carbKcal = cal - protKcal - grasaKcal;
+        const carbMinKcal = cal * 0.10;
+        if (carbKcal < carbMinKcal) {
+            grasaKcal = Math.max(cal * 0.20, cal - protKcal - carbMinKcal);
+            carbKcal = Math.max(0, cal - protKcal - grasaKcal);
+        }
+        return { carbohidratos: Math.round(carbKcal / 4), grasas: Math.round(grasaKcal / 9) };
+    }
+
+    /**
+     * Corrige macros incoherentes (P+C+G que no suman las calorías). Conserva
+     * proteína y calorías, y recalcula carbohidratos/grasas para cerrar el
+     * balance. Devuelve el MISMO objeto si ya está dentro del ±3%.
+     */
+    function normalizeMacros(m) {
+        if (!m || !(m.calorias > 0) || !(m.proteina > 0)) return m;
+        const suma = m.proteina * 4 + (m.carbohidratos || 0) * 4 + (m.grasas || 0) * 9;
+        if (Math.abs(suma - m.calorias) <= m.calorias * 0.03) return m; // ya cuadra
+        const r = repartirMacros(m.calorias, m.proteina);
+        return { ...m, carbohidratos: r.carbohidratos, grasas: r.grasas };
+    }
+
     function getDatosCalculados() {
         try {
             const saved = localStorage.getItem('rpCoach_bioimpedancia');
             if (saved) {
-                return JSON.parse(saved);
+                const datos = JSON.parse(saved);
+                // Auto-sanado de datos antiguos con macros incoherentes (una sola vez)
+                const m = datos?.metricas?.macros;
+                if (m) {
+                    const norm = normalizeMacros(m);
+                    if (norm !== m) {
+                        datos.metricas.macros = norm;
+                        try { localStorage.setItem('rpCoach_bioimpedancia', JSON.stringify(datos)); } catch (e) { }
+                    }
+                }
+                return datos;
             }
         } catch (e) { }
         return null;

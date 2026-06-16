@@ -254,6 +254,8 @@ const BarcodeScannerRP = (() => {
                 </div>
                 <div id="scanner-result"></div>
             </div>
+
+            ${calculadoraHTML()}
         `;
 
         container.querySelector('#btn-scanner-start')?.addEventListener('click', startCamera);
@@ -262,6 +264,169 @@ const BarcodeScannerRP = (() => {
             const code = container.querySelector('#scanner-manual-code')?.value.trim();
             if (code) searchAndShow(code);
         });
+
+        bindCalculadora(container);
+    }
+
+    // ── Calculadora de calorías (sin código de barras) ──
+
+    function r(n) { return Math.round((Number(n) || 0)); }
+    function r1(n) { const v = Number(n) || 0; return Math.round(v * 10) / 10; }
+
+    function calculadoraHTML() {
+        const db = window.ALIMENTOS_DB || [];
+        const opciones = db
+            .map((a, i) => `<option value="${i}">${a.nombre} (${a.porcion})</option>`)
+            .join('');
+        return `
+            <div class="card glass-card mt-2" id="calc-card">
+                <div class="card__header">
+                    <h4>🧮 Calculadora de calorías</h4>
+                    <span class="rp-badge" style="background:var(--rp-accent); color:#04211c;">Sin código</span>
+                </div>
+                <p class="text-muted" style="font-size:0.78rem;">¿Comida casera, fruta a granel o restaurante? Calcula sus calorías y macros y súmalos a tu día.</p>
+
+                <div class="calc-tabs" style="display:flex; gap:6px; margin:12px 0;">
+                    <button class="calc-tab active" data-tab="alimento" style="flex:1; padding:8px; border:none; border-radius:9px; cursor:pointer; font-weight:700; font-size:0.74rem; background:var(--rp-accent); color:#04211c;">🍎 Alimento</button>
+                    <button class="calc-tab" data-tab="macros" style="flex:1; padding:8px; border:none; border-radius:9px; cursor:pointer; font-weight:700; font-size:0.74rem; background:rgba(255,255,255,0.08); color:#bbb;">💪 Macros</button>
+                    <button class="calc-tab" data-tab="etiqueta" style="flex:1; padding:8px; border:none; border-radius:9px; cursor:pointer; font-weight:700; font-size:0.74rem; background:rgba(255,255,255,0.08); color:#bbb;">🏷️ Etiqueta</button>
+                </div>
+
+                <!-- Modo 1: Por alimento (ALIMENTOS_DB) -->
+                <div id="calc-panel-alimento" class="calc-panel">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size:0.75rem;">Elige un alimento</label>
+                        <select id="calc-food" class="form-input">${opciones}</select>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label class="form-label" style="font-size:0.75rem;">Gramos consumidos</label>
+                        <input type="number" id="calc-food-grams" class="form-input" value="100" min="1" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Modo 2: Por macros (calcula kcal) -->
+                <div id="calc-panel-macros" class="calc-panel hidden">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size:0.75rem;">Nombre (opcional)</label>
+                        <input type="text" id="calc-macro-name" class="form-input" placeholder="Ej. Tacos de la calle">
+                    </div>
+                    <div style="display:flex; gap:6px;" class="mt-2">
+                        <div class="form-group" style="flex:1;"><label class="form-label" style="font-size:0.72rem;">Proteína (g)</label><input type="number" id="calc-macro-p" class="form-input" value="0" min="0" inputmode="decimal"></div>
+                        <div class="form-group" style="flex:1;"><label class="form-label" style="font-size:0.72rem;">Carbos (g)</label><input type="number" id="calc-macro-c" class="form-input" value="0" min="0" inputmode="decimal"></div>
+                        <div class="form-group" style="flex:1;"><label class="form-label" style="font-size:0.72rem;">Grasas (g)</label><input type="number" id="calc-macro-g" class="form-input" value="0" min="0" inputmode="decimal"></div>
+                    </div>
+                </div>
+
+                <!-- Modo 3: Por etiqueta (valores por 100g) -->
+                <div id="calc-panel-etiqueta" class="calc-panel hidden">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size:0.75rem;">Nombre (opcional)</label>
+                        <input type="text" id="calc-lbl-name" class="form-input" placeholder="Ej. Galletas marca X">
+                    </div>
+                    <p class="text-muted" style="font-size:0.7rem; margin-top:6px;">Valores por 100 g (como vienen en la etiqueta):</p>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1; min-width:70px;"><label class="form-label" style="font-size:0.72rem;">kcal/100g</label><input type="number" id="calc-lbl-kcal" class="form-input" value="0" min="0" inputmode="numeric"></div>
+                        <div class="form-group" style="flex:1; min-width:60px;"><label class="form-label" style="font-size:0.72rem;">P/100g</label><input type="number" id="calc-lbl-p" class="form-input" value="0" min="0" inputmode="decimal"></div>
+                        <div class="form-group" style="flex:1; min-width:60px;"><label class="form-label" style="font-size:0.72rem;">C/100g</label><input type="number" id="calc-lbl-c" class="form-input" value="0" min="0" inputmode="decimal"></div>
+                        <div class="form-group" style="flex:1; min-width:60px;"><label class="form-label" style="font-size:0.72rem;">G/100g</label><input type="number" id="calc-lbl-g" class="form-input" value="0" min="0" inputmode="decimal"></div>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label class="form-label" style="font-size:0.75rem;">Gramos consumidos</label>
+                        <input type="number" id="calc-lbl-grams" class="form-input" value="100" min="1" inputmode="numeric">
+                    </div>
+                </div>
+
+                <div id="calc-result" class="card mt-2" style="background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.25); padding:12px; text-align:center;">
+                    <div style="font-size:1.5rem; font-weight:800; color:#34D399;" id="calc-kcal">0 kcal</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);" id="calc-macros">P 0g · C 0g · G 0g</div>
+                </div>
+                <button id="calc-add" class="btn btn--primary btn--block mt-2">＋ Registrar en mi día</button>
+            </div>
+        `;
+    }
+
+    // Estado actual de la calculadora según el modo activo
+    function calcActiveMode(container) {
+        const tab = container.querySelector('.calc-tab.active');
+        return tab ? tab.dataset.tab : 'alimento';
+    }
+
+    function calcCompute(container) {
+        const mode = calcActiveMode(container);
+        const db = window.ALIMENTOS_DB || [];
+        if (mode === 'alimento') {
+            const idx = parseInt(container.querySelector('#calc-food')?.value);
+            const food = db[idx];
+            const g = parseFloat(container.querySelector('#calc-food-grams')?.value) || 0;
+            if (!food || !food.gramos || g <= 0) return null;
+            const f = g / food.gramos;
+            return { nombre: food.nombre, gramos: r(g), kcal: r(food.kcal * f), prot: r1(food.prot * f), carb: r1(food.carb * f), grasa: r1(food.grasa * f) };
+        }
+        if (mode === 'macros') {
+            const p = parseFloat(container.querySelector('#calc-macro-p')?.value) || 0;
+            const c = parseFloat(container.querySelector('#calc-macro-c')?.value) || 0;
+            const gr = parseFloat(container.querySelector('#calc-macro-g')?.value) || 0;
+            const nombre = container.querySelector('#calc-macro-name')?.value.trim() || 'Alimento manual';
+            return { nombre, gramos: null, kcal: r(p * 4 + c * 4 + gr * 9), prot: r1(p), carb: r1(c), grasa: r1(gr) };
+        }
+        // etiqueta
+        const k = parseFloat(container.querySelector('#calc-lbl-kcal')?.value) || 0;
+        const p = parseFloat(container.querySelector('#calc-lbl-p')?.value) || 0;
+        const c = parseFloat(container.querySelector('#calc-lbl-c')?.value) || 0;
+        const gr = parseFloat(container.querySelector('#calc-lbl-g')?.value) || 0;
+        const g = parseFloat(container.querySelector('#calc-lbl-grams')?.value) || 0;
+        const nombre = container.querySelector('#calc-lbl-name')?.value.trim() || 'Producto (etiqueta)';
+        if (g <= 0) return null;
+        const f = g / 100;
+        return { nombre, gramos: r(g), kcal: r(k * f), prot: r1(p * f), carb: r1(c * f), grasa: r1(gr * f) };
+    }
+
+    function calcRefresh(container) {
+        const res = calcCompute(container);
+        const kEl = container.querySelector('#calc-kcal');
+        const mEl = container.querySelector('#calc-macros');
+        if (!kEl || !mEl) return;
+        if (!res) { kEl.textContent = '0 kcal'; mEl.textContent = 'Completa los datos'; return; }
+        kEl.textContent = res.kcal + ' kcal';
+        mEl.textContent = `P ${res.prot}g · C ${res.carb}g · G ${res.grasa}g${res.gramos ? ' · ' + res.gramos + 'g' : ''}`;
+    }
+
+    function bindCalculadora(container) {
+        // Cambio de pestañas
+        container.querySelectorAll('.calc-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                container.querySelectorAll('.calc-tab').forEach(t => {
+                    const on = t === tab;
+                    t.classList.toggle('active', on);
+                    t.style.background = on ? 'var(--rp-accent)' : 'rgba(255,255,255,0.08)';
+                    t.style.color = on ? '#04211c' : '#bbb';
+                });
+                ['alimento', 'macros', 'etiqueta'].forEach(m =>
+                    container.querySelector('#calc-panel-' + m)?.classList.toggle('hidden', m !== tab.dataset.tab));
+                calcRefresh(container);
+            });
+        });
+
+        // Recalcular en vivo ante cualquier cambio
+        container.querySelectorAll('#calc-card input, #calc-card select').forEach(el => {
+            el.addEventListener('input', () => calcRefresh(container));
+            el.addEventListener('change', () => calcRefresh(container));
+        });
+
+        // Registrar en el día
+        container.querySelector('#calc-add')?.addEventListener('click', () => {
+            const res = calcCompute(container);
+            if (!res || res.kcal <= 0) {
+                setStatus('⚠️ Completa los datos: las calorías deben ser mayores a 0.');
+                return;
+            }
+            if (window.NutritionFlexible?.addFood) {
+                NutritionFlexible.addFood({ ...res, fuente: 'calculadora' });
+                setStatus('✅ Registrado: ' + res.nombre + ' (' + res.kcal + ' kcal). Revisa tus barras en "Mi Menú de Hoy".');
+            }
+        });
+
+        calcRefresh(container);
     }
 
     function init() {
